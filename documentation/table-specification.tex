@@ -1,0 +1,270 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage[hyphens]{url}
+\usepackage[multiple]{footmisc}
+\usepackage{longtable}
+\usepackage[top=1.5in, bottom=1.0in, left=0.5in, right=0.5in]{geometry}
+
+\newcommand{\tbd}{{\tiny \textbf{TBD}}}
+
+\title{IPHAS DR2: Table specification}
+\date{\today}
+\author{Geert Barentsen}
+
+\begin{document}
+
+\maketitle
+
+This document describes the proposed set of tables and columns which are to be 
+included in IPHAS Data Release 2. In brief, it is proposed to create four 
+tables:
+\begin{itemize}
+\item \textbf{iphasDetection}: the complete collection of all objects detected 
+in those IPHAS exposures which pass the essential quality criteria. Each row 
+represents a single-epoch, single-band detection, and hence this table 
+contains duplicate detections of unique objects.
+\item \textbf{iphasSource}: band-merged version of the detections table, in 
+which detections have been cross-matched on a field-by-field basis. Unique 
+sources may have duplicate entries in this table, but the `best' entry for 
+each unique source will be flagged. 
+\item \textbf{iphasExposure}: meta-data on the observing conditions for each 
+run.
+\item \textbf{iphasField}: meta-data on the observing conditions, based on 
+iphasExposure but collated on a field-by-field basis with extra information added (cf. the existing iphas-qc.fits table).
+\end{itemize}
+
+On top of these four tables we may define `views' which define subsets of 
+certain rows and columns for the purpose of being user-friendly. For example, 
+there might be a view called \textbf{iphasPointSource} which consists of those 
+entries from iphasSource which are marked `primary detections', hence avoiding duplicates. In what follows we concentrate on defining the four main tables however.
+
+It is important to note that the naming conventions and column descriptions 
+used below are largely based on two existing tables in the UKIDSS/GPS survey, 
+namely `gpsDetection' and `gpsSource' (see the WFAU website for the 
+definitions of these tables\footnote{\url{http://surveys.roe.ac.uk/wsa/www/WSA_TABLE_gpsSourceSchema.html}}
+\footnote{\url{http://surveys.roe.ac.uk/wsa/www/WSA_TABLE_gpsDetectionSchema.html}}). 
+There are several reasons to adopt the UKIDSS format:
+\begin{itemize}
+\item a consistent format will encourage UKIDSS users to adopt IPHAS;
+\item UKIDSS have an existing algorithm in place to merge the single-band 
+morphological classifications into `mergedClass'/`mergedClassStat' columns, as 
+explained in their schema browser
+\footnote{\url{http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass}}
+\footnote{\url{http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat}};
+\item UKIDSS have an existing method to flag duplicate detections and mark the 
+best one\footnote{\url{http://surveys.roe.ac.uk/wsa/www/gloss_p.html#gpssource_priorsec}}.
+\end{itemize}
+
+
+\newpage
+\section{Table definitions}
+\subsection{iphasDetection}
+
+\begin{center}
+\begin{longtable}{llclp{10cm}}
+\caption[short]{Definition of the \textbf{iphasDetection} table.} \label{iphasSource} \\
+
+\hline \textbf{Name} & \textbf{Type} & \textbf{Length} & \textbf{Unit} & \textbf{Description} \\ \hline
+\endfirsthead
+
+\hline \textbf{Name} & \textbf{Type} & \textbf{Length} & \textbf{Unit} & \textbf{Description} \\ \hline
+\endhead
+
+\hline \multicolumn{5}{r}{{\it Continued on next page}} \\ 
+\endfoot
+
+\hline \hline
+\endlastfoot
+
+detectionID & int & 8 & & Unique identification number formed by concatenating runID (6 or 7 digits), ccd (1 digit), seqNum (6 digits). \\
+runID & int & 4 & & Original identifier of the run (i.e. exposure) in the observing logs of the Isaac Newton Telescope (INT). 
+References to the iphasExposure table. \\
+ccd & int & 1 & & Extension number of the CCD of the Wide-Field Camera (WFC). \\
+seqNum & int & 4 & & Unique running number of this detection (unique withing the given runID/ccd combination, assigned by the image detection pipeline). \\
+band & char & 2 & & Filter used. One of `r', `i', `ha'. \\ 
+x & real & 4 & pixel & X coordinate of the detection in the CCD reference frame. \\
+y & real & 4 & pixel & Y coordinate of the detection in the CCD reference frame. \\
+ra & real & 8 & degrees & J2000 right ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). \\
+dec & real & 8 & degrees & J2000 declination with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). \\
+posErr & real & 4 & arcsec & Astrometric fit error (RMS). \\
+
+gauSig & real & 4 & pixels & RMS of axes of ellipse fit, i.e. sqrt(a**2 + b**2). \\
+ell & real & 4 & & Ellipticity (defined as 1-b/a, where a/b=semi-major/semi-minor axes).  \\
+pa & real & 4 & & Position angle of ellipse major axis with respect to the x-axis. \\
+
+peakMag & real & 4 & mag & Aperture corrected magnitude in the Vega system 
+(based on the peak pixel height.) \\
+peakMagErr & real & 4 & mag & Uncertainty in peakMag. Does not include systematics. \\ 
+aperMag1 & real & 4 & mag & Aperture corrected magnitude in the Vega system (1.17 arcsec aperture diameter, i.e. 1/2 x rcore radius). \\ % 1/2 x 7 pixels
+aperMag1err & real & 4 & mag & Uncertainty in aperMag1. Does not include systematics. \\ 
+aperMag2 & real & 4 & mag & Aperture corrected magnitude in the Vega system (2.33 arcsec aperture diameter, i.e. rcore radius). \\ % 7 pixels
+aperMag2err & real & 4 & mag & Uncertainty in aperMag2. Does not include systematics. \\ 
+aperMag3 & real & 4 & mag & Aperture corrected magnitude in the Vega system (3.30 arcsec aperture diameter, i.e. sqrt(2) x rcore radius). \\ % sqrt(2) x 7 pixels
+aperMag3err & real & 4 & mag & Uncertainty in aperMag3. Does not include systematics. \\ 
+aperMag4 & real & 4 & mag & Aperture corrected magnitude in the Vega system (4.67 arcsec aperture diameter, i.e. 2 x rcore radius). \\ % 2 x 7 pixels
+aperMag4err & real & 4 & mag & Uncertainty in aperMag4. Does not include systematics. \\ 
+aperMag5 & real & 4 & mag & Aperture corrected magnitude in the Vega system (6.60 arcsec aperture diameter, i.e. 2 sqrt(2) x rcore radius). \\ % 2 x sqrt(2) x 7 pixels
+aperMag5err & real & 4 & mag & Uncertainty in aperMag5. Does not include systematics. \\ 
+sky & real & 4 & {\sc ADU} & Local interpolated sky level from background tracker. \\
+skyVar & real & 4 & {\sc ADU} & Local estimate of variation in sky level around 
+image. \\
+class & int & 2 & & Flag indicating the most probable morphological classification (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated).\\
+classStat & real & 4 & & N(0,1) stellarness-of-profile statistic. \\
+badPix & real & 4 &  & Number of bad pixels. \\
+deblend & bool & 1 &  & True if the object had to be deblended, i.e. if it was part of overlapping (blended) images. \\ 
+saturated & bool & 1 &  & True if the peak pixel is saturated. \\ 
+truncated & bool & 1 &  & True if the object is truncated (too close to an image boundary, defined as being within 4 arcsec from the CCD edge). \\ 
+brightNeighb & bool & 1 &  & True if the object is within 10 arcmin of a star brighter than V < 4.5. \\ 
+reliable & bool & 1 & & True if the source is stellar, not deblended, not saturated, not truncated, not near a bright neighbour, and has less than 1 bad pixel. \\
+
+seeing & real & 4 & & Average seeing in the exposure. \\
+mjd & real & 4 & & Modified Julian Date at start of exposure. \\
+
+\end{longtable}
+\end{center}
+
+\newpage
+
+\subsection{iphasSource}
+
+\begin{center}
+\begin{longtable}{llclp{9cm}}
+\caption[short]{Definition of the \textbf{iphasSource} table.} \label{iphasSource} \\
+
+\hline \textbf{Name} & \textbf{Type} & \textbf{Length} & \textbf{Unit} & \textbf{Description} \\ \hline
+\endfirsthead
+
+\hline \textbf{Name} & \textbf{Type} & \textbf{Length} & \textbf{Unit} & \textbf{Description} \\ \hline
+\endhead
+
+\hline \multicolumn{5}{r}{{\it Continued on next page}} \\ 
+\endfoot
+
+\hline \hline
+\endlastfoot
+
+sourceID & int & 8 &  & Unique identification number assigned by the merge algorithm. \\
+name & char & 25 &  & Official designation of the form `IPHAS JHHMMSS.ss+DDMMSS.s'. \\
+ra & real & 8 & degrees & J2000 right ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). \\
+dec & real & 8 & degrees & J2000 declination with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). \\
+l & real & 8 & degrees & Galactic longitude converted from ra/dec (IAU 1958). \\
+b & real & 8 & degrees & Galactic latitude converted from ra/dec (IAU 1958). \\
+pos\_err & real & 4 & arcsec & Astrometric fit error (RMS). \\
+mergedClassStat & real & 4 &  & Merged N(0,1) stellarness-of-profile statistic. \\
+mergedClass & int & 2 &  & Combined class flag from three bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). \\
+pStar & real & 4 &  & Probability that the source is a star. \\
+pGalaxy & real & 4 &  & Probability that the source is a galaxy. \\
+pNoise & real & 4 &  & Probability that the source is noise. \\
+pSaturated & real & 4 &  & Probability that the source is saturated. \\
+
+r & real & 4 & mag & Default r-band magnitude in the Vega system (using aperMag2, i.e. 2.3 arcsec aperture diameter). \\ 
+rErr & real & 4 & mag & Uncertainty for r. Does not include systematic errors. \\ 
+rPeakMag & real & 4 & mag & r-band magnitude in the Vega system (based on the peak pixel height.) \\ 
+rPeakMagErr & real & 4 & mag & Uncertainty in rPeakMag. Does not include systematics. \\ 
+rAperMag1 & real & 4 & mag & r-band magnitude in the Vega system (using aperMag1, i.e. 1.2 arcsec aperture diameter) \\ 
+rAperMag1err & real & 4 & mag & Uncertainty in rAperMag1. Does not include systematics. \\ 
+rAperMag3 & real & 4 & mag & r-band magnitude in the Vega system (using aperMag1, i.e. 3.3 arcsec aperture diameter) \\ 
+rAperMag3err & real & 4 & mag & Uncertainty in rAperMag3. Does not include systematics. \\ 
+rGauSig & real & 4 & pixels & RMS of axes of ellipse fit in r. \\ 
+rEll & real & 4 & & Ellipticity in the r-band. \\
+rPA & real & 4 & & Position angle in the r-band. \\
+rDeblend & bool &  &  & True if the object had to be deblended in the r band, i.e. if it was part of overlapping images. \\ 
+rClass & int & 2 & & Discrete image classification flag. \\
+rClassStat & real & 4 & & N(0,1) stellarness-of-profile statistic. \\
+rSaturated & bool &  &  & True if the peak pixel is saturated in the r-band. \\ 
+rOnEdge & bool &  &  & True if the detection is located within 4 arcsec (12 pixels) from the edge of the CCD. \\ 
+rReliable & bool & & & True if the source is stellar, not deblended, not saturated, not near the edge, and detected at SNR $>$ 5. \\
+rSeeing & real & 4 & & Average seeing in the r-band exposure. \\
+rDetectionID & int & 8 & & Reference to the r-band detection of this source in the iphasDetection table. \\
+
+
+i & real & 4 & mag & Default i-band magnitude in the Vega system (using aperMag2, i.e. 2.3 arcsec aperture diameter). \\ 
+rErr & real & 4 & mag & Uncertainty for i. Does not include systematic errors. \\ 
+iPeakMag & real & 4 & mag & i-band magnitude in the Vega system (based on the peak pixel height.) \\ 
+iPeakMagErr & real & 4 & mag & Uncertainty in iPeakMag. Does not include systematics. \\ 
+iAperMag1 & real & 4 & mag & i-band magnitude in the Vega system (using aperMag1, i.e. 1.2 arcsec aperture diameter) \\ 
+iAperMag1err & real & 4 & mag & Uncertainty in iAperMag1. Does not include systematics. \\ 
+iAperMag3 & real & 4 & mag & i-band magnitude in the Vega system (using aperMag1, i.e. 3.3 arcsec aperture diameter) \\ 
+iAperMag3err & real & 4 & mag & Uncertainty in iAperMag3. Does not include systematics. \\ 
+iGauSig & real & 4 & pixels & RMS of axes of ellipse fit in i. \\ 
+iEll & real & 4 & & Ellipticity in the i-band. \\
+iPA & real & 4 & & Position angle in the i-band. \\
+iDeblend & bool &  &  & True if the object had to be deblended in the i-band, i.e. if it was part of overlapping images. \\ 
+iClass & int & 2 & & Discrete image classification flag. \\
+iClassStat & real & 4 & & N(0,1) stellarness-of-profile statistic. \\
+iSaturated & bool &  &  & True if the peak pixel is saturated in the i-band. \\ 
+iOnEdge & bool &  &  & True if the detection is located within 4 arcsec (12 pixels) from the edge of the CCD. \\ 
+iReliable & bool & & & True if the source is stellar, not deblended, not saturated, not near the edge, and detected at SNR $>$ 5. \\
+iSeeing & real & 4 & & Average seeing in the i-band exposure. \\
+iDetectionID & int & 8 & & Reference to the i-band detection of this source in the iphasDetection table. \\
+
+
+ha & real & 4 & mag & Default H-alpha magnitude in the Vega system (using aperMag2, i.e. 2.3 arcsec aperture diameter). \\ 
+rErr & real & 4 & mag & Uncertainty for ha. Does not include systematic errors. \\ 
+iPeakMag & real & 4 & mag & H-alpha magnitude in the Vega system (based on the peak pixel height.) \\ 
+iPeakMagErr & real & 4 & mag & Uncertainty in haPeakMag. Does not include systematics. \\ 
+iAperMag1 & real & 4 & mag & H-alpha magnitude in the Vega system (using aperMag1, i.e. 1.2 arcsec aperture diameter) \\ 
+iAperMag1err & real & 4 & mag & Uncertainty in haAperMag1. Does not include systematics. \\ 
+iAperMag3 & real & 4 & mag & H-alpha magnitude in the Vega system (using aperMag1, i.e. 3.3 arcsec aperture diameter) \\ 
+iAperMag3err & real & 4 & mag & Uncertainty in haAperMag3. Does not include systematics. \\ 
+iGauSig & real & 4 & pixels & RMS of axes of ellipse fit in H-alpha. \\ 
+iEll & real & 4 & & Ellipticity in H-alpha. \\
+iPA & real & 4 & & Position angle in H-alpha. \\
+iDeblend & bool &  &  & True if the object had to be deblended in H-alpha, i.e. if it was part of overlapping images. \\ 
+iClass & int & 2 & & Discrete image classification flag. \\
+iClassStat & real & 4 & & N(0,1) stellarness-of-profile statistic. \\
+iSaturated & bool &  &  & True if the peak pixel is saturated in H-alpha. \\ 
+iOnEdge & bool &  &  & True if the detection is located within 4 arcsec (12 pixels) from the edge of the CCD. \\ 
+iReliable & bool & & & True if the source is stellar, not deblended, not saturated, not near the edge, and detected at SNR $>$ 5. \\
+iSeeing & real & 4 & & Average seeing in the H-alpha exposure. \\
+iDetectionID & int & 8 & & Reference to the H-alpha detection of this source in the iphasDetection table. \\
+
+date & char & 10 & yyyy-mm-dd & Date of the night in which this source was 
+observed. \\
+fieldID & int & \tbd & & Unique identifier of the field observation. \\
+
+r2 & real & 4 & mag & Alternative magnitude obtained in the same night as the default magnitude, if available. \\ 
+i2 & real & 4 & mag & Alternative magnitude obtained in the same night as the default magnitude, if available. \\
+ha2 & real & 4 & mag & Alternative magnitude obtained in the same night as the default magnitude, if available. \\ 
+r2\_err & real & 4 & mag & Uncertainty for r2. Does not include systematic errors. \\ 
+i2\_err & real & 4 & mag & Uncertainty for i2. Does not include systematic errors. \\
+ha2\_err & real & 4 & mag & Uncertainty for ha2. Does not include systematic errors. \\ 
+r2\_detectionID & \tbd & & & Identifier in the detection table. \\
+i2\_detectionID & \tbd &  & & Identifier in the detection table. \\
+ha2\_detectionID & \tbd & & & Identifier in the detection table. \\
+nobs & int & 1 & & Total number of detections of this source available in the iphasDetection table. 
+\\
+
+\end{longtable}
+\end{center}
+
+
+
+\subsection{iphasRun}
+
+Indexed by runID.
+
+\tbd
+
+\subsection{iphasField}
+
+Indexed by fieldID.
+
+\tbd
+
+\section{TODO}
+\begin{itemize}
+\item How merge onEdge/Saturated/Reliable columns?
+\item Show example queries
+\item Bright star flag?
+\item Columns for H-alpha are named i.
+\item Change terminology: alternative magnitude into secondary magnitude.
+\item Offset matching distances between bands, i.e. 4 columns i_dra, i_ddec, 
+h_dra, h_ddec.  (UKIDSS has terminology... but maybe just iRA, haRA, etc is 
+better?)
+\item Promise a max time-interval for r2/i2/ha2, and promise that it's the 
+partner.
+\end{itemize}
+
+\end{document}
