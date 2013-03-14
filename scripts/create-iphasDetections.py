@@ -40,7 +40,7 @@ else:
     DESTINATION = "/car-data/gb/iphasDetection"
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
-BRIGHTCAT = fits.getdata('BrightStarCat-iphas.fits', 1)
+BRIGHTCAT = fits.getdata('lib/BrightStarCat-iphas.fits', 1)
 
 EXTS = [1, 2, 3, 4]  # Which extensions to expect in the fits catalogues?
 PXSCALE = 0.333  # Arcsec/pix of the CCD
