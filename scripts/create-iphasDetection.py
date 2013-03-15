@@ -18,7 +18,7 @@ TODO
 """
 
 from astropy.io import fits
-#from astropy import wcs
+#from astropy import wcs  # astropy.wcs doesn't like IPHAS catalogues!
 from astLib import astWCS
 import numpy as np
 import logging
@@ -117,10 +117,10 @@ class CatalogueConverter():
             self.fits = fits.open(self.path)
         except IOError, e:
             raise CatalogueException('IOError: %s' % e)
+        self.validate()  # Raises CatalogueException for dodgy catalogues
         self.cat_path = self.strip_basedir(path)
         self.image_path = self.get_image_path()
         self.conf_path = self.get_conf_path()
-        self.validate()  # Raises CatalogueException for dodgy catalogues
 
     def hdr(self, field, ext=1):
         """Return the value of a header field from extension `ext`."""
@@ -160,7 +160,7 @@ class CatalogueConverter():
                 self.fits[ccd].header['PV2_1'] = self.hdr('PROJP1', ccd)
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
-        
+
         # Some runs do not have date/time stored due to a glitch in the
         # Telescope Control System
         for ccd in EXTS:
@@ -168,6 +168,8 @@ class CatalogueConverter():
                 raise CatalogueException('UTSTART keyword missing')
             if not 'DATE-OBS' in self.fits[ccd].header:
                 raise CatalogueException('DATE-OBS keyword missing')
+            if not 'MJD-OBS' in self.fits[ccd].header:
+                raise CatalogueException('MJD-OBS keyword missing')
 
     def get_image_path(self):
         candidate = os.path.join(self.directory,
@@ -589,7 +591,7 @@ class CatalogueConverter():
         col_mjd = fits.Column(name='mjd', format='D', unit='Julian days',
                               array=mjd)
 
-        seeing = np.concatenate([[self.hdr('SEEING', ccd)]
+        seeing = np.concatenate([[PXSCALE*self.hdr('SEEING', ccd)]
                                  * self.fits[ccd].data.size
                                  for ccd in EXTS])
         col_seeing = fits.Column(name='seeing', format='E', unit='arcsec',
@@ -722,3 +724,5 @@ if __name__ == '__main__':
     run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
     run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
     run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
+
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r455355_cat.fits')
