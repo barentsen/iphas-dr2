@@ -18,7 +18,8 @@ TODO
 """
 
 from astropy.io import fits
-from astropy import wcs
+#from astropy import wcs
+from astLib import astWCS
 import numpy as np
 import logging
 import os
@@ -159,7 +160,7 @@ class CatalogueConverter():
                 self.fits[ccd].header['PV2_1'] = self.hdr('PROJP1', ccd)
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
-
+        
         # Some runs do not have date/time stored due to a glitch in the
         # Telescope Control System
         for ccd in EXTS:
@@ -328,13 +329,24 @@ class CatalogueConverter():
         dec = np.array([])
         for ccd in EXTS:
             # Bug? wcslib complains because the units are given as pixels!
-            self.fits[ccd].header['CUNIT1'] = 'deg'
-            self.fits[ccd].header['CUNIT2'] = 'deg'
+            #self.fits[ccd].header['CUNIT1'] = 'deg'
+            #self.fits[ccd].header['CUNIT2'] = 'deg'
+
+            """
             mywcs = wcs.WCS(self.fits[ccd].header, relax=True)
             myra, mydec = mywcs.wcs_pix2world(
                             self.fits[ccd].data.field('X_coordinate'),
                             self.fits[ccd].data.field('Y_coordinate'),
                             1)
+            """
+
+            mywcs = astWCS.WCS(self.fits[ccd].header, mode='pyfits')
+            radec = np.array(mywcs.pix2wcs(
+                                self.fits[ccd].data.field('X_coordinate'),
+                                self.fits[ccd].data.field('Y_coordinate')))
+            myra = radec[:, 0]
+            mydec = radec[:, 1]
+
             ra = np.concatenate((ra, myra))
             dec = np.concatenate((dec, mydec))
         return (ra, dec)
@@ -357,10 +369,12 @@ class CatalogueConverter():
 
     def get_csv_summary(self):
         """ Returns a CSV-formatted summary line """
+        # Average seeing and ellipticity across CCDs
         avg_seeing = (PXSCALE * np.mean([self.hdr('SEEING', ccd)
                                          for ccd in EXTS]))
         avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
 
+        # When the PERCORR keyword is missing, assume it is zero
         mypercorr = self.hdr('PERCORR')
         if mypercorr is None:
             mypercorr = 0.0
@@ -375,9 +389,9 @@ class CatalogueConverter():
 
         field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
 
-        return ('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
+        return ('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
                 + '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
-                + '"%s",%s,%s,%s,%s,%s,%s,%s') % (
+                + '%s,%s,%s,%s,%s,%s,"%s",%s,%s,%s,%s,%s,%s,%s') % (
                     self.cat_path,
                     self.image_path,
                     self.conf_path,
@@ -432,6 +446,19 @@ class CatalogueConverter():
                                    for ccd in EXTS])
 
     def save_detections(self):
+        """ Create the columns of the output FITS table and save them.
+        
+        The fits data types used are:
+        L = boolean (1 byte?)
+        X = bit
+        B = unsigned byte
+        I = 16-bit int
+        J = 32-bit int
+        K = 64-bit int
+        A = 1-byte char
+        E = single
+        D = double
+        """
         output_filename = os.path.join(DESTINATION,
                                        '%s_det.fits' % self.hdr('RUN'))
 
@@ -446,20 +473,6 @@ class CatalogueConverter():
         bandnames = {'r': 'r', 'i': 'i', 'Halpha': 'ha'}
         myband = bandnames[self.hdr('WFFBAND')]
         band = np.array([myband] * n_objects)
-
-        # Create the columns of the output FITS table
-        """
-        Note: these are the data types understood by pyfits
-        L = boolean (1 byte?)
-        X = bit
-        B = unsigned byte
-        I = 16-bit int
-        J = 32-bit int
-        K = 64-bit int
-        A = 1-byte char
-        E = single
-        D = double
-        """
 
         detectionID = np.array([int('%07d%d%06d' % (
                     self.hdr('RUN'), ccds[i], seqNo[i]))
@@ -480,6 +493,7 @@ class CatalogueConverter():
                             array=self.concat('Y_coordinate'))
         # Double precision equatorial coordinates
         myra, mydec = self.compute_coordinates()
+
         col_ra = fits.Column(name='ra', format='D', unit='deg',
                              array=myra)  # Double precision!
         col_dec = fits.Column(name='dec', format='D', unit='deg',
@@ -695,10 +709,16 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    run_all(8)
+    #run_all(4)
 
+    #Testcases:
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jul2007/r571033_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r455464_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/uvex_sep2010/r755575_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_dec2004/r434839_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_dec2005/r486966_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
+
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
