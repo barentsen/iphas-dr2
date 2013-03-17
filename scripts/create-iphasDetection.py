@@ -156,10 +156,14 @@ class CatalogueConverter():
 
         # In some months, PV2_1/PV2_3 are incorrectly zeroed by default
         for ccd in EXTS:
+            """
             if self.hdr('PV2_1', ccd) != self.hdr('PROJP1', ccd):
                 self.fits[ccd].header['PV2_1'] = self.hdr('PROJP1', ccd)
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
+            """
+            for kw in ['PV2_1', 'PV2_2', 'PV2_3', 'CUNIT1', 'CUNIT2']
+                del self.fits[ccd].header[kw]
 
         # Some runs do not have date/time stored due to a glitch in the
         # Telescope Control System
@@ -334,21 +338,21 @@ class CatalogueConverter():
             #self.fits[ccd].header['CUNIT1'] = 'deg'
             #self.fits[ccd].header['CUNIT2'] = 'deg'
 
-            """
+            
             mywcs = wcs.WCS(self.fits[ccd].header, relax=True)
             myra, mydec = mywcs.wcs_pix2world(
                             self.fits[ccd].data.field('X_coordinate'),
                             self.fits[ccd].data.field('Y_coordinate'),
                             1)
+            
             """
-
             mywcs = astWCS.WCS(self.fits[ccd].header, mode='pyfits')
             radec = np.array(mywcs.pix2wcs(
                                 self.fits[ccd].data.field('X_coordinate'),
                                 self.fits[ccd].data.field('Y_coordinate')))
             myra = radec[:, 0]
             mydec = radec[:, 1]
-
+            """
             ra = np.concatenate((ra, myra))
             dec = np.concatenate((dec, mydec))
         return (ra, dec)
@@ -714,8 +718,8 @@ if __name__ == '__main__':
     #run_all(4)
 
     #Testcases:
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
 
     run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_aug2004a/r414199_cat.fits')
