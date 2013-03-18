@@ -147,4 +147,4 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     #run_one('0020_nov2003b')
-    run_all(3)
+    run_all(9)
