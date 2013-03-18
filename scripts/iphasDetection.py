@@ -233,7 +233,8 @@ class DetectionCatalogue():
         try:
             return self.strip_basedir(confmaps[myband][mydir])
         except KeyError:
-            raise CatalogueException('No confidence map found in %s' % mydir)
+            return None
+            #raise CatalogueException('No confidence map found in %s' % mydir)
 
     def strip_basedir(self, path):
         return path[len(DATADIR):]
@@ -722,11 +723,13 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    #run_all(4)
+    run_all(8)
 
     #Testcases:
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
 
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_aug2004a/r414199_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_aug2004a/r414199_cat.fits')
+
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
