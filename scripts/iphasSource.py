@@ -28,7 +28,7 @@ else:
     DESTINATION = "/car-data/gb/iphas-dr2/iphasSource"
 
 # How to execute stilts?
-STILTS = 'cpulimit --limit=90 nice java -Xmx1000M -jar lib/stilts.jar'
+STILTS = '/home/gb/bin/cpulimit --limit=90 nice java -Xmx1000M -jar lib/stilts.jar'
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -39,6 +39,7 @@ IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 ###########
 
 class IPHASException(Exception):
+    """Raised when a field cannot be band-merged."""
     pass
 
 
@@ -152,4 +153,4 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     #run_one('0020_nov2003b')
-    run_all(9)
+    run_all(8)
