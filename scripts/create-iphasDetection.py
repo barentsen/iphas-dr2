@@ -18,8 +18,7 @@ TODO
 """
 
 from astropy.io import fits
-from astropy import wcs  # astropy.wcs doesn't like IPHAS catalogues!
-#from astLib import astWCS
+from astropy import wcs
 import numpy as np
 import logging
 import os
@@ -31,14 +30,14 @@ from multiprocessing import Pool
 # CONSTANTS & CONFIGURATION
 ################################
 
-if os.uname()[1] == 'uhppc11.herts.ac.uk': 
+if os.uname()[1] == 'uhppc11.herts.ac.uk':
     # Where are the pipeline-reduced catalogues?
     DATADIR = "/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas"
     # Where to write the output catalogues?
-    DESTINATION = "/home/gb/tmp/iphasDetection"
+    DESTINATION = "/home/gb/tmp/iphas-dr2/iphasDetection"
 else:
     DATADIR = "/car-data/gb/iphas"
-    DESTINATION = "/car-data/gb/iphasDetection"
+    DESTINATION = "/car-data/gb/iphas-dr2/iphasDetection"
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
 BRIGHTCAT = fits.getdata('lib/BrightStarCat-iphas.fits', 1)
@@ -99,13 +98,18 @@ np.seterr(invalid='ignore', divide='ignore')
 
 
 class CatalogueException(Exception):
-    """ Used to flag catalogues with known problems considered un-fixable. """
+    """ 
+    Exception raised when a catalogue has a *known* problem which cannot be
+    fixed.
+    """
     pass
 
 
-class CatalogueConverter():
+class DetectionCatalogue():
     """
-    Perform operations on catalogues produced by the CASU (imcore) pipeline.
+    Reads in a detection catalogue in the format produced by the Cambridge
+    Astronomical Survey Unit (CASU) and transforms it into a UKIDSS-style
+    catalogues with user-friendly coordinates, magnitudes and flags.
     """
 
     def __init__(self, path):
@@ -123,52 +127,53 @@ class CatalogueConverter():
         self.conf_path = self.get_conf_path()
 
     def hdr(self, field, ext=1):
-        """Return the value of a header field from extension `ext`."""
+        """Return the value of the header keyword from extension `ext`."""
         return self.fits[ext].header.get(field)
 
     def validate(self):
-        """Raise an exception in the catalogue is not a proper one."""
-        # Object must start with the word "intphas" or "iphas"
+        """
+        Test the catalogue for known problems, and fix if possible.
+
+        If the catalogue is not suitable for the IPHAS data release,
+        a CatalogueException is raised.
+        """
+        # The OBJECT keyword must start with the word "intphas" or "iphas"
         if not (self.hdr('OBJECT').startswith('intphas')
                 or self.hdr('OBJECT').startswith('iphas')):
             raise CatalogueException('Not an IPHAS run, OBJECT = %s' %
                                      self.hdr('OBJECT'))
 
-        # We expect the filter to be one of Ha/r/i
+        # The filter must be one of Halpha/r/i
         if not self.hdr('WFFBAND') in ['Halpha', 'r', 'i']:
             raise CatalogueException('Unexpected filter, WFFBAND = %s' %
                                      self.hdr('WFFBAND'))
 
-        # Early versions of CASU catalogues chave multiple columns 'Blank'
-        # Numpy will throw an exception if multiple columns have the same name
-        # So this needs to be fixed:
         for ccd in EXTS:
+
+            # Early versions of CASU catalogues chave multiple columns 'Blank'
+            # Numpy will throw an exception if multiple columns have the same
+            # name, so we need to rename these columns.
             n_columns = len(self.fits[ccd].columns)
             for col in range(26, n_columns, 1):
                 name = self.fits[ccd].columns[col].name
                 if name == 'Blank':
                     self.fits[ccd].columns[col].name = 'Blank%d' % col
 
-        # In early catalogues, the "Number" field is called "No."
-        for ccd in EXTS:
+            # In early catalogues, the "Number" (SeqNo) field is called "No."
             if self.fits[ccd].columns[0].name == 'No.':
                 self.fits[ccd].columns[0].name = 'Number'
 
-        # In some months, PV2_1/PV2_3 are incorrectly zeroed by default
-        for ccd in EXTS:
-            """
-            if self.hdr('PV2_1', ccd) != self.hdr('PROJP1', ccd):
-                self.fits[ccd].header['PV2_1'] = self.hdr('PROJP1', ccd)
-            if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
-                self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
-            """
-            # Remove old-school ZPN coefficients
-            for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3', 
-                       'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3', 
+            # The headers contain a combination of old- and modern-
+            # style WCS parameters for the ZPN projection coefficients, which
+            # confuses libwcs. Moreover, in a few cases the keyword values
+            # are plainly wrong. Hence we remove the keywords.
+            for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3',
+                       'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3',
                        'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
                        'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001']:
                 del self.fits[ccd].header[kw]
 
+            # ..and enforce the parameters wich have been used by the pipeline
             self.fits[ccd].header['EQUINOX'] = 2000.0
             self.fits[ccd].header['PV2_1'] = 1.0
             self.fits[ccd].header['PV2_3'] = 220.0
@@ -176,7 +181,7 @@ class CatalogueConverter():
             self.fits[ccd].header['CUNIT2'] = 'deg'
 
             # Some runs do not have date/time stored due to a glitch in the
-            # Telescope Control System
+            # Telescope Control System. We consider this a show-stopper.
             if not 'UTSTART' in self.fits[ccd].header:
                 raise CatalogueException('UTSTART keyword missing')
             if not 'DATE-OBS' in self.fits[ccd].header:
@@ -185,6 +190,10 @@ class CatalogueConverter():
                 raise CatalogueException('MJD-OBS keyword missing')
 
     def get_image_path(self):
+        """Returns the filename of the accompanying image FITS file.
+
+        Raises a CatalogueException if the image is missing.
+        """
         candidate = os.path.join(self.directory,
                                  self.filename.split('_')[0] + '.fit')
         if os.path.exists(candidate):
@@ -193,7 +202,7 @@ class CatalogueConverter():
             raise CatalogueException('No image found for %s' % (self.path))
 
     def get_conf_path(self):
-        """Return the name of the confidence map in directory 'mydir'"""
+        """Return the filename of the accompanying confidence map."""
         mydir = self.directory
         myband = self.hdr('WFFBAND')
         global confmaps
@@ -258,22 +267,53 @@ class CatalogueConverter():
         else:
             return t
 
-    def compute_magnitudes(self, mode='aperMag2'):
-        """Converts a flux count to a magnitude.
+    def compute_magnitudes(self, n_pixels, flux_field, apcor_field):
+        """Convert the flux counts to magnitudes.
 
         According to the header parameters in the specified extension.
         Be aware that APCOR and PERCORR differ on a CCD-by-CCD basis.
         """
+        magnitudes = np.array([])
+        exptime = self.get_exptime()
+
         # Loop over the four CCD extensions and compute the magnitudes
         # Note: APCOR differs on a CCD-by-CCD basis!
+        for ccd in EXTS:
+            # Mag = ZP - 2.5*log10(flux/exptime) - apcor - percorr
+            # See http://apm3.ast.cam.ac.uk/~mike/iphas/README.catalogues
+            mypercorr = self.hdr('PERCORR', ccd)
+            if mypercorr is None:  # PERCORR keyword is sometimes missing
+                mypercorr = 0.0
 
-        mymodes = {'peakMag': 'peak',
-                   'aperMag1': 'core1',
-                   'aperMag2': 'core',
-                   'aperMag3': 'core2',
-                   'aperMag4': 'core3',
-                   'aperMag5': 'core4'}
-        aperture = mymodes[mode]
+            flux = self.fits[ccd].data.field(flux_field)
+            mag = (self.hdr('MAGZPT', ccd)
+                   - 2.5 * np.log10(flux / exptime)
+                   - self.hdr(apcor_field, ccd)
+                   - mypercorr)
+            magnitudes = np.concatenate((magnitudes, mag))
+
+        return magnitudes
+
+    def compute_magnitude_errors(self, n_pixels, flux_field, apcor_field):
+        """Convert the flux errors to magnitude errors."""
+        errors = np.array([])
+        for ccd in EXTS:
+            # See http://apm3.ast.cam.ac.uk/~mike/iphas/README.catalogues
+            flux = self.fits[ccd].data.field(flux_field)
+            err_flux = np.sqrt((flux / self.hdr('GAIN', ccd))
+                               + n_pixels * (self.hdr('SKYNOISE', ccd)**2.))
+            err_mag = (2.5 / np.log(10)) * err_flux / flux
+            errors = np.concatenate((errors, err_mag))
+        return errors
+
+    def get_magnitude_column(self, name='aperMag2'):
+        mynames = {'peakMag': 'peak', 'peakMagErr': 'peak',
+                   'aperMag1': 'core1', 'aperMag1Err': 'core1',
+                   'aperMag2': 'core', 'aperMag2Err': 'core',
+                   'aperMag3': 'core2', 'aperMag3Err': 'core2',
+                   'aperMag4': 'core3', 'aperMag4Err': 'core3',
+                   'aperMag5': 'core4', 'aperMag5Err': 'core4'}
+        aperture = mynames[name]
 
         if aperture == 'peak':
             # Peak pixel
@@ -313,55 +353,27 @@ class CatalogueConverter():
         else:
             raise CatalogueException('Did not understand requested aperture')
 
-        magnitudes = np.array([])
-        errors = np.array([])
-        exptime = self.get_exptime()
-        for ccd in EXTS:
-            # Mag = ZP - 2.5*log10(flux/exptime) - apcor - percorr
-            # See http://apm3.ast.cam.ac.uk/~mike/iphas/README.catalogues
-            mypercorr = self.hdr('PERCORR', ccd)
-            # PERCORR keyword is sometimes missing
-            if mypercorr is None:
-                mypercorr = 0.0
-
-            flux = self.fits[ccd].data.field(flux_field)
-            mag = (self.hdr('MAGZPT', ccd)
-                   - 2.5 * np.log10(flux / exptime)
-                   - self.hdr(apcor_field, ccd)
-                   - mypercorr)
-            magnitudes = np.concatenate((magnitudes, mag))
-
-            err_flux = np.sqrt((flux / self.hdr('GAIN', ccd))
-                               + n_pixels * (self.hdr('SKYNOISE', ccd)**2.))
-            err_mag = (2.5 / np.log(10)) * err_flux / flux
-            errors = np.concatenate((errors, err_mag))
-
-        return (magnitudes, errors)
+        if name.endswith('Err'):
+            errors = self.compute_magnitude_errors(n_pixels, flux_field, 
+                                                   apcor_field)
+            return fits.Column(name=name, format='E',
+                               unit='Sigma', array=errors)
+        else:
+            mag = self.compute_magnitudes(n_pixels, flux_field, apcor_field)
+            return fits.Column(name=name, format='E',
+                               unit='Magnitude', array=mag)
 
     def compute_coordinates(self):
         """Returns RA/DEC using the pixel coordinates and the header WCS"""
         ra = np.array([])
         dec = np.array([])
         for ccd in EXTS:
-            # Bug? wcslib complains because the units are given as pixels!
-            #self.fits[ccd].header['CUNIT1'] = 'deg'
-            #self.fits[ccd].header['CUNIT2'] = 'deg'
-
-            
             mywcs = wcs.WCS(self.fits[ccd].header, relax=True)
             myra, mydec = mywcs.wcs_pix2world(
                             self.fits[ccd].data.field('X_coordinate'),
                             self.fits[ccd].data.field('Y_coordinate'),
                             1)
-            
-            """
-            mywcs = astWCS.WCS(self.fits[ccd].header, mode='pyfits')
-            radec = np.array(mywcs.pix2wcs(
-                                self.fits[ccd].data.field('X_coordinate'),
-                                self.fits[ccd].data.field('Y_coordinate')))
-            myra = radec[:, 0]
-            mydec = radec[:, 1]
-            """
+
             ra = np.concatenate((ra, myra))
             dec = np.concatenate((dec, mydec))
         return (ra, dec)
@@ -462,7 +474,7 @@ class CatalogueConverter():
 
     def save_detections(self):
         """ Create the columns of the output FITS table and save them.
-        
+
         The fits data types used are:
         L = boolean (1 byte?)
         X = bit
@@ -526,15 +538,6 @@ class CatalogueConverter():
                               array=self.concat('Ellipticity'))
         col_pa = fits.Column(name='pa', format='E', unit='Number',
                              array=self.concat('Position_angle'))
-
-        mag_cols = {}
-        for m in ['peakMag', 'aperMag1', 'aperMag2', 'aperMag3']:
-            magnitudes, errors = self.compute_magnitudes(m)
-            mag_cols[m] = fits.Column(name=m, format='E',
-                                      unit='Magnitude', array=magnitudes)
-            mag_cols[m+'Err'] = fits.Column(name=m+'Err', format='E',
-                                            unit='Sigma', array=errors)
-
         col_sky = fits.Column(name='sky', format='E', unit='Counts',
                               array=self.concat('Skylev'))
         col_skyVar = fits.Column(name='skyVar', format='E', unit='Counts',
@@ -582,14 +585,6 @@ class CatalogueConverter():
         col_badPix = fits.Column(name='badPix', format='E', unit='Pixels',
                                  array=badPix)
 
-        classification = np.array(self.concat('Classification'))
-        reliableStar = (((classification < -0.5) & (classification > -2.5))
-                        & (badPix < 1)
-                        & (mag_cols['aperMag2Err'].array < 0.198)
-                        & ~deblend & ~saturated & ~truncated & ~brightNeighb)
-        col_reliableStar = fits.Column(name='reliableStar', format='L',
-                                       unit='Boolean', array=reliableStar)
-
         # Figure out the YYYYMMDD identifier of the *night* (i.e. evening)
         mydate = datetime.datetime.strptime(
                         self.hdr('DATE-OBS')+' '+self.hdr('UTSTART')[0:2],
@@ -616,15 +611,18 @@ class CatalogueConverter():
                              col_x, col_y,
                              col_ra, col_dec, col_posErr,
                              col_gauSig, col_ell, col_pa,
-                             mag_cols['peakMag'], mag_cols['peakMagErr'],
-                             mag_cols['aperMag1'], mag_cols['aperMag1Err'],
-                             mag_cols['aperMag2'], mag_cols['aperMag2Err'],
-                             mag_cols['aperMag3'], mag_cols['aperMag3Err'],
+                             self.get_magnitude_column('peakMag'),
+                             self.get_magnitude_column('peakMagErr'),
+                             self.get_magnitude_column('aperMag1'),
+                             self.get_magnitude_column('aperMag1Err'),
+                             self.get_magnitude_column('aperMag2'),
+                             self.get_magnitude_column('aperMag2Err'),
+                             self.get_magnitude_column('aperMag3'),
+                             self.get_magnitude_column('aperMag3Err'),
                              col_sky, col_skyVar,
                              col_class, col_classStat, col_badPix,
                              col_deblend, col_saturated,
                              col_truncated, col_brightNeighb,
-                             col_reliableStar,
                              col_night, col_mjd, col_seeing])
         hdu_table = fits.new_table(cols, tbtype='BinTableHDU')
         # Copy some of the original keywords
@@ -670,7 +668,7 @@ def list_catalogues():
 
 def run_one(path):
     try:
-        pc = CatalogueConverter(path)
+        pc = DetectionCatalogue(path)
         csv = pc.get_csv_summary()
         pc.save_detections()
         return csv
