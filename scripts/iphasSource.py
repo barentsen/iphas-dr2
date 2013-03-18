@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Merge the same-epoch H-alpha/r/i exposures of an IPHAS field.
+Creates the band-merged 'iphasSource' table.
 
-Author: Geert Barentsen
+This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
+field into band-merged catalogues.
+
+Authors: Geert Barentsen, Hywel Farnhill, Robert Greimel
 """
 from __future__ import print_function, division
 import os
@@ -41,11 +44,12 @@ class IPHASException(Exception):
 
 class BandMerge():
     """
-    Perform a band-merge of r/i/Ha catalogues of the same field
+    Class to read in iphasSource tables and perform a band-merge.
     """
 
     def __init__(self, fieldid, run_ha, run_r, run_i,
                  shift_ha=0.0, shift_r=0.0, shift_i=0.0):
+        """Constructor"""
         self.fieldid = fieldid
         self.run_ha = run_ha
         self.run_r = run_r
@@ -56,10 +60,11 @@ class BandMerge():
         self.output = os.path.join(DESTINATION, fieldid+'.fits')
 
     def get_catalogue_path(self, run):
-        return os.path.join(DATADIR,
-                            '%s_det.fits' % run)
+        """Returns the full path of a run's 'iphasDetection' catalogue."""
+        return os.path.join(DATADIR, '{}_det.fits'.format(run))
 
     def get_stilts_command(self):
+        """Returns the stilts command used to perform a band-merge."""
         cmd = """{0} tmatchn matcher=sky params=0.5 multimode=group nin=3 \
                   in1={1} in2={2} in3={3} \
                   join1=always join2=always join3=always \
