@@ -162,7 +162,10 @@ class CatalogueConverter():
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
             """
-            for kw in ['PV2_1', 'PV2_2', 'PV2_3', 'CUNIT1', 'CUNIT2']:
+            for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3', 
+                       'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3', 
+                       'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
+                       'CUNIT1', 'CUNIT2']:
                 del self.fits[ccd].header[kw]
 
         # Some runs do not have date/time stored due to a glitch in the
