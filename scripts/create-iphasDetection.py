@@ -168,6 +168,9 @@ class CatalogueConverter():
                        'CUNIT1', 'CUNIT2']:
                 del self.fits[ccd].header[kw]
 
+            self.fits[ccd].header['EQUINOX'] = 2000.0
+
+
         # Some runs do not have date/time stored due to a glitch in the
         # Telescope Control System
         for ccd in EXTS:
