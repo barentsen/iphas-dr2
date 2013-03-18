@@ -18,8 +18,8 @@ TODO
 """
 
 from astropy.io import fits
-#from astropy import wcs  # astropy.wcs doesn't like IPHAS catalogues!
-from astLib import astWCS
+from astropy import wcs  # astropy.wcs doesn't like IPHAS catalogues!
+#from astLib import astWCS
 import numpy as np
 import logging
 import os
@@ -162,7 +162,7 @@ class CatalogueConverter():
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
             """
-            for kw in ['PV2_1', 'PV2_2', 'PV2_3', 'CUNIT1', 'CUNIT2']
+            for kw in ['PV2_1', 'PV2_2', 'PV2_3', 'CUNIT1', 'CUNIT2']:
                 del self.fits[ccd].header[kw]
 
         # Some runs do not have date/time stored due to a glitch in the
