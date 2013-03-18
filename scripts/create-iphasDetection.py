@@ -162,18 +162,21 @@ class CatalogueConverter():
             if self.hdr('PV2_3', ccd) != self.hdr('PROJP3', ccd):
                 self.fits[ccd].header['PV2_3'] = self.hdr('PROJP3', ccd)
             """
+            # Remove old-school ZPN coefficients
             for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3', 
                        'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3', 
                        'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
-                       'CUNIT1', 'CUNIT2']:
+                       'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001']:
                 del self.fits[ccd].header[kw]
 
             self.fits[ccd].header['EQUINOX'] = 2000.0
+            self.fits[ccd].header['PV2_1'] = 1.0
+            self.fits[ccd].header['PV2_3'] = 220.0
+            self.fits[ccd].header['CUNIT1'] = 'deg'
+            self.fits[ccd].header['CUNIT2'] = 'deg'
 
-
-        # Some runs do not have date/time stored due to a glitch in the
-        # Telescope Control System
-        for ccd in EXTS:
+            # Some runs do not have date/time stored due to a glitch in the
+            # Telescope Control System
             if not 'UTSTART' in self.fits[ccd].header:
                 raise CatalogueException('UTSTART keyword missing')
             if not 'DATE-OBS' in self.fits[ccd].header:
