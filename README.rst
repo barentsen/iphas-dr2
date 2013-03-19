@@ -8,6 +8,10 @@ Contents
 * scripts: Python/stilts scripts used to generate the iphasDetection and iphasSource tables.
 * documentation: description of tables.
 
+Dependencies
+------------
+numpy, astropy.
+
 License
 --------
 Copyright, the authors 2013.

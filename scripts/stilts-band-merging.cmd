@@ -1,6 +1,14 @@
 ######
-# NOTE: This script assumes that in1=r, in2=i, in3=H-alpha
+# This 'ocmd' script assumes the bands are given to stilts in this order:
+# in1=r, in2=i, in3=H-alpha
 ######
+
+# sourceID (use the first non-NULL value of detectionID_1/2/3)
+addcol sourceID "detectionID_1"
+replacecol sourceID "NULL_sourceID?detectionID_2:sourceID"
+replacecol sourceID "NULL_sourceID?detectionID_3:sourceID"
+
+addcol fieldID "param$fieldID"
 
 # Rename RA/Dec
 colmeta -name ra ra_1
@@ -148,4 +156,4 @@ addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (
 addcol reliableStar "reliable & (NULL_mergedClass ? false: ((mergedClass < -0.5) & (mergedClass > -2.5)))"
 
 # Remove obsolete columns
-keepcols 'ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated  iBrightNeighb iMJD iSeeing iDetectionID iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night'
+keepcols 'sourceID fieldID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated  iBrightNeighb iMJD iSeeing iDetectionID iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night'

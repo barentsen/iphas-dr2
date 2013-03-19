@@ -3,7 +3,9 @@
 Creates the band-merged 'iphasSource' table.
 
 This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
-field into band-merged catalogues.
+field into band-merged catalogues, following the UKIDSS format.
+
+This script also applies the global calibration to the magnitudes!
 
 Authors: Geert Barentsen, Hywel Farnhill, Robert Greimel
 """
@@ -70,27 +72,29 @@ class BandMerge():
                   in1={1} in2={2} in3={3} \
                   join1=always join2=always join3=always \
                   values1='ra dec' values2='ra dec' values3='ra dec' \
-                  icmd1='select "aperMag2Err > 0 & aperMag2Err < 1
+                  icmd1='setparam fieldID "{4}";
+                         select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1";
-                         replacecol peakMag  "toFloat(peakMag  + {4})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {4})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {4})";' \
-                  icmd2='select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1"; \
                          replacecol peakMag  "toFloat(peakMag  + {5})";
                          replacecol aperMag2 "toFloat(aperMag2 + {5})";
                          replacecol aperMag3 "toFloat(aperMag3 + {5})";' \
-                  icmd3='select "aperMag2Err > 0 & aperMag2Err < 1
+                  icmd2='select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1"; \
                          replacecol peakMag  "toFloat(peakMag  + {6})";
                          replacecol aperMag2 "toFloat(aperMag2 + {6})";
                          replacecol aperMag3 "toFloat(aperMag3 + {6})";' \
+                  icmd3='select "aperMag2Err > 0 & aperMag2Err < 1
+                                 & aperMag3Err > 0 & aperMag3Err < 1"; \
+                         replacecol peakMag  "toFloat(peakMag  + {7})";
+                         replacecol aperMag2 "toFloat(aperMag2 + {7})";
+                         replacecol aperMag3 "toFloat(aperMag3 + {7})";' \
                   ocmd=@stilts-band-merging.cmd \
                   progress=none \
-                  out='{7}'""".format(STILTS,
+                  out='{8}'""".format(STILTS,
                                       self.get_catalogue_path(self.run_r),
                                       self.get_catalogue_path(self.run_i),
                                       self.get_catalogue_path(self.run_ha),
+                                      self.fieldid,
                                       self.shift_r,
                                       self.shift_i,
                                       self.shift_ha,
@@ -152,5 +156,5 @@ def run_all(ncores=4):
 ###################
 
 if __name__ == '__main__':
-    #run_one('0020_nov2003b')
-    run_all(8)
+    run_one('0020_nov2003b')
+    #run_all(8)
