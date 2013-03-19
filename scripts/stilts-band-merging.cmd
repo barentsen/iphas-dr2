@@ -1,5 +1,8 @@
 ######
-# This 'ocmd' script assumes the bands are given to stilts in this order:
+# The commands below are executed as the 'stilts ocmd' command after 
+# band-merging the r/i/Halpha detection catalogues.
+#
+# It is assumed that the order of the bands given to stilts is:
 # in1=r, in2=i, in3=H-alpha
 ######
 
@@ -7,8 +10,6 @@
 addcol sourceID "detectionID_1"
 replacecol sourceID "NULL_sourceID?detectionID_2:sourceID"
 replacecol sourceID "NULL_sourceID?detectionID_3:sourceID"
-
-addcol fieldID "param$fieldID"
 
 # Rename RA/Dec
 colmeta -name ra ra_1
@@ -135,11 +136,8 @@ addcol mergedClass "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGa
 # mergedClassStat
 addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
 
-
-# Extra columns
-colmeta -name night night_1
-replacecol night "NULL_night?night_2:night"
-replacecol night "NULL_night?night_3:night"
+# Quality flags
+addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
 addcol deblend "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
 
@@ -149,11 +147,17 @@ addcol truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? f
 
 addcol brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
 
-addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
-
 addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & ! saturated & ! truncated & ! brightNeighb & ! badPix"
 
 addcol reliableStar "reliable & (NULL_mergedClass ? false: ((mergedClass < -0.5) & (mergedClass > -2.5)))"
 
+# night
+colmeta -name night night_1
+replacecol night "NULL_night?night_2:night"
+replacecol night "NULL_night?night_3:night"
+
+# fieldID
+addcol fieldID "param$fieldID"
+
 # Remove obsolete columns
-keepcols 'sourceID fieldID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated  iBrightNeighb iMJD iSeeing iDetectionID iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated  iBrightNeighb iMJD iSeeing iDetectionID iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night fieldID'

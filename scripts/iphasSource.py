@@ -102,6 +102,7 @@ class BandMerge():
         return cmd
 
     def run(self):
+        """Perform the band-merging."""
         cmd = self.get_stilts_command()
         status = os.system(cmd)
         return status
