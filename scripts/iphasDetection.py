@@ -180,6 +180,12 @@ class DetectionCatalogue():
             self.fits[ccd].header['CUNIT1'] = 'deg'
             self.fits[ccd].header['CUNIT2'] = 'deg'
 
+            # Header-packet from the Telescope Control System not collected.
+            if self.fits[ccd].header['RUN'] == 948917:
+                self.fits[ccd].header['UTSTART'] = '02:48:00'
+                self.fits[ccd].header['DATE-OBS'] = '2012-11-20'
+                self.fits[ccd].header['MJD-OBS'] = 56251.11666666667
+
             # Some runs do not have date/time stored due to a glitch in the
             # Telescope Control System. We consider this a show-stopper.
             if not 'UTSTART' in self.fits[ccd].header:
@@ -723,13 +729,13 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    run_all(8)
+    #run_all(8)
 
     #Testcases:
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
 
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_aug2004a/r414199_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
 
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
