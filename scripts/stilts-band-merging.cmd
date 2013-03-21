@@ -159,5 +159,12 @@ replacecol night "NULL_night?night_3:night"
 # fieldID
 addcol fieldID "param$fieldID"
 
+colmeta -name rX x_1
+colmeta -name rY y_1
+colmeta -name iX x_2
+colmeta -name iY y_2
+colmeta -name haX x_3
+colmeta -name haY y_3
+
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated  iBrightNeighb iMJD iSeeing iDetectionID iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night fieldID'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID rX rY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated iBrightNeighb iMJD iSeeing iDetectionID iX iY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haX haY haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night fieldID'

@@ -274,6 +274,69 @@ class DetectionCatalogue():
         else:
             return t
 
+    def get_Xn(self):
+        """Returns X coordinates in the CCD#4 system
+
+        The following relations transform all the CCDs to the CCD#4 pixel system
+        (Copied from http://www.ast.cam.ac.uk/~wfcsur/technical/astrometry)
+
+        Virtual transform constants:  (from a set of 30 pointings in ELAIS region)
+        0.10000E+01   -0.10013E-02   2113.94
+        0.58901E-03    0.10001E+01    -12.67
+        Location of rotator centre in CCD-space  1   -332.881    3041.61
+        -0.10272E-01    0.99992E+00     78.84
+        -0.10003E+01   -0.10663E-01   6226.05
+        Location of rotator centre in CCD-space  2    3177.58    1731.94
+        0.10003E+01   -0.23903E-02  -2096.52
+        0.24865E-02    0.10003E+01     21.93
+        Location of rotator centre in CCD-space  3    3880.40    2996.45
+        0.10000E+01    0.00000E+00      0.00
+        0.00000E+00    0.10000E+01      0.00
+        Location of rotator centre in CCD-space  4    1778.00    3029.00
+
+        The transforms are in the form
+        a              b            c
+        d              e            f
+
+        and based on CCD#4 pixel system
+
+        So to convert a CCD to the CCD#4 system take the pixel location (x,y) on the
+        CCD and apply the following transformation to it
+        x' = a*x + b*y + c
+        y' = d*x + e*y + f
+
+        to get to rotator centre replace c -> c-1778
+                                         f -> f-3029
+        """
+        a = [0.10000E+01, -0.10272E-01, 0.10003E+01, 0.10000E+01]
+        b = [-0.10013E-02, 0.99992E+00, -0.23903E-02, 0.0]
+        c = [2113.94, 78.84, -2096.52, 0.00]
+
+        xn = np.array([])
+        for i in range(len(EXTS)):
+            ccd = EXTS[i]
+            myxn = (a[i]*self.fits[ccd].data.field('X_coordinate')
+                    + b[i]*self.fits[ccd].data.field('Y_coordinate')
+                    + c[i] - 1778)
+            xn = np.concatenate((xn, myxn))
+        return fits.Column(name='Xn', format='E', unit='Pixels', array=xn)
+
+    def get_Xi(self):
+        """Returns Y coordinates in the CCD#4 system
+        """
+        d = [0.58901E-03, -0.10003E+01, 0.24865E-02, 0.00000E+00]
+        e = [0.10001E+01, -0.10663E-0, 0.10003E+01, 0.10000E+01]
+        f = [-12.67, 6226.05, 21.93, 0.00]
+
+        xi = np.array([])
+        for i in range(len(EXTS)):
+            ccd = EXTS[i]
+            myxi = (d[i]*self.fits[ccd].data.field('X_coordinate')
+                    + e[i]*self.fits[ccd].data.field('Y_coordinate')
+                    + f[i] - 3029)
+            xi = np.concatenate((xi, myxi))
+        return fits.Column(name='Xi', format='E', unit='Pixels', array=xi)
+
     def compute_magnitudes(self, n_pixels, flux_field, apcor_field):
         """Convert the flux counts to magnitudes.
 
@@ -616,6 +679,7 @@ class DetectionCatalogue():
         cols = fits.ColDefs([col_detectionID, col_runID,
                              col_ccd, col_seqNum, col_band,
                              col_x, col_y,
+                             self.get_Xi(), self.get_Xn(),
                              col_ra, col_dec, col_posErr,
                              col_gauSig, col_ell, col_pa,
                              self.get_magnitude_column('peakMag'),
@@ -729,13 +793,13 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    #run_all(8)
+    run_all(8)
 
     #Testcases:
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
 
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
 
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
