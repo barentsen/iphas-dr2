@@ -18,6 +18,7 @@ TODO
 """
 
 from astropy.io import fits
+from astropy.io import ascii
 from astropy import wcs
 import numpy as np
 import logging
@@ -44,6 +45,9 @@ BRIGHTCAT = fits.getdata('lib/BrightStarCat-iphas.fits', 1)
 
 EXTS = [1, 2, 3, 4]  # Which extensions to expect in the fits catalogues?
 PXSCALE = 0.333  # Arcsec/pix of the CCD
+
+# Table containing slight updates to WCS astrometric parameters
+WCSFIXES = ascii.read('wcs-tuning/wcs-fixes.csv')
 
 # Which are the possible filenames of the confidence maps?
 CONF_NAMES = {'Halpha': ['Ha_conf.fits', 'Ha_conf.fit',
@@ -121,7 +125,7 @@ class DetectionCatalogue():
             self.fits = fits.open(self.path)
         except IOError, e:
             raise CatalogueException('IOError: %s' % e)
-        self.validate()  # Raises CatalogueException for dodgy catalogues
+        self.sanitize()  # Raises CatalogueException for dodgy catalogues
         self.cat_path = self.strip_basedir(path)
         self.image_path = self.get_image_path()
         self.conf_path = self.get_conf_path()
@@ -130,7 +134,7 @@ class DetectionCatalogue():
         """Return the value of the header keyword from extension `ext`."""
         return self.fits[ext].header.get(field)
 
-    def validate(self):
+    def sanitize(self):
         """
         Test the catalogue for known problems, and fix if possible.
 
@@ -170,11 +174,13 @@ class DetectionCatalogue():
             for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3',
                        'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3',
                        'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
-                       'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001']:
+                       'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001',
+                       'RADECSYS']:
                 del self.fits[ccd].header[kw]
 
             # ..and enforce the parameters wich have been used by the pipeline
             self.fits[ccd].header['EQUINOX'] = 2000.0
+            self.fits[ccd].header['RADESYSa'] = 'ICRS'
             self.fits[ccd].header['PV2_1'] = 1.0
             self.fits[ccd].header['PV2_3'] = 220.0
             self.fits[ccd].header['CUNIT1'] = 'deg'
@@ -194,6 +200,28 @@ class DetectionCatalogue():
                 raise CatalogueException('DATE-OBS keyword missing')
             if not 'MJD-OBS' in self.fits[ccd].header:
                 raise CatalogueException('MJD-OBS keyword missing')
+
+        # Finally, fix the WCS parameters if necessary
+        self.wcsfix()
+
+    def wcsfix(self):
+        """
+        Updates the header if an improved WCS has been determined.
+
+        See the wcs-tuning sub-directory for information.
+        """
+        if self.hdr('RUN') in WCSFIXES['RUN']:  # Is an updated WCS available?
+            for ccd in EXTS:
+                idx = ((WCSFIXES['RUN'] == self.hdr('RUN'))
+                       & (WCSFIXES['CCD'] == ccd))
+                if idx.sum() > 0:
+                    logging.info("Found WCS fix for {0}[{1}].".format(
+                                                              self.hdr('RUN'),
+                                                              ccd))
+                    idx_fix = idx.nonzero()[0][-1]
+                    for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
+                               'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
+                        self.fits[ccd].header[kw] = WCSFIXES[kw][idx_fix]
 
     def get_image_path(self):
         """Returns the filename of the accompanying image FITS file.
@@ -488,6 +516,7 @@ class DetectionCatalogue():
 
         return ('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
                 + '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
+                + ','.join((['%s'] * 44)) + ','
                 + '%s,%s,%s,%s,%s,%s,"%s",%s,%s,%s,%s,%s,%s,%s') % (
                     self.cat_path,
                     self.image_path,
@@ -521,6 +550,30 @@ class DetectionCatalogue():
                     self.hdr('GAIN', 3), self.hdr('GAIN', 4),
                     self.hdr('STDCRMS', 1), self.hdr('STDCRMS', 2),
                     self.hdr('STDCRMS', 3), self.hdr('STDCRMS', 4),
+                    self.hdr('CRPIX1', 1), self.hdr('CRPIX2', 1),
+                    self.hdr('CRVAL1', 1), self.hdr('CRVAL2', 1),
+                    self.hdr('CD1_1', 1), self.hdr('CD1_2', 1),
+                    self.hdr('CD2_1', 1), self.hdr('CD2_2', 1),
+                    self.hdr('PV2_1', 1), self.hdr('PV2_2', 1),
+                    self.hdr('PV2_3', 1),
+                    self.hdr('CRPIX1', 2), self.hdr('CRPIX2', 2),
+                    self.hdr('CRVAL1', 2), self.hdr('CRVAL2', 2),
+                    self.hdr('CD1_1', 2), self.hdr('CD1_2', 2),
+                    self.hdr('CD2_1', 2), self.hdr('CD2_2', 2),
+                    self.hdr('PV2_1', 2), self.hdr('PV2_2', 2),
+                    self.hdr('PV2_3', 2),
+                    self.hdr('CRPIX1', 3), self.hdr('CRPIX2', 3),
+                    self.hdr('CRVAL1', 3), self.hdr('CRVAL2', 3),
+                    self.hdr('CD1_1', 3), self.hdr('CD1_2', 3),
+                    self.hdr('CD2_1', 3), self.hdr('CD2_2', 3),
+                    self.hdr('PV2_1', 3), self.hdr('PV2_2', 3),
+                    self.hdr('PV2_3', 3),
+                    self.hdr('CRPIX1', 4), self.hdr('CRPIX2', 4),
+                    self.hdr('CRVAL1', 4), self.hdr('CRVAL2', 4),
+                    self.hdr('CD1_1', 4), self.hdr('CD1_2', 4),
+                    self.hdr('CD2_1', 4), self.hdr('CD2_2', 4),
+                    self.hdr('PV2_1', 4), self.hdr('PV2_2', 4),
+                    self.hdr('PV2_3', 4),
                     self.hdr('CCDSPEED'),
                     self.hdr('OBSERVER'),
                     self.hdr('DAZSTART'),
@@ -746,9 +799,9 @@ def run_one(path):
     except CatalogueException, e:
         logging.error('%s: CatalogueException: %s' % (path, e))
         return None
-    except Exception, e:
-        logging.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-        return None
+    #except Exception, e:
+    #    logging.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+    #    return None
 
 
 def run_all(ncores=4):
@@ -768,17 +821,30 @@ def run_all(ncores=4):
     out = open(filename, 'w')
 
     out.write('catalogue,image,conf,run,object,ra,dec,field,'
-              + 'seeing,seeing1,seeing2,seeing3,seeing4,'
-              + 'ellipt,ellipt1,ellipt2,ellipt3,ellipt4,'
+              + 'SEEING,CCD1_SEEING,CCD2_SEEING,CCD3_SEEING,CCD4_SEEING,'
+              + 'ELLIPTIC,CCD1_ELLIPTIC,CCD2_ELLIPTIC,CCD3_ELLIPTIC,CCD4_ELLIPTIC,'
               + '5sig,'
-              + 'airmass,rcore,crowded,'
-              + 'skylevel1,skylevel2,skylevel3,skylevel4,'
-              + 'skynoise1,skynoise2,skynoise3,skynoise4,magzpt,magzrr,'
-              + 'percorr1,percorr2,percorr3,percorr4,'
-              + 'gain1,gain2,gain3,gain4,'
-              + 'stdcrms1,stdcrms2,stdcrms3,stdcrms4,'
-              + 'ccdspeed,observer,'
-              + 'dazstart,time,mjd-obs,exptime,wffpos,wffband,wffid\n')
+              + 'AIRMASS,RCORE,CROWDED,'
+              + 'CCD1_SKYLEVEL,CCD2_SKYLEVEL,CCD3_SKYLEVEL,CCD4_SKYLEVEL,'
+              + 'CCD1_SKYNOISE,CCD2_SKYNOISE,CCD3_SKYNOISE,CCD4_SKYNOISE,'
+              + 'MAGZPT,MAGZRR,'
+              + 'CCD1_PERCORR,CCD2_PERCORR,CCD3_PERCORR,CCD4_PERCORR,'
+              + 'CCD1_GAIN,CCD2_GAIN,CCD3_GAIN,CCD4_GAIN,'
+              + 'CCD1_STDCRMS,CCD2_STDCRMS,CCD3_STDCRMS,CCD4_STDCRMS,'
+              + 'CCD1_CRPIX1,CCD1_CRPIX2,CCD1_CRVAL1,CCD1_CRVAL2,'
+              + 'CCD1_CD1_1,CCD1_CD1_2,CCD1_CD2_1,CCD1_CD2_2,'
+              + 'CCD1_PV2_1,CCD1_PV2_2,CCD1_PV2_3,'
+              + 'CCD2_CRPIX1,CCD2_CRPIX2,CCD2_CRVAL1,CCD2_CRVAL2,'
+              + 'CCD2_CD1_1,CCD2_CD1_2,CCD2_CD2_1,CCD2_CD2_2,'
+              + 'CCD2_PV2_1,CCD2_PV2_2,CCD2_PV2_3,'
+              + 'CCD3_CRPIX1,CCD3_CRPIX2,CCD3_CRVAL1,CCD3_CRVAL2,'
+              + 'CCD3_CD1_1,CCD3_CD1_2,CCD3_CD2_1,CCD3_CD2_2,'
+              + 'CCD3_PV2_1,CCD3_PV2_2,CCD3_PV2_3,'
+              + 'CCD4_CRPIX1,CCD4_CRPIX2,CCD4_CRVAL1,CCD4_CRVAL2,'
+              + 'CCD4_CD1_1,CCD4_CD1_2,CCD4_CD2_1,CCD4_CD2_2,'
+              + 'CCD4_PV2_1,CCD4_PV2_2,CCD4_PV2_3,'
+              + 'CCDSPEED,OBSERVER,'
+              + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID\n')
     for r in results:
         if r is None:
             continue
@@ -793,7 +859,7 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    run_all(8)
+    #run_all(6)
 
     #Testcases:
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
@@ -803,3 +869,8 @@ if __name__ == '__main__':
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
 
     #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
+
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459709_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459710_cat.fits')
+    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459711_cat.fits')
+

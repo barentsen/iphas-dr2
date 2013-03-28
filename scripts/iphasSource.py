@@ -30,7 +30,7 @@ else:
     DESTINATION = "/car-data/gb/iphas-dr2/iphasSource"
 
 # How to execute stilts?
-STILTS = '/home/gb/bin/cpulimit --limit=90 nice java -Xmx1000M -jar lib/stilts.jar'
+STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar lib/stilts.jar'
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -157,5 +157,5 @@ def run_all(ncores=4):
 ###################
 
 if __name__ == '__main__':
-    #run_one('0020_nov2003b')
-    run_all(8)
+    run_one('5089o_jun2005')
+    #run_all(8)
