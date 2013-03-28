@@ -8,13 +8,16 @@ data release as the 'iphasDetection' table.
 The transformation involves converting fluxes to magnitudes, computing
 celestial coordinates and adding flags to indicate quality problems.
 
-Executing this script will also produce a table called 'iphasRuns.csv' which
-serves as an index to the available exposures.
+The script also checks the header for known errors and fixes the World
+Coordinate System (WCS) where necessary.
+
+This script will also produce a table called 'iphasRuns.csv' which
+can be used as index of all the available IPHAS exposures.
 
 Author: Geert Barentsen
 
 TODO
-- Take confidence map into account
+- Assign confidence value to each star from the confidence map
 """
 
 from astropy.io import fits
@@ -102,9 +105,9 @@ np.seterr(invalid='ignore', divide='ignore')
 
 
 class CatalogueException(Exception):
-    """ 
-    Exception raised when a catalogue has a *known* problem which cannot be
-    fixed.
+    """
+    Exception raised when a catalogue has a known problem which cannot be
+    fixed, i.e. when the catalogue is considered useless.
     """
     pass
 
@@ -125,7 +128,10 @@ class DetectionCatalogue():
             self.fits = fits.open(self.path)
         except IOError, e:
             raise CatalogueException('IOError: %s' % e)
-        self.sanitize()  # Raises CatalogueException for dodgy catalogues
+
+        self.check_header()  # Raises CatalogueException for dodgy catalogues
+        self.fix_wcs()  # Fix the WCS parameters where necessary
+
         self.cat_path = self.strip_basedir(path)
         self.image_path = self.get_image_path()
         self.conf_path = self.get_conf_path()
@@ -134,7 +140,7 @@ class DetectionCatalogue():
         """Return the value of the header keyword from extension `ext`."""
         return self.fits[ext].header.get(field)
 
-    def sanitize(self):
+    def check_header(self):
         """
         Test the catalogue for known problems, and fix if possible.
 
@@ -153,7 +159,6 @@ class DetectionCatalogue():
                                      self.hdr('WFFBAND'))
 
         for ccd in EXTS:
-
             # Early versions of CASU catalogues chave multiple columns 'Blank'
             # Numpy will throw an exception if multiple columns have the same
             # name, so we need to rename these columns.
@@ -166,25 +171,6 @@ class DetectionCatalogue():
             # In early catalogues, the "Number" (SeqNo) field is called "No."
             if self.fits[ccd].columns[0].name == 'No.':
                 self.fits[ccd].columns[0].name = 'Number'
-
-            # The headers contain a combination of old- and modern-
-            # style WCS parameters for the ZPN projection coefficients, which
-            # confuses libwcs. Moreover, in a few cases the keyword values
-            # are plainly wrong. Hence we remove the keywords.
-            for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3',
-                       'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3',
-                       'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
-                       'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001',
-                       'RADECSYS']:
-                del self.fits[ccd].header[kw]
-
-            # ..and enforce the parameters wich have been used by the pipeline
-            self.fits[ccd].header['EQUINOX'] = 2000.0
-            self.fits[ccd].header['RADESYSa'] = 'ICRS'
-            self.fits[ccd].header['PV2_1'] = 1.0
-            self.fits[ccd].header['PV2_3'] = 220.0
-            self.fits[ccd].header['CUNIT1'] = 'deg'
-            self.fits[ccd].header['CUNIT2'] = 'deg'
 
             # Header-packet from the Telescope Control System not collected.
             if self.fits[ccd].header['RUN'] == 948917:
@@ -201,23 +187,40 @@ class DetectionCatalogue():
             if not 'MJD-OBS' in self.fits[ccd].header:
                 raise CatalogueException('MJD-OBS keyword missing')
 
-        # Finally, fix the WCS parameters if necessary
-        self.wcsfix()
-
-    def wcsfix(self):
+    def fix_wcs(self):
         """
         Updates the header if an improved WCS has been determined.
 
         See the wcs-tuning sub-directory for information.
         """
-        if self.hdr('RUN') in WCSFIXES['RUN']:  # Is an updated WCS available?
+        # The headers contain a combination of old- and modern-
+        # style WCS parameters for the ZPN projection coefficients, which
+        # confuses libwcs. Moreover, in a few cases the keyword values
+        # are plainly wrong. Hence we remove the keywords.
+        for ccd in EXTS:
+            for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3',
+                       'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3',
+                       'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
+                       'PROJP1', 'PROJP3', 'WAT1_001', 'WAT2_001',
+                       'RADECSYS']:
+                del self.fits[ccd].header[kw]  # Remove junk
+
+            # ..and enforce the pipeline's true defaults
+            self.fits[ccd].header['EQUINOX'] = 2000.0
+            self.fits[ccd].header['RADESYSa'] = 'ICRS'
+            self.fits[ccd].header['PV2_1'] = 1.0
+            self.fits[ccd].header['PV2_3'] = 220.0
+            self.fits[ccd].header['CUNIT1'] = 'deg'
+            self.fits[ccd].header['CUNIT2'] = 'deg'
+
+        # Is an updated (fixed) WCS available?
+        if self.hdr('RUN') in WCSFIXES['RUN']:
             for ccd in EXTS:
                 idx = ((WCSFIXES['RUN'] == self.hdr('RUN'))
                        & (WCSFIXES['CCD'] == ccd))
                 if idx.sum() > 0:
-                    logging.info("Found WCS fix for {0}[{1}].".format(
-                                                              self.hdr('RUN'),
-                                                              ccd))
+                    logging.info("WCS fixed: {0}[{1}].".format(self.hdr('RUN'),
+                                                               ccd))
                     idx_fix = idx.nonzero()[0][-1]
                     for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
                                'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
@@ -365,6 +368,33 @@ class DetectionCatalogue():
             xi = np.concatenate((xi, myxi))
         return fits.Column(name='Xi', format='E', unit='Pixels', array=xi)
 
+    def get_column_sky(self):
+        return fits.Column(name='sky', format='E', unit='Counts',
+                           array=self.concat('Skylev'))
+
+    def get_column_skyVar(self):
+        return fits.Column(name='skyVar', format='E', unit='Counts',
+                           array=self.concat('Skyrms'))
+
+    def get_column_seeing(self):
+        seeing = np.concatenate([[PXSCALE*self.hdr('SEEING', ccd)]
+                                 * self.fits[ccd].data.size
+                                 for ccd in EXTS])
+        return fits.Column(name='seeing', format='E', unit='arcsec',
+                           array=seeing)
+
+    def get_column_gauSig(self):
+        return fits.Column(name='gauSig', format='E', unit='Number',
+                           array=self.concat('Gaussian_sigma'))
+
+    def get_column_ell(self):
+        return fits.Column(name='ell', format='E', unit='Number',
+                           array=self.concat('Ellipticity'))
+
+    def get_column_pa(self):
+        return fits.Column(name='pa', format='E', unit='Number',
+                           array=self.concat('Position_angle'))
+
     def compute_magnitudes(self, n_pixels, flux_field, apcor_field):
         """Convert the flux counts to magnitudes.
 
@@ -452,7 +482,7 @@ class DetectionCatalogue():
             raise CatalogueException('Did not understand requested aperture')
 
         if name.endswith('Err'):
-            errors = self.compute_magnitude_errors(n_pixels, flux_field, 
+            errors = self.compute_magnitude_errors(n_pixels, flux_field,
                                                    apcor_field)
             return fits.Column(name=name, format='E',
                                unit='Sigma', array=errors)
@@ -655,16 +685,6 @@ class DetectionCatalogue():
                     for ccd in EXTS])  # In arcsec
         col_posErr = fits.Column(name='posErr', format='E', unit='arcsec',
                                  array=posErr)  # Double precision!
-        col_gauSig = fits.Column(name='gauSig', format='E', unit='Number',
-                                 array=self.concat('Gaussian_sigma'))
-        col_ell = fits.Column(name='ell', format='E', unit='Number',
-                              array=self.concat('Ellipticity'))
-        col_pa = fits.Column(name='pa', format='E', unit='Number',
-                             array=self.concat('Position_angle'))
-        col_sky = fits.Column(name='sky', format='E', unit='Counts',
-                              array=self.concat('Skylev'))
-        col_skyVar = fits.Column(name='skyVar', format='E', unit='Counts',
-                                 array=self.concat('Skyrms'))
         col_class = fits.Column(name='class', format='I', unit='Flag',
                                 array=self.concat('Classification'))
         col_classStat = fits.Column(name='classStat', format='E',
@@ -722,19 +742,15 @@ class DetectionCatalogue():
         col_mjd = fits.Column(name='mjd', format='D', unit='Julian days',
                               array=mjd)
 
-        seeing = np.concatenate([[PXSCALE*self.hdr('SEEING', ccd)]
-                                 * self.fits[ccd].data.size
-                                 for ccd in EXTS])
-        col_seeing = fits.Column(name='seeing', format='E', unit='arcsec',
-                                 array=seeing)
-
         # Write the output fits table
         cols = fits.ColDefs([col_detectionID, col_runID,
                              col_ccd, col_seqNum, col_band,
                              col_x, col_y,
                              self.get_Xi(), self.get_Xn(),
                              col_ra, col_dec, col_posErr,
-                             col_gauSig, col_ell, col_pa,
+                             self.get_column_gauSig(), 
+                             self.get_column_ell(),
+                             self.get_column_pa(),
                              self.get_magnitude_column('peakMag'),
                              self.get_magnitude_column('peakMagErr'),
                              self.get_magnitude_column('aperMag1'),
@@ -743,11 +759,13 @@ class DetectionCatalogue():
                              self.get_magnitude_column('aperMag2Err'),
                              self.get_magnitude_column('aperMag3'),
                              self.get_magnitude_column('aperMag3Err'),
-                             col_sky, col_skyVar,
+                             self.get_column_sky(),
+                             self.get_column_skyVar(),
                              col_class, col_classStat, col_badPix,
                              col_deblend, col_saturated,
                              col_truncated, col_brightNeighb,
-                             col_night, col_mjd, col_seeing])
+                             col_night, col_mjd, 
+                             self.get_column_seeing()])
         hdu_table = fits.new_table(cols, tbtype='BinTableHDU')
         # Copy some of the original keywords
         for kw in ['RUN', 'OBSERVAT', 'LATITUDE', 'LONGITUD', 'HEIGHT',
@@ -799,9 +817,9 @@ def run_one(path):
     except CatalogueException, e:
         logging.error('%s: CatalogueException: %s' % (path, e))
         return None
-    #except Exception, e:
-    #    logging.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-    #    return None
+    except Exception, e:
+        logging.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+        return None
 
 
 def run_all(ncores=4):
@@ -859,18 +877,17 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    #run_all(6)
+    run_all(8)
 
+    """
     #Testcases:
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
-
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
-
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
-
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459709_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459709_cat.fits')
     run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459710_cat.fits')
-    #run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459711_cat.fits')
+    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459711_cat.fits')
+    """
 
