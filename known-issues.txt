@@ -1,0 +1,10 @@
+Known issues
+============
+
+This is a list of known issues in the IPHAS data to watch out for when generating catalogues from the pipeline-produced detection lists.
+
+ * In ubercrowded fields, the WCS astrometric fit can be off by more than 0.5 arcsec towards the edges of a CCD. The problem is rare and has been resolved ad-hoc using the code under scripts/tune-wcs.
+ * The WCS keywords in the pipeline catalogues can be inconsistent at times. For a generic fix, see "fix_wcs()" in the iphasDetection.py script.
+ * Spurious sources frequently appear in the vignetted corners of CCD's 3 & 1. These need to be masked out.
+ * dec2003 runs show bad columns in CCD 3 & 4 which are not fully accounted for in the confidence map, leading to significant numbers of spurious sources around those columns. These need to be masked out.
+ * The 'badpix' information is missing from the pipeline-produced catalogues in the first few months of the survey.

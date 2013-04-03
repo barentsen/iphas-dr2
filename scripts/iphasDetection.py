@@ -37,20 +37,25 @@ from multiprocessing import Pool
 # CONSTANTS & CONFIGURATION
 ################################
 
-if os.uname()[1] == 'uhppc11.herts.ac.uk':
+hostname = os.uname()[1]
+if hostname == 'uhppc11.herts.ac.uk':
     # Where are the pipeline-reduced catalogues?
-    DATADIR = "/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas"
+    DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     # Where to write the output catalogues?
+    DESTINATION = '/home/gb/tmp/iphas-dr2/iphasDetection'
+elif hostname == 'gvm':
+    DATADIR = '/media/uh/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = "/home/gb/tmp/iphas-dr2/iphasDetection"
 else:
-    DATADIR = "/car-data/gb/iphas"
-    DESTINATION = "/car-data/gb/iphas-dr2/iphasDetection"
+    DATADIR = '/car-data/gb/iphas'
+    DESTINATION = '/car-data/gb/iphas-dr2/iphasDetection'
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
 BRIGHTCAT = fits.getdata('lib/BrightStarCat-iphas.fits', 1)
 
-EXTS = [1, 2, 3, 4]  # Which extensions to expect in the fits catalogues?
-PXSCALE = 0.333  # Arcsec/pix of the CCD
+# Which extensions to expect in the fits catalogues?
+EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
+PXSCALE = 0.333  # Arcsec/pix of the INT/WFC CCD's
 
 # Table containing slight updates to WCS astrometric parameters
 WCSFIXES = ascii.read('wcs-tuning/wcs-fixes.csv')
@@ -134,6 +139,9 @@ class DetectionCatalogue():
 
         self.check_header()  # Raises CatalogueException for dodgy catalogues
         self.fix_wcs()  # Fix the WCS parameters where necessary
+
+        # Total number of detected objects across all CCDs
+        self.objectcount = np.sum([self.fits[ccd].data.size for ccd in EXTS])
 
         self.cat_path = self.strip_basedir(path)
         self.image_path = self.get_image_path()
@@ -308,7 +316,15 @@ class DetectionCatalogue():
         else:
             return t
 
-    def get_Xn(self):
+    def column_x(self):
+        return fits.Column(name='x', format='E', unit='Pixels',
+                           array=self.concat('X_coordinate'))
+
+    def column_y(self):
+        return fits.Column(name='y', format='E', unit='Pixels',
+                           array=self.concat('Y_coordinate'))
+
+    def column_Xn(self):
         """Returns X coordinates in the pixel system of CCD #4
 
         The following relations transform all the CCDs to the CCD#4 system
@@ -354,7 +370,7 @@ class DetectionCatalogue():
             xn = np.concatenate((xn, myxn))
         return fits.Column(name='Xn', format='E', unit='Pixels', array=xn)
 
-    def get_Xi(self):
+    def column_Xi(self):
         """Returns Y coordinates in the CCD#4 system
         """
         d = [0.58901E-03, -0.10003E+01, 0.24865E-02, 0.00000E+00]
@@ -370,32 +386,119 @@ class DetectionCatalogue():
             xi = np.concatenate((xi, myxi))
         return fits.Column(name='Xi', format='E', unit='Pixels', array=xi)
 
-    def get_column_sky(self):
+    def column_sky(self):
         return fits.Column(name='sky', format='E', unit='Counts',
                            array=self.concat('Skylev'))
 
-    def get_column_skyVar(self):
+    def column_skyVar(self):
         return fits.Column(name='skyVar', format='E', unit='Counts',
                            array=self.concat('Skyrms'))
 
-    def get_column_seeing(self):
+    def column_seeing(self):
         seeing = np.concatenate([[PXSCALE*self.hdr('SEEING', ccd)]
                                  * self.fits[ccd].data.size
                                  for ccd in EXTS])
         return fits.Column(name='seeing', format='E', unit='arcsec',
                            array=seeing)
 
-    def get_column_gauSig(self):
+    def column_gauSig(self):
         return fits.Column(name='gauSig', format='E', unit='Number',
                            array=self.concat('Gaussian_sigma'))
 
-    def get_column_ell(self):
+    def column_ell(self):
         return fits.Column(name='ell', format='E', unit='Number',
                            array=self.concat('Ellipticity'))
 
-    def get_column_pa(self):
+    def column_pa(self):
         return fits.Column(name='pa', format='E', unit='Number',
                            array=self.concat('Position_angle'))
+
+    def column_class(self):
+        return fits.Column(name='class', format='I', unit='Flag',
+                           array=self.concat('Classification'))
+
+    def column_classStat(self):
+        return fits.Column(name='classStat', format='E', unit='N-sigma',
+                           array=self.concat('Statistic'))
+
+    def column_deblend(self):
+        """Which stars have been deblended?"""
+        # For deblended images, only the 1st areal profile is computed
+        # and the other profile values are set to -1
+        deblend = (self.concat('Areal_3_profile') < 0)
+        return fits.Column(name='deblend', format='L', unit='Boolean',
+                           array=deblend)
+
+    def column_saturated(self):
+        """Which stars are saturated?"""
+        # The saturation level is stored in the SATURATE keyword for each ccd
+        saturated = np.concatenate([(self.fits[ccd].data.field('Peak_height')
+                                     > self.fits[ccd].header.get('SATURATE'))
+                                     for ccd in EXTS])
+        return fits.Column(name='saturated', format='L',
+                           unit='Boolean', array=saturated)
+
+    def column_truncated(self):
+        """Which stars are too close to the CCD edges?"""
+        # Mark stars near the edges
+        avoidance = 4.0/0.333  # 4 Arcseconds
+        min_x = 1 + avoidance
+        max_x = 2048 - avoidance
+        min_y = 1 + avoidance
+        max_y = 4096 - avoidance
+
+        truncated = ((self.concat('X_coordinate') < min_x)
+                     | (self.concat('X_coordinate') > max_x)
+                     | (self.concat('Y_coordinate') < min_y)
+                     | (self.concat('Y_coordinate') > max_y))
+        return fits.Column(name='truncated', format='L', unit='Boolean', 
+                           array=truncated)
+
+    def column_brightNeighb(self, ra , dec):
+        """ Returns an array of boolean flags indicating whether the stars
+        are within 10 arcmin of a star brighter than V < 4.5 """
+        flags = np.zeros(len(ra), dtype=bool)  # Initialize result array
+        # Try all stars in the truncated bright star catalogue (BSC, Yale)
+        # which are nearby-ish
+        nearby = np.abs(dec[0] - BRIGHTCAT.field('_DEJ2000')) < 2.
+        for i in np.where(nearby)[0]:
+            d_ra = ra - BRIGHTCAT.field('_RAJ2000')[i]
+            d_dec = dec - BRIGHTCAT.field('_DEJ2000')[i]
+            # Approx angular separation (Astronomical Algorithms Eq. 16.2)
+            d = np.sqrt((d_ra*np.cos(np.radians(dec)))**2 + d_dec**2)
+            # Flag bright neighbours if within 10 arcmin
+            flags[d < 10/60.] = True
+
+        return fits.Column(name='brightNeighb', format='L', unit='Boolean', 
+                           array=flags)
+
+    def column_badPix(self): 
+        return fits.Column(name='badPix', format='E', unit='Pixels',
+                           array=self.concat('Bad_pixels'))
+
+    def column_night(self):
+        """Column containing the YYYYMMDD identifier of the *night*
+        (i.e. evening)"""
+        mydate = datetime.datetime.strptime(
+                        self.hdr('DATE-OBS')+' '+self.hdr('UTSTART')[0:2],
+                        '%Y-%m-%d %H')  # Dont parse seconds; they can be '60'
+        if mydate.hour < 12:
+            mydate -= datetime.timedelta(1)  # Give date at start of night
+        night = np.array([mydate.strftime('%Y%m%d')] * self.objectcount)
+        return fits.Column(name='night', format='J', array=night)
+
+    def column_mjd(self):
+        mjd = np.array([self.hdr('MJD-OBS')] * self.objectcount)
+        return fits.Column(name='mjd', format='D', unit='Julian days',
+                           array=mjd)
+
+    def column_posErr(self):
+        """Astrometric fit RMS error (arcsec)"""
+        posErr = np.concatenate([[self.fits[ccd].header.get('STDCRMS')]
+                                 * self.fits[ccd].data.size
+                                 for ccd in EXTS])  # In arcsec
+        return fits.Column(name='posErr', format='E', unit='arcsec',
+                           array=posErr)
 
     def compute_magnitudes(self, n_pixels, flux_field, apcor_field):
         """Convert the flux counts to magnitudes.
@@ -436,7 +539,10 @@ class DetectionCatalogue():
             errors = np.concatenate((errors, err_mag))
         return errors
 
-    def get_magnitude_column(self, name='aperMag2'):
+    def column_mag(self, name='aperMag2'):
+        """Returns magnitude columns."""
+        # `mynames' defines the names of the different magnitudes and links 
+        # them to the columns with flux values in the pipeline catalogue.
         mynames = {'peakMag': 'peak', 'peakMagErr': 'peak',
                    'aperMag1': 'core1', 'aperMag1Err': 'core1',
                    'aperMag2': 'core', 'aperMag2Err': 'core',
@@ -493,7 +599,7 @@ class DetectionCatalogue():
             return fits.Column(name=name, format='E',
                                unit='Magnitude', array=mag)
 
-    def compute_coordinates(self):
+    def column_radec(self):
         """Returns RA/DEC using the pixel coordinates and the header WCS"""
         ra = np.array([])
         dec = np.array([])
@@ -506,23 +612,12 @@ class DetectionCatalogue():
 
             ra = np.concatenate((ra, myra))
             dec = np.concatenate((dec, mydec))
-        return (ra, dec)
 
-    def compute_brightNeighb(self, ra, dec):
-        """ Returns an array of boolean flags indicating whether the stars
-        are within 10 arcmin of a star brighter than V < 4.5 """
-        flags = np.zeros(len(ra), dtype=bool)  # Initialize result array
-        # Try all stars in the truncated bright star catalogue (BSC, Yale)
-        # which are nearby-ish
-        nearbyish = np.abs(dec[0] - BRIGHTCAT.field('_DEJ2000')) < 2.
-        for i in np.where(nearbyish)[0]:
-            d_ra = ra - BRIGHTCAT.field('_RAJ2000')[i]
-            d_dec = dec - BRIGHTCAT.field('_DEJ2000')[i]
-            # Approx angular separation (Astronomical Algorithms Eq. 16.2)
-            d = np.sqrt((d_ra*np.cos(np.radians(dec)))**2 + d_dec**2)
-            # Flag bright neighbours if within 10 arcmin
-            flags[d < 10/60.] = True
-        return flags
+        col_ra = fits.Column(name='ra', format='D', unit='deg',
+                             array=ra)  # Double precision!
+        col_dec = fits.Column(name='dec', format='D', unit='deg',
+                              array=dec)  # Double precision!
+        return (col_ra, col_dec)
 
     def get_csv_summary(self):
         """ Returns a CSV-formatted summary line """
@@ -644,21 +739,18 @@ class DetectionCatalogue():
         output_filename = os.path.join(DESTINATION,
                                        '%s_det.fits' % self.hdr('RUN'))
 
-        # Total number of detected objects
-        n_objects = np.sum([self.fits[ccd].data.size for ccd in EXTS])
-
         # Pre-prepare columns
         ccds = np.concatenate([[ccd] * self.fits[ccd].data.size
                               for ccd in EXTS])
-        runID = np.array([self.hdr('RUN')] * n_objects)
+        runID = np.array([self.hdr('RUN')] * self.objectcount)
         seqNo = self.concat('Number')
         bandnames = {'r': 'r', 'i': 'i', 'Halpha': 'ha'}
         myband = bandnames[self.hdr('WFFBAND')]
-        band = np.array([myband] * n_objects)
+        band = np.array([myband] * self.objectcount)
 
         detectionID = np.array([int('%07d%d%06d' % (
                     self.hdr('RUN'), ccds[i], seqNo[i]))
-                    for i in range(n_objects)])
+                    for i in range(self.objectcount)])
         col_detectionID = fits.Column(name='detectionID', format='K',
                                       unit='Number', array=detectionID)
         col_runID = fits.Column(name='runID', format='J',
@@ -669,107 +761,49 @@ class DetectionCatalogue():
                                  array=seqNo)
         col_band = fits.Column(name='band', format='2A', unit='String',
                                array=band)
-        col_x = fits.Column(name='x', format='E', unit='Pixels',
-                            array=self.concat('X_coordinate'))
-        col_y = fits.Column(name='y', format='E', unit='Pixels',
-                            array=self.concat('Y_coordinate'))
-        # Double precision equatorial coordinates
-        myra, mydec = self.compute_coordinates()
 
-        col_ra = fits.Column(name='ra', format='D', unit='deg',
-                             array=myra)  # Double precision!
-        col_dec = fits.Column(name='dec', format='D', unit='deg',
-                              array=mydec)  # Double precision!
-        # Astrometric fit error (arcsec)
-        posErr = np.concatenate([
-                    [self.fits[ccd].header.get('STDCRMS')]
-                    * self.fits[ccd].data.size
-                    for ccd in EXTS])  # In arcsec
-        col_posErr = fits.Column(name='posErr', format='E', unit='arcsec',
-                                 array=posErr)  # Double precision!
-        col_class = fits.Column(name='class', format='I', unit='Flag',
-                                array=self.concat('Classification'))
-        col_classStat = fits.Column(name='classStat', format='E',
-                                    unit='N-sigma',
-                                    array=self.concat('Statistic'))
-
-        # For deblended images, only the 1st areal profile is computed
-        # and the rest are set to -1
-        deblend = (self.concat('Areal_3_profile') < 0)
-        col_deblend = fits.Column(name='deblend', format='L', unit='Boolean',
-                                  array=deblend)
-
-        # Which stars are saturated?
-        # The saturation level is stored in the SATURATE keyword for each ccd
-        saturated = np.concatenate([(
-                        self.fits[ccd].data.field('Peak_height')
-                        > self.fits[ccd].header.get('SATURATE'))
-                        for ccd in EXTS])
-        col_saturated = fits.Column(name='saturated', format='L',
-                                    unit='Boolean', array=saturated)
-
-        # Mark stars near the edges
-        avoidance = 4.0/0.333  # 4 Arcseconds
-        min_x = 1 + avoidance
-        max_x = 2048 - avoidance
-        min_y = 1 + avoidance
-        max_y = 4096 - avoidance
-
-        truncated = ((self.concat('X_coordinate') < min_x)
-                     | (self.concat('X_coordinate') > max_x)
-                     | (self.concat('Y_coordinate') < min_y)
-                     | (self.concat('Y_coordinate') > max_y))
-        col_truncated = fits.Column(name='truncated', format='L',
-                                    unit='Boolean', array=truncated)
-
-        brightNeighb = self.compute_brightNeighb(myra, mydec)
-        col_brightNeighb = fits.Column(name='brightNeighb', format='L',
-                                       unit='Boolean', array=brightNeighb)
-
-        badPix = self.concat('Bad_pixels')
-        col_badPix = fits.Column(name='badPix', format='E', unit='Pixels',
-                                 array=badPix)
-
-        # Figure out the YYYYMMDD identifier of the *night* (i.e. evening)
-        mydate = datetime.datetime.strptime(
-                        self.hdr('DATE-OBS')+' '+self.hdr('UTSTART')[0:2],
-                        '%Y-%m-%d %H')  # Dont parse seconds; they can be '60'
-        if mydate.hour < 12:
-            mydate -= datetime.timedelta(1)
-        night = np.array([mydate.strftime('%Y%m%d')] * n_objects)
-        col_night = fits.Column(name='night', format='J',
-                                array=night)
-
-        mjd = np.array([self.hdr('MJD-OBS')] * n_objects)
-        col_mjd = fits.Column(name='mjd', format='D', unit='Julian days',
-                              array=mjd)
+        col_ra, col_dec = self.column_radec()
 
         # Write the output fits table
-        cols = fits.ColDefs([col_detectionID, col_runID,
-                             col_ccd, col_seqNum, col_band,
-                             col_x, col_y,
-                             self.get_Xi(), self.get_Xn(),
-                             col_ra, col_dec, col_posErr,
-                             self.get_column_gauSig(), 
-                             self.get_column_ell(),
-                             self.get_column_pa(),
-                             self.get_magnitude_column('peakMag'),
-                             self.get_magnitude_column('peakMagErr'),
-                             self.get_magnitude_column('aperMag1'),
-                             self.get_magnitude_column('aperMag1Err'),
-                             self.get_magnitude_column('aperMag2'),
-                             self.get_magnitude_column('aperMag2Err'),
-                             self.get_magnitude_column('aperMag3'),
-                             self.get_magnitude_column('aperMag3Err'),
-                             self.get_column_sky(),
-                             self.get_column_skyVar(),
-                             col_class, col_classStat, col_badPix,
-                             col_deblend, col_saturated,
-                             col_truncated, col_brightNeighb,
-                             col_night, col_mjd, 
-                             self.get_column_seeing()])
+        cols = fits.ColDefs([col_detectionID, 
+                             col_runID,
+                             col_ccd, 
+                             col_seqNum, 
+                             col_band,
+                             self.column_x(),
+                             self.column_y(),
+                             self.column_Xi(), 
+                             self.column_Xn(),
+                             col_ra, 
+                             col_dec, 
+                             self.column_posErr(),
+                             self.column_gauSig(), 
+                             self.column_ell(),
+                             self.column_pa(),
+                             self.column_mag('peakMag'),
+                             self.column_mag('peakMagErr'),
+                             self.column_mag('aperMag1'),
+                             self.column_mag('aperMag1Err'),
+                             self.column_mag('aperMag2'),
+                             self.column_mag('aperMag2Err'),
+                             self.column_mag('aperMag3'),
+                             self.column_mag('aperMag3Err'),
+                             self.column_sky(),
+                             self.column_skyVar(),
+                             self.column_class(), 
+                             self.column_classStat(), 
+                             self.column_badPix(),
+                             self.column_deblend(), 
+                             self.column_saturated(),
+                             self.column_truncated(), 
+                             self.column_brightNeighb(col_ra.array, 
+                                                      col_dec.array),
+                             self.column_night(), 
+                             self.column_mjd(), 
+                             self.column_seeing()])
         hdu_table = fits.new_table(cols, tbtype='BinTableHDU')
-        # Copy some of the original keywords
+
+        # Copy some of the original keywords to the new catalogue
         for kw in ['RUN', 'OBSERVAT', 'LATITUDE', 'LONGITUD', 'HEIGHT',
                    'OBSERVER',
                    'OBJECT', 'RA', 'DEC', 'EQUINOX', 'RADECSYS',
@@ -879,17 +913,17 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    run_all(8)
+    #run_all(8)
 
-    """
+    
     #Testcases:
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375399_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375400_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2003b/r375401_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_nov2012/r948917_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_oct2009/r703030_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459709_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459710_cat.fits')
-    run_one('/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas/iphas_jun2005/r459711_cat.fits')
-    """
+    run_one(DATADIR+'/iphas_nov2003b/r375399_cat.fits')
+    run_one(DATADIR+'/iphas_nov2003b/r375400_cat.fits')
+    run_one(DATADIR+'/iphas_nov2003b/r375401_cat.fits')
+    run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
+    run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
+    run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
+    run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
+    run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
+    
 
