@@ -17,7 +17,10 @@ can be used as index of all the available IPHAS exposures.
 Author: Geert Barentsen
 
 TODO
-- Assign confidence value to each star from the confidence map
+- merge error flags into a bit sequence? (cf. Hambly et al. 2008)
+- look up confidence value for each star in the confidence maps;
+- flag known asteroids;
+- fine-tune the 'zone of avoidance' around bright stars.
 """
 
 from astropy.io import fits
