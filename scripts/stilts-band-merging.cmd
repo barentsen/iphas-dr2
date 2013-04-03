@@ -55,6 +55,10 @@ colmeta -name rBrightNeighb brightNeighb_1
 colmeta -name rMJD mjd_1
 colmeta -name rSeeing seeing_1
 colmeta -name rDetectionID detectionID_1
+colmeta -name rX x_1
+colmeta -name rY y_1
+colmeta -name rPlaneX Xn_1
+colmeta -name rPlaneY Xi_1
 
 # Rename i-band columns
 colmeta -name i aperMag2_2
@@ -76,6 +80,10 @@ colmeta -name iBrightNeighb brightNeighb_2
 colmeta -name iMJD mjd_2
 colmeta -name iSeeing seeing_2
 colmeta -name iDetectionID detectionID_2
+colmeta -name iX x_2
+colmeta -name iY y_2
+colmeta -name iPlaneX Xn_2
+colmeta -name iPlaneY Xi_2
 
 # Rename H-alpha columns
 colmeta -name ha aperMag2_3
@@ -97,6 +105,11 @@ colmeta -name haBrightNeighb brightNeighb_3
 colmeta -name haMJD mjd_3
 colmeta -name haSeeing seeing_3
 colmeta -name haDetectionID detectionID_3
+colmeta -name haX x_3
+colmeta -name haY y_3
+colmeta -name haPlaneX Xn_3
+colmeta -name haPlaneY Xi_3
+
 
 # Single-band pStar
 addcol rPStar "toFloat(NULL_rClass?1:rClass==-9?0.00:rClass==-3?0.25:rClass==-2?0.70:rClass==-1?0.90:rClass==0?0.05:rClass==1?0.05:NULL)"
@@ -136,6 +149,13 @@ addcol mergedClass "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGa
 # mergedClassStat
 addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
 
+
+# Vignetted if > 3700 pixels from rotation axis
+addcol rVignetted "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) > 3700"
+addcol iVignetted "sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) > 3700"
+addcol haVignetted "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) > 3700"
+addcol vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
+
 # Quality flags
 addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
@@ -159,12 +179,6 @@ replacecol night "NULL_night?night_3:night"
 # fieldID
 addcol fieldID "param$fieldID"
 
-colmeta -name rX x_1
-colmeta -name rY y_1
-colmeta -name iX x_2
-colmeta -name iY y_2
-colmeta -name haX x_3
-colmeta -name haY y_3
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID rX rY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated iBrightNeighb iMJD iSeeing iDetectionID iX iY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haX haY haXi haEta badPix deblend saturated truncated brightNeighb reliable reliableStar night fieldID'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated iBrightNeighb iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta badPix deblend saturated truncated vignetted brightNeighb reliable reliableStar night fieldID'
