@@ -37,13 +37,13 @@ from multiprocessing import Pool
 # CONSTANTS & CONFIGURATION
 ################################
 
-hostname = os.uname()[1]
-if hostname == 'uhppc11.herts.ac.uk':
+HOSTNAME = os.uname()[1]
+if HOSTNAME == 'uhppc11.herts.ac.uk':
     # Where are the pipeline-reduced catalogues?
     DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     # Where to write the output catalogues?
     DESTINATION = '/home/gb/tmp/iphas-dr2/iphasDetection'
-elif hostname == 'gvm':
+elif HOSTNAME == 'gvm':
     DATADIR = '/media/uh/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = "/home/gb/tmp/iphas-dr2/iphasDetection"
 else:
@@ -921,9 +921,9 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    #run_all(8)
+    run_all(8)
 
-    
+    """
     #Testcases:
     run_one(DATADIR+'/iphas_nov2003b/r375399_cat.fits')
     run_one(DATADIR+'/iphas_nov2003b/r375400_cat.fits')
@@ -933,5 +933,6 @@ if __name__ == '__main__':
     run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
     run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
     run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
+    """
     
 
