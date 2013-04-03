@@ -316,6 +316,34 @@ class DetectionCatalogue():
         else:
             return t
 
+    def column_runID(self):
+        runID = np.array([self.hdr('RUN')] * self.objectcount)
+        return fits.Column(name='runID', format='J', unit='Number', array=runID)
+
+    def column_band(self):
+        bandnames = {'r': 'r', 'i': 'i', 'Halpha': 'ha'}
+        myband = bandnames[self.hdr('WFFBAND')]
+        band = np.array([myband] * self.objectcount)
+        return fits.Column(name='band', format='2A', unit='String',
+                           array=band)
+
+    def column_ccd(self):
+        ccds = np.concatenate([[ccd] * self.fits[ccd].data.size 
+                               for ccd in EXTS])
+        return fits.Column(name='ccd', format='B', unit='Number', array=ccds)
+
+    def column_seqNum(self):
+        return fits.Column(name='seqNum', format='I', unit='Number',
+                           array=self.concat('Number'))
+
+    def column_detectionID(self, col_ccd, col_seqNum):
+        detectionID = np.array([int('%07d%d%06d' % (self.hdr('RUN'), 
+                                                    col_ccd.array[i], 
+                                                    col_seqNum.array[i]))
+                                for i in range(self.objectcount)])
+        return fits.Column(name='detectionID', format='K', unit='Number', 
+                           array=detectionID)
+
     def column_x(self):
         return fits.Column(name='x', format='E', unit='Pixels',
                            array=self.concat('X_coordinate'))
@@ -739,37 +767,17 @@ class DetectionCatalogue():
         output_filename = os.path.join(DESTINATION,
                                        '%s_det.fits' % self.hdr('RUN'))
 
-        # Pre-prepare columns
-        ccds = np.concatenate([[ccd] * self.fits[ccd].data.size
-                              for ccd in EXTS])
-        runID = np.array([self.hdr('RUN')] * self.objectcount)
-        seqNo = self.concat('Number')
-        bandnames = {'r': 'r', 'i': 'i', 'Halpha': 'ha'}
-        myband = bandnames[self.hdr('WFFBAND')]
-        band = np.array([myband] * self.objectcount)
-
-        detectionID = np.array([int('%07d%d%06d' % (
-                    self.hdr('RUN'), ccds[i], seqNo[i]))
-                    for i in range(self.objectcount)])
-        col_detectionID = fits.Column(name='detectionID', format='K',
-                                      unit='Number', array=detectionID)
-        col_runID = fits.Column(name='runID', format='J',
-                                unit='Number', array=runID)
-        col_ccd = fits.Column(name='ccd', format='B', unit='Number',
-                              array=ccds)
-        col_seqNum = fits.Column(name='seqNum', format='I', unit='Number',
-                                 array=seqNo)
-        col_band = fits.Column(name='band', format='2A', unit='String',
-                               array=band)
-
+        # Prepare columns on which others depend
+        col_ccd = self.column_ccd()
+        col_seqNum = self.column_seqNum()
         col_ra, col_dec = self.column_radec()
 
         # Write the output fits table
-        cols = fits.ColDefs([col_detectionID, 
-                             col_runID,
+        cols = fits.ColDefs([self.column_detectionID(col_ccd, col_seqNum), 
+                             self.column_runID(),
                              col_ccd, 
                              col_seqNum, 
-                             col_band,
+                             self.column_band(),
                              self.column_x(),
                              self.column_y(),
                              self.column_Xi(), 
