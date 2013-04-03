@@ -162,5 +162,5 @@ def run_all(ncores=4):
 ###################
 
 if __name__ == '__main__':
-    #run_one('5089o_jun2005')
-    run_all(8)
+    run_one('5089o_jun2005')
+    #run_all(8)

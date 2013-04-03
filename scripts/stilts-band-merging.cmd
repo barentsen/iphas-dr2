@@ -151,9 +151,15 @@ addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)
 
 
 # Vignetted if > 3700 pixels from rotation axis
-addcol rVignetted "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) > 3700"
-addcol iVignetted "sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) > 3700"
-addcol haVignetted "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) > 3700"
+#addcol rVignetted "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) > 3700"
+#addcol iVignetted "sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) > 3700"
+#addcol haVignetted "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) > 3700"
+
+# Alternative definition
+addcol rVignetted "(sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) + 0.5*sqrt(pow(rX-1024,2)+pow(rY-2048,2))) > 4650"
+addcol iVignetted "(sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) + 0.5*sqrt(pow(iX-1024,2)+pow(iY-2048,2))) > 4650"
+addcol haVignetted "(sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) + 0.5*sqrt(pow(haX-1024,2)+pow(haY-2048,2))) > 4650"
+
 addcol vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
 
 # Quality flags
