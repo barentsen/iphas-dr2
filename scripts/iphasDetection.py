@@ -309,12 +309,12 @@ class DetectionCatalogue():
             return t
 
     def get_Xn(self):
-        """Returns X coordinates in the CCD#4 system
+        """Returns X coordinates in the pixel system of CCD #4
 
-        The following relations transform all the CCDs to the CCD#4 pixel system
+        The following relations transform all the CCDs to the CCD#4 system
         (Copied from http://www.ast.cam.ac.uk/~wfcsur/technical/astrometry)
 
-        Virtual transform constants:  (from a set of 30 pointings in ELAIS region)
+        Virtual transform constants: (from 30 pointings in ELAIS region)
         0.10000E+01   -0.10013E-02   2113.94
         0.58901E-03    0.10001E+01    -12.67
         Location of rotator centre in CCD-space  1   -332.881    3041.61
@@ -334,8 +334,8 @@ class DetectionCatalogue():
 
         and based on CCD#4 pixel system
 
-        So to convert a CCD to the CCD#4 system take the pixel location (x,y) on the
-        CCD and apply the following transformation to it
+        So to convert a CCD to the CCD#4 system take the pixel location (x,y) 
+        on the CCD and apply the following transformation to it
         x' = a*x + b*y + c
         y' = d*x + e*y + f
 
@@ -347,8 +347,7 @@ class DetectionCatalogue():
         c = [2113.94, 78.84, -2096.52, 0.00]
 
         xn = np.array([])
-        for i in range(len(EXTS)):
-            ccd = EXTS[i]
+        for i, ccd in enumerate(EXTS):
             myxn = (a[i]*self.fits[ccd].data.field('X_coordinate')
                     + b[i]*self.fits[ccd].data.field('Y_coordinate')
                     + c[i] - 1778)
@@ -359,7 +358,7 @@ class DetectionCatalogue():
         """Returns Y coordinates in the CCD#4 system
         """
         d = [0.58901E-03, -0.10003E+01, 0.24865E-02, 0.00000E+00]
-        e = [0.10001E+01, -0.10663E-0, 0.10003E+01, 0.10000E+01]
+        e = [0.10001E+01, -0.10663E-01, 0.10003E+01, 0.10000E+01]
         f = [-12.67, 6226.05, 21.93, 0.00]
 
         xi = np.array([])
