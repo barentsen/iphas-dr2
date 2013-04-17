@@ -47,18 +47,20 @@ colmeta -name rEll ell_1
 colmeta -name rPA pa_1
 colmeta -name rClass class_1
 colmeta -name rClassStat classStat_1
-colmeta -name rBadPix badPix_1
+colmeta -name rBrightNeighb brightNeighb_1
 colmeta -name rDeblend deblend_1
 colmeta -name rSaturated saturated_1
+colmeta -name rVignetted vignetted_1
 colmeta -name rTruncated truncated_1
-colmeta -name rBrightNeighb brightNeighb_1
+colmeta -name rBadPix badPix_1
+colmeta -name rErrBits errBits_1
 colmeta -name rMJD mjd_1
 colmeta -name rSeeing seeing_1
 colmeta -name rDetectionID detectionID_1
 colmeta -name rX x_1
 colmeta -name rY y_1
-colmeta -name rPlaneX Xn_1
-colmeta -name rPlaneY Xi_1
+colmeta -name rPlaneX planeX_1
+colmeta -name rPlaneY planeY_1
 
 # Rename i-band columns
 colmeta -name i aperMag2_2
@@ -72,18 +74,20 @@ colmeta -name iEll ell_2
 colmeta -name iPA pa_2
 colmeta -name iClass class_2
 colmeta -name iClassStat classStat_2
-colmeta -name iBadPix badPix_2
+colmeta -name iBrightNeighb brightNeighb_2
 colmeta -name iDeblend deblend_2
 colmeta -name iSaturated saturated_2
+colmeta -name iVignetted vignetted_2
 colmeta -name iTruncated truncated_2
-colmeta -name iBrightNeighb brightNeighb_2
+colmeta -name iBadPix badPix_2
+colmeta -name iErrBits errBits_2
 colmeta -name iMJD mjd_2
 colmeta -name iSeeing seeing_2
 colmeta -name iDetectionID detectionID_2
 colmeta -name iX x_2
 colmeta -name iY y_2
-colmeta -name iPlaneX Xn_2
-colmeta -name iPlaneY Xi_2
+colmeta -name iPlaneX planeX_2
+colmeta -name iPlaneY planeY_2
 
 # Rename H-alpha columns
 colmeta -name ha aperMag2_3
@@ -97,18 +101,20 @@ colmeta -name haEll ell_3
 colmeta -name haPA pa_3
 colmeta -name haClass class_3
 colmeta -name haClassStat classStat_3
-colmeta -name haBadPix badPix_3
+colmeta -name haBrightNeighb brightNeighb_3
 colmeta -name haDeblend deblend_3
 colmeta -name haSaturated saturated_3
+colmeta -name haVignetted vignetted_3
 colmeta -name haTruncated truncated_3
-colmeta -name haBrightNeighb brightNeighb_3
+colmeta -name haBadPix badPix_3
+colmeta -name haErrBits errBits_3
 colmeta -name haMJD mjd_3
 colmeta -name haSeeing seeing_3
 colmeta -name haDetectionID detectionID_3
 colmeta -name haX x_3
 colmeta -name haY y_3
-colmeta -name haPlaneX Xn_3
-colmeta -name haPlaneY Xi_3
+colmeta -name haPlaneX planeX_3
+colmeta -name haPlaneY planeY_3
 
 
 # Single-band pStar
@@ -150,30 +156,23 @@ addcol mergedClass "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGa
 addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
 
 
-# Vignetted if > 3700 pixels from rotation axis
-#addcol rVignetted "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) > 3700"
-#addcol iVignetted "sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) > 3700"
-#addcol haVignetted "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) > 3700"
-
-# Alternative definition
-addcol rVignetted "(sqrt(pow(rPlaneX,2)+pow(rPlaneY,2)) + 0.5*sqrt(pow(rX-1024,2)+pow(rY-2048,2))) > 4650"
-addcol iVignetted "(sqrt(pow(iPlaneX,2)+pow(iPlaneY,2)) + 0.5*sqrt(pow(iX-1024,2)+pow(iY-2048,2))) > 4650"
-addcol haVignetted "(sqrt(pow(haPlaneX,2)+pow(haPlaneY,2)) + 0.5*sqrt(pow(haX-1024,2)+pow(haY-2048,2))) > 4650"
-
-addcol vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
-
-# Quality flags
-addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
+# merged quality flags
+addcol brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
 
 addcol deblend "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
 
 addcol saturated "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated)"
 
+addcol vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
+
 addcol truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
 
-addcol brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
+addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
-addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & ! saturated & ! truncated & ! brightNeighb & ! badPix"
+addcol errBits "maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits))"
+
+
+addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & ! brightNeighb & ! saturated & ! vignetted & ! truncated & ! badPix"
 
 addcol reliableStar "reliable & (NULL_mergedClass ? false: ((mergedClass < -0.5) & (mergedClass > -2.5)))"
 
@@ -185,6 +184,14 @@ replacecol night "NULL_night?night_3:night"
 # fieldID
 addcol fieldID "param$fieldID"
 
+# Colours
+addcol rmi "r - i"
+addcol rmha "r - ha"
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rBadPix rDeblend rSaturated rTruncated rBrightNeighb rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iBadPix iDeblend iSaturated iTruncated iBrightNeighb iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haBadPix haDeblend haSaturated haTruncated haBrightNeighb haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta badPix deblend saturated truncated vignetted brightNeighb reliable reliableStar night fieldID'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix vignetted errBits reliable reliableStar night fieldID'
+
+# Removed for brevity:
+# rBrightNeighb rDeblend rSaturated rVignetted rTruncated rBadPix
+# iBrightNeighb iDeblend iSaturated iVignetted iTruncated iBadPix
+# haBrightNeighb haDeblend haSaturated haVignetted haTruncated haBadPix

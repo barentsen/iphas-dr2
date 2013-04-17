@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
+"""Generates user-friendly single-band IPHAS detection catalogues.
+
 This script reads in catalogues produces by the 'imcore' image detection tool
 of the Cambridge Astronomical Survey Unit (CASU) pipeline, and transforms
 these catalogues into a more user-friendly format which is known in the
@@ -14,12 +16,9 @@ Coordinate System (WCS) where necessary.
 This script will also produce a table called 'iphasRuns.csv' which
 can be used as index of all the available IPHAS exposures.
 
-Author: Geert Barentsen
-
 TODO
 - merge error flags into a bit sequence? (cf. Hambly et al. 2008)
 - look up confidence value for each star in the confidence maps;
-- flag known asteroids;
 - fine-tune the 'zone of avoidance' around bright stars.
 """
 
@@ -31,6 +30,11 @@ import logging
 import os
 import datetime
 from multiprocessing import Pool
+
+__author__ = 'Geert Barentsen'
+__copyright__ = 'Copyright, The Authors'
+__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
+               'Cambridge Astronomical Survey Unit']
 
 
 ################################
@@ -341,7 +345,7 @@ class DetectionCatalogue():
                                                     col_ccd.array[i], 
                                                     col_seqNum.array[i]))
                                 for i in range(self.objectcount)])
-        return fits.Column(name='detectionID', format='K', unit='Number', 
+        return fits.Column(name='detectionID', format='K', unit='Number',
                            array=detectionID)
 
     def column_x(self):
@@ -352,8 +356,9 @@ class DetectionCatalogue():
         return fits.Column(name='y', format='E', unit='Pixels',
                            array=self.concat('Y_coordinate'))
 
-    def column_Xn(self):
-        """Returns X coordinates in the pixel system of CCD #4
+    def column_planeX(self):
+        """Returns X coordinates in the pixel system of CCD #4,
+        with the origin on the optical axis.
 
         The following relations transform all the CCDs to the CCD#4 system
         (Copied from http://www.ast.cam.ac.uk/~wfcsur/technical/astrometry)
@@ -396,11 +401,10 @@ class DetectionCatalogue():
                     + b[i]*self.fits[ccd].data.field('Y_coordinate')
                     + c[i] - 1778)
             xn = np.concatenate((xn, myxn))
-        return fits.Column(name='Xn', format='E', unit='Pixels', array=xn)
+        return fits.Column(name='planeX', format='E', unit='Pixels', array=xn)
 
-    def column_Xi(self):
-        """Returns Y coordinates in the CCD#4 system
-        """
+    def column_planeY(self):
+        """Returns Y coordinates in the CCD#4-based focal plane system."""
         d = [0.58901E-03, -0.10003E+01, 0.24865E-02, 0.00000E+00]
         e = [0.10001E+01, -0.10663E-01, 0.10003E+01, 0.10000E+01]
         f = [-12.67, 6226.05, 21.93, 0.00]
@@ -412,7 +416,7 @@ class DetectionCatalogue():
                     + e[i]*self.fits[ccd].data.field('Y_coordinate')
                     + f[i] - 3029)
             xi = np.concatenate((xi, myxi))
-        return fits.Column(name='Xi', format='E', unit='Pixels', array=xi)
+        return fits.Column(name='planeY', format='E', unit='Pixels', array=xi)
 
     def column_sky(self):
         return fits.Column(name='sky', format='E', unit='Counts',
@@ -449,40 +453,7 @@ class DetectionCatalogue():
         return fits.Column(name='classStat', format='E', unit='N-sigma',
                            array=self.concat('Statistic'))
 
-    def column_deblend(self):
-        """Which stars have been deblended?"""
-        # For deblended images, only the 1st areal profile is computed
-        # and the other profile values are set to -1
-        deblend = (self.concat('Areal_3_profile') < 0)
-        return fits.Column(name='deblend', format='L', unit='Boolean',
-                           array=deblend)
-
-    def column_saturated(self):
-        """Which stars are saturated?"""
-        # The saturation level is stored in the SATURATE keyword for each ccd
-        saturated = np.concatenate([(self.fits[ccd].data.field('Peak_height')
-                                     > self.fits[ccd].header.get('SATURATE'))
-                                     for ccd in EXTS])
-        return fits.Column(name='saturated', format='L',
-                           unit='Boolean', array=saturated)
-
-    def column_truncated(self):
-        """Which stars are too close to the CCD edges?"""
-        # Mark stars near the edges
-        avoidance = 4.0/0.333  # 4 Arcseconds
-        min_x = 1 + avoidance
-        max_x = 2048 - avoidance
-        min_y = 1 + avoidance
-        max_y = 4096 - avoidance
-
-        truncated = ((self.concat('X_coordinate') < min_x)
-                     | (self.concat('X_coordinate') > max_x)
-                     | (self.concat('Y_coordinate') < min_y)
-                     | (self.concat('Y_coordinate') > max_y))
-        return fits.Column(name='truncated', format='L', unit='Boolean', 
-                           array=truncated)
-
-    def column_brightNeighb(self, ra , dec):
+    def column_brightNeighb(self, ra, dec):
         """ Returns an array of boolean flags indicating whether the stars
         are within 10 arcmin of a star brighter than V < 4.5 """
         flags = np.zeros(len(ra), dtype=bool)  # Initialize result array
@@ -497,12 +468,85 @@ class DetectionCatalogue():
             # Flag bright neighbours if within 10 arcmin
             flags[d < 10/60.] = True
 
-        return fits.Column(name='brightNeighb', format='L', unit='Boolean', 
+        return fits.Column(name='brightNeighb', format='L', unit='Boolean',
                            array=flags)
 
-    def column_badPix(self): 
+    def column_deblend(self):
+        """Which stars have been deblended?"""
+        # For deblended images, only the 1st areal profile is computed
+        # and the other profile values are set to -1
+        deblend = (self.concat('Areal_3_profile') < 0)
+        return fits.Column(name='deblend', format='L', unit='Boolean',
+                           array=deblend)
+
+    def column_saturated(self):
+        """Which stars are saturated?"""
+        # The saturation level is stored in the SATURATE keyword for each ccd
+        saturated = np.concatenate([(self.fits[ccd].data.field('Peak_height')
+                                     > self.fits[ccd].header.get('SATURATE'))
+                                    for ccd in EXTS])
+        return fits.Column(name='saturated', format='L',
+                           unit='Boolean', array=saturated)
+
+    def column_vignetted(self, col_planeX, col_planeY):
+        """Which stars are too close to the corners of the focal plane?"""
+        # pixel distance from optical axis
+        x_plane = col_planeX.array
+        y_plane = col_planeY.array
+        r_plane = np.sqrt(np.power(x_plane, 2) + np.power(y_plane, 2))
+        # pixel distance from CCD center also matters
+        x = self.concat('X_coordinate')
+        y = self.concat('Y_coordinate')
+        r_ccd = np.sqrt(np.power(x-1024, 2) + np.power(y-2048, 2))
+        # empirical condition for stars with poor image quality
+        vignetted = (r_plane + r_ccd) > 5700  # pixels
+        return fits.Column(name='vignetted', format='L', unit='Boolean',
+                           array=vignetted)
+
+    def column_truncated(self):
+        """Which stars are too close to the CCD edges?"""
+        # Mark stars near the edges
+        avoidance = 4.0/0.333  # 4 Arcseconds
+        min_x = 1 + avoidance
+        max_x = 2048 - avoidance
+        min_y = 1 + avoidance
+        max_y = 4096 - avoidance
+
+        truncated = ((self.concat('X_coordinate') < min_x)
+                     | (self.concat('X_coordinate') > max_x)
+                     | (self.concat('Y_coordinate') < min_y)
+                     | (self.concat('Y_coordinate') > max_y))
+        return fits.Column(name='truncated', format='L', unit='Boolean',
+                           array=truncated)
+
+    def column_badPix(self):
         return fits.Column(name='badPix', format='E', unit='Pixels',
                            array=self.concat('Bad_pixels'))
+
+    def column_errBits(self, col_brightNeighb, col_deblend, col_saturated,
+                       col_vignetted, col_truncated, col_badPix):
+        """Returns the numeric error quality bits as an integer.
+
+        Inspired by
+        http://surveys.roe.ac.uk/wsa/www/gloss_j.html#gpssource_jerrbits
+
+        bit  decimal
+        1    2^0 = 1       Bright neighbour.
+        2    2^1 = 2       Deblended.
+        4    2^3 = 8       Saturated.
+        7    2^6 = 64      Vignetted.
+        8    2^7 = 128     Truncated.
+        11   2^10 = 1024   Bad pixels.
+        """
+        # Note: booleans in FITS are stored as ord('F') / ord('T')
+        errBits = (1 * (col_brightNeighb.array > ord('F'))
+                   + 2 * (col_deblend.array > ord('F'))
+                   + 8 * (col_saturated.array > ord('F'))
+                   + 64 * (col_vignetted.array > ord('F'))
+                   + 128 * (col_truncated.array > ord('F'))
+                   + 1024 * (col_badPix.array >= 1))
+        return fits.Column(name='errBits', format='I',
+                           unit='bitmask', array=errBits)
 
     def column_night(self):
         """Column containing the YYYYMMDD identifier of the *night*
@@ -569,7 +613,7 @@ class DetectionCatalogue():
 
     def column_mag(self, name='aperMag2'):
         """Returns magnitude columns."""
-        # `mynames' defines the names of the different magnitudes and links 
+        # `mynames' defines the names of the different magnitudes and links
         # them to the columns with flux values in the pipeline catalogue.
         mynames = {'peakMag': 'peak', 'peakMagErr': 'peak',
                    'aperMag1': 'core1', 'aperMag1Err': 'core1',
@@ -771,21 +815,34 @@ class DetectionCatalogue():
         col_ccd = self.column_ccd()
         col_seqNum = self.column_seqNum()
         col_ra, col_dec = self.column_radec()
+        col_planeX = self.column_planeX()
+        col_planeY = self.column_planeY()
+
+        # Error flags
+        col_brightNeighb = self.column_brightNeighb(col_ra.array, col_dec.array)
+        col_deblend = self.column_deblend()
+        col_saturated = self.column_saturated()
+        col_vignetted = self.column_vignetted(col_planeX, col_planeY)
+        col_truncated = self.column_truncated()
+        col_badPix = self.column_badPix()
+        col_errBits = self.column_errBits(col_brightNeighb, col_deblend,
+                                          col_saturated, col_vignetted,
+                                          col_truncated, col_badPix)
 
         # Write the output fits table
-        cols = fits.ColDefs([self.column_detectionID(col_ccd, col_seqNum), 
+        cols = fits.ColDefs([self.column_detectionID(col_ccd, col_seqNum),
                              self.column_runID(),
-                             col_ccd, 
-                             col_seqNum, 
+                             col_ccd,
+                             col_seqNum,
                              self.column_band(),
                              self.column_x(),
                              self.column_y(),
-                             self.column_Xi(), 
-                             self.column_Xn(),
-                             col_ra, 
-                             col_dec, 
+                             col_planeX,
+                             col_planeY,
+                             col_ra,
+                             col_dec,
                              self.column_posErr(),
-                             self.column_gauSig(), 
+                             self.column_gauSig(),
                              self.column_ell(),
                              self.column_pa(),
                              self.column_mag('peakMag'),
@@ -798,16 +855,17 @@ class DetectionCatalogue():
                              self.column_mag('aperMag3Err'),
                              self.column_sky(),
                              self.column_skyVar(),
-                             self.column_class(), 
-                             self.column_classStat(), 
-                             self.column_badPix(),
-                             self.column_deblend(), 
-                             self.column_saturated(),
-                             self.column_truncated(), 
-                             self.column_brightNeighb(col_ra.array, 
-                                                      col_dec.array),
-                             self.column_night(), 
-                             self.column_mjd(), 
+                             self.column_class(),
+                             self.column_classStat(),
+                             col_brightNeighb,
+                             col_deblend,
+                             col_saturated,
+                             col_vignetted,
+                             col_truncated,
+                             col_badPix,
+                             col_errBits,
+                             self.column_night(),
+                             self.column_mjd(),
                              self.column_seeing()])
         hdu_table = fits.new_table(cols, tbtype='BinTableHDU')
 
@@ -921,7 +979,7 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    run_all(8)
+    #run_all(8)
 
     """
     #Testcases:
@@ -930,9 +988,8 @@ if __name__ == '__main__':
     run_one(DATADIR+'/iphas_nov2003b/r375401_cat.fits')
     run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
     run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
+    """
     run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
     run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
     run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
-    """
-    
 

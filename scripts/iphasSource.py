@@ -1,16 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Creates the band-merged 'iphasSource' table.
+"""Generates the user-friendly band-merged 'iphasSource' catalogues.
 
 This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
 field into band-merged catalogues, following the UKIDSS format.
 
 This script also applies the global calibration to the magnitudes!
 
-Authors: Geert Barentsen, Hywel Farnhill, Robert Greimel
-
 TODO:
- - add colours (rmi, rmha?);
  - add priOrSec;
  - add htmID?
 """
@@ -20,6 +17,12 @@ import numpy as np
 from astropy.io import fits
 from astropy import log
 from multiprocessing import Pool
+
+__author__ = 'Geert Barentsen'
+__copyright__ = 'Copyright, The Authors'
+__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
+               'Cambridge Astronomical Survey Unit']
+
 
 #############################
 # CONSTANTS & CONFIGURATION
