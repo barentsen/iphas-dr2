@@ -189,7 +189,7 @@ addcol rmi "r - i"
 addcol rmha "r - ha"
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix vignetted errBits reliable reliableStar night fieldID'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits reliable reliableStar night fieldID'
 
 # Removed for brevity:
 # rBrightNeighb rDeblend rSaturated rVignetted rTruncated rBadPix
