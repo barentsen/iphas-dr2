@@ -6,7 +6,7 @@
 #PBS -l nodes=1:ppn=8
 #PBS -k oe                                                                      
 #PBS -q cmain
-#PBS -l walltime=12:00:00                                                       
+#PBS -l walltime=06:00:00                                                       
 
 echo $1
 
@@ -25,6 +25,8 @@ echo PBS: array ID is $PBS_ARRAYID
 echo PBS: current home directory is $PBS_O_HOME
 echo PBS: PATH = $PBS_O_PATH
 echo ------------------------------------------------------
+
+echo IPHASDIR = $IPHASDIR
 
 export PYTHONPATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/lib/python2.7/site-packages/
 export PATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/bin:$PATH

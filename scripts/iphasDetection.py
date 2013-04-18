@@ -986,7 +986,8 @@ if __name__ == '__main__':
     else:
         directory = DATADIR
 
-    if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
+    # Testing mode
+    if HOSTNAME == 'uhppc11.herts.ac.uk':
         logging.basicConfig(level=logging.INFO)
         run_all(directory, ncores=4)
 
@@ -1003,7 +1004,8 @@ if __name__ == '__main__':
         run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
         """
 
-    else:  # Production
+    # Production mode
+    else:
         logging.basicConfig(level=logging.ERROR)
         run_all(directory, ncores=8)
 
