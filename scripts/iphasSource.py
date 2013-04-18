@@ -27,12 +27,13 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
 # CONSTANTS & CONFIGURATION
 #############################
 
-if os.uname()[1] == 'uhppc11.herts.ac.uk':
+HOSTNAME = os.uname()[1]
+if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
     # Where are the pipeline-reduced catalogues?
     DATADIR = "/home/gb/tmp/iphas-dr2/iphasDetection"
     # Where to write the output catalogues?
     DESTINATION = "/home/gb/tmp/iphas-dr2/iphasSource"
-else:
+else:  # production
     DATADIR = "/car-data/gb/iphas-dr2/iphasDetection"
     DESTINATION = "/car-data/gb/iphas-dr2/iphasSource"
 
@@ -164,5 +165,8 @@ def run_all(ncores=4):
 ###################
 
 if __name__ == '__main__':
-    run_one('5089o_jun2005')
-    #run_all(8)
+
+    if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
+        run_one('5089o_jun2005')
+    else:  # production
+        run_all(8)

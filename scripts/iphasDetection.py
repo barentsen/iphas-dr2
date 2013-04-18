@@ -978,7 +978,13 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    #run_all(8)
+
+    if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
+        run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
+        run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
+        run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
+    else:  # Production
+        run_all(8)
 
     """
     #Testcases:
@@ -988,7 +994,3 @@ if __name__ == '__main__':
     run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
     run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
     """
-    run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
-    run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
-    run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
-
