@@ -5,5 +5,5 @@
 DATADIR='/car-data/gb/iphas'
 for subdir in `ls $DATADIR`; do
     echo $subdir
-    qsub -v IPHASDIR=$subdir iphasDetection.pbs
+    qsub -N catalogue_$subdir -v IPHASDIR=$subdir iphasDetection.pbs
 done
