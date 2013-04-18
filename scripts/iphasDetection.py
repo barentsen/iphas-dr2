@@ -988,9 +988,10 @@ if __name__ == '__main__':
 
     # Testing mode
     if HOSTNAME == 'uhppc11.herts.ac.uk':
-        logging.basicConfig(level=logging.INFO)
-        run_all(directory, ncores=4)
+        logging.basicConfig(level=logging.ERROR)
+        run_all(directory, ncores=7)
 
+        #logging.basicConfig(level=logging.INFO)
         #run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
         #run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
         #run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
