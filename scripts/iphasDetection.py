@@ -27,6 +27,7 @@ from astropy import wcs
 import numpy as np
 import logging
 import os
+import sys
 import datetime
 from multiprocessing import Pool
 
@@ -896,10 +897,10 @@ class DetectionCatalogue():
 ######################
 
 
-def list_catalogues():
-    logging.info('Searching for catalogues in %s' % DATADIR)
+def list_catalogues(directory):
+    logging.info('Searching for catalogues in %s' % directory)
     catalogues = []
-    for mydir in os.walk(DATADIR, followlinks=True):
+    for mydir in os.walk(directory, followlinks=True):
         logging.info('Entering %s' % mydir[0])
         for filename in mydir[2]:
             # Only consider files of the form *_cat.fits
@@ -923,13 +924,14 @@ def run_one(path):
         return None
 
 
-def run_all(ncores=4):
+def run_all(directory, ncores=4):
     """
     Create catalogues for all runs found in the data directory.
 
-    ncores: number of processing cores to use
+    directory: data directory with pipeline catalogues.
+    ncores: number of processing cores to use.
     """
-    catalogues = list_catalogues()
+    catalogues = list_catalogues(directory)
 
     # Execute our analysis for each mercat
     p = Pool(processes=ncores)
@@ -977,20 +979,31 @@ def run_all(ncores=4):
 ###################
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.ERROR)
+    
+    # Which directory to process?
+    if len(sys.argv) > 1:
+        directory = os.path.join(DATADIR, sys.argv[1])
+    else:
+        directory = DATADIR
 
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
-        run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
-        run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
-        run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
-    else:  # Production
-        run_all(8)
+        logging.basicConfig(level=logging.INFO)
+        run_all(directory, ncores=4)
 
-    """
-    #Testcases:
-    run_one(DATADIR+'/iphas_nov2003b/r375399_cat.fits')
-    run_one(DATADIR+'/iphas_nov2003b/r375400_cat.fits')
-    run_one(DATADIR+'/iphas_nov2003b/r375401_cat.fits')
-    run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
-    run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
-    """
+        #run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
+        #run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
+        #run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
+
+        """
+        #Testcases:
+        run_one(DATADIR+'/iphas_nov2003b/r375399_cat.fits')
+        run_one(DATADIR+'/iphas_nov2003b/r375400_cat.fits')
+        run_one(DATADIR+'/iphas_nov2003b/r375401_cat.fits')
+        run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
+        run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
+        """
+
+    else:  # Production
+        logging.basicConfig(level=logging.ERROR)
+        run_all(directory, ncores=8)
+
