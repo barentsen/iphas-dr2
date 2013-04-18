@@ -17,7 +17,6 @@ This script will also produce a table called 'iphasRuns.csv' which
 can be used as index of all the available IPHAS exposures.
 
 TODO
-- merge error flags into a bit sequence? (cf. Hambly et al. 2008)
 - look up confidence value for each star in the confidence maps;
 - fine-tune the 'zone of avoidance' around bright stars.
 """
@@ -527,7 +526,7 @@ class DetectionCatalogue():
                        col_vignetted, col_truncated, col_badPix):
         """Returns the numeric error quality bits as an integer.
 
-        Inspired by
+        Inspired by Hambly et al. (2008), e.g.:
         http://surveys.roe.ac.uk/wsa/www/gloss_j.html#gpssource_jerrbits
 
         bit  decimal
@@ -536,7 +535,7 @@ class DetectionCatalogue():
         4    2^3 = 8       Saturated.
         7    2^6 = 64      Vignetted.
         8    2^7 = 128     Truncated.
-        11   2^10 = 1024   Bad pixels.
+        16   2^15 = 32768  Bad pixels.
         """
         # Note: booleans in FITS are stored as ord('F') / ord('T')
         errBits = (1 * (col_brightNeighb.array > ord('F'))
@@ -544,8 +543,8 @@ class DetectionCatalogue():
                    + 8 * (col_saturated.array > ord('F'))
                    + 64 * (col_vignetted.array > ord('F'))
                    + 128 * (col_truncated.array > ord('F'))
-                   + 1024 * (col_badPix.array >= 1))
-        return fits.Column(name='errBits', format='I',
+                   + 32768 * (col_badPix.array >= 1))
+        return fits.Column(name='errBits', format='J',
                            unit='bitmask', array=errBits)
 
     def column_night(self):

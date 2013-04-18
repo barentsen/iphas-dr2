@@ -143,10 +143,10 @@ addcol pGalaxyProd "(rPGalaxy * iPGalaxy * haPGalaxy)"
 addcol pNoiseProd  "(rPNoise * iPNoise * haPNoise)"
 addcol pSaturatedProd  "(rPSaturated * iPSaturated * haPSaturated)"
 
-addcol pStar   "pStarProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
-addcol pGalaxy "pGalaxyProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
-addcol pNoise  "pNoiseProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
-addcol pSaturated "pSaturatedProd / (pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
+addcol -desc "Probability the source is stellar." pStar   "pStarProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
+addcol -desc "Probability the source is a galaxy." pGalaxy "pGalaxyProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
+addcol -desc "Probability the source is noise." pNoise "pNoiseProd /(pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
+addcol -desc "Probability the source is saturated." pSaturated "pSaturatedProd / (pStarProd+pGalaxyProd+pNoiseProd+pSaturatedProd)"
 
 # Assign the actual mergedClass flag, following the procedure described at
 # http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass
@@ -157,17 +157,17 @@ addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)
 
 
 # merged quality flags
-addcol brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
+addcol -desc "True if a very bright star is nearby." brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
 
-addcol deblend "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
+addcol -desc "True if the source was blended with a nearby neighbour." deblend "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
 
 addcol saturated "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated)"
 
-addcol vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
+addcol -desc "True if in a part of the focal plane where the image quality is poor." vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
 
-addcol truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
+addcol -desc "True if close to the CCD boundary." truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
 
-addcol badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
+addcol -desc "True if one or more bad pixel(s) in the aperture." badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
 addcol errBits "maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits))"
 
@@ -181,15 +181,18 @@ colmeta -name night night_1
 replacecol night "NULL_night?night_2:night"
 replacecol night "NULL_night?night_3:night"
 
+# seeing
+addcol -desc "Worst seeing amongst the three bands." seeing "toFloat( maximum(array(NULL_rSeeing ? 0 : rSeeing, NULL_iSeeing ? 0 : iSeeing, NULL_haSeeing ? 0 : haSeeing)) )"
+
 # fieldID
 addcol fieldID "param$fieldID"
 
 # Colours
-addcol rmi "r - i"
-addcol rmha "r - ha"
+addcol -desc "(r' - i') colour" rmi "r - i"
+addcol -desc "(r' - Ha) colour" rmha "r - ha"
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits reliable reliableStar night fieldID'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits reliable reliableStar night seeing fieldID'
 
 # Removed for brevity:
 # rBrightNeighb rDeblend rSaturated rVignetted rTruncated rBadPix

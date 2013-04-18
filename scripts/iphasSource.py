@@ -8,7 +8,6 @@ field into band-merged catalogues, following the UKIDSS format.
 This script also applies the global calibration to the magnitudes!
 
 TODO:
- - add priOrSec;
  - add htmID?
 """
 from __future__ import print_function, division
