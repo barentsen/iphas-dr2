@@ -3,6 +3,7 @@
 """Find the primary detections in the IPHAS catalogue."""
 from __future__ import division, print_function, unicode_literals
 import os
+import sys
 import numpy as np
 from astropy.io import fits
 import logging
@@ -24,7 +25,7 @@ IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 # How to execute stilts?
 STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar ../lib/stilts.jar'
 
-FIELD_MAXDIST = 0.8  # degrees
+FIELD_MAXDIST = 0.8  # Fields within this radius will be considered to overlap
 
 CACHE = {}
 
@@ -33,52 +34,61 @@ CACHE = {}
 # CLASSES
 ###########
 
+class SeamingException(Exception):
+    """
+    Exception raised when a catalogue has a known problem.
+    """
+    pass
+
+
 class Seamer(object):
 
     def __init__(self, fieldid, ra, dec):
         self.fieldid = fieldid
         self.crossmatch_file = '/tmp/seaming_{0}.fits'.format(fieldid)
+        self.primaryid_file = '/tmp/primaryid_{0}.fits'.format(fieldid)
+        self.output_file = '/home/gb/tmp/iphas-dr2/iphasSource2/{0}.fits'.format(fieldid)
         self.ra = ra
         self.dec = dec
 
     def run(self):
         self.overlaps = self.get_overlaps()
-        #self.crossmatch()
-        primaryID = self.get_primary_ids()
+        self.crossmatch()
+        sourceID, primaryID = self.get_primary_ids()
         #print(primaryID)
-        self.add_column(primaryID)
+        self.add_column(sourceID, primaryID)
+        self.clean()
 
-    def add_column(self, array):
-        col_primaryID = fits.Column(name='primaryID', format='K',
-                                    unit='Number', array=array)
 
-        #f = fits.open(self.filename(self.fieldid))
-        #f[1].columns.add_col(col_primaryID)
-        #f.writeto('/tmp/test2.fits', clobber=True)
-        #fits.writeto('/tmp/test2.fits', f[1].data, f[1].header, clobber=True)
+    def clean(self):
+        os.remove(self.crossmatch_file)
+        os.remove(self.primaryid_file)
 
-        output_filename = '/tmp/test2.fits'
 
-        # Open old file
-        f = fits.open(self.filename(self.fieldid), memmap=False)
+    def add_column(self, sourceID, primaryID):
+        # Write the (sourceID,primaryID)s to a table
+        col_sourceID = fits.Column(name='sourceID', format='K', array=sourceID)
+        col_priSourceID = fits.Column(name='priSourceID', format='K', array=primaryID)
+        cols = fits.ColDefs([col_sourceID, col_priSourceID])
+        newtable = fits.new_table(cols)
+        newtable.writeto(self.primaryid_file, clobber=True)
 
-        tmp = f[1].data['ra']  # deal with crazy bug
-        #logging.error(len(array))
+        # Then use stilts to add the extra column
+        config = {'STILTS': STILTS,
+                  'IN1': self.filename(self.fieldid),
+                  'IN2': self.primaryid_file,
+                  'OUT': self.output_file}
 
-        cdefs = f[1].get_coldefs()
-        cdefs.add_col(col_primaryID)
-        outtabhdu = fits.new_table(cdefs)
-        outtabhdu.writeto(output_filename, clobber=True)
-        
-        #hdu_table = fits.new_table(cols, tbtype='BinTableHDU')
-        #fits.new_table(f[1].columns, tbtype='BinTableHDU')
+        cmd = "{STILTS} tmatch2 progress=none find=best1 in1={IN1} in2={IN2} "
+        cmd += "matcher=exact join=all1 suffix1='' "
+        cmd += "values1='sourceID' values2='sourceID' "
+        cmd += "ocmd='delcols sourceID_2' out='{OUT}' "
 
-        #hdu_primary = fits.PrimaryHDU()
-        #hdulist = fits.HDUList([hdu_primary, hdu_table])
-        #f[1].columns.add_col(col_primaryID)
-        #f.writeto(output_filename, clobber=True)
-        
-
+        stilts_cmd = cmd.format(**config)
+        logging.info(stilts_cmd)
+        status = os.system(stilts_cmd)
+        logging.info(status)
+        return status
 
     def get_overlaps(self):
         """Which fields possibly overlap?"""
@@ -91,8 +101,11 @@ class Seamer(object):
         return IPHASQC['id'][idx]
 
     def filename(self, fieldid):
+        """
         url = ('http://stri-cluster.herts.ac.uk/~gb/'
                + 'iphas-dr2/iphasSource/{0}.fits')
+        """
+        url = '/home/gb/tmp/iphas-dr2/iphasSource/{0}.fits'
         return url.format(fieldid)
 
     def get_stilts_command(self):
@@ -107,7 +120,7 @@ class Seamer(object):
                   'OUT': self.crossmatch_file}
         # Create stilts command
         # FIXME: add progress=none
-        cmd = "{STILTS} tmatchn matcher=sky params=0.5 "
+        cmd = "{STILTS} tmatchn progress=none matcher=sky params=0.5 "
         cmd += "multimode=pairs iref=1 nin={NIN} "
         cmd += "in1={IN1} values1='ra dec' join1=always "
         cmd += "icmd1='{ICMD}' "
@@ -123,44 +136,51 @@ class Seamer(object):
 
     def crossmatch(self):
         cmd = self.get_stilts_command()
-        logging.info('Overlaps: {0}'.format(self.overlaps))
-        logging.info(cmd)
+        logging.debug('Overlaps: {0}'.format(self.overlaps))
+        logging.debug(cmd)
         status = os.system(cmd)
         logging.info(status)
         return status
 
     def get_primary_ids(self):
-        d = fits.getdata(self.crossmatch_file, 1)
+        try:
+            d = fits.getdata(self.crossmatch_file, 1)
+        except IOError, e:
+            raise SeamingException(e)
 
         primary_ids = []
         for source in d:
 
-            idx_all = (np.arange(self.overlaps.size + 1) + 1)
-            ids = np.array([source['sourceID_{0}'.format(i)] for i in idx_all])
+            if source['sourceID_1'] in CACHE:
+                 primary_ids.append(CACHE[source['sourceID_1']])
+            else:
 
-            idx = idx_all[ids > 0]
+                idx_all = (np.arange(self.overlaps.size + 1) + 1)
+                ids = np.array([source['sourceID_{0}'.format(i)] for i in idx_all])
 
-            stats = {'sourceID': ids[ids > 0],
-                     'fieldID': np.array([source['fieldID_{0}'.format(i)]
-                                          for i in idx]),
-                     'bands': np.array([source['bands_{0}'.format(i)]
-                                        for i in idx]),
-                     'errBits': np.array([0 for i in idx]),  # FIXME
-                     'seeing': np.array([source['rSeeing_{0}'.format(i)]
-                                         for i in idx]),  # FIXME
-                     'rAxis': np.array([i for i in idx]),  # FIXME
-                     'winner': np.array([True for i in idx])}
+                idx = idx_all[ids > 0]
 
-            stats = self.mark_winner(stats)
+                stats = {'sourceID': ids[ids > 0],
+                         'fieldID': np.array([source['fieldID_{0}'.format(i)]
+                                              for i in idx]),
+                         'bands': np.array([source['bands_{0}'.format(i)]
+                                            for i in idx]),
+                         'errBits': np.array([0 for i in idx]),  # FIXME
+                         'seeing': np.array([source['rSeeing_{0}'.format(i)]
+                                             for i in idx]),  # FIXME
+                         'rAxis': np.array([i for i in idx]),  # FIXME
+                         'winner': np.array([True for i in idx])}
 
-            winnerID = stats['sourceID'][stats['winner']][0]
+                stats = self.mark_winner(stats)
 
-            primary_ids.append(winnerID)
+                winnerID = stats['sourceID'][stats['winner']][0]
 
-            for sourceID in stats['sourceID']:
-                CACHE[sourceID] = winnerID
+                primary_ids.append(winnerID)
 
-        return np.array(primary_ids)
+                for sourceID in stats['sourceID']:
+                    CACHE[sourceID] = winnerID
+
+        return (d['sourceID_1'], np.array(primary_ids))
 
     def mark_winner(self, stats):
         """The ranking criteria are
@@ -207,12 +227,31 @@ class Seamer(object):
 
 if __name__ == "__main__":
 
-    for idx in np.argsort(IPHASQC['seeing_max']):
-        logging.info('Now seaming {0}'.format(IPHASQC['id'][idx]))
 
-        s = Seamer(IPHASQC['id'][idx], IPHASQC['ra'][idx], IPHASQC['dec'][idx])
-        s.run()
-        break
+    # Which longitude range to process?
+    if len(sys.argv) > 1:
+        lon1 = int(sys.argv[1])
+        lon2 = lon1 + 10
+    else:
+        raise Exception('Missing longitude strip argument')
+
+    cond_strip = (IPHASQC['is_pdr'] 
+                  & (IPHASQC['l'] > lon1-1) 
+                  & (IPHASQC['l'] < lon2+1))
+
+    cond_strip = (IPHASQC['id'] == '3680o_dec2003')
+
+    for idx in np.argsort(IPHASQC['seeing_max']):
+        if cond_strip[idx]:
+
+            logging.info('Now seaming {0}'.format(IPHASQC['id'][idx]))
+
+            try:
+                s = Seamer(IPHASQC['id'][idx], IPHASQC['ra'][idx], IPHASQC['dec'][idx])
+                s.run()
+            except SeamingException, e:
+                logging.error(e)
+            
     """
     TABLE = '107.75.fits'
     match = fits.getdata(TABLE, 1)

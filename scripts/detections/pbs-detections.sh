@@ -31,8 +31,8 @@ echo ------------------------------------------------------
 export PYTHONPATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/lib/python2.7/site-packages/
 export PATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/bin:$PATH
 export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
-cd /home/gb/dev/iphas-dr2/scripts
-nice python iphasDetection.py 
+cd /home/gb/dev/iphas-dr2/scripts/detections
+nice python detections.py 
 #$IPHASDIR
 echo ------------------------------------------------------
 echo Job ends

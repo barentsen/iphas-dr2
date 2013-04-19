@@ -46,23 +46,27 @@ if HOSTNAME == 'uhppc11.herts.ac.uk':
     # Where are the pipeline-reduced catalogues?
     DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     # Where to write the output catalogues?
-    DESTINATION = '/home/gb/tmp/iphas-dr2/iphasDetection'
+    DESTINATION = '/home/gb/tmp/iphas-dr2/detections'
 elif HOSTNAME == 'gvm':
     DATADIR = '/media/uh/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    DESTINATION = "/home/gb/tmp/iphas-dr2/iphasDetection"
+    DESTINATION = "/home/gb/tmp/iphas-dr2/detections"
 else:
     DATADIR = '/car-data/gb/iphas'
-    DESTINATION = '/car-data/gb/iphas-dr2/iphasDetection'
+    DESTINATION = '/car-data/gb/iphas-dr2/detections'
+
+SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))  # Dir of this script
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
-BRIGHTCAT = fits.getdata('lib/BrightStarCat-iphas.fits', 1)
+BRIGHTCAT_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
+BRIGHTCAT = fits.getdata(BRIGHTCAT_PATH, 1)
 
 # Which extensions to expect in the fits catalogues?
 EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
 PXSCALE = 0.333  # Arcsec/pix of the INT/WFC CCD's
 
 # Table containing slight updates to WCS astrometric parameters
-WCSFIXES = ascii.read('wcs-tuning/wcs-fixes.csv')
+WCSFIXES_PATH = os.path.join(SCRIPTDIR, '../wcs-tuning/wcs-fixes.csv')
+WCSFIXES = ascii.read(WCSFIXES_PATH)
 
 # Which are the possible filenames of the confidence maps?
 CONF_NAMES = {'Halpha': ['Ha_conf.fits', 'Ha_conf.fit',
@@ -945,12 +949,12 @@ def run_all(directory, ncores=4):
     """
     catalogues = list_catalogues(directory)
 
-    # Execute our analysis for each mercat
+    # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
     results = p.imap(run_one, catalogues)  # returns an iterator
 
     # Write the results
-    filename = os.path.join(DESTINATION, 'iphasRun.csv')
+    filename = os.path.join(DESTINATION, 'index.csv')
     out = open(filename, 'w')
 
     out.write('catalogue,image,conf,run,object,ra,dec,field,'
@@ -998,10 +1002,14 @@ if __name__ == '__main__':
     else:
         directory = DATADIR
 
+    # Make sure the output directory exists
+    if not os.path.exists(DESTINATION):
+        os.makedirs(DESTINATION)
+
     # Testing mode
     if HOSTNAME == 'uhppc11.herts.ac.uk':
         logging.basicConfig(level=logging.ERROR)
-        run_all(directory, ncores=7)
+        run_all(directory, ncores=2)
 
         #logging.basicConfig(level=logging.INFO)
         #run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')

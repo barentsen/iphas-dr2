@@ -12,6 +12,7 @@ TODO:
 """
 from __future__ import print_function, division
 import os
+import sys
 import numpy as np
 from astropy.io import fits
 from astropy import log
@@ -38,7 +39,7 @@ else:  # production
     DESTINATION = "/car-data/gb/iphas-dr2/iphasSource"
 
 # How to execute stilts?
-STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar lib/stilts.jar'
+STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar ../lib/stilts.jar'
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -148,10 +149,13 @@ def run_one(fieldid):
     return status
 
 
-def run_all(ncores=4):
+def run_all(lon1=20, lon2=220, ncores=4):
     """ Band-merge all fields """
+    log.info('Band-merging in longitude range [{0},{1}['.format(lon1, lon2))
     # Which fields do we want to merge?
-    idx = np.where(IPHASQC.field('is_pdr'))[0]
+    idx = np.where(IPHASQC.field('is_pdr')
+                   & (IPHASQC.field('l') >= lon1)
+                   & (IPHASQC.field('l') < lon2))[0]
     fieldids = IPHASQC.field('id')[idx]
     # Distribute the work over ncores
     p = Pool(processes=ncores)
@@ -166,7 +170,22 @@ def run_all(ncores=4):
 
 if __name__ == '__main__':
 
+    # Which longitude range to process?
+    if len(sys.argv) > 1:
+        lon1 = int(sys.argv[1])
+        lon2 = lon1 + 10
+        # There are a tiny bit of sources near the survey edge at l ~ 29
+        # so we add them to the strip at 30
+        if lon1 == 30:
+            lon1 = 25.0
+    else:
+        lon1 = 20
+        lon2 = 220
+
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-        run_one('5089o_jun2005')
+        #run_one('5089o_jun2005')
+        #run_one('3561_nov2003')
+        run_all(lon1=lon1, lon2=lon2, ncores=4)
+        #run_all(lon1=208, lon2=209, ncores=6)
     else:  # production
-        run_all(8)
+        run_all(lon1=lon1, lon2=lon2, ncores=8)

@@ -163,16 +163,17 @@ addcol -desc "True if the source was blended with a nearby neighbour." deblend "
 
 addcol saturated "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated)"
 
-addcol -desc "True if in a part of the focal plane where the image quality is poor." vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
+addcol -desc "True if in part of focal plane where image quality is poor." vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
 
 addcol -desc "True if close to the CCD boundary." truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
 
 addcol -desc "True if one or more bad pixel(s) in the aperture." badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
-addcol errBits "maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits))"
+addcol errBits "toInteger( maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits)) )"
 
 
-addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & ! brightNeighb & ! saturated & ! vignetted & ! truncated & ! badPix"
+addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & errBits == 0"
+
 
 addcol reliableStar "reliable & (NULL_mergedClass ? false: ((mergedClass < -0.5) & (mergedClass > -2.5)))"
 
@@ -195,7 +196,7 @@ addcol -desc "(r' - Ha) colour" rmha "r - ha"
 addcol rAxisDist "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2))"
 addcol iAxisDist "sqrt(pow(iPlaneX,2)+pow(iPlaneY,2))"
 addcol haAxisDist "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2))"
-addcol -desc "Distance from the optical axis" rAxis "maximum(array(NULL_rAxisDist?0:rAxisDist, NULL_iAxisDist?0:iAxisDist, NULL_haAxisDist?0:haAxisDist))"
+addcol -desc "Distance from the optical axis" rAxis "toFloat( maximum(array(NULL_rAxisDist?0:rAxisDist, NULL_iAxisDist?0:iAxisDist, NULL_haAxisDist?0:haAxisDist)) )"
 
 # Remove obsolete columns
 keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits reliable reliableStar night seeing rAxis fieldID'
