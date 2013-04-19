@@ -48,6 +48,10 @@ class Concatenator(object):
     def __init__(self, fieldlist, strip):
         self.fieldlist = fieldlist
         self.strip = strip
+
+        if not os.path.exists(DESTINATION):
+            os.makedirs(DESTINATION)
+
         self.output_file = os.path.join(DESTINATION,
                                         'strip{0}.fits'.format(strip))
 
@@ -62,10 +66,12 @@ class Concatenator(object):
 
         param = {'stilts': STILTS,
                  'in': instring,
-                 'icmd': """'select "(errBits < 100) & (sourceID == priSourceID)"'""",
+                 'icmd': """'select "(errBits < 100) \
+                                      & pStar > 0.2 \
+                                      & (sourceID == priSourceID)"'""",
                  'out': self.output_file}
 
-        cmd = '{stilts} tcat {in} icmd={icmd} lazy=true out={out}'
+        cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
         mycmd = cmd.format(**param)
         log.debug(mycmd)
         status = os.system(mycmd)
