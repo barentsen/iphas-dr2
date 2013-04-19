@@ -46,15 +46,16 @@ if HOSTNAME == 'uhppc11.herts.ac.uk':
     # Where are the pipeline-reduced catalogues?
     DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     # Where to write the output catalogues?
-    DESTINATION = '/home/gb/tmp/iphas-dr2/detections'
+    DESTINATION = '/home/gb/tmp/iphas-dr2/detected'
 elif HOSTNAME == 'gvm':
     DATADIR = '/media/uh/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    DESTINATION = "/home/gb/tmp/iphas-dr2/detections"
+    DESTINATION = "/home/gb/tmp/iphas-dr2/detected"
 else:
     DATADIR = '/car-data/gb/iphas'
-    DESTINATION = '/car-data/gb/iphas-dr2/detections'
+    DESTINATION = '/car-data/gb/iphas-dr2/detected'
 
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))  # Dir of this script
+# Dir of this script
+SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
 BRIGHTCAT_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
@@ -947,6 +948,10 @@ def run_all(directory, ncores=4):
     directory: data directory with pipeline catalogues.
     ncores: number of processing cores to use.
     """
+    # Make sure the output directory exists
+    if not os.path.exists(DESTINATION):
+        os.makedirs(DESTINATION)
+
     catalogues = list_catalogues(directory)
 
     # Run the processing for each pipeline catalogue
@@ -1001,10 +1006,6 @@ if __name__ == '__main__':
         directory = os.path.join(DATADIR, sys.argv[1])
     else:
         directory = DATADIR
-
-    # Make sure the output directory exists
-    if not os.path.exists(DESTINATION):
-        os.makedirs(DESTINATION)
 
     # Testing mode
     if HOSTNAME == 'uhppc11.herts.ac.uk':

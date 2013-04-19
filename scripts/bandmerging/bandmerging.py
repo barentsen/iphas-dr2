@@ -31,15 +31,19 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
 HOSTNAME = os.uname()[1]
 if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
     # Where are the pipeline-reduced catalogues?
-    DATADIR = "/home/gb/tmp/iphas-dr2/iphasDetection"
+    DATADIR = "/home/gb/tmp/iphas-dr2/detected"
     # Where to write the output catalogues?
-    DESTINATION = "/home/gb/tmp/iphas-dr2/iphasSource"
+    DESTINATION = "/home/gb/tmp/iphas-dr2/bandmerged"
 else:  # production
-    DATADIR = "/car-data/gb/iphas-dr2/iphasDetection"
-    DESTINATION = "/car-data/gb/iphas-dr2/iphasSource"
+    DATADIR = "/car-data/gb/iphas-dr2/detected"
+    DESTINATION = "/car-data/gb/iphas-dr2/bandmerged"
+
+# Dir of this script
+SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # How to execute stilts?
-STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar ../lib/stilts.jar'
+STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar {0}'.format(
+                                 os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -77,37 +81,42 @@ class BandMerge():
 
     def get_stilts_command(self):
         """Returns the stilts command used to perform a band-merge."""
-        cmd = """{0} tmatchn matcher=sky params=0.5 multimode=group nin=3 \
-                  in1={1} in2={2} in3={3} \
+
+        config = {'stilts': STILTS,
+                  'runr': self.get_catalogue_path(self.run_r),
+                  'runi': self.get_catalogue_path(self.run_i),
+                  'runha': self.get_catalogue_path(self.run_ha),
+                  'fieldid': self.fieldid,
+                  'shift_r': self.shift_r,
+                  'shift_i': self.shift_i,
+                  'shift_ha': self.shift_ha,
+                  'ocmd': os.path.join(SCRIPTDIR, 'stilts-band-merging.cmd'),
+                  'output': self.output}
+
+        cmd = """{stilts} tmatchn matcher=sky params=0.5 multimode=group \
+                  nin=3 in1={runr} in2={runi} in3={runha} \
                   join1=always join2=always join3=always \
                   values1='ra dec' values2='ra dec' values3='ra dec' \
-                  icmd1='setparam fieldID "{4}";
+                  icmd1='setparam fieldID "{fieldid}";
                          select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1";
-                         replacecol peakMag  "toFloat(peakMag  + {5})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {5})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {5})";' \
+                         replacecol peakMag  "toFloat(peakMag  + {shift_r})";
+                         replacecol aperMag2 "toFloat(aperMag2 + {shift_r})";
+                         replacecol aperMag3 "toFloat(aperMag3 + {shift_r})";' \
                   icmd2='select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1"; \
-                         replacecol peakMag  "toFloat(peakMag  + {6})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {6})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {6})";' \
+                         replacecol peakMag  "toFloat(peakMag  + {shift_i})";
+                         replacecol aperMag2 "toFloat(aperMag2 + {shift_i})";
+                         replacecol aperMag3 "toFloat(aperMag3 + {shift_i})";' \
                   icmd3='select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1"; \
-                         replacecol peakMag  "toFloat(peakMag  + {7})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {7})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {7})";' \
-                  ocmd=@stilts-band-merging.cmd \
+                         replacecol peakMag  "toFloat(peakMag  + {shift_ha})";
+                         replacecol aperMag2 "toFloat(aperMag2 + {shift_ha})";
+                         replacecol aperMag3 "toFloat(aperMag3 + {shift_ha})";' \
+                  ocmd=@{ocmd} \
                   progress=none \
-                  out='{8}'""".format(STILTS,
-                                      self.get_catalogue_path(self.run_r),
-                                      self.get_catalogue_path(self.run_i),
-                                      self.get_catalogue_path(self.run_ha),
-                                      self.fieldid,
-                                      self.shift_r,
-                                      self.shift_i,
-                                      self.shift_ha,
-                                      self.output)
+                  out='{output}'""".format(**config)
+
         return cmd
 
     def run(self):
@@ -120,7 +129,6 @@ class BandMerge():
 ###########
 # FUNCTIONS
 ###########
-
 
 def run_one(fieldid):
     """ Band-merge a single field """
@@ -152,6 +160,11 @@ def run_one(fieldid):
 def run_all(lon1=20, lon2=220, ncores=4):
     """ Band-merge all fields """
     log.info('Band-merging in longitude range [{0},{1}['.format(lon1, lon2))
+
+    # Make sure the output directory exists
+    if not os.path.exists(DESTINATION):
+        os.makedirs(DESTINATION)
+
     # Which fields do we want to merge?
     idx = np.where(IPHASQC.field('is_pdr')
                    & (IPHASQC.field('l') >= lon1)
@@ -170,7 +183,7 @@ def run_all(lon1=20, lon2=220, ncores=4):
 
 if __name__ == '__main__':
 
-    # Which longitude range to process?
+    # Which longitude strip to process? (optional)
     if len(sys.argv) > 1:
         lon1 = int(sys.argv[1])
         lon2 = lon1 + 10
@@ -179,8 +192,8 @@ if __name__ == '__main__':
         if lon1 == 30:
             lon1 = 25.0
     else:
-        lon1 = 20
-        lon2 = 220
+        lon1 = 0
+        lon2 = 360
 
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
         #run_one('5089o_jun2005')
