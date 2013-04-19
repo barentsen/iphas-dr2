@@ -325,6 +325,7 @@ class DetectionCatalogue():
         return fits.Column(name='runID', format='J', unit='Number', array=runID)
 
     def column_band(self):
+        """Returns the FITS column with the band name for each star."""
         bandnames = {'r': 'r', 'i': 'i', 'Halpha': 'ha'}
         myband = bandnames[self.hdr('WFFBAND')]
         band = np.array([myband] * self.objectcount)
@@ -332,32 +333,40 @@ class DetectionCatalogue():
                            array=band)
 
     def column_ccd(self):
-        ccds = np.concatenate([[ccd] * self.fits[ccd].data.size 
+        """Returns the FITS column with the CCD number for each star."""
+        ccds = np.concatenate([[ccd] * self.fits[ccd].data.size
                                for ccd in EXTS])
         return fits.Column(name='ccd', format='B', unit='Number', array=ccds)
 
     def column_seqNum(self):
-        return fits.Column(name='seqNum', format='I', unit='Number',
+        """Returns the FITS column with the running number for each star."""
+        # format must be 'J' (32-bit) because numbers larger than 32767 occur
+        return fits.Column(name='seqNum', format='J', unit='Number',
                            array=self.concat('Number'))
 
     def column_detectionID(self, col_ccd, col_seqNum):
-        detectionID = np.array([int('%07d%d%06d' % (self.hdr('RUN'), 
-                                                    col_ccd.array[i], 
+        """Returns the FITS column with the detectionIDs."""
+        detectionID = np.array([int('%07d%d%06d' % (self.hdr('RUN'),
+                                                    col_ccd.array[i],
                                                     col_seqNum.array[i]))
                                 for i in range(self.objectcount)])
         return fits.Column(name='detectionID', format='K', unit='Number',
                            array=detectionID)
 
     def column_x(self):
+        """Returns the FITS column for the X CCD pixel coordinate."""
         return fits.Column(name='x', format='E', unit='Pixels',
                            array=self.concat('X_coordinate'))
 
     def column_y(self):
+        """Returns the FITS column for the Y CCD pixel coordinate."""
         return fits.Column(name='y', format='E', unit='Pixels',
                            array=self.concat('Y_coordinate'))
 
     def column_planeX(self):
-        """Returns X coordinates in the pixel system of CCD #4,
+        """Returns the FITS column with X coordinates in the focal plane.
+
+        The reference frame of the coordinates is the pixel system of CCD #4,
         with the origin on the optical axis.
 
         The following relations transform all the CCDs to the CCD#4 system
@@ -383,7 +392,7 @@ class DetectionCatalogue():
 
         and based on CCD#4 pixel system
 
-        So to convert a CCD to the CCD#4 system take the pixel location (x,y) 
+        So to convert a CCD to the CCD#4 system take the pixel location (x,y)
         on the CCD and apply the following transformation to it
         x' = a*x + b*y + c
         y' = d*x + e*y + f
@@ -404,7 +413,10 @@ class DetectionCatalogue():
         return fits.Column(name='planeX', format='E', unit='Pixels', array=xn)
 
     def column_planeY(self):
-        """Returns Y coordinates in the CCD#4-based focal plane system."""
+        """Returns the FITS column with Y coordinates in the focal plane.
+
+        See column_planeX() for details.
+        """
         d = [0.58901E-03, -0.10003E+01, 0.24865E-02, 0.00000E+00]
         e = [0.10001E+01, -0.10663E-01, 0.10003E+01, 0.10000E+01]
         f = [-12.67, 6226.05, 21.93, 0.00]
@@ -979,7 +991,7 @@ def run_all(directory, ncores=4):
 ###################
 
 if __name__ == '__main__':
-    
+
     # Which directory to process?
     if len(sys.argv) > 1:
         directory = os.path.join(DATADIR, sys.argv[1])
@@ -992,6 +1004,9 @@ if __name__ == '__main__':
         run_all(directory, ncores=7)
 
         #logging.basicConfig(level=logging.INFO)
+        #run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
+
+
         #run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
         #run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
         #run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
@@ -1009,4 +1024,3 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level=logging.ERROR)
         run_all(directory, ncores=8)
-
