@@ -812,18 +812,18 @@ class DetectionCatalogue():
                                    for ccd in EXTS])
 
     def save_detections(self):
-        """ Create the columns of the output FITS table and save them.
+        """Create the columns of the output FITS table and save them.
 
-        The fits data types used are:
-        L = boolean (1 byte?)
-        X = bit
-        B = unsigned byte
-        I = 16-bit int
-        J = 32-bit int
-        K = 64-bit int
-        A = 1-byte char
-        E = single
-        D = double
+        Reminder: the fits data types used are:
+                    L = boolean (1 byte?)
+                    X = bit
+                    B = unsigned byte
+                    I = 16-bit int
+                    J = 32-bit int
+                    K = 64-bit int
+                    A = 1-byte char
+                    E = single
+                    D = double
         """
         output_filename = os.path.join(DESTINATION,
                                        '%s_det.fits' % self.hdr('RUN'))
@@ -915,6 +915,10 @@ class DetectionCatalogue():
 
 
 def list_catalogues(directory):
+    """Returns a list of all pipeline-produced image detection tables.
+
+    directory -- path to the directory containing CASU's pipelined data.
+    """
     logging.info('Searching for catalogues in %s' % directory)
     catalogues = []
     for mydir in os.walk(directory, followlinks=True):
@@ -928,6 +932,10 @@ def list_catalogues(directory):
 
 
 def run_one(path):
+    """Created a catalogue from one given pipeline table.
+
+    path -- of the pipeline table.
+    """
     try:
         pc = DetectionCatalogue(path)
         csv = pc.get_csv_summary()
@@ -942,16 +950,16 @@ def run_one(path):
 
 
 def run_all(directory, ncores=4):
-    """
-    Create catalogues for all runs found in the data directory.
+    """Creates catalogues for all pipeline tables found in the data directory.
 
-    directory: data directory with pipeline catalogues.
-    ncores: number of processing cores to use.
+    directory -- containing Cambridge's pipeline catalogues.
+    ncores -- number of parallel processes.
     """
     # Make sure the output directory exists
     if not os.path.exists(DESTINATION):
         os.makedirs(DESTINATION)
 
+    # Where are the pipeline catalogues?
     catalogues = list_catalogues(directory)
 
     # Run the processing for each pipeline catalogue
@@ -1010,7 +1018,7 @@ if __name__ == '__main__':
     # Testing mode
     if HOSTNAME == 'uhppc11.herts.ac.uk':
         logging.basicConfig(level=logging.ERROR)
-        run_all(directory, ncores=2)
+        run_all(directory, ncores=7)
 
         #logging.basicConfig(level=logging.INFO)
         #run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
