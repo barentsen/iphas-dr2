@@ -19,3 +19,9 @@ Running these scripts will produce the following data output::
                      ...
                      strip210
               concatenated/
+
+TODO
+----
+ * Tune and document the choice of columns.
+ * Fix WCS of outstanding problematic fields.
+ * Fix bad column issue in dec2003 data.
