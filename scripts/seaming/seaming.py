@@ -289,7 +289,7 @@ def run_strip(strip):
     for idx in np.argsort(IPHASQC['seeing_max']):
         if cond_strip[idx]:
 
-            log.info('Seaming {0}'.format(IPHASQC['id'][idx]))
+            log.info('Strip {0}: seaming {1}'.format(strip, IPHASQC['id'][idx]))
 
             try:
                 s = Seamer(IPHASQC['id'][idx],
@@ -299,6 +299,20 @@ def run_strip(strip):
                 s.run()
             except SeamingException, e:
                 log.error(str(e))
+            except Exception, e:
+                log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (IPHASQC['id'][idx], e))
+
+
+def run_all(lon1=30, lon2=210, ncores=4):
+    """ Band-merge all fields """
+    log.info('Seaming in longitude strips {0}-{1}'.format(lon1, lon2))
+    strips = np.arange(lon1, lon2+1, 10)
+
+    # Distribute the work over ncores
+    p = Pool(processes=ncores)
+    results = p.imap(run_strip, strips)
+    for i in results:
+        pass
 
 
 ###################

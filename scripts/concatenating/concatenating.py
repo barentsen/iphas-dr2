@@ -61,7 +61,7 @@ class Concatenator(object):
                                         'strip{0}.fits'.format(strip))
 
     def run(self):
-
+        """Performs the concatenation of the strip."""
         instring = ''
         for field in self.fieldlist:
             path = os.path.join(DATADIR, 
@@ -75,10 +75,10 @@ class Concatenator(object):
                                       & pStar > 0.2 \
                                       & (sourceID == priSourceID) \
                                       & l >= """+str(self.lon1)+""" \
-                                      & l < """+str(self.lon2)+"""; \
+                                      & l < """+str(self.lon2)+""""; \
                              keepcols "sourceID ra dec l b mergedClass \
                                        r rErr rClass i iErr iClass ha haErr haClass \
-                                        errBits reliable fieldID"'""",
+                                       errBits reliable fieldID"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'

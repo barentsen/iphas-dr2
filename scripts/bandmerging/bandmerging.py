@@ -198,7 +198,7 @@ if __name__ == '__main__':
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
         #run_one('5089o_jun2005')
         #run_one('3561_nov2003')
-        run_all(lon1=lon1, lon2=lon2, ncores=6)
+        run_all(lon1=lon1, lon2=lon2, ncores=7)
         #run_all(lon1=208, lon2=209, ncores=6)
     else:  # production
         run_all(lon1=lon1, lon2=lon2, ncores=8)
