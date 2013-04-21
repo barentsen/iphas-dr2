@@ -300,10 +300,10 @@ def run_strip(strip):
             except SeamingException, e:
                 log.error(str(e))
             except Exception, e:
-                log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (IPHASQC['id'][idx], e))
+                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (strip, IPHASQC['id'][idx], e))
 
 
-def run_all(lon1=30, lon2=210, ncores=4):
+def run_all(lon1=30, lon2=210, ncores=6):
     """ Band-merge all fields """
     log.info('Seaming in longitude strips {0}-{1}'.format(lon1, lon2))
     strips = np.arange(lon1, lon2+1, 10)
@@ -324,7 +324,7 @@ if __name__ == "__main__":
     # Which longitude range to process?
     if len(sys.argv) > 1:
         strip = int(sys.argv[1])
+        run_strip(strip)
     else:
-        raise Exception('Missing longitude strip argument')
+        run_all(ncores=6)
 
-    run_strip(strip)
