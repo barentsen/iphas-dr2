@@ -49,6 +49,11 @@ class Concatenator(object):
         self.fieldlist = fieldlist
         self.strip = strip
 
+        self.lon1 = strip
+        self.lon2 = strip + 10
+        if self.lon1 == 30:
+            self.lon1 = 25
+
         if not os.path.exists(DESTINATION):
             os.makedirs(DESTINATION)
 
@@ -68,7 +73,12 @@ class Concatenator(object):
                  'in': instring,
                  'icmd': """'select "(errBits < 100) \
                                       & pStar > 0.2 \
-                                      & (sourceID == priSourceID)"'""",
+                                      & (sourceID == priSourceID) \
+                                      & l >= """+str(self.lon1)+""" \
+                                      & l < """+str(self.lon2)+"""; \
+                             keepcols "sourceID ra dec l b mergedClass \
+                                       r rErr rClass i iErr iClass ha haErr haClass \
+                                        errBits reliable fieldID"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
@@ -77,16 +87,6 @@ class Concatenator(object):
         status = os.system(mycmd)
         log.info('Concat: '+str(status))
         return status
-
-        """
-        for field in self.fieldlist:
-            self.add_field(field)
-        """
-
-
-    def add_field(self, field):
-        """Adds one field to the concat."""
-        pass
         
 
 
