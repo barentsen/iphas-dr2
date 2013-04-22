@@ -5,6 +5,7 @@ from __future__ import division, print_function, unicode_literals
 import os
 import sys
 import numpy as np
+from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
 log.setLevel('INFO')
@@ -273,6 +274,7 @@ class Seamer(object):
 ###########
 
 def run_strip(strip):
+    """Seam the fields in a given 10-degree wide longitude strip."""
     # Strips are defined by the start longitude of a 10 deg-wide strip
     assert(strip in np.arange(30, 210+1, 10))
     # So which are our boundaries?
@@ -304,9 +306,9 @@ def run_strip(strip):
 
 
 def run_all(lon1=30, lon2=210, ncores=6):
-    """ Band-merge all fields """
-    log.info('Seaming in longitude strips {0}-{1}'.format(lon1, lon2))
+    """ Seam the fields in all 10-degree wide longitude strips."""
     strips = np.arange(lon1, lon2+1, 10)
+    log.info('Seaming in longitude strips %s' % (strips))
 
     # Distribute the work over ncores
     p = Pool(processes=ncores)
@@ -326,5 +328,6 @@ if __name__ == "__main__":
         strip = int(sys.argv[1])
         run_strip(strip)
     else:
-        run_all(ncores=6)
+        log.info('Running all strips')
+        run_all(lon1=40, lon2=210, ncores=8)
 

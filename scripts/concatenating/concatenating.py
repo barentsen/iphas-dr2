@@ -78,7 +78,8 @@ class Concatenator(object):
                                       & l < """+str(self.lon2)+""""; \
                              keepcols "sourceID ra dec l b mergedClass \
                                        r rErr rClass i iErr iClass ha haErr haClass \
-                                       errBits reliable fieldID"'""",
+                                       brightNeighb deblend saturated vignetted \
+                                       errBits reliable reliableStar fieldID"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
