@@ -103,9 +103,9 @@ def run_strip(strip):
     # So which are our boundaries?
     # Note: we must allow an extree for border overlaps!
     lon1 = strip - 1
-    lon2 = lon1 + 10 + 1
+    lon2 = strip + 10 + 1
     cond_strip = (IPHASQC['is_pdr']
-                  & (IPHASQC['l'] > lon1)
+                  & (IPHASQC['l'] >= lon1)
                   & (IPHASQC['l'] < lon2))
 
     fieldlist = IPHASQC['id'][cond_strip]

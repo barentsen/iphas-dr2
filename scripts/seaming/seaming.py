@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Find the primary detections in the IPHAS catalogue."""
+"""Identifies duplicate detections in the IPHAS catalogue.
+
+This script will identify duplicate detections across all fields and decide 
+which is the 'primary' (best) one.
+"""
 from __future__ import division, print_function, unicode_literals
 import os
 import sys
+import time
 import numpy as np
+import datetime
+import dbm
 from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
@@ -46,8 +53,11 @@ IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 # Fields within this radius will be considered to overlap
 FIELD_MAXDIST = 0.8  # degrees
 
+# Detections within this radius will be considered identical
+MATCHING_DISTANCE = 0.5  # arcsec
+
 # CACHE registers sourceID's for wich a primaryID has already been assigned
-CACHE = {}
+CACHE = {}  # (Beats any key-value db)
 
 
 ###########
@@ -94,7 +104,7 @@ class Seamer(object):
         """Main function."""
         self.overlaps = self.get_overlaps()
         self.crossmatch()
-        sourceID, primaryID = self.get_primary_ids()
+        sourceID, primaryID = self.get_primary_ids4()
         self.write_results(sourceID, primaryID)
         self.clean()
 
@@ -102,6 +112,15 @@ class Seamer(object):
         """Removes temporary files created by run()."""
         os.remove(self.crossmatch_file)
         os.remove(self.primaryid_file)
+
+    def log_debug(self, message):
+        log.debug('strip{0}: {1}'.format(self.strip, message))
+
+    def log_info(self, message):
+        log.info('strip{0}: {1}'.format(self.strip, message))
+
+    def log_warning(self, message):
+        log.warning('strip{0}: {1}'.format(self.strip, message))
 
     def write_results(self, sourceID, primaryID):
         """Writes a new catalogue with primaryID to disk."""
@@ -126,7 +145,7 @@ class Seamer(object):
         stilts_cmd = cmd.format(**config)
         log.debug(stilts_cmd)
         status = os.system(stilts_cmd)
-        log.info('Adding column: '+str(status))
+        self.log_info('Adding column: '+str(status))
         return status
 
     def get_overlaps(self):
@@ -150,13 +169,15 @@ class Seamer(object):
         icmd += 'keepcols "sourceID fieldID ra dec bands errBits seeing rAxis"'
         # Keywords in stilts command
         config = {'STILTS': STILTS,
+                  'MATCHING_DISTANCE': MATCHING_DISTANCE,
                   'NIN': len(self.overlaps) + 1,
                   'IN1': self.filename(self.fieldid),
                   'ICMD': icmd,
                   'OUT': self.crossmatch_file}
         # Create stilts command
         # FIXME: add progress=none
-        cmd = "{STILTS} tmatchn progress=none matcher=sky params=0.5 "
+        cmd = "{STILTS} tmatchn progress=none "
+        cmd += "matcher=sky params={MATCHING_DISTANCE} "
         cmd += "multimode=pairs iref=1 nin={NIN} "
         cmd += "in1={IN1} values1='ra dec' join1=always "
         cmd += "icmd1='{ICMD}' "
@@ -176,7 +197,7 @@ class Seamer(object):
         log.debug('Overlaps: {0}'.format(self.overlaps))
         log.debug(cmd)
         status = os.system(cmd)
-        log.info('Crossmatch: '+str(status))
+        self.log_info('Crossmatch: '+str(status))
         if status == 256:
             raise SeamingException('Crossmatch failed for %s' % self.fieldid)
         return status
@@ -184,10 +205,7 @@ class Seamer(object):
     def get_primary_ids(self):
         """Returns the tuple (sourceID,primarySourceID)."""
         # Open the file with the sources crossmatched across fields
-        try:
-            matchtable = fits.getdata(self.crossmatch_file, 1)
-        except IOError, e:
-            raise SeamingException(e)
+        matchtable = fits.getdata(self.crossmatch_file, 1)
 
         idx_all = (np.arange(self.overlaps.size+1) + 1)  # 1 2 3 ...
         sourceid_keys = ['sourceID_{0}'.format(i) for i in idx_all]
@@ -197,8 +215,182 @@ class Seamer(object):
             mySourceID = source['sourceID_1']
             # If we have encountered the source before, we enforce the
             # previous conclusion to ensure consistency
+            if mySourceID in CACHE[self.strip]:
+                primaryID = CACHE[self.strip][mySourceID]
+                del CACHE[self.strip][mySourceID]  # Save memory; info no longer needed
+            else:
+
+                # Load the sourceIDs of the competitors
+                ids = np.array([source[key] for key in sourceid_keys])
+                # Filter out the missing IDs (i.e. negative values in FITS)
+                idx = idx_all[ids > 0]
+
+                if len(idx) == 1:  # No alternatives
+                    primaryID = mySourceID
+                    CACHE[self.strip][mySourceID] = primaryID
+                else:
+
+                    my_sourceids = ids[ids > 0]
+                    #my_fields = np.array([source['fieldID_%s'%i] for i in idx])
+                    my_bands = np.array([source['bands_%s'%i] for i in idx])
+                    my_errbits = np.array([source['errBits_%s'%i] for i in idx])
+                    my_seeing = np.array([source['seeing_%s'%i] for i in idx])
+                    my_raxis = np.array([source['rAxis_%s'%i] for i in idx])
+
+                    primaryID = self.get_primaryID(my_sourceids, 
+                                                   my_bands, my_errbits,
+                                                   my_seeing, my_raxis)
+
+                    for candidate in my_sourceids:
+                        CACHE[self.strip][candidate] = primaryID
+                    #print(stats)
+                    #break
+
+            primary_ids.append(primaryID)
+
+        return (matchtable['sourceID_1'], np.array(primary_ids))
+
+
+    def get_primaryID(self, candidates, bands, errbits, seeing, raxis):
+        """
+        Returns the index of the primary source given stats.
+
+        The ranking criteria are
+          1. prefer filter coverage (3 > 2 > 1);
+          2. prefer least severe error flags;
+          3. prefer best seeing amongst the filters
+             (but tolerate up to 20% of the best value);
+          4. prefer smallest distance from optical axis.
+        """
+        # This array keeps track of which candidates are still in the running
+        winning = np.array([True for i in candidates])
+
+        # Discard source with less bands
+        idx_loser = bands < bands.max()
+        winning[idx_loser] = False
+
+        # Discard sources with large errBits
+        idx_loser = errbits > errbits[winning].min()
+        winning[idx_loser] = False
+
+        # Discard sources with poor seeing
+        idx_loser = seeing > (1.2 * seeing[winning].min())
+        winning[idx_loser] = False
+
+        # Finally, the winner is the one closest to the optical axis
+        idx_loser = raxis > raxis[winning].min()
+        winning[idx_loser] = False
+
+        # This shouldn't happen
+        if winning.sum() != 1:
+            log.warning('Object w/o clear winner in {0}'.format(self.fieldid))
+
+        # Return the index of the winner
+        return candidates[winning.nonzero()[0][0]]
+
+
+
+    def cache_get(self, sourceID):
+        return int(CACHE[self.strip][str(sourceID)])
+
+    def cache_set(self, sourceID, primaryID):
+        CACHE[self.strip][str(sourceID)] = str(primaryID)
+
+
+    def get_primary_ids4(self):
+        """Returns the tuple (sourceID,primarySourceID)."""
+        # Open the file with the sources crossmatched across fields
+        # Memmap=True increases speed by a factor ~several
+
+        try:
+            crossmatch = fits.getdata(self.crossmatch_file, 1, memmap=True)
+        except OSError, e: # No such file
+            log.warning('Failed to open {0}: {1}'.format(self.crossmatch_file, 
+                                                         e))
+            log.warning('Will try again in 5 seconds.')
+            time.sleep(5)
+            crossmatch = fits.getdata(self.crossmatch_file, 1, memmap=True)
+
+        
+        # Which columns are important?
+        idx = (np.arange(self.overlaps.size+1) + 1)  # 1 2 3 ...
+        sourceID_cols = np.array(['sourceID_{0}'.format(i) for i in idx])
+        bands_cols = np.array(['bands_{0}'.format(i) for i in idx])
+        errBits_cols = np.array(['errBits_{0}'.format(i) for i in idx])
+        seeing_cols = np.array(['seeing_{0}'.format(i) for i in idx])
+        rAxis_cols = np.array(['rAxis_{0}'.format(i) for i in idx])
+
+        # Save in memory
+        matchdata = {}
+        for col in np.concatenate((sourceID_cols, bands_cols, errBits_cols, 
+                                   seeing_cols, rAxis_cols)):
+            matchdata[col] = crossmatch[col]
+
+
+        # This array keeps track of which candidates are still in the running
+        winning_template = np.array([True for i in idx])
+
+        primary_ids = []  # will hold the key result
+
+        for rowno in range(matchdata['sourceID_1'].size):
+            mySourceID = matchdata['sourceID_1'][rowno]
+            # If we have encountered the source before, we enforce the
+            # previous conclusion to ensure consistency
+            if str(mySourceID) in CACHE[self.strip]:
+                winnerID = self.cache_get(mySourceID)
+                #del CACHE[self.strip][mySourceID]  # Save memory; info no longer needed
+                continue
+
+            win = winning_template.copy()
+
+            # Not matched
+            ids = np.array([matchdata[col][rowno] for col in sourceID_cols])
+            win[ids < 0] = False
+
+            if win.sum() > 1:
+                # Discard source with less bands
+                bands = np.array([matchdata[col][rowno]
+                                  for col in bands_cols[win]])
+                win[win.nonzero()[0][bands < bands.max()]] = False
+
+                # Discard sources with large errBits
+                errbits = np.array([matchdata[col][rowno]
+                                    for col in errBits_cols[win]])
+                win[win.nonzero()[0][errbits > errbits.min()]] = False
+
+                if win.sum() > 1:
+                    # Discard sources with poor seeing
+                    seeing = np.array([matchdata[col][rowno] 
+                                       for col in seeing_cols[win]])
+                    win[win.nonzero()[0][seeing > 1.2 * seeing.min()]] = False
+
+                    # Finally, the winner is the one closest to the optical axis
+                    raxis = np.array([matchdata[col][rowno] 
+                                      for col in rAxis_cols[win]])
+                    win[win.nonzero()[0][raxis > raxis.min()]] = False
+
+            # This shouldn't happen
+            if win.sum() != 1:
+                log.warning('Object w/o clear winner in {0}'.format(self.fieldid))
+
+            # index of the winner
+            winnerID = win.nonzero()[0][0]
+            primary_ids.append(winnerID)
+
+            for candidate in ids[ids > 0]:
+                self.cache_set(candidate, winnerID)
+
+        return (matchdata['sourceID_1'], np.array(primary_ids))
+
+
+"""
+        for source in matchtable:
+            mySourceID = source['sourceID_1']
+            # If we have encountered the source before, we enforce the
+            # previous conclusion to ensure consistency
             if mySourceID in CACHE:
                 winnerID = CACHE[mySourceID]
+                del CACHE[mySourceID]  # Save memory; info no longer needed
             else:
 
                 # Load the sourceIDs of the competitors
@@ -230,44 +422,7 @@ class Seamer(object):
             primary_ids.append(winnerID)
 
         return (matchtable['sourceID_1'], np.array(primary_ids))
-
-    def get_winner(self, bands, errbits, seeing, raxis):
-        """
-        Returns the index of the primary source given stats.
-
-        The ranking criteria are
-          1. prefer filter coverage (3 > 2 > 1);
-          2. prefer least severe error flags;
-          3. prefer best seeing amongst the filters
-             (but tolerate up to 20% of the best value);
-          4. prefer smallest distance from optical axis.
-        """
-        # This array keeps track of which candidates are still in the running
-        winning = np.array([True for i in bands])
-
-        # Discard source with less bands
-        idx_loser = (bands < np.max(bands))
-        winning[idx_loser] = False
-
-        # Discard sources with large errBits
-        idx_loser = (errbits > np.min(errbits[winning]))
-        winning[idx_loser] = False
-
-        # Discard sources with poor seeing
-        idx_loser = (seeing > 1.2*np.min(seeing[winning]))
-        winning[idx_loser] = False
-
-        # Finally, the winner is the one closest to the optical axis
-        idx_loser = (raxis > np.min(raxis[winning]))
-        winning[idx_loser] = False
-
-        # This shouldn't happen
-        if winning.sum() != 1:
-            log.warning('Object w/o clear winner in {0}'.format(self.fieldid))
-
-        # Return the index of the winner
-        return winning.nonzero()[0][0]
-
+"""
 
 ###########
 # FUNCTIONS
@@ -277,12 +432,17 @@ def run_strip(strip):
     """Seam the fields in a given 10-degree wide longitude strip."""
     # Strips are defined by the start longitude of a 10 deg-wide strip
     assert(strip in np.arange(30, 210+1, 10))
+
+    # Prepare cache
+    #CACHE[strip] = {}
+    CACHE[strip] = dbm.open('cache-strip%s' % strip, 'c')
+
     # So which are our boundaries?
     # Note: we must allow an extree for border overlaps!
     lon1 = strip - 1
-    lon2 = lon1 + 10 + 1
+    lon2 = strip + 10 + 1
     cond_strip = (IPHASQC['is_pdr']
-                  & (IPHASQC['l'] > lon1)
+                  & (IPHASQC['l'] >= lon1)
                   & (IPHASQC['l'] < lon2))
 
     #cond_strip = (IPHASQC['id'] == '3693_dec2003')
@@ -291,7 +451,9 @@ def run_strip(strip):
     for idx in np.argsort(IPHASQC['seeing_max']):
         if cond_strip[idx]:
 
-            log.info('Strip {0}: seaming {1}'.format(strip, IPHASQC['id'][idx]))
+            log.info('{3}: strip{0}: seaming {1}'.format(strip, 
+                                                         IPHASQC['id'][idx], 
+                                                         datetime.datetime.now()))
 
             try:
                 s = Seamer(IPHASQC['id'][idx],
@@ -304,8 +466,13 @@ def run_strip(strip):
             except Exception, e:
                 log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (strip, IPHASQC['id'][idx], e))
 
+            #break
 
-def run_all(lon1=30, lon2=210, ncores=6):
+    # Clear cache
+    #del CACHE[strip]
+
+
+def run_all(lon1=30, lon2=210, ncores=2):
     """ Seam the fields in all 10-degree wide longitude strips."""
     strips = np.arange(lon1, lon2+1, 10)
     log.info('Seaming in longitude strips %s' % (strips))
@@ -329,5 +496,6 @@ if __name__ == "__main__":
         run_strip(strip)
     else:
         log.info('Running all strips')
-        run_all(lon1=40, lon2=210, ncores=8)
+        #run_strip(110)
+        run_all(lon1=30, lon2=210, ncores=4)
 
