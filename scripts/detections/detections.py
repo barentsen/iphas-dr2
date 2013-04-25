@@ -18,7 +18,6 @@ can be used as index of all the available IPHAS exposures.
 
 TODO
 - fix WCS of outstanding CCDs with bad astrometry;
-- fix bad column data in dec2003 data;
 - look up confidence value for each star in the confidence maps.
 """
 
@@ -544,17 +543,21 @@ class DetectionCatalogue():
                            array=truncated)
 
     def column_badPix(self, col_ccd, col_x, col_y):
+        """Returns the FITS column indicating the number of bad pixels.
+
+        Note that bad pixel information is not given for the earliest runs.
+        """
         badpix = self.concat('Bad_pixels')
-        # The confidence map for dec2003 failed to mask out two bad columns,
-        # so we have this little hack to flag the spurious sources
-        if self.hdr('DATE-OBS')[0:7] == '2003-12':
-            log.info('Masking out')
+        # The confidence map for dec2003 failed to mask out two bad columns;
+        # the hack below flags spurious sources near these columns.
+        if self.hdr('DATE-OBS')[0:7] == '2003-12':  # dec2003
             bad_column = (
-                            ((col_ccd.array == 4) & (col_x.array > 548)
-                                & (col_x.array < 550))
+                            ((col_ccd.array == 4)
+                             & (col_x.array > 548) & (col_x.array < 550))
                             |
-                            ((col_ccd.array == 3) & (col_x.array > 1243)
-                                & (col_x.array < 1245) & (col_y.array > 2048))
+                            ((col_ccd.array == 3)
+                             & (col_x.array > 1243) & (col_x.array < 1245)
+                             & (col_y.array > 2048))
                          )
             badpix[bad_column] = 99
 

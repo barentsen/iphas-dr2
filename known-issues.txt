@@ -7,4 +7,5 @@ This is a list of known issues in the IPHAS data to watch out for when generatin
  * The WCS keywords in the pipeline catalogues can be inconsistent at times. For a generic fix, see "fix_wcs()" in the iphasDetection.py script.
  * Spurious sources frequently appear in the vignetted corners of CCD's 3 & 1. These need to be masked out.
  * dec2003 runs show bad columns in CCD #3 (x=1244-1245) and CCD #4 (x=549) which are not masked out by the confidence map. This caused a significant numbers of spurious sources around those columns. These sources are currently flagges as having bad pixels by the detections.py script.
- * The 'badpix' information is missing from the pipeline-produced catalogues in the first few months of the survey.
+ * The 'badpix' information is missing from the pipeline-produced catalogues in the first few months of the survey (i.e. 2003.)
+ * The bandmerging script relies on the Stilts "tmatchn multimode=group" feature, which however does not guarantee delivering the best match in very crowded fields. (cf. http://www.star.bristol.ac.uk/~mbt/stilts/sun256/matchGroup.html)
