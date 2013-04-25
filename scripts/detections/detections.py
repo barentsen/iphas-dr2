@@ -17,15 +17,16 @@ This script will also produce a table called 'iphasRuns.csv' which
 can be used as index of all the available IPHAS exposures.
 
 TODO
-- look up confidence value for each star in the confidence maps;
-- fine-tune the 'zone of avoidance' around bright stars.
+- fix WCS of outstanding CCDs with bad astrometry;
+- fix bad column data in dec2003 data;
+- look up confidence value for each star in the confidence maps.
 """
 
 from astropy.io import fits
 from astropy.io import ascii
 from astropy import wcs
+from astropy import log
 import numpy as np
-import logging
 import os
 import sys
 import datetime
@@ -58,8 +59,11 @@ else:
 SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
-BRIGHTCAT_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
-BRIGHTCAT = fits.getdata(BRIGHTCAT_PATH, 1)
+BSC_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
+BSC = fits.getdata(BSC_PATH, 1)
+BRIGHT_RA = BSC['_RAJ2000']
+BRIGHT_DEC = BSC['_DEJ2000']
+BRIGHT_VMAG = BSC['Vmag']
 
 # Which extensions to expect in the fits catalogues?
 EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
@@ -162,10 +166,10 @@ class DetectionCatalogue():
 
     def check_header(self):
         """
-        Test the catalogue for known problems, and fix if possible.
+        Checks the pipeline catalogue for known problems; fixes if possible.
 
-        If the catalogue is not suitable for the IPHAS data release,
-        a CatalogueException is raised.
+        If the catalogue is not suitable for the IPHAS data release because
+        of a known problem, a CatalogueException is raised.
         """
         # The OBJECT keyword must start with the word "intphas" or "iphas"
         if not (self.hdr('OBJECT').startswith('intphas')
@@ -183,7 +187,7 @@ class DetectionCatalogue():
             # Numpy will throw an exception if multiple columns have the same
             # name, so we need to rename these columns.
             n_columns = len(self.fits[ccd].columns)
-            for col in range(26, n_columns, 1):
+            for col in xrange(24, n_columns, 1):
                 name = self.fits[ccd].columns[col].name
                 if name == 'Blank':
                     self.fits[ccd].columns[col].name = 'Blank%d' % col
@@ -239,8 +243,8 @@ class DetectionCatalogue():
                 idx = ((WCSFIXES['RUN'] == self.hdr('RUN'))
                        & (WCSFIXES['CCD'] == ccd))
                 if idx.sum() > 0:
-                    logging.info("WCS fixed: {0}[{1}].".format(self.hdr('RUN'),
-                                                               ccd))
+                    log.info("WCS fixed: {0}[{1}].".format(self.hdr('RUN'),
+                                                           ccd))
                     idx_fix = idx.nonzero()[0][-1]
                     for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
                                'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
@@ -351,10 +355,11 @@ class DetectionCatalogue():
 
     def column_detectionID(self, col_ccd, col_seqNum):
         """Returns the FITS column with the detectionIDs."""
-        detectionID = np.array([int('%07d%d%06d' % (self.hdr('RUN'),
-                                                    col_ccd.array[i],
-                                                    col_seqNum.array[i]))
-                                for i in range(self.objectcount)])
+        detectionID = np.array(['%07d%d%06d' % (self.hdr('RUN'),
+                                                col_ccd.array[i],
+                                                col_seqNum.array[i])
+                                for i in xrange(self.objectcount)],
+                                dtype='i8')
         return fits.Column(name='detectionID', format='K', unit='Number',
                            array=detectionID)
 
@@ -427,7 +432,7 @@ class DetectionCatalogue():
         f = [-12.67, 6226.05, 21.93, 0.00]
 
         xi = np.array([])
-        for i in range(len(EXTS)):
+        for i in xrange(len(EXTS)):
             ccd = EXTS[i]
             myxi = (d[i]*self.fits[ccd].data.field('X_coordinate')
                     + e[i]*self.fits[ccd].data.field('Y_coordinate')
@@ -476,14 +481,17 @@ class DetectionCatalogue():
         flags = np.zeros(len(ra), dtype=bool)  # Initialize result array
         # Try all stars in the truncated bright star catalogue (BSC, Yale)
         # which are nearby-ish
-        nearby = np.abs(dec[0] - BRIGHTCAT.field('_DEJ2000')) < 2.
+        nearby = np.abs(dec[0] - BRIGHT_DEC) < 1.
         for i in np.where(nearby)[0]:
-            d_ra = ra - BRIGHTCAT.field('_RAJ2000')[i]
-            d_dec = dec - BRIGHTCAT.field('_DEJ2000')[i]
+            d_ra = ra - BRIGHT_RA[i]
+            d_dec = dec - BRIGHT_DEC[i]
             # Approx angular separation (Astronomical Algorithms Eq. 16.2)
             d = np.sqrt((d_ra*np.cos(np.radians(dec)))**2 + d_dec**2)
             # Flag bright neighbours if within 10 arcmin
-            flags[d < 10/60.] = True
+            if BRIGHT_VMAG[i] < 4:  # Brighter than 4th magnitude
+                flags[d < 10/60.] = True
+            else:
+                flags[d < 5/60.] = True
 
         return fits.Column(name='brightNeighb', format='L', unit='Boolean',
                            array=flags)
@@ -515,8 +523,8 @@ class DetectionCatalogue():
         x = self.concat('X_coordinate')
         y = self.concat('Y_coordinate')
         r_ccd = np.sqrt(np.power(x-1024, 2) + np.power(y-2048, 2))
-        # empirical condition for stars with poor image quality
-        vignetted = (r_plane + r_ccd) > 5700  # pixels
+        # Empirical condition for focal plane locations with poor image quality
+        vignetted = (r_plane + 2*r_ccd) > 7900  # pixels
         return fits.Column(name='vignetted', format='L', unit='Boolean',
                            array=vignetted)
 
@@ -728,7 +736,11 @@ class DetectionCatalogue():
                   - self.hdr('APCOR2')
                   - mypercorr)
 
-        field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
+        try:
+            field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
+        except IndexError:
+            raise CatalogueException('could not understand OBJECT keyword: '
+                                     + '"{0}"'.format(self.hdr('OBJECT')))
 
         return ('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
                 + '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
@@ -919,15 +931,15 @@ def list_catalogues(directory):
 
     directory -- path to the directory containing CASU's pipelined data.
     """
-    logging.info('Searching for catalogues in %s' % directory)
+    log.info('Searching for catalogues in %s' % directory)
     catalogues = []
     for mydir in os.walk(directory, followlinks=True):
-        logging.info('Entering %s' % mydir[0])
+        log.info('Entering %s' % mydir[0])
         for filename in mydir[2]:
             # Only consider files of the form *_cat.fits
             if filename.endswith("_cat.fits"):
                 catalogues.append(os.path.join(mydir[0], filename))
-    logging.info('Found %d catalogues' % len(catalogues))
+    log.info('Found %d catalogues' % len(catalogues))
     return catalogues
 
 
@@ -942,10 +954,10 @@ def run_one(path):
         pc.save_detections()
         return csv
     except CatalogueException, e:
-        logging.error('%s: CatalogueException: %s' % (path, e))
+        log.warning('%s: CatalogueException: %s' % (path, e))
         return None
     except Exception, e:
-        logging.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
         return None
 
 
@@ -1015,29 +1027,11 @@ if __name__ == '__main__':
     else:
         directory = DATADIR
 
-    # Testing mode
-    if HOSTNAME == 'uhppc11.herts.ac.uk':
-        logging.basicConfig(level=logging.ERROR)
-        run_all(directory, ncores=7)
-
-        #logging.basicConfig(level=logging.INFO)
+    if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
+        log.setLevel('INFO')
+        #run_all(directory, ncores=7)
         #run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
 
-
-        #run_one(DATADIR+'/iphas_jun2005/r459709_cat.fits')
-        #run_one(DATADIR+'/iphas_jun2005/r459710_cat.fits')
-        #run_one(DATADIR+'/iphas_jun2005/r459711_cat.fits')
-
-        """
-        #Testcases:
-        run_one(DATADIR+'/iphas_nov2003b/r375399_cat.fits')
-        run_one(DATADIR+'/iphas_nov2003b/r375400_cat.fits')
-        run_one(DATADIR+'/iphas_nov2003b/r375401_cat.fits')
-        run_one(DATADIR+'/iphas_nov2012/r948917_cat.fits')
-        run_one(DATADIR+'/iphas_oct2009/r703030_cat.fits')
-        """
-
-    # Production mode
-    else:
-        logging.basicConfig(level=logging.ERROR)
+    else:  # Production
+        log.setLevel('WARNING')
         run_all(directory, ncores=8)
