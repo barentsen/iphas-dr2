@@ -536,7 +536,6 @@ class DetectionCatalogue():
         max_x = 2048 - avoidance
         min_y = 1 + avoidance
         max_y = 4096 - avoidance
-
         truncated = ((self.concat('X_coordinate') < min_x)
                      | (self.concat('X_coordinate') > max_x)
                      | (self.concat('Y_coordinate') < min_y)
@@ -544,9 +543,23 @@ class DetectionCatalogue():
         return fits.Column(name='truncated', format='L', unit='Boolean',
                            array=truncated)
 
-    def column_badPix(self):
+    def column_badPix(self, col_ccd, col_x, col_y):
+        badpix = self.concat('Bad_pixels')
+        # The confidence map for dec2003 failed to mask out two bad columns,
+        # so we have this little hack to flag the spurious sources
+        if self.hdr('DATE-OBS')[0:7] == '2003-12':
+            log.info('Masking out')
+            bad_column = (
+                            ((col_ccd.array == 4) & (col_x.array > 548)
+                                & (col_x.array < 550))
+                            |
+                            ((col_ccd.array == 3) & (col_x.array > 1243)
+                                & (col_x.array < 1245) & (col_y.array > 2048))
+                         )
+            badpix[bad_column] = 99
+
         return fits.Column(name='badPix', format='E', unit='Pixels',
-                           array=self.concat('Bad_pixels'))
+                           array=badpix)
 
     def column_errBits(self, col_brightNeighb, col_deblend, col_saturated,
                        col_vignetted, col_truncated, col_badPix):
@@ -844,6 +857,8 @@ class DetectionCatalogue():
         col_ccd = self.column_ccd()
         col_seqNum = self.column_seqNum()
         col_ra, col_dec = self.column_radec()
+        col_x = self.column_x()
+        col_y = self.column_y()
         col_planeX = self.column_planeX()
         col_planeY = self.column_planeY()
 
@@ -853,7 +868,7 @@ class DetectionCatalogue():
         col_saturated = self.column_saturated()
         col_vignetted = self.column_vignetted(col_planeX, col_planeY)
         col_truncated = self.column_truncated()
-        col_badPix = self.column_badPix()
+        col_badPix = self.column_badPix(col_ccd, col_x, col_y)
         col_errBits = self.column_errBits(col_brightNeighb, col_deblend,
                                           col_saturated, col_vignetted,
                                           col_truncated, col_badPix)
@@ -864,8 +879,8 @@ class DetectionCatalogue():
                              col_ccd,
                              col_seqNum,
                              self.column_band(),
-                             self.column_x(),
-                             self.column_y(),
+                             col_x,
+                             col_y,
                              col_planeX,
                              col_planeY,
                              col_ra,
@@ -1030,7 +1045,9 @@ if __name__ == '__main__':
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
-        #run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
+        run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
+        run_one(DATADIR+'/iphas_dec2003/r381808_cat.fits')
+        
 
     else:  # Production
         log.setLevel('WARNING')
