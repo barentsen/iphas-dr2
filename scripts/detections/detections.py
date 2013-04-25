@@ -61,7 +61,7 @@ SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
 BSC_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
 BSC = fits.getdata(BSC_PATH, 1)
-BRIGHT_RA = BSC['_RAJ2000']
+BRIGHT_RA = BSC['_RAJ2000']  # Read coordinates and brightness into memory
 BRIGHT_DEC = BSC['_DEJ2000']
 BRIGHT_VMAG = BSC['Vmag']
 

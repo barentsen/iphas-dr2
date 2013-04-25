@@ -36,7 +36,7 @@ IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # How to execute stilts?
-STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar {0}'.format(
+STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
                                  os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
 
 ###########

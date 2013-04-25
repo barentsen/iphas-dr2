@@ -7,7 +7,7 @@ astrophysical source amongst the IPHAS observations. Moreover, the script
 will decide on the 'primary' (best) detection and add its sourceID to all
 the catalogues as the extra column 'primaryID'.
 
-Computing requirements: the densest strips need ~4h CPU and ~8 GB RAM.
+Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
 
 TODO
  * Test for correctness
@@ -146,8 +146,8 @@ class SeamMachine(object):
         """Writes a new catalogue with primaryID to disk."""
         # Write the (sourceID,primaryID)s to a table
         col_sourceID = fits.Column(name='sourceID', format='K', array=sourceID)
-        col_priSourceID = fits.Column(name='priSourceID', format='K', array=primaryID)
-        cols = fits.ColDefs([col_sourceID, col_priSourceID])
+        col_primaryID = fits.Column(name='primaryID', format='K', array=primaryID)
+        cols = fits.ColDefs([col_sourceID, col_primaryID])
         newtable = fits.new_table(cols)
         newtable.writeto(self.primaryid_file, clobber=True)
 
@@ -285,8 +285,8 @@ class SeamMachine(object):
             win = winning_template.copy()
 
             # Not matched
-            ids = np.array([matchdata[col][rowno] for col in sourceID_cols])
-            win[ids < 0] = False
+            sourceID = np.array([matchdata[col][rowno] for col in sourceID_cols])
+            win[sourceID < 0] = False
 
             if win.sum() > 1:
                 # Discard source with less bands
@@ -315,10 +315,10 @@ class SeamMachine(object):
                 log.warning('Object w/o clear winner in {0}'.format(self.fieldid))
 
             # index of the winner
-            winnerID = win.nonzero()[0][0]
+            winnerID = sourceID[win.nonzero()[0][0]]
             primary_ids.append(winnerID)
 
-            for candidate in ids[ids > 0]:
+            for candidate in sourceID[sourceID > 0]:
                 self.cache_set(candidate, winnerID)
 
         self.log_info('identified primaryIDs')
@@ -374,6 +374,8 @@ def run_strip(strip):
             except Exception, e:
                 log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (strip, IPHASQC['id'][idx], e))
 
+            break
+
     del CACHE[strip]  # Clear cache
     # We're done
     log.info('{0}: strip{1}: ENDED'.format(str(datetime.datetime.now())[0:19],
@@ -384,6 +386,7 @@ def run_all(lon1=30, lon2=210, ncores=2):
     """Seam the fields in all 10-degree wide longitude strips.
 
     Be aware that the densest strips need ~8 GB RAM each.
+    Set ncores to avoid swapping at all cost!
     """
     strips = np.arange(lon1, lon2+0.1, STRIPWIDTH)
     log.info('Seaming in longitude strips %s' % (strips))
