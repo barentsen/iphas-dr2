@@ -1,13 +1,14 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+Fix the World Coordinate System (WCS) for IPHAS fields with known problems.
+
 This script takes a list of IPHAS runs which are known to have a poor
 astrometric WCS solution. The script then provides an interactive display
-to allow the WCS parameters to be tuned using keyboard shortcuts.
-
-Author: Geert Barentsen
+to allow the astrometry to be compared against 2MASS, and allows the WCS
+parameters to be modified using buttons on the keyboard.
 """
 from __future__ import division, print_function
-
 import numpy as np
 import os
 import urllib2
@@ -16,21 +17,26 @@ from astropy.io import fits
 from astropy.io import votable
 from astropy.io import ascii
 from astropy import wcs
+from astropy import log
 from matplotlib import pyplot as plt
 
-"""
-CONSTANTS
-"""
+__author__ = 'Geert Barentsen'
+__copyright__ = 'Copyright, The Authors'
+__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
+
+
+################################
+# CONSTANTS & CONFIGURATION
+################################
 
 DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
 EXTS = [1, 2, 3, 4]  # Which extensions to expect in the fits catalogues?
 PXSCALE = 0.333  # Arcsec/pix of the CCD
 
 
-"""
-FUNCTIONS
-"""
-
+############
+# FUNCTIONS
+############
 
 def twomass_conesearch(ra, dec, radius):
     """
@@ -45,10 +51,9 @@ def twomass_conesearch(ra, dec, radius):
     return table.array['ra'], table.array['dec']
 
 
-"""
-CLASSES
-"""
-
+##########
+# CLASSES
+##########
 
 class SurveyExposure():
     """INT Wide Field Camera Exposure"""
@@ -156,6 +161,17 @@ class WCSTuner():
         self.shift_cd2_1, self.shift_cd2_2 = 0.0, 0.0
 
     def keypress(self, event):
+        """Adjusts WCS parameters by responding to keyboard events.
+
+        arrows: move CRPIX
+        []/'  : move CRPIX (fast)
+        1/2   : increase/decrease CD1_1
+        3/4   : increase/decrease CD1_2
+        5/6   : increase/decrease CD2_1
+        7/8   : increase/decrease CD2_2
+        r     : reset WCS
+        w     : write results
+        """
         stepsize = 0.15  # pixels, i.e. 0.05 arcsec
         if event.key == 'right':
             if self.ccd == 2:
@@ -243,7 +259,7 @@ class WCSTuner():
         out = open(filename_done, 'a')
         out.write(done)
         out.close()
-        print('Field has been marked done')
+        log.debug('Field has been marked done')
 
     def write(self):
         filename = 'wcs-fixes.csv'
@@ -270,7 +286,7 @@ class WCSTuner():
         out.write(csv+'\n')
         out.close()
 
-        print("Wrote to %s:\n%s" % (filename, csv))
+        log.info("Wrote to %s:\n%s" % (filename, csv))
 
     def mask(self, ra, dec, axnum):
         idx = ((ra > self.xlim[axnum][0]) & (ra < self.xlim[axnum][1])
@@ -278,12 +294,12 @@ class WCSTuner():
         return ra[idx], dec[idx]
 
     def start(self):
-        print('Preparing to show %s' % self.filename_bad)
+        log.debug('Preparing to show %s' % self.filename_bad)
         ra, dec = self.run_ref.radec()
         bad_ra, bad_dec = self.run_bad.radec()
         tm_ra, tm_dec = twomass_conesearch(np.median(ra), np.median(dec), 0.25)
 
-        print('Found %s 2MASS sources' % len(tm_ra))
+        log.debug('Found %s 2MASS sources' % len(tm_ra))
 
         lim = 60/3600.0
         self.xlim = [[ra.min(), ra.min()+2*lim],
@@ -303,11 +319,12 @@ class WCSTuner():
             ax.scatter(myra, mydec, marker='o', facecolor='None',
                        edgecolor='#888888', linewidth=0.5, s=10)
 
+            # Plot reference CCD as red circles
             myra, mydec = self.mask(ra, dec, i)
             ax.scatter(myra, mydec, marker='o', facecolor='None',
                        edgecolor='red', linewidth=0.5, s=10)
 
-            # Plot 2MASS
+            # Plot 2MASS as blue crosses
             myra, mydec = self.mask(tm_ra, tm_dec, i)
             ax.scatter(tm_ra, tm_dec, marker='x', facecolor='white',
                        edgecolor='blue', linewidth=0.5, s=90)
@@ -340,16 +357,24 @@ class WCSTuner():
         plt.draw()
 
 
-"""
-MAIN
-"""
+#######
+# MAIN
+#######
 
 if __name__ == '__main__':
+    log.setLevel('DEBUG')
 
-    done = ascii.read('runs-done.tbl')  # File listing runs already fixed
+    done = ascii.read('wcs-fixes.csv')  # File listing runs already fixed
     #for row in ascii.read('runs-todo.tbl'):
-    for row in ascii.read('needfix-extra.txt'):
-        if not row['catalogue'] in done['catalogue']:
-            tuner = WCSTuner(row['catalogue'], row['ref'], row['ccd'])
-            tuner.start()
-    print('All is done.')
+    for row in ascii.read('needfix.txt'):
+        # Have we already corrected this run/ccd combination?
+        myrun = int(row['catalogue'].split('/')[1].split('_')[0][1:])
+        if (myrun in done['RUN']
+                and row['ccd'] in done['CCD'][done['RUN'] == myrun]):
+            log.info('Skipping {0} CCD#{1}: already done'.format(myrun,
+                                                                 row['ccd']))
+            continue
+
+        tuner = WCSTuner(row['catalogue'], row['ref'], row['ccd'])
+        tuner.start()
+    log.info('All is done.')
