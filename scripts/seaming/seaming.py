@@ -374,7 +374,7 @@ def run_strip(strip):
             except Exception, e:
                 log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (strip, IPHASQC['id'][idx], e))
 
-            break
+            #break
 
     del CACHE[strip]  # Clear cache
     # We're done

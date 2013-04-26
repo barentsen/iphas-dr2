@@ -68,15 +68,14 @@ class Concatenator(object):
                                'strip{0}'.format(self.strip),
                                '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
-
+        # & (sourceID == primaryID) \
         param = {'stilts': STILTS,
                  'in': instring,
                  'icmd': """'select "(errBits < 100) \
                                       & pStar > 0.2 \
-                                      & (sourceID == priSourceID) \
                                       & l >= """+str(self.lon1)+""" \
                                       & l < """+str(self.lon2)+""""; \
-                             keepcols "sourceID ra dec l b mergedClass \
+                             keepcols "sourceID primaryID ra dec l b mergedClass \
                                        r rErr rClass i iErr iClass ha haErr haClass \
                                        brightNeighb deblend saturated vignetted \
                                        errBits reliable reliableStar fieldID"'""",
@@ -102,8 +101,8 @@ def run_strip(strip):
 
     # So which are our boundaries?
     # Note: we must allow an extree for border overlaps!
-    lon1 = strip - 1
-    lon2 = strip + 10 + 1
+    lon1 = strip - 0.8
+    lon2 = strip + 10 + 0.8
     cond_strip = (IPHASQC['is_pdr']
                   & (IPHASQC['l'] >= lon1)
                   & (IPHASQC['l'] < lon2))

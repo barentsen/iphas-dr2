@@ -187,6 +187,7 @@ addcol -desc "Worst seeing amongst the three bands." seeing "toFloat( maximum(ar
 
 # fieldID
 addcol fieldID "param$fieldID"
+addcol fieldGrade "param$fieldGrade"
 
 # Colours
 addcol -desc "(r' - i') colour" rmi "r - i"

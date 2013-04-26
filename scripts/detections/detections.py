@@ -13,11 +13,12 @@ celestial coordinates and adding flags to indicate quality problems.
 The script also checks the header for known errors and fixes the World
 Coordinate System (WCS) where necessary.
 
-This script will also produce a table called 'iphasRuns.csv' which
-can be used as index of all the available IPHAS exposures.
+This script will also produce a table called 'index.csv' which
+provides a table of all available IPHAS exposures.
+
+Computing requirements: 6h CPU on 8 cores. Low RAM.
 
 TODO
-- fix WCS of outstanding CCDs with bad astrometry;
 - look up confidence value for each star in the confidence maps.
 """
 

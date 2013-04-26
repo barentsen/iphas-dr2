@@ -63,10 +63,11 @@ class BandMerge():
     Class to read in iphasSource tables and perform a band-merge.
     """
 
-    def __init__(self, fieldid, run_ha, run_r, run_i,
+    def __init__(self, fieldid, fieldgrade, run_ha, run_r, run_i,
                  shift_ha=0.0, shift_r=0.0, shift_i=0.0):
         """Constructor"""
         self.fieldid = fieldid
+        self.fieldgrade = fieldgrade
         self.run_ha = run_ha
         self.run_r = run_r
         self.run_i = run_i
@@ -86,6 +87,7 @@ class BandMerge():
                   'runr': self.get_catalogue_path(self.run_r),
                   'runi': self.get_catalogue_path(self.run_i),
                   'runha': self.get_catalogue_path(self.run_ha),
+                  'fieldgrade': self.fieldgrade,
                   'fieldid': self.fieldid,
                   'shift_r': self.shift_r,
                   'shift_i': self.shift_i,
@@ -98,6 +100,7 @@ class BandMerge():
                   join1=always join2=always join3=always \
                   values1='ra dec' values2='ra dec' values3='ra dec' \
                   icmd1='setparam fieldID "{fieldid}";
+                         setparam fieldGrade "{fieldgrade}";
                          select "aperMag2Err > 0 & aperMag2Err < 1
                                  & aperMag3Err > 0 & aperMag3Err < 1";
                          replacecol peakMag  "toFloat(peakMag  + {shift_r})";
@@ -147,6 +150,7 @@ def run_one(fieldid):
 
     # Carry out the band-merging
     bm = BandMerge(fieldid,
+                   IPHASQC.field('qflag')[idx[0]],
                    IPHASQC.field('run_ha')[idx[0]],
                    IPHASQC.field('run_r')[idx[0]],
                    IPHASQC.field('run_i')[idx[0]],
@@ -196,9 +200,9 @@ if __name__ == '__main__':
         lon2 = 360
 
     if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-        #run_one('5089o_jun2005')
+        run_one('5089o_jun2005')
         #run_one('3561_nov2003')
-        run_all(lon1=lon1, lon2=lon2, ncores=7)
+        #run_all(lon1=lon1, lon2=lon2, ncores=7)
         #run_all(lon1=208, lon2=209, ncores=6)
     else:  # production
         run_all(lon1=lon1, lon2=lon2, ncores=8)
