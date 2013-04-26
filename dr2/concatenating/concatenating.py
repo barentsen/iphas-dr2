@@ -114,7 +114,6 @@ def run_strip(strip):
     concat.run()
 
 
-
 ###################
 # MAIN EXECUTION
 ###################

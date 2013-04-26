@@ -25,7 +25,7 @@ echo ------------------------------------------------------
 
 export PYTHONPATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/lib/python2.7/site-packages/
 export PATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/bin:$PATH
-cd /home/gb/dev/iphas-dr2/scripts/bandmerging
+cd /home/gb/dev/iphas-dr2/dr2/bandmerging
 nice python bandmerging.py $LON1 $LON2
 echo ------------------------------------------------------
 echo Job ends
