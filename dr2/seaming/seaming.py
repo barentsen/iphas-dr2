@@ -348,6 +348,10 @@ def run_strip(strip):
     # Note: we must allow FIELD_MAXDIST for border overlaps!
     lon1 = strip - FIELD_MAXDIST
     lon2 = strip + STRIPWIDTH + FIELD_MAXDIST
+
+    if strip == 30:  # Account for the tiny strip between 29-30 LON
+        lon1 = 25
+
     cond_strip = (IPHASQC['is_pdr']
                   & (IPHASQC['l'] >= lon1)
                   & (IPHASQC['l'] < lon2))
