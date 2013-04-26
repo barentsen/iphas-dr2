@@ -1,9 +1,8 @@
 #!/bin/sh -f                                                                    
-#PBS -N iphasBandMerging
 #PBS -m aeb 
 #PBS -M gb
-#PSB -l pmem=1gb
-#PBS -l nodes=1:ppn=8
+#PSB -l pmem=8gb
+#PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      
 #PBS -q cmain
 #PBS -l walltime=12:00:00
