@@ -10,6 +10,7 @@ the catalogues as the extra column 'primaryID'.
 Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
 
 TODO
+ * Prefer A-graded fields over B/C/D
  * Test for correctness
  * add partnerID (same-epoch partner field detection)
 """
@@ -421,6 +422,7 @@ if __name__ == "__main__":
         strip = int(sys.argv[1])
         run_strip(strip)
     else:
-        log.info('Running all strips')
-        run_strip(30)
+        print('Please give the strip number as argument')
+        #log.info('Running all strips')
+        #run_strip(30)
         #run_all(lon1=30, lon2=210, ncores=2)

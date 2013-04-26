@@ -8,7 +8,8 @@ field into band-merged catalogues, following the UKIDSS format.
 This script also applies the global calibration to the magnitudes!
 
 TODO:
- - add htmID?
+ * calibrate against panstarrs or apass?
+ * add htmID?
 """
 from __future__ import print_function, division
 import os

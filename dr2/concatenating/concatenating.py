@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Generates the final IPHAS data products."""
+"""Generates the final IPHAS data products.
+
+TODO:
+ * fieldID appears truncated if the first row has a short fieldID;
+"""
 from __future__ import division, print_function, unicode_literals
 import os
 import sys
