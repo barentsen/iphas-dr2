@@ -1,7 +1,6 @@
 #!/bin/sh -f                                                                    
 #PBS -m aeb 
 #PBS -M gb
-#PSB -l pmem=8gb
 #PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      
 #PBS -q cmain
