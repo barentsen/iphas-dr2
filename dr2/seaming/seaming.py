@@ -116,6 +116,7 @@ class SeamMachine(object):
         self.overlaps = self.overlaps()
         self.crossmatch()
         sourceID, primaryID = self.get_primaryID()
+        assert(len(sourceID) == len(primaryID))
         self.save(sourceID, primaryID)
         self.clean()
 
@@ -271,7 +272,7 @@ class SeamMachine(object):
         # This array keeps track of which candidates are still in the running
         winning_template = np.array([True for i in idx])
 
-        primary_ids = []  # will hold the key result
+        primaryID = []  # will hold the result
 
         for rowno in range(matchdata['sourceID_1'].size):
             mySourceID = matchdata['sourceID_1'][rowno]
@@ -279,50 +280,55 @@ class SeamMachine(object):
             # previous conclusion to ensure consistency
             if mySourceID in CACHE[self.strip]:
                 winnerID = self.cache_get(mySourceID)
-                del CACHE[self.strip][mySourceID]  # Save memory; info no longer needed
-                continue
+                del CACHE[self.strip][mySourceID]  # Save memory
+            else:
 
-            win = winning_template.copy()
+                win = winning_template.copy()
 
-            # Not matched
-            sourceID = np.array([matchdata[col][rowno] for col in sourceID_cols])
-            win[sourceID < 0] = False
-
-            if win.sum() > 1:
-                # Discard source with less bands
-                bands = np.array([matchdata[col][rowno]
-                                  for col in bands_cols[win]])
-                win[win.nonzero()[0][bands < bands.max()]] = False
-
-                # Discard sources with large errBits
-                errbits = np.array([matchdata[col][rowno]
-                                    for col in errBits_cols[win]])
-                win[win.nonzero()[0][errbits > errbits.min()]] = False
+                # Discard unmatched sources
+                sourceID = np.array([matchdata[col][rowno]
+                                     for col in sourceID_cols])
+                win[sourceID < 0] = False
 
                 if win.sum() > 1:
+                    # Discard source with few bands
+                    bands = np.array([matchdata[col][rowno]
+                                      for col in bands_cols[win]])
+                    win[win.nonzero()[0][bands < bands.max()]] = False
+
+                    # Discard sources with large errBits
+                    errbits = np.array([matchdata[col][rowno]
+                                        for col in errBits_cols[win]])
+                    win[win.nonzero()[0][errbits > errbits.min()]] = False
+
                     # Discard sources with poor seeing
                     seeing = np.array([matchdata[col][rowno]
                                        for col in seeing_cols[win]])
                     win[win.nonzero()[0][seeing > 1.2 * seeing.min()]] = False
 
-                    # Finally, the winner is the one closest to the optical axis
-                    raxis = np.array([matchdata[col][rowno]
-                                      for col in rAxis_cols[win]])
-                    win[win.nonzero()[0][raxis > raxis.min()]] = False
+                    if win.sum() > 1:
+                        # If there are still candidates left at this point
+                        # then the one closest to the optical axis wins
+                        raxis = np.array([matchdata[col][rowno]
+                                          for col in rAxis_cols[win]])
+                        win[win.nonzero()[0][raxis > raxis.min()]] = False
 
-            # This shouldn't happen
-            if win.sum() != 1:
-                log.warning('Object w/o clear winner in {0}'.format(self.fieldid))
+                # This shouldn't happen
+                if win.sum() != 1:
+                    self.log_warning('Object w/o clear winner in {0}'.format(
+                                                                self.fieldid))
 
-            # index of the winner
-            winnerID = sourceID[win.nonzero()[0][0]]
-            primary_ids.append(winnerID)
+                # index of the winner
+                winnerID = sourceID[win.nonzero()[0][0]]
 
-            for candidate in sourceID[sourceID > 0]:
-                self.cache_set(candidate, winnerID)
+                # Update cache
+                for candidate in sourceID[sourceID > 0][1:]:
+                    self.cache_set(candidate, winnerID)
 
-        self.log_info('identified primaryIDs')
-        return (matchdata['sourceID_1'], np.array(primary_ids))
+            primaryID.append(winnerID)
+
+        self.log_info('Finished identifying primaryIDs')
+        return (matchdata['sourceID_1'], np.array(primaryID))
 
 
 ###########
@@ -347,6 +353,8 @@ def run_strip(strip):
                   & (IPHASQC['l'] < lon2))
     n_fields = cond_strip.sum()  # How many fields are in our strip?
     n_processed = 0
+
+    #cond_strip = IPHASQC['id'] == '4342_jun2004'
 
     # Seam fields; do the best-seeing fields first!
     for idx in np.argsort(IPHASQC['seeing_max']):
@@ -410,5 +418,5 @@ if __name__ == "__main__":
         run_strip(strip)
     else:
         log.info('Running all strips')
-        run_strip(40)
-        #run_all(lon1=30, lon2=210, ncores=4)
+        run_strip(30)
+        #run_all(lon1=30, lon2=210, ncores=2)
