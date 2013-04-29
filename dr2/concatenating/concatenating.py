@@ -49,40 +49,52 @@ STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
 
 class Concatenator(object):
 
-    def __init__(self, fieldlist, strip):
-        self.fieldlist = fieldlist
+    def __init__(self, strip, lon1, lon2):
         self.strip = strip
-
-        self.lon1 = strip
-        self.lon2 = strip + 10
-        if self.lon1 == 30:
-            self.lon1 = 25
+        self.lon1 = lon1
+        self.lon2 = lon2
+        self.fieldlist = self.get_fieldlist()
 
         if not os.path.exists(DESTINATION):
             os.makedirs(DESTINATION)
 
         self.output_file = os.path.join(DESTINATION,
-                                        'strip{0}.fits'.format(strip))
+                                        'IPHAS-PSC-GLON-{0:.0f}-{1:.0f}.fits'.format(
+                                                    self.lon1, self.lon2))
+
+    def get_fieldlist(self):
+        # Which are our fields?
+        # Note: we must allow for border overlaps
+        cond_strip = (IPHASQC['is_pdr']
+                      & (IPHASQC['l'] >= (self.lon1 - 0.8))
+                      & (IPHASQC['l'] < (self.lon2 + 0.8)))
+        fieldlist = IPHASQC['id'][cond_strip]
+        log.info('Found {0} fields.'.format(len(fieldlist)))
+        return fieldlist
 
     def run(self):
         """Performs the concatenation of the strip."""
         instring = ''
         for field in self.fieldlist:
-            path = os.path.join(DATADIR, 
+            path = os.path.join(DATADIR,
                                'strip{0}'.format(self.strip),
                                '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
         # & (sourceID == primaryID) \
+        # Note: a bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
         param = {'stilts': STILTS,
                  'in': instring,
                  'icmd': """'select "(errBits < 100) \
                                       & pStar > 0.2 \
                                       & l >= """+str(self.lon1)+""" \
-                                      & l < """+str(self.lon2)+""""; \
-                             keepcols "sourceID primaryID ra dec l b mergedClass \
+                                      & l < """+str(self.lon2)+"""
+                                      & sourceID == primaryID"; \
+                             replacecol -utype S15 fieldID "fieldID"; \
+                             replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
+                             keepcols "sourceID ra dec l b mergedClass \
                                        r rErr rClass i iErr iClass ha haErr haClass \
                                        brightNeighb deblend saturated vignetted \
-                                       errBits reliable reliableStar fieldID"'""",
+                                       errBits reliable reliableStar fieldID fieldGrade"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
@@ -91,32 +103,27 @@ class Concatenator(object):
         status = os.system(mycmd)
         log.info('Concat: '+str(status))
         return status
-        
 
 
 ###########
 # FUNCTIONS
 ###########
 
-def run_strip(strip):
+def run_strip(strip, lon1, lon2):
     # Strips are defined by the start longitude of a 10 deg-wide strip
-    assert(strip in np.arange(30, 210+1, 10))
-    log.info('Concatenating strip {0}'.format(strip))
-
-    # So which are our boundaries?
-    # Note: we must allow an extree for border overlaps!
-    lon1 = strip - 0.8
-    lon2 = strip + 10 + 0.8
-    cond_strip = (IPHASQC['is_pdr']
-                  & (IPHASQC['l'] >= lon1)
-                  & (IPHASQC['l'] < lon2))
-
-    fieldlist = IPHASQC['id'][cond_strip]
-    log.info('Found {0} fields.'.format(len(fieldlist)))
-
-    concat = Concatenator(fieldlist, strip)
+    #assert(strip in np.arange(30, 210+1, 10))
+    log.info('Concatenating L={0}-{1}'.format(lon1, lon2))
+    concat = Concatenator(strip, lon1, lon2)
     concat.run()
 
+
+def run_all():
+    for strip in np.arange(20, 210+1, 10):
+        if strip == 20:  # No sources in glon 20-25
+            run_strip(30, 25, 30)
+        else:
+            run_strip(strip, strip, strip+5)
+            run_strip(strip, strip+5, strip+10)
 
 ###################
 # MAIN EXECUTION
@@ -124,10 +131,14 @@ def run_strip(strip):
 
 if __name__ == "__main__":
 
+    """
     # Which longitude range to process?
     if len(sys.argv) > 1:
         strip = int(sys.argv[1])
     else:
         raise Exception('Missing longitude strip argument')
+    """
+    #run_strip(strip)
+    #run_strip(30, 20, 25)
 
-    run_strip(strip)
+    run_all()
