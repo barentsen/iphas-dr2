@@ -2,16 +2,13 @@
 # -*- coding: utf-8 -*-
 """Identifies duplicate detections in the IPHAS catalogue.
 
-This script will identify all the individual detections for a single
-astrophysical source amongst the IPHAS observations. Moreover, the script
-will decide on the 'primary' (best) detection and add its sourceID to all
-the catalogues as the extra column 'primaryID'.
+This script will identify all the detections for a single astrophysical source
+amongst the IPHAS observations using stilts crossmatching.
+Using this information. the script will decide on the 'primary' (best)
+detection and the 'partner' (same night) detection.
+Finally, this information is then added to the bandmerged catalogues.
 
 Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
-
-TODO
- * Test for correctness
- * add partnerID (same-epoch partner field detection)
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -103,7 +100,9 @@ class SeamMachine(object):
                                                                     strip,
                                                                     fieldid))
         self.primaryid_file = os.path.join(TMPDIR,
-                                           'seamids_{0}_{1}.fits'.format(strip, fieldid))
+                                           'seamids_{0}_{1}.fits'.format(
+                                                                   strip,
+                                                                   fieldid))
         # Where to store the results?
         self.output_dir = os.path.join(DESTINATION, 'strip{0}'.format(strip))
         if not os.path.exists(self.output_dir):
@@ -258,7 +257,6 @@ class SeamMachine(object):
         return status
 
     def cache_get(self, sourceID):
-        #return int(CACHE[self.strip][str(sourceID)])
         return CACHE[self.strip][sourceID]
 
     def cache_set(self, sourceID, primaryID):
@@ -326,7 +324,10 @@ class SeamMachine(object):
             sourceID = np.array([matchdata[col][rowno]
                                  for col in sourceID_cols])
             mySourceID = sourceID[0]  # sourceID of the current row
-            nObs.append( (sourceID > 0).sum() ) # Number of observations
+
+            # Count number of observations
+            n = (sourceID > 0).sum()
+            nObs.append(n)
 
             # First, identify the partnerID
             mjd = np.array([matchdata[col][rowno] for col in rMJD_cols])
@@ -448,8 +449,8 @@ def run_strip(strip):
     n_fields = cond_strip.sum()  # How many fields are in our strip?
     n_processed = 0
 
-    #cond_strip = IPHASQC['id'] == '4342_jun2004'
-    #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')  
+    # Testcase in strip 215:
+    #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')
 
     # Seam fields; do the best-seeing fields first!
     for idx in np.argsort(IPHASQC['seeing_max']):
@@ -474,9 +475,9 @@ def run_strip(strip):
                 s.run()
             except SeamingException, e:
                 log.error(str(e))
-            #except Exception, e:
-            #    log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
-            #                                    strip, IPHASQC['id'][idx], e))
+            except Exception, e:
+                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
+                                                strip, IPHASQC['id'][idx], e))
 
     del CACHE[strip]  # Clear cache
     # We're done

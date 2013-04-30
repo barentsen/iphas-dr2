@@ -43,16 +43,19 @@ SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
                                  os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
 
+# Width of the Galactic Plane strip to process
+STRIPWIDTH = 5  # degrees galactic longitude
+
 ###########
 # CLASSES
 ###########
 
 class Concatenator(object):
 
-    def __init__(self, strip, lon1, lon2):
+    def __init__(self, strip):
         self.strip = strip
-        self.lon1 = lon1
-        self.lon2 = lon2
+        self.lon1 = strip
+        self.lon2 = strip + STRIPWIDTH
         self.fieldlist = self.get_fieldlist()
 
         if not os.path.exists(DESTINATION):
@@ -119,23 +122,16 @@ class Concatenator(object):
 # FUNCTIONS
 ###########
 
-def run_one(lon1):
-    if lon1 < 30:
-        strip = 30
-    else:
-        strip = lon1 - (lon1 % 10)
-
-    lon2 = lon1 + 5
-
+def run_one(strip):
     # Strips are defined by the start longitude of a 10 deg-wide strip
     #assert(strip in np.arange(30, 210+1, 10))
-    log.info('Concatenating L={0}-{1}'.format(lon1, lon2))
-    concat = Concatenator(strip, lon1, lon2)
+    log.info('Concatenating L={0}'.format(strip))
+    concat = Concatenator(strip)
     concat.run()
 
 
 def run_all(ncores=2):
-    longitudes = np.arange(25, 215+1, 5)[::-1]
+    longitudes = np.arange(25, 215+1, STRIPWIDTH)[::-1]
     # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
     p.map(run_one, longitudes)
@@ -146,5 +142,5 @@ def run_all(ncores=2):
 
 if __name__ == "__main__":
 
-    run_all(4)
-    #run_one(215)
+    #run_all(4)
+    run_one(215)
