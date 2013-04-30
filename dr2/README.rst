@@ -18,33 +18,9 @@ The processing scripts produce binary FITS tables in the following directories:
               bandmerged/  [182 GB; ~144 CPU hours]
               seamed/      [TBC]
               concatenated/
-                           strip30.fits   [2.1 GB]
-                           strip130.fits  [0.6 GB]
-                           strip140.fits  [0.4 GB]
-                           strip160.fits  [0.5 GB]
-                           strip200.fits  [0.5 GB]
-                           strip210.fits  [0.3 GB]
+                           iphas-dr2-psc-glon025.fits
+                           iphas-dr2-psc-glon030.fits
+                           ...
+                           iphas-dr2-psc-glon215.fits
 
-Open issues
------------
 
-Critical:
- * Fix WCS of ~50 outstanding CCDs. [1 day]
- * Fix bad column issue in dec2003 data. [1 day]
- * Relax vignetting constraint. [0.1 day]
- * Add IPHAS object identifier strings. [0.1 day]
-
-Necessary:
- * Automated tests (validation) of data products. [2 days?]
- * Discard fields with poor calibration. [2 days?]
- * Document the files and columns on a webpage. [1 day]
-
-Optional:
- * Add (r2, i2, ha2) columns. [1 day]
- * Optimize bright neighbour flag. [1 day]
-
- Challenges
- ----------
-  * Computing power with high I/O throughput.
-  * Disk space on desktop.
-  * Hosting 20+ GB of catalogues locally.

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """Concatenates the source lists into the final "Primary Source Catalogue".
 
-
+TODO
+ * Offer a 'full' and 'light' version?
 """
 from __future__ import division, print_function, unicode_literals
 import os
-import sys
 import numpy as np
 from multiprocessing import Pool
 from astropy.io import fits
@@ -23,15 +23,13 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
 # CONSTANTS & CONFIGURATION
 #############################
 
-HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-    # Where are the pipeline-reduced catalogues?
-    DATADIR = "/home/gb/tmp/iphas-dr2/seamed"
-    # Where to write the output catalogues?
-    DESTINATION = "/home/gb/tmp/iphas-dr2/concatenated"
-else:  # production
-    DATADIR = "/car-data/gb/iphas-dr2/seamed"
-    DESTINATION = "/car-data/gb/iphas-dr2/concatenated"
+DEBUGMODE = False
+
+# Where are the seamedd catalogues?
+DATADIR = "/car-data/gb/iphas-dr2/seamed"
+
+# Where to write the output?
+DESTINATION = "/car-data/gb/iphas-dr2/concatenated"
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -41,10 +39,17 @@ SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # How to execute stilts?
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                 os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
+                                os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
 
 # Width of the Galactic Plane strip to process
 STRIPWIDTH = 5  # degrees galactic longitude
+
+HOSTNAME = os.uname()[1]
+if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
+    DEBUGMODE = True
+    DATADIR = "/home/gb/tmp/iphas-dr2/seamed"
+    DESTINATION = "/home/gb/tmp/iphas-dr2/concatenated"
+
 
 ###########
 # CLASSES
@@ -81,8 +86,8 @@ class Concatenator(object):
         instring = ''
         for field in self.fieldlist:
             path = os.path.join(DATADIR,
-                               'strip{0}'.format(self.strip),
-                               '{0}.fits'.format(field))
+                                'strip{0}'.format(self.strip),
+                                '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
         # & (sourceID == primaryID) \
         # Note: a bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
@@ -101,10 +106,11 @@ class Concatenator(object):
                                        rmi rmha \
                                        r rErr rAperMag3 rClass rMJD \
                                        i iErr iAperMag3 iClass iMJD iXi iEta \
-                                       ha haErr haAperMag3 haClass haMJD haXi haEta \
+                                       ha haErr haAperMag3 haClass haMJD \
+                                       haXi haEta \
                                        haPeakMag haPeakMagErr haClassStat \
-                                       brightNeighb deblend saturated vignetted \
-                                       errBits reliable reliableStar \
+                                       brightNeighb deblend saturated \
+                                       vignetted errBits reliable reliableStar \
                                        fieldID fieldGrade night seeing \
                                        nObs r2 rErr2 i2 iErr2 \
                                        ha2 haErr2 errBits2"'""",
@@ -141,6 +147,7 @@ def run_all(ncores=2):
 ###################
 
 if __name__ == "__main__":
-
-    #run_all(4)
-    run_one(215)
+    if DEBUGMODE:
+        run_one(215)
+    else:
+        run_all(4)
