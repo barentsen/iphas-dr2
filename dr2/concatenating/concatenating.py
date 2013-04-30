@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Generates the final IPHAS data products.
+"""Concatenates the source lists into the final "Primary Source Catalogue".
 
-TODO:
- * fieldID appears truncated if the first row has a short fieldID;
+
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -133,7 +132,7 @@ def run_one(lon1):
     concat.run()
 
 
-def run_all(ncores=8):
+def run_all(ncores=2):
     longitudes = np.arange(25, 215+1, 5)[::-1]
     # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
@@ -145,5 +144,5 @@ def run_all(ncores=8):
 
 if __name__ == "__main__":
 
-    run_all(8)
+    run_all(4)
     #run_one(215)
