@@ -1,12 +1,12 @@
 #!/bin/sh -f    
-#PBS -N iphas-detections                                                               
+#PBS -N iphas-concatenating                                                        
 #PBS -m aeb 
 #PBS -M gb
 #PSB -l pmem=8gb
 #PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      
 #PBS -q cmain
-#PBS -l walltime=23:59:00                                                       
+#PBS -l walltime=06:00:00                                                       
 
 echo $1
 

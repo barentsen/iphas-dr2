@@ -59,8 +59,8 @@ class Concatenator(object):
             os.makedirs(DESTINATION)
 
         self.output_file = os.path.join(DESTINATION,
-                                        'IPHAS-PSC-GLON-{0:.0f}-{1:.0f}.fits'.format(
-                                                    self.lon1, self.lon2))
+                                        'iphas-dr2-psc-glon{0:03.0f}.fits'.format(
+                                                    self.lon1))
 
     def get_fieldlist(self):
         # Which are our fields?
@@ -85,16 +85,23 @@ class Concatenator(object):
         param = {'stilts': STILTS,
                  'in': instring,
                  'icmd': """'select "(errBits < 100) \
-                                      & pStar > 0.2 \
+                                      & (pStar > 0.2 || pGalaxy > 0.2) \
                                       & l >= """+str(self.lon1)+""" \
                                       & l < """+str(self.lon2)+"""
                                       & sourceID == primaryID"; \
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
-                             keepcols "sourceID ra dec l b mergedClass \
-                                       r rErr rClass i iErr iClass ha haErr haClass \
+                             keepcols "sourceID ra dec l b \
+                                       rmi rmha \
+                                       r rErr rClass rMJD \
+                                       i iErr iClass iMJD iXi iEta \
+                                       ha haErr haClass haMJD haXi haEta \
+                                       haPeakMag haPeakMagErr haClassStat \
+                                       mergedClass mergedClassStat \
+                                       pStar pGalaxy \
                                        brightNeighb deblend saturated vignetted \
-                                       errBits reliable reliableStar fieldID fieldGrade"'""",
+                                       errBits reliable reliableStar \
+                                       fieldID fieldGrade night seeing"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
@@ -118,7 +125,7 @@ def run_strip(strip, lon1, lon2):
 
 
 def run_all():
-    for strip in np.arange(20, 210+1, 10):
+    for strip in np.arange(20, 210+1, 10)[::-1]:
         if strip == 20:  # No sources in glon 20-25
             run_strip(30, 25, 30)
         else:
