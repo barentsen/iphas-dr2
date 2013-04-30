@@ -9,9 +9,10 @@ from __future__ import division, print_function, unicode_literals
 import os
 import sys
 import numpy as np
+from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
-log.setLevel('DEBUG')
+log.setLevel('INFO')
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -66,7 +67,7 @@ class Concatenator(object):
         # Which are our fields?
         # Note: we must allow for border overlaps
         cond_strip = (IPHASQC['is_pdr']
-                      & IPHASQC['qflag'] != 'D'
+                      & (IPHASQC['qflag'] != 'D')
                       & (IPHASQC['l'] >= (self.lon1 - 0.8))
                       & (IPHASQC['l'] < (self.lon2 + 0.8)))
         fieldlist = IPHASQC['id'][cond_strip]
@@ -93,13 +94,13 @@ class Concatenator(object):
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              keepcols "sourceID ra dec l b \
+                                       mergedClass mergedClassStat \
+                                       pStar pGalaxy \
                                        rmi rmha \
                                        r rErr rAperMag3 rClass rMJD \
                                        i iErr iAperMag3 iClass iMJD iXi iEta \
                                        ha haErr haAperMag3 haClass haMJD haXi haEta \
                                        haPeakMag haPeakMagErr haClassStat \
-                                       mergedClass mergedClassStat \
-                                       pStar pGalaxy \
                                        brightNeighb deblend saturated vignetted \
                                        errBits reliable reliableStar \
                                        fieldID fieldGrade night seeing"'""",
@@ -117,7 +118,14 @@ class Concatenator(object):
 # FUNCTIONS
 ###########
 
-def run_strip(strip, lon1, lon2):
+def run_one(lon1):
+    if lon1 < 30:
+        strip = 30
+    else:
+        strip = lon1 - (lon1 % 10)
+
+    lon2 = lon1 + 5
+
     # Strips are defined by the start longitude of a 10 deg-wide strip
     #assert(strip in np.arange(30, 210+1, 10))
     log.info('Concatenating L={0}-{1}'.format(lon1, lon2))
@@ -125,13 +133,11 @@ def run_strip(strip, lon1, lon2):
     concat.run()
 
 
-def run_all():
-    for strip in np.arange(20, 210+1, 10)[::-1]:
-        if strip == 20:  # No sources in glon 20-25
-            run_strip(30, 25, 30)
-        else:
-            run_strip(strip, strip, strip+5)
-            run_strip(strip, strip+5, strip+10)
+def run_all(ncores=8):
+    longitudes = np.arange(25, 215+1, 5)[::-1]
+    # Run the processing for each pipeline catalogue
+    p = Pool(processes=ncores)
+    p.map(run_one, longitudes)
 
 ###################
 # MAIN EXECUTION
@@ -139,14 +145,5 @@ def run_all():
 
 if __name__ == "__main__":
 
-    """
-    # Which longitude range to process?
-    if len(sys.argv) > 1:
-        strip = int(sys.argv[1])
-    else:
-        raise Exception('Missing longitude strip argument')
-    """
-    #run_strip(strip)
-    #run_strip(30, 20, 25)
-
-    run_all()
+    run_all(8)
+    #run_one(215)
