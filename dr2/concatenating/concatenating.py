@@ -66,6 +66,7 @@ class Concatenator(object):
         # Which are our fields?
         # Note: we must allow for border overlaps
         cond_strip = (IPHASQC['is_pdr']
+                      & IPHASQC['qflag'] != 'D'
                       & (IPHASQC['l'] >= (self.lon1 - 0.8))
                       & (IPHASQC['l'] < (self.lon2 + 0.8)))
         fieldlist = IPHASQC['id'][cond_strip]
