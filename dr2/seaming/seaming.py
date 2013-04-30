@@ -10,7 +10,6 @@ the catalogues as the extra column 'primaryID'.
 Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
 
 TODO
- * Prefer A-graded fields over B/C/D
  * Test for correctness
  * add partnerID (same-epoch partner field detection)
 """
@@ -61,7 +60,7 @@ IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 FIELD_MAXDIST = 0.8  # degrees
 
 # Width of the Galactic Plane strip to process
-STRIPWIDTH = 10  # degrees galactic longitude
+STRIPWIDTH = 5  # degrees galactic longitude
 
 # Detections within this radius will be considered identical
 MATCHING_DISTANCE = 0.5  # arcsec
@@ -116,9 +115,10 @@ class SeamMachine(object):
         """Main function."""
         self.overlaps = self.overlaps()
         self.crossmatch()
-        sourceID, primaryID = self.get_primaryID()
-        assert(len(sourceID) == len(primaryID))
-        self.save(sourceID, primaryID)
+        sourceID, matchinfo = self.get_primaryID()
+        assert(len(sourceID) == len(matchinfo['primaryID']))  # sanity check
+        assert(len(sourceID) == len(matchinfo['partnerID']))
+        self.save(sourceID, matchinfo)
         self.clean()
 
     def clean(self):
@@ -144,12 +144,40 @@ class SeamMachine(object):
                                             self.strip,
                                             message))
 
-    def save(self, sourceID, primaryID):
+    def save(self, sourceID, matchinfo):
         """Writes a new catalogue with primaryID to disk."""
         # Write the (sourceID,primaryID)s to a table
         col_sourceID = fits.Column(name='sourceID', format='K', array=sourceID)
-        col_primaryID = fits.Column(name='primaryID', format='K', array=primaryID)
-        cols = fits.ColDefs([col_sourceID, col_primaryID])
+        col_nObs = fits.Column(name='nObs', format='B', 
+                               array=matchinfo['nObs'])
+        col_primaryID = fits.Column(name='primaryID', format='K',
+                                    array=matchinfo['primaryID'])
+        col_partnerID = fits.Column(name='partnerID', format='K',
+                                    null=-9223372036854775808,
+                                    array=matchinfo['partnerID'])
+        col_r2 = fits.Column(name='r2', format='E', unit='Magnitude',
+                             array=matchinfo['r2'])
+        col_rErr2 = fits.Column(name='rErr2', format='E', unit='Sigma',
+                                array=matchinfo['rErr2'])
+        col_i2 = fits.Column(name='i2', format='E', unit='Magnitude',
+                             array=matchinfo['i2'])
+        col_iErr2 = fits.Column(name='iErr2', format='E', unit='Sigma',
+                                array=matchinfo['iErr2'])
+        col_ha2 = fits.Column(name='ha2', format='E', unit='Magnitude',
+                              array=matchinfo['ha2'])
+        col_haErr2 = fits.Column(name='haErr2', format='E', unit='Sigma',
+                                 array=matchinfo['haErr2'])
+        col_errBits2 = fits.Column(name='errBits2', format='J',
+                                   null=-2147483648, unit='bitmask',
+                                   array=matchinfo['errBits2'])
+        cols = fits.ColDefs([col_sourceID,
+                             col_nObs,
+                             col_primaryID,
+                             col_partnerID,
+                             col_r2, col_rErr2,
+                             col_i2, col_iErr2,
+                             col_ha2, col_haErr2,
+                             col_errBits2])
         newtable = fits.new_table(cols)
         newtable.writeto(self.primaryid_file, clobber=True)
 
@@ -192,7 +220,8 @@ class SeamMachine(object):
         """Return the stilts command to crossmatch overlapping fields."""
         # Operations to perform on all tables
         icmd = 'addcol bands "sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1))"; '
-        icmd += 'keepcols "sourceID fieldID ra dec bands errBits seeing rAxis"'
+        icmd += """keepcols "sourceID fieldID ra dec bands errBits seeing \
+                             rAxis rMJD r rErr i iErr ha haErr" """
         # Keywords in stilts command
         config = {'STILTS': STILTS,
                   'MATCHING_DISTANCE': MATCHING_DISTANCE,
@@ -236,7 +265,7 @@ class SeamMachine(object):
         CACHE[self.strip][sourceID] = primaryID
 
     def get_primaryID(self):
-        """Returns the tuple (sourceID,primaryID).
+        """Returns the tuple (sourceID, primaryID, partnerinfo).
 
         The ranking criteria are
           1. prefer filter coverage (3 > 2 > 1);
@@ -244,12 +273,13 @@ class SeamMachine(object):
           3. prefer best seeing amongst the filters
              (but tolerate up to 20% of the best value);
           4. prefer smallest distance from optical axis.
-        """
-        # Open the file with the sources crossmatched across fields
-        # Memmap=True increases speed by a factor ~several
 
+        The function is optimised for speed at the expense of readability.
+        """
+
+        # Open the file with the sources crossmatched across fields
         try:
-            crossmatch = fits.getdata(self.crossmatch_file, 1)
+            crossmatch = fits.getdata(self.crossmatch_file, 1, Memmap=True)
         except OSError, e:  # Anticipate a "No such file" error
             log.warning('Failed to open {0}: {1}'.format(self.crossmatch_file,
                                                          e))
@@ -264,20 +294,72 @@ class SeamMachine(object):
         errBits_cols = np.array(['errBits_{0}'.format(i) for i in idx])
         seeing_cols = np.array(['seeing_{0}'.format(i) for i in idx])
         rAxis_cols = np.array(['rAxis_{0}'.format(i) for i in idx])
+        rMJD_cols = np.array(['rMJD_{0}'.format(i) for i in idx])
+        r_cols = np.array(['r_{0}'.format(i) for i in idx])
+        rErr_cols = np.array(['rErr_{0}'.format(i) for i in idx])
+        i_cols = np.array(['i_{0}'.format(i) for i in idx])
+        iErr_cols = np.array(['iErr_{0}'.format(i) for i in idx])
+        ha_cols = np.array(['ha_{0}'.format(i) for i in idx])
+        haErr_cols = np.array(['haErr_{0}'.format(i) for i in idx])
 
         # Save in memory to speed up what follows
         matchdata = {}
         for col in np.concatenate((sourceID_cols, bands_cols, errBits_cols,
-                                   seeing_cols, rAxis_cols)):
+                                   seeing_cols, rAxis_cols, rMJD_cols,
+                                   r_cols, rErr_cols,
+                                   i_cols, iErr_cols,
+                                   ha_cols, haErr_cols)):
             matchdata[col] = crossmatch[col]
 
         # This array keeps track of which candidates are still in the running
         winning_template = np.array([True for i in idx])
 
         primaryID = []  # will hold the result
+        partnerID = []
+        partner_r, partner_rErr = [], []
+        partner_i, partner_iErr = [], []
+        partner_ha, partner_haErr = [], []
+        partner_errBits = []
+        nObs = []
 
         for rowno in range(matchdata['sourceID_1'].size):
-            mySourceID = matchdata['sourceID_1'][rowno]
+            sourceID = np.array([matchdata[col][rowno]
+                                 for col in sourceID_cols])
+            mySourceID = sourceID[0]  # sourceID of the current row
+            nObs.append( (sourceID > 0).sum() ) # Number of observations
+
+            # First, identify the partnerID
+            mjd = np.array([matchdata[col][rowno] for col in rMJD_cols])
+            cond_partner = np.abs(mjd[1:] - mjd[0]) < 0.5  # within 30 mins
+            if cond_partner.sum() > 0:  # Partner found!
+                # Index 0 is the source itself!
+                idx_partner = 1 + cond_partner.nonzero()[0][0]
+                partnerID.append(sourceID[idx_partner])
+
+                partner_r.append(
+                    matchdata[r_cols[idx_partner]][rowno])
+                partner_rErr.append(
+                    matchdata[rErr_cols[idx_partner]][rowno])
+                partner_i.append(
+                    matchdata[i_cols[idx_partner]][rowno])
+                partner_iErr.append(
+                    matchdata[iErr_cols[idx_partner]][rowno])
+                partner_ha.append(
+                    matchdata[ha_cols[idx_partner]][rowno])
+                partner_haErr.append(
+                    matchdata[haErr_cols[idx_partner]][rowno])
+                partner_errBits.append(
+                    matchdata[errBits_cols[idx_partner]][rowno])
+            else:
+                partnerID.append(-9223372036854775808)  # null value
+                partner_r.append(np.nan)
+                partner_rErr.append(np.nan)
+                partner_i.append(np.nan)
+                partner_iErr.append(np.nan)
+                partner_ha.append(np.nan)
+                partner_haErr.append(np.nan)
+                partner_errBits.append(-2147483648)  # null value
+
             # If we have encountered the source before, we enforce the
             # previous conclusion to ensure consistency
             if mySourceID in CACHE[self.strip]:
@@ -285,11 +367,8 @@ class SeamMachine(object):
                 del CACHE[self.strip][mySourceID]  # Save memory
             else:
 
-                win = winning_template.copy()
-
                 # Discard unmatched sources
-                sourceID = np.array([matchdata[col][rowno]
-                                     for col in sourceID_cols])
+                win = winning_template.copy()
                 win[sourceID < 0] = False
 
                 if win.sum() > 1:
@@ -330,7 +409,18 @@ class SeamMachine(object):
             primaryID.append(winnerID)
 
         self.log_info('Finished identifying primaryIDs')
-        return (matchdata['sourceID_1'], np.array(primaryID))
+
+        matchinfo = {'nObs': np.array(nObs),
+                     'primaryID': np.array(primaryID),
+                     'partnerID':  np.array(partnerID),
+                     'r2': np.array(partner_r),
+                     'rErr2': np.array(partner_rErr),
+                     'i2': np.array(partner_i),
+                     'iErr2': np.array(partner_iErr),
+                     'ha2': np.array(partner_ha),
+                     'haErr2': np.array(partner_haErr),
+                     'errBits2': np.array(partner_errBits)}
+        return (matchdata['sourceID_1'], matchinfo)
 
 
 ###########
@@ -340,7 +430,7 @@ class SeamMachine(object):
 def run_strip(strip):
     """Seams the fields in a given longitude strip."""
     # Strips are defined by the start longitude of a 10 deg-wide strip
-    assert(strip in np.arange(30, 210+1, STRIPWIDTH))
+    assert(strip in np.arange(25, 215+1, STRIPWIDTH))
     log.info('{0}: strip{1}: START'.format(str(datetime.datetime.now())[0:19],
                                            strip))
     # Intialize caching dictionary
@@ -351,9 +441,6 @@ def run_strip(strip):
     lon1 = strip - FIELD_MAXDIST
     lon2 = strip + STRIPWIDTH + FIELD_MAXDIST
 
-    if strip == 30:  # Account for the tiny strip between 29-30 LON
-        lon1 = 25
-
     cond_strip = (IPHASQC['is_pdr']
                   & (IPHASQC['qflag'] != 'D')
                   & (IPHASQC['l'] >= lon1)
@@ -362,6 +449,7 @@ def run_strip(strip):
     n_processed = 0
 
     #cond_strip = IPHASQC['id'] == '4342_jun2004'
+    #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')  
 
     # Seam fields; do the best-seeing fields first!
     for idx in np.argsort(IPHASQC['seeing_max']):
@@ -386,11 +474,9 @@ def run_strip(strip):
                 s.run()
             except SeamingException, e:
                 log.error(str(e))
-            except Exception, e:
-                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
-                                                strip, IPHASQC['id'][idx], e))
-
-            #break
+            #except Exception, e:
+            #    log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
+            #                                    strip, IPHASQC['id'][idx], e))
 
     del CACHE[strip]  # Clear cache
     # We're done
@@ -398,7 +484,7 @@ def run_strip(strip):
                                            strip))
 
 
-def run_all(lon1=30, lon2=210, ncores=2):
+def run_all(lon1=25, lon2=215, ncores=2):
     """Seam the fields in all 10-degree wide longitude strips.
 
     Be aware that the densest strips need ~8 GB RAM each.
@@ -425,7 +511,4 @@ if __name__ == "__main__":
         strip = int(sys.argv[1])
         run_strip(strip)
     else:
-        print('Please give the strip number as argument')
-        #log.info('Running all strips')
-        #run_strip(30)
-        #run_all(lon1=30, lon2=210, ncores=2)
+        print('Give the strip number as the first argument')

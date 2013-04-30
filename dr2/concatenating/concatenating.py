@@ -102,7 +102,9 @@ class Concatenator(object):
                                        haPeakMag haPeakMagErr haClassStat \
                                        brightNeighb deblend saturated vignetted \
                                        errBits reliable reliableStar \
-                                       fieldID fieldGrade night seeing"'""",
+                                       fieldID fieldGrade night seeing \
+                                       nObs r2 rErr2 i2 iErr2 \
+                                       ha2 haErr2 errBits2"'""",
                  'out': self.output_file}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
