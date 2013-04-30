@@ -93,9 +93,9 @@ class Concatenator(object):
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              keepcols "sourceID ra dec l b \
                                        rmi rmha \
-                                       r rErr rClass rMJD \
-                                       i iErr iClass iMJD iXi iEta \
-                                       ha haErr haClass haMJD haXi haEta \
+                                       r rErr rAperMag3 rClass rMJD \
+                                       i iErr iAperMag3 iClass iMJD iXi iEta \
+                                       ha haErr haAperMag3 haClass haMJD haXi haEta \
                                        haPeakMag haPeakMagErr haClassStat \
                                        mergedClass mergedClassStat \
                                        pStar pGalaxy \
