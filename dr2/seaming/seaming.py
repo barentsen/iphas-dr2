@@ -179,6 +179,7 @@ class SeamMachine(object):
         dra = (self.ra - IPHASQC['ra']) * np.cos(np.radians(self.dec))
         d = (ddec ** 2 + dra ** 2) ** 0.5
         idx = (IPHASQC['is_pdr']
+               & (IPHASQC['qflag'] != 'D')
                & (d < FIELD_MAXDIST)
                & (self.fieldid != IPHASQC['id']))
         return IPHASQC['id'][idx]
@@ -354,6 +355,7 @@ def run_strip(strip):
         lon1 = 25
 
     cond_strip = (IPHASQC['is_pdr']
+                  & (IPHASQC['qflag'] != 'D')
                   & (IPHASQC['l'] >= lon1)
                   & (IPHASQC['l'] < lon2))
     n_fields = cond_strip.sum()  # How many fields are in our strip?
@@ -385,7 +387,8 @@ def run_strip(strip):
             except SeamingException, e:
                 log.error(str(e))
             except Exception, e:
-                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (strip, IPHASQC['id'][idx], e))
+                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
+                                                strip, IPHASQC['id'][idx], e))
 
             #break
 
