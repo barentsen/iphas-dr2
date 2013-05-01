@@ -15,8 +15,7 @@ log.setLevel('INFO')
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
-               'Cambridge Astronomical Survey Unit']
+__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 
 
 #############################

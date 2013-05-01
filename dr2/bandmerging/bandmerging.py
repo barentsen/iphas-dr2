@@ -21,8 +21,7 @@ from multiprocessing import Pool
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
-               'Cambridge Astronomical Survey Unit']
+__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 
 
 #############################
@@ -44,7 +43,7 @@ SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
 # How to execute stilts?
 STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                 os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
+                                os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
@@ -188,17 +187,20 @@ def run_all(lon1=20, lon2=220, ncores=4):
 
 if __name__ == '__main__':
     """Bandmerges fields in the IPHAS survey within a given gal. long. range.
-    
-    Arguments:
-    lon1 -- begin galactic longitude (default: 0)
-    lon2 -- end galactic longitude (default: 360)
+
+    Arguments
+    ---------
+    lon1: number, default 0
+    begin galactic longitude (default: 0)
+    lon2: number, default 360
+    end galactic longitude (default: 360)
     """
 
     # Which longitude strip to process?
     if len(sys.argv) > 2:
         lon1 = int(sys.argv[1])
         lon2 = int(sys.argv[2])
-    else: # Do all
+    else:  # Do all
         lon1 = 0
         lon2 = 360
 
