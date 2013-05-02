@@ -19,7 +19,6 @@ import datetime
 from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
-log.setLevel('INFO')
 import constants
 from constants import IPHASQC
 
@@ -484,6 +483,8 @@ def run_all(lon1=25, lon2=215, ncores=2):
 ###################
 
 if __name__ == "__main__":
+
+    log.setLevel('INFO')
 
     # Which longitude range to process?
     if len(sys.argv) > 1:
