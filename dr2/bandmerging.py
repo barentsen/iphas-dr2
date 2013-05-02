@@ -18,6 +18,8 @@ import numpy as np
 from astropy.io import fits
 from astropy import log
 from multiprocessing import Pool
+import constants
+from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -28,25 +30,8 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-    # Where are the pipeline-reduced catalogues?
-    DATADIR = "/home/gb/tmp/iphas-dr2/detected"
-    # Where to write the output catalogues?
-    DESTINATION = "/home/gb/tmp/iphas-dr2/bandmerged"
-else:  # production
-    DATADIR = "/car-data/gb/iphas-dr2/detected"
-    DESTINATION = "/car-data/gb/iphas-dr2/bandmerged"
-
-# Dir of this script
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
-
-# How to execute stilts?
-STILTS = 'nice java -Xmx500M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
-
-# Where is the IPHAS quality control table?
-IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
+# Where to write the output catalogues?
+MYDESTINATION = os.path.join(constants.DESTINATION, 'bandmerged')
 
 
 ###########
@@ -74,16 +59,18 @@ class BandMerge():
         self.shift_ha = shift_ha
         self.shift_r = shift_r
         self.shift_i = shift_i
-        self.output = os.path.join(DESTINATION, fieldid+'.fits')
+        self.output = os.path.join(MYDESTINATION, fieldid+'.fits')
 
     def get_catalogue_path(self, run):
         """Returns the full path of a run's 'iphasDetection' catalogue."""
-        return os.path.join(DATADIR, '{}_det.fits'.format(run))
+        return os.path.join(constants.DESTINATION,
+                            'detected',
+                            '{}_det.fits'.format(run))
 
     def get_stilts_command(self):
         """Returns the stilts command used to perform a band-merge."""
 
-        config = {'stilts': STILTS,
+        config = {'stilts': constants.STILTS,
                   'runr': self.get_catalogue_path(self.run_r),
                   'runi': self.get_catalogue_path(self.run_i),
                   'runha': self.get_catalogue_path(self.run_ha),
@@ -92,7 +79,9 @@ class BandMerge():
                   'shift_r': self.shift_r,
                   'shift_i': self.shift_i,
                   'shift_ha': self.shift_ha,
-                  'ocmd': os.path.join(SCRIPTDIR, 'stilts-band-merging.cmd'),
+                  'ocmd': os.path.join(constants.PACKAGEDIR,
+                                       'lib',
+                                       'stilts-band-merging.cmd'),
                   'output': self.output}
 
         cmd = """{stilts} tmatchn matcher=sky params=0.5 multimode=group \
@@ -166,8 +155,8 @@ def run_all(lon1=20, lon2=220, ncores=4):
     log.info('Band-merging in longitude range [{0},{1}['.format(lon1, lon2))
 
     # Make sure the output directory exists
-    if not os.path.exists(DESTINATION):
-        os.makedirs(DESTINATION)
+    if not os.path.exists(MYDESTINATION):
+        os.makedirs(MYDESTINATION)
 
     # Which fields do we want to merge?
     idx = np.where(IPHASQC.field('is_pdr')
@@ -204,9 +193,9 @@ if __name__ == '__main__':
         lon1 = 0
         lon2 = 360
 
-    if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-        run_all(lon1=lon1, lon2=lon2, ncores=4)
-        #run_one('5089o_jun2005')
+    if constants.DEBUGMODE:
+        #run_all(lon1=lon1, lon2=lon2, ncores=4)
+        run_one('5089o_jun2005')
         #run_one('3561_nov2003')
         #run_all(lon1=208, lon2=209, ncores=6)
     else:  # production

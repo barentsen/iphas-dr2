@@ -20,6 +20,8 @@ from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
 log.setLevel('INFO')
+import constants
+from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -30,37 +32,11 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing
-    # Where are the pipeline-reduced catalogues?
-    DATADIR = "/home/gb/tmp/iphas-dr2/bandmerged"
-    # Where to write the output catalogues?
-    DESTINATION = "/home/gb/tmp/iphas-dr2/seamed"
-else:  # production
-    DATADIR = "/car-data/gb/iphas-dr2/bandmerged"
-    DESTINATION = "/car-data/gb/iphas-dr2/seamed"
+# Where to write the output catalogues?
+MYDESTINATION = os.path.join(constants.DESTINATION, 'seamed')
 
 # Where to store temporary files
 TMPDIR = '/dev/shm'
-
-# Dir of this script
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
-
-# How to execute stilts?
-STILTS = 'nice java -Xmx400M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
-
-# Where is the IPHAS quality control table?
-IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
-
-# Fields within this radius will be considered to overlap
-FIELD_MAXDIST = 0.8  # degrees
-
-# Width of the Galactic Plane strip to process
-STRIPWIDTH = 5  # degrees galactic longitude
-
-# Detections within this radius will be considered identical
-MATCHING_DISTANCE = 0.5  # arcsec
 
 # CACHE registers sourceID's for wich a primaryID has already been assigned
 CACHE = {}  # (Beats any key-value db)
@@ -104,7 +80,7 @@ class SeamMachine(object):
                                                                    strip,
                                                                    fieldid))
         # Where to store the results?
-        self.output_dir = os.path.join(DESTINATION, 'strip{0}'.format(strip))
+        self.output_dir = os.path.join(MYDESTINATION, 'strip{0}'.format(strip))
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
         self.output_file = os.path.join(self.output_dir,
@@ -181,7 +157,7 @@ class SeamMachine(object):
         newtable.writeto(self.primaryid_file, clobber=True)
 
         # Then use stilts to add the extra column
-        config = {'STILTS': STILTS,
+        config = {'STILTS': constants.STILTS,
                   'IN1': self.filename(self.fieldid),
                   'IN2': self.primaryid_file,
                   'OUT': self.output_file}
@@ -207,13 +183,15 @@ class SeamMachine(object):
         d = (ddec ** 2 + dra ** 2) ** 0.5
         idx = (IPHASQC['is_pdr']
                & (IPHASQC['qflag'] != 'D')
-               & (d < FIELD_MAXDIST)
+               & (d < constants.FIELD_MAXDIST)
                & (self.fieldid != IPHASQC['id']))
         return IPHASQC['id'][idx]
 
     def filename(self, fieldid):
         """Returns the path of the bandmerged catalogue for a given field."""
-        return os.path.join(DATADIR, '{0}.fits').format(fieldid)
+        return os.path.join(constants.DESTINATION, 
+                            'bandmerged', 
+                            '{0}.fits'.format(fieldid))
 
     def crossmatch_command(self):
         """Return the stilts command to crossmatch overlapping fields."""
@@ -222,8 +200,8 @@ class SeamMachine(object):
         icmd += """keepcols "sourceID fieldID ra dec bands errBits seeing \
                              rAxis rMJD r rErr i iErr ha haErr" """
         # Keywords in stilts command
-        config = {'STILTS': STILTS,
-                  'MATCHING_DISTANCE': MATCHING_DISTANCE,
+        config = {'STILTS': constants.STILTS,
+                  'MATCHING_DISTANCE': constants.MATCHING_DISTANCE,
                   'NIN': len(self.overlaps) + 1,
                   'IN1': self.filename(self.fieldid),
                   'ICMD': icmd,
@@ -431,7 +409,7 @@ class SeamMachine(object):
 def run_strip(strip):
     """Seams the fields in a given longitude strip."""
     # Strips are defined by the start longitude of a 10 deg-wide strip
-    assert(strip in np.arange(25, 215+1, STRIPWIDTH))
+    assert(strip in np.arange(25, 215+1, constants.STRIPWIDTH))
     log.info('{0}: strip{1}: START'.format(str(datetime.datetime.now())[0:19],
                                            strip))
     # Intialize caching dictionary
@@ -439,8 +417,8 @@ def run_strip(strip):
 
     # Which are our boundaries?
     # Note: we must allow FIELD_MAXDIST for border overlaps!
-    lon1 = strip - FIELD_MAXDIST
-    lon2 = strip + STRIPWIDTH + FIELD_MAXDIST
+    lon1 = strip - constants.FIELD_MAXDIST
+    lon2 = strip + constants.STRIPWIDTH + constants.FIELD_MAXDIST
 
     cond_strip = (IPHASQC['is_pdr']
                   & (IPHASQC['qflag'] != 'D')
@@ -491,7 +469,7 @@ def run_all(lon1=25, lon2=215, ncores=2):
     Be aware that the densest strips need ~8 GB RAM each.
     Set ncores to avoid swapping at all cost!
     """
-    strips = np.arange(lon1, lon2+0.1, STRIPWIDTH)
+    strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH)
     log.info('Seaming in longitude strips %s' % (strips))
 
     # Distribute the work over ncores

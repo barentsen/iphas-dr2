@@ -1,9 +1,11 @@
-#!/bin/sh -f                                                                    
+#!/bin/sh -f
 #PBS -m aeb 
 #PBS -M gb
-#PBS -l nodes=1:ppn=1
+#PSB -l pmem=1gb
+#PBS -l nodes=1:ppn=8
 #PBS -k oe                                                                      
 #PBS -q cmain
+#PBS -l walltime=4:00:00
 
 echo ------------------------------------------------------
 echo -n 'Job is running on node '; cat $PBS_NODEFILE
@@ -23,7 +25,7 @@ echo ------------------------------------------------------
 
 export PYTHONPATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/lib/python2.7/site-packages/
 export PATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/bin:$PATH
-cd /home/gb/dev/iphas-dr2/dr2/seaming
-nice python seaming.py $STRIP
+cd /home/gb/dev/iphas-dr2/dr2
+nice python bandmerging.py $LON1 $LON2
 echo ------------------------------------------------------
 echo Job ends

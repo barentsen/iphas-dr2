@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """Concatenates the source lists into the final "Primary Source Catalogue".
 
+This script takes the output from the seaming script and concatenates the 
+results into the final "Primary Source Catalogue" product.
+
 TODO
  * Offer a 'full' and 'light' version?
 """
@@ -11,7 +14,8 @@ import numpy as np
 from multiprocessing import Pool
 from astropy.io import fits
 from astropy import log
-log.setLevel('INFO')
+import constants
+from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -22,32 +26,8 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-DEBUGMODE = False
-
-# Where are the seamedd catalogues?
-DATADIR = "/car-data/gb/iphas-dr2/seamed"
-
-# Where to write the output?
-DESTINATION = "/car-data/gb/iphas-dr2/concatenated"
-
-# Where is the IPHAS quality control table?
-IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
-
-# Dir of this script
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
-
-# How to execute stilts?
-STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                os.path.join(SCRIPTDIR, '../lib/stilts.jar'))
-
-# Width of the Galactic Plane strip to process
-STRIPWIDTH = 5  # degrees galactic longitude
-
-HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
-    DEBUGMODE = True
-    DATADIR = "/home/gb/tmp/iphas-dr2/seamed"
-    DESTINATION = "/home/gb/tmp/iphas-dr2/concatenated"
+# Where to write the output catalogues?
+MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated')
 
 
 ###########
@@ -59,13 +39,13 @@ class Concatenator(object):
     def __init__(self, strip):
         self.strip = strip
         self.lon1 = strip
-        self.lon2 = strip + STRIPWIDTH
+        self.lon2 = strip + constants.STRIPWIDTH
         self.fieldlist = self.get_fieldlist()
 
-        if not os.path.exists(DESTINATION):
-            os.makedirs(DESTINATION)
+        if not os.path.exists(MYDESTINATION):
+            os.makedirs(MYDESTINATION)
 
-        self.output_file = os.path.join(DESTINATION,
+        self.output_file = os.path.join(MYDESTINATION,
                                         'iphas-dr2-psc-glon{0:03.0f}.fits'.format(
                                                     self.lon1))
 
@@ -84,13 +64,14 @@ class Concatenator(object):
         """Performs the concatenation of the strip."""
         instring = ''
         for field in self.fieldlist:
-            path = os.path.join(DATADIR,
+            path = os.path.join(constants.DESTINATION,
+                                'seamed',
                                 'strip{0}'.format(self.strip),
                                 '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
         # & (sourceID == primaryID) \
         # Note: a bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
-        param = {'stilts': STILTS,
+        param = {'stilts': constants.STILTS,
                  'in': instring,
                  'icmd': """'select "(errBits < 100) \
                                       & (pStar > 0.2 || pGalaxy > 0.2) \
@@ -136,7 +117,7 @@ def run_one(strip):
 
 
 def run_all(ncores=2):
-    longitudes = np.arange(25, 215+1, STRIPWIDTH)[::-1]
+    longitudes = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
     # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
     p.map(run_one, longitudes)
@@ -146,7 +127,9 @@ def run_all(ncores=2):
 ###################
 
 if __name__ == "__main__":
-    if DEBUGMODE:
-        run_one(215)
+    if constants.DEBUGMODE:
+        log.setLevel('INFO')
+        run_one(200)
     else:
+        log.setLevel('INFO')
         run_all(4)

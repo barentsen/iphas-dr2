@@ -1,14 +1,9 @@
-#!/bin/sh -f    
-#PBS -N iphas-concatenating                                                        
+#!/bin/sh -f                                                                    
 #PBS -m aeb 
 #PBS -M gb
-#PSB -l pmem=6gb
-#PBS -l nodes=1:ppn=4
+#PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      
 #PBS -q cmain
-#PBS -l walltime=04:00:00                                                       
-
-echo $1
 
 echo ------------------------------------------------------
 echo -n 'Job is running on node '; cat $PBS_NODEFILE
@@ -28,8 +23,7 @@ echo ------------------------------------------------------
 
 export PYTHONPATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/lib/python2.7/site-packages/
 export PATH=/home/gb/bin/epd-7.3-1-rh5-x86_64/bin:$PATH
-export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
-cd /home/gb/dev/iphas-dr2/dr2/concatenating
-nice python concatenating.py 
+cd /home/gb/dev/iphas-dr2/dr2
+nice python seaming.py $STRIP
 echo ------------------------------------------------------
 echo Job ends

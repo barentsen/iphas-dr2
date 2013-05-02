@@ -31,6 +31,7 @@ import os
 import sys
 import datetime
 from multiprocessing import Pool
+import constants
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -42,24 +43,11 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
 # CONSTANTS & CONFIGURATION
 ################################
 
-HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':
-    # Where are the pipeline-reduced catalogues?
-    DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    # Where to write the output catalogues?
-    DESTINATION = '/home/gb/tmp/iphas-dr2/detected'
-elif HOSTNAME == 'gvm':
-    DATADIR = '/media/uh/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    DESTINATION = "/home/gb/tmp/iphas-dr2/detected"
-else:
-    DATADIR = '/car-data/gb/iphas'
-    DESTINATION = '/car-data/gb/iphas-dr2/detected'
-
-# Dir of this script
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
+# Where the write output catalogues?
+MYDESTINATION = os.path.join(constants.DESTINATION, 'detected')
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
-BSC_PATH = os.path.join(SCRIPTDIR, '../lib/BrightStarCat-iphas.fits')
+BSC_PATH = os.path.join(constants.PACKAGEDIR, 'lib', 'BrightStarCat-iphas.fits')
 BSC = fits.getdata(BSC_PATH, 1)
 BRIGHT_RA = BSC['_RAJ2000']  # Read coordinates and brightness into memory
 BRIGHT_DEC = BSC['_DEJ2000']
@@ -67,51 +55,10 @@ BRIGHT_VMAG = BSC['Vmag']
 
 # Which extensions to expect in the fits catalogues?
 EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
-PXSCALE = 0.333  # Arcsec/pix of the INT/WFC CCD's
 
 # Table containing slight updates to WCS astrometric parameters
-WCSFIXES_PATH = os.path.join(SCRIPTDIR, '../wcs-tuning/wcs-fixes.csv')
+WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
 WCSFIXES = ascii.read(WCSFIXES_PATH)
-
-# Which are the possible filenames of the confidence maps?
-CONF_NAMES = {'Halpha': ['Ha_conf.fits', 'Ha_conf.fit',
-                         'Halpha_conf.fit',
-                         'ha_conf.fits', 'ha_conf.fit',
-                         'h_conf.fits', 'h_conf.fit',
-                         'Halpha:197_iphas_aug2003_cpm.fit',
-                         'Halpha:197_iphas_sep2003_cpm.fit',
-                         'Halpha:197_iphas_oct2003_cpm.fit',
-                         'Halpha:197_iphas_nov2003_cpm.fit',
-                         'Halpha:197_nov2003b_cpm.fit',
-                         'Halpha:197_dec2003_cpm.fit',
-                         'Halpha:197_jun2004_cpm.fit',
-                         'Halpha:197_iphas_jul2004a_cpm.fit',
-                         'Halpha:197_iphas_jul2004_cpm.fit',
-                         'Halpha:197_iphas_aug2004a_cpm.fit',
-                         'Halpha:197_iphas_aug2004b_cpm.fit',
-                         'Halpha:197_iphas_dec2004b_cpm.fit'],
-              'r': ['r_conf.fit', 'r_conf.fits',
-                    'r:214_iphas_aug2003_cpm.fit',
-                    'r:214_dec2003_cpm.fit',
-                    'r:214_iphas_nov2003_cpm.fit',
-                    'r:214_nov2003b_cpm.fit',
-                    'r:214_iphas_sep2003_cpm.fit',
-                    'r:214_iphas_aug2004a_cpm.fit',
-                    'r:214_iphas_aug2004b_cpm.fit',
-                    'r:214_iphas_jul2004a_cpm.fit',
-                    'r:214_iphas_jul2004_cpm.fit',
-                    'r:214_jun2004_cpm.fit'],
-              'i': ['i_conf.fit', 'i_conf.fits',
-                    'i:215_iphas_aug2003_cpm.fit',
-                    'i:215_dec2003_cpm.fit',
-                    'i:215_iphas_nov2003_cpm.fit',
-                    'i:215_nov2003b_cpm.fit',
-                    'i:215_iphas_sep2003_cpm.fit',
-                    'i:215_iphas_aug2004a_cpm.fit',
-                    'i:215_iphas_aug2004b_cpm.fit',
-                    'i:215_iphas_jul2004a_cpm.fit',
-                    'i:215_iphas_jul2004_cpm.fit',
-                    'i:215_jun2004_cpm.fit']}
 
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}
@@ -270,21 +217,21 @@ class DetectionCatalogue():
         # The result from previous function calls are stored in 'confmaps'
         if mydir not in confmaps[myband].keys():
             # Some directories do not contain confidence maps
-            if mydir == DATADIR+'iphas_nov2006c':
-                candidatedir = DATADIR+'iphas_nov2006b'
-            elif mydir == DATADIR+'iphas_jul2008':
-                candidatedir = DATADIR+'iphas_aug2008'
-            elif mydir == DATADIR+'iphas_oct2009':
-                candidatedir = DATADIR+'iphas_nov2009'
-            elif mydir == DATADIR+'run10':
-                candidatedir = DATADIR+'run11'
-            elif mydir == DATADIR+'run13':
-                candidatedir = DATADIR+'run12'
+            if mydir == os.path.join(constants.RAWDATADIR, 'iphas_nov2006c'):
+                candidatedir = os.path.join(constants.RAWDATADIR, 'iphas_nov2006b')
+            elif mydir == os.path.join(constants.RAWDATADIR, 'iphas_jul2008'):
+                candidatedir = os.path.join(constants.RAWDATADIR, 'iphas_aug2008')
+            elif mydir == os.path.join(constants.RAWDATADIR, 'iphas_oct2009'):
+                candidatedir = os.path.join(constants.RAWDATADIR, 'iphas_nov2009')
+            elif mydir == os.path.join(constants.RAWDATADIR, 'run10'):
+                candidatedir = os.path.join(constants.RAWDATADIR, 'run11')
+            elif mydir == os.path.join(constants.RAWDATADIR, 'run13'):
+                candidatedir = os.path.join(constants.RAWDATADIR, 'run12')
             else:
                 candidatedir = mydir
 
             # Try all possible names
-            for name in CONF_NAMES[myband]:
+            for name in constants.CONF_NAMES[myband]:
                 candidate = os.path.join(candidatedir, name)
                 if os.path.exists(candidate):
                     confmaps[myband][mydir] = candidate  # Success!
@@ -298,7 +245,7 @@ class DetectionCatalogue():
             #raise CatalogueException('No confidence map found in %s' % mydir)
 
     def strip_basedir(self, path):
-        return path[len(DATADIR):]
+        return path[len(constants.RAWDATADIR):]
 
     def get_exptime(self):
         """Return the exposure time for the catalogue, while taking into
@@ -449,7 +396,7 @@ class DetectionCatalogue():
                            array=self.concat('Skyrms'))
 
     def column_seeing(self):
-        seeing = np.concatenate([[PXSCALE*self.hdr('SEEING', ccd)]
+        seeing = np.concatenate([[constants.PXSCALE * self.hdr('SEEING', ccd)]
                                  * self.fits[ccd].data.size
                                  for ccd in EXTS])
         return fits.Column(name='seeing', format='E', unit='arcsec',
@@ -736,7 +683,7 @@ class DetectionCatalogue():
     def get_csv_summary(self):
         """ Returns a CSV-formatted summary line """
         # Average seeing and ellipticity across CCDs
-        avg_seeing = (PXSCALE * np.mean([self.hdr('SEEING', ccd)
+        avg_seeing = (constants.PXSCALE * np.mean([self.hdr('SEEING', ccd)
                                          for ccd in EXTS]))
         avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
 
@@ -772,10 +719,10 @@ class DetectionCatalogue():
                     self.hdr('DEC'),
                     field,
                     avg_seeing,
-                    PXSCALE*self.hdr('SEEING', 1),
-                    PXSCALE*self.hdr('SEEING', 2),
-                    PXSCALE*self.hdr('SEEING', 3),
-                    PXSCALE*self.hdr('SEEING', 4),
+                    constants.PXSCALE * self.hdr('SEEING', 1),
+                    constants.PXSCALE * self.hdr('SEEING', 2),
+                    constants.PXSCALE * self.hdr('SEEING', 3),
+                    constants.PXSCALE * self.hdr('SEEING', 4),
                     avg_ellipt,
                     self.hdr('ELLIPTIC', 1), self.hdr('ELLIPTIC', 2),
                     self.hdr('ELLIPTIC', 3), self.hdr('ELLIPTIC', 4),
@@ -854,7 +801,7 @@ class DetectionCatalogue():
                     E = single
                     D = double
         """
-        output_filename = os.path.join(DESTINATION,
+        output_filename = os.path.join(MYDESTINATION,
                                        '%s_det.fits' % self.hdr('RUN'))
 
         # Prepare columns on which others depend
@@ -987,8 +934,8 @@ def run_all(directory, ncores=4):
     ncores -- number of parallel processes.
     """
     # Make sure the output directory exists
-    if not os.path.exists(DESTINATION):
-        os.makedirs(DESTINATION)
+    if not os.path.exists(MYDESTINATION):
+        os.makedirs(MYDESTINATION)
 
     # Where are the pipeline catalogues?
     catalogues = list_catalogues(directory)
@@ -998,7 +945,7 @@ def run_all(directory, ncores=4):
     results = p.imap(run_one, catalogues)  # returns an iterator
 
     # Write the results
-    filename = os.path.join(DESTINATION, 'index.csv')
+    filename = os.path.join(MYDESTINATION, 'index.csv')
     out = open(filename, 'w')
 
     out.write('catalogue,image,conf,run,object,ra,dec,field,'
@@ -1042,16 +989,15 @@ if __name__ == '__main__':
 
     # Which directory to process?
     if len(sys.argv) > 1:
-        directory = os.path.join(DATADIR, sys.argv[1])
+        directory = os.path.join(constants.RAWDATADIR, sys.argv[1])
     else:
-        directory = DATADIR
+        directory = constants.RAWDATADIR
 
-    if HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
+    if constants.HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
-        run_one(DATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(DATADIR+'/iphas_dec2003/r381808_cat.fits')
-        
+        run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
 
     else:  # Production
         log.setLevel('WARNING')
