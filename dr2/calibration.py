@@ -13,7 +13,7 @@ from multiprocessing import Pool
 import numpy as np
 from astropy import log
 from astropy.io import fits
-from astropy.coordinates.angle_utilities import small_angle_sphere_dist as dist
+import util
 import constants
 from constants import IPHASQC
 
@@ -41,7 +41,7 @@ class OffsetMachine(object):
         myra = IPHASQC['ra'][idx]
         mydec = IPHASQC['dec'][idx]
 
-        dist = sphere_dist(myra, mydec, IPHASQC['ra'], IPHASQC['dec'])
+        dist = util.sphere_dist(myra, mydec, IPHASQC['ra'], IPHASQC['dec'])
         idx2 = (constants.COND_DR2
                 & (dist < constants.FIELD_MAXDIST)
                 & (IPHASQC['run_'+str(self.band)] != self.run))
@@ -86,17 +86,10 @@ class OffsetMachine(object):
                     'n': len(offsets)}
 
 
-def sphere_dist(ra1, dec1, ra2, dec2):
-    """Spherical distance: small-angle approximation."""
-    ddec = dec2 - dec1
-    dra = (ra2 - ra1) * np.cos(np.radians(dec1))
-    return (ddec ** 2 + dra ** 2) ** 0.5
-
-
 def crossmatch(ra, dec, ra_array, dec_array,
                matchdist=constants.MATCHING_DISTANCE):
     """Returns the index of the matched source."""
-    dist = sphere_dist(ra, dec, ra_array, dec_array)
+    dist = util.sphere_dist(ra, dec, ra_array, dec_array)
     idx_closest = dist.argmin()
     if dist[idx_closest] < (matchdist / 3600.):
         return idx_closest
