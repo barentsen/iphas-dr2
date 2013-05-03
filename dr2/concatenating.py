@@ -135,7 +135,6 @@ class Concatenator(object):
 
 
 
-
 ###########
 # FUNCTIONS
 ###########
