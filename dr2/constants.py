@@ -23,8 +23,7 @@ PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
-
-COND_RELEASE = (IPHASQC['is_pdr'] & (IPHASQC['qflag'] != 'D'))
+IPHASQC_COND_RELEASE = (IPHASQC['is_pdr'] & (IPHASQC['qflag'] != 'D'))
 
 # How to execute stilts?
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(

@@ -27,7 +27,7 @@ def sphere_dist_fast(lon1, lat1, lon2, lat2):
     Euclidean angular distance "on a sphere" - only valid on sphere in the
     small-angle approximation.
     """
-
+    # Bugfix: crossing meridian
     if isinstance(lon1, np.ndarray) and len(lon1) > 1:
         lon1[(lon1 - lon2) > 180] -= 360
     elif isinstance(lon2, np.ndarray) and len(lon2) > 1:

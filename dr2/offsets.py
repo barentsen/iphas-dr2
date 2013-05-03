@@ -63,7 +63,7 @@ class OffsetMachine(object):
         mydec = IPHASQC['dec'][idx]
 
         dist = util.sphere_dist(myra, mydec, IPHASQC['ra'], IPHASQC['dec'])
-        idx2 = (constants.COND_RELEASE
+        idx2 = (constants.IPHASQC_COND_RELEASE
                 & (dist < constants.FIELD_MAXDIST)
                 & (IPHASQC['run_'+str(self.band)] != self.run))
 
@@ -142,7 +142,7 @@ def offsets_relative(band, ncores=4):
 
     # Distribute the work over ncores
     p = Pool(processes=ncores)
-    runs = IPHASQC['run_'+str(band)][constants.COND_RELEASE]
+    runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
     results = p.map(offsets_relative_one, runs)
     for i, field in enumerate(results):
         log.info('Completed run {0}/{1}'.format(i, len(runs)))

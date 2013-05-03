@@ -159,7 +159,7 @@ def run_all(lon1=20, lon2=220, ncores=4):
         os.makedirs(MYDESTINATION)
 
     # Which fields do we want to merge?
-    idx = np.where(IPHASQC.field('is_pdr')
+    idx = np.where(constants.IPHASQC_COND_RELEASE
                    & (IPHASQC.field('l') >= lon1)
                    & (IPHASQC.field('l') < lon2))[0]
     fieldids = IPHASQC.field('id')[idx]
