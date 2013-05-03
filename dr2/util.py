@@ -19,3 +19,17 @@ def sphere_dist(lon1, lat1, lon2, lat2):
     coslats = np.cos(np.radians(lat1)) * np.cos(np.radians(lat2))
 
     return np.degrees(2 * np.arcsin((sdlat**2 + coslats * sdlon**2) ** 0.5))
+
+
+def crossmatch(ra, dec, ra_array, dec_array, matchdist=0.5):
+    """Returns the index of the matched source.
+
+    ra/dec in degrees.
+    matching distance in arcseconds.
+    """
+    dist = sphere_dist(ra, dec, ra_array, dec_array)
+    idx_closest = dist.argmin()
+    if dist[idx_closest] < (matchdist / 3600.):
+        return idx_closest
+    else:
+        return None

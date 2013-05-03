@@ -24,7 +24,7 @@ PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
 
-COND_DR2 = (IPHASQC['is_pdr'] & (IPHASQC['qflag'] != 'D'))
+COND_RELEASE = (IPHASQC['is_pdr'] & (IPHASQC['qflag'] != 'D'))
 
 # How to execute stilts?
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
@@ -41,6 +41,9 @@ MATCHING_DISTANCE = 0.5  # arcsec
 
  #INT/WFC CCD pixel scale
 PXSCALE = 0.333  # arcsec/pix
+
+# Filter names
+BANDS = ['r', 'i', 'ha']
 
 # Which are the possible filenames of the confidence maps?
 CONF_NAMES = {'Halpha': ['Ha_conf.fits', 'Ha_conf.fit',
