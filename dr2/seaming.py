@@ -178,7 +178,7 @@ class SeamMachine(object):
 
     def overlaps(self):
         """Returns the list of fields which overlap."""
-        dist = sphere_dist(self.ra, self.dec, IPHASQC['ra'], IPHASQC['dec'])
+        dist = util.sphere_dist(self.ra, self.dec, IPHASQC['ra'], IPHASQC['dec'])
         idx = (constants.IPHASQC_COND_RELEASE
                & (dist < constants.FIELD_MAXDIST)
                & (self.fieldid != IPHASQC['id']))
