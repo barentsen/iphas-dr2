@@ -135,7 +135,8 @@ def offsets_relative(band, ncores=4):
     log.info('Starting to compute offsets for band {0}'.format(band))
 
     # Write the results
-    filename = os.path.join(constants.DESTINATION, 'offsets-r.csv')
+    filename = os.path.join(constants.DESTINATION, 
+                            'offsets-{0}.csv'.format(band))
     out = open(filename, 'w')
     out.write('run1,run2,offset,std,n\n')
 
