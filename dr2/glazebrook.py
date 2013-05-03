@@ -47,7 +47,7 @@ class Glazebrook(object):
 		A = self._A()
 		b = self._b()
 		s = linalg.lsqr(A, b)
-		return s
+        return s
 
 
 
