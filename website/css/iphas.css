@@ -1,0 +1,52 @@
+.head {
+    padding-top: 90px;
+    padding-bottom: 0;
+    margin-bottom: 9px;
+}
+
+.head h1 {
+    font-size: 54px;
+}
+
+.abstract {
+    margin-left: 0px;
+}
+
+.about {
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+.about > div {
+	margin-bottom: 20px;
+}
+
+.about h3 {
+	margin: 0;
+	text-align: left;
+}
+
+.about i {
+	margin-right: 8px;
+	font-size: 1em;
+}
+
+
+.keyfacts i {
+    margin-right: 4px;
+
+}
+
+.keyfacts ul {
+    margin-bottom: 0px;
+}
+
+
+.well {
+    padding:0.8em;
+    background-color: #eee;
+}
+
+#footer {
+    margin-bottom: 20px;
+}

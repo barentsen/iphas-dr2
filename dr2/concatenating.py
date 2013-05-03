@@ -84,8 +84,8 @@ class Concatenator(object):
                                        mergedClass mergedClassStat \
                                        pStar pGalaxy \
                                        rmi rmha \
-                                       r rErr rAperMag3 rClass rMJD \
-                                       i iErr iAperMag3 iClass iMJD iXi iEta \
+                                       r rErr rAperMag3 rClass rMJD rErrBits \
+                                       i iErr iAperMag3 iClass iMJD iErrBits iXi iEta \
                                        ha haErr haAperMag3 haClass haMJD \
                                        haXi haEta \
                                        haPeakMag haPeakMagErr haClassStat \

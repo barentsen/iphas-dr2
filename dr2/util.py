@@ -4,6 +4,7 @@
 from __future__ import division, print_function, unicode_literals
 import numpy as np
 
+
 def sphere_dist(lon1, lat1, lon2, lat2):
     """
     Haversine formula for angular distance on a sphere: more stable at poles.
@@ -21,13 +22,24 @@ def sphere_dist(lon1, lat1, lon2, lat2):
     return np.degrees(2 * np.arcsin((sdlat**2 + coslats * sdlon**2) ** 0.5))
 
 
+def sphere_dist_fast(lon1, lat1, lon2, lat2):
+    """
+    Euclidean angular distance "on a sphere" - only valid on sphere in the
+    small-angle approximation.
+    """
+    dlat = lat2 - lat1
+    dlon = (lon2 - lon1) * np.cos(np.radians(lat1))
+
+    return (dlat ** 2 + dlon ** 2) ** 0.5
+
+
 def crossmatch(ra, dec, ra_array, dec_array, matchdist=0.5):
     """Returns the index of the matched source.
 
     ra/dec in degrees.
     matching distance in arcseconds.
     """
-    dist = sphere_dist(ra, dec, ra_array, dec_array)
+    dist = sphere_dist_fast(ra, dec, ra_array, dec_array)
     idx_closest = dist.argmin()
     if dist[idx_closest] < (matchdist / 3600.):
         return idx_closest
