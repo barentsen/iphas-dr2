@@ -6,8 +6,6 @@ This script takes the output from the seaming script and concatenates the
 results into the final "Primary Source Catalogue" product,
 which is generated in 5x5 degree tiles.
 
-TODO
- * Offer a 'full' and 'light' version?
 """
 from __future__ import division, print_function, unicode_literals
 import os
