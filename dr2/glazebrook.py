@@ -18,38 +18,30 @@ class Glazebrook(object):
 		self.runs = runs
 		self.overlaps = overlaps
 		self.anchors = anchors
+		self.n_nonanchors = (~anchors).sum()
 
 	def _A(self):
-		A = sparse.lil_matrix((len(self.runs), 
-			                        len(self.runs)))
-
-		for i, run in enumerate(self.runs):
-			for j, run2 in enumerate(self.runs):
-				if self.anchors[i] and i == j:
-					A[i,j] = 1
-				elif self.anchors[i]:
-					continue
-				elif i == j:
-					A[i,j] = 1 - (len(self.overlaps[run2]['runs']) + 1)
+		A = sparse.lil_matrix((self.n_nonanchors, 
+			                   self.n_nonanchors))
+		for i, run in enumerate(self.runs[~self.anchors]):
+			for j, run2 in enumerate(self.runs[~self.anchors]):
+				if i == j:
+					A[i,j] = -len(self.overlaps[run2]['runs'])
 				elif run2 in self.overlaps[run]['runs']:
 					A[i,j] = 1
-
 		return A
 
 	def _b(self):
-		b = np.zeros(len(self.runs))
-		for i, run in enumerate(self.runs):
-			if not self.anchors[i]:
-				b[i] = np.sum(self.overlaps[run]['offsets'])
+		b = np.zeros(self.n_nonanchors)
+		for i, run in enumerate(self.runs[~self.anchors]):
+			b[i] = np.sum(self.overlaps[run]['offsets'])
 		return b
 
 	def solve(self):
 		A = self._A()
 		b = self._b()
 		s = linalg.lsqr(A, b)
-        return s
-
-
+		return s
 
 
 if __name__ == '__main__':
