@@ -199,8 +199,7 @@ class SeamMachine(object):
     def crossmatch_command(self):
         """Return the stilts command to crossmatch overlapping fields."""
         # Operations to perform on all tables
-        icmd = 'addcol bands "sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1))"; '
-        icmd += """keepcols "sourceID fieldID ra dec bands errBits seeing \
+        icmd = """keepcols "sourceID fieldID ra dec nBands errBits seeing \
                              rAxis rMJD r rErr i iErr ha haErr" """
         # Keywords in stilts command
         config = {'STILTS': constants.STILTS,
@@ -269,7 +268,7 @@ class SeamMachine(object):
         # Which columns are important?
         idx = (np.arange(self.overlaps.size+1) + 1)  # 1 2 3 ...
         sourceID_cols = np.array(['sourceID_{0}'.format(i) for i in idx])
-        bands_cols = np.array(['bands_{0}'.format(i) for i in idx])
+        nBands_cols = np.array(['nBands_{0}'.format(i) for i in idx])
         errBits_cols = np.array(['errBits_{0}'.format(i) for i in idx])
         seeing_cols = np.array(['seeing_{0}'.format(i) for i in idx])
         rAxis_cols = np.array(['rAxis_{0}'.format(i) for i in idx])
@@ -283,7 +282,7 @@ class SeamMachine(object):
 
         # Save in memory to speed up what follows
         matchdata = {}
-        for col in np.concatenate((sourceID_cols, bands_cols, errBits_cols,
+        for col in np.concatenate((sourceID_cols, nBands_cols, errBits_cols,
                                    seeing_cols, rAxis_cols, rMJD_cols,
                                    r_cols, rErr_cols,
                                    i_cols, iErr_cols,
@@ -355,9 +354,9 @@ class SeamMachine(object):
 
                 if win.sum() > 1:
                     # Discard source with few bands
-                    bands = np.array([matchdata[col][rowno]
-                                      for col in bands_cols[win]])
-                    win[win.nonzero()[0][bands < bands.max()]] = False
+                    nBands = np.array([matchdata[col][rowno]
+                                      for col in nBands_cols[win]])
+                    win[win.nonzero()[0][nBands < nBands.max()]] = False
 
                     # Discard sources with large errBits
                     errbits = np.array([matchdata[col][rowno]
