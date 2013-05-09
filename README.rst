@@ -1,16 +1,31 @@
-iphas-dr2
-=========
+IPHAS Data Release 2
+====================
 
-Scripts and documentation to produce IPHAS Data Release 2.
+Python package, scripts and documentation used to produce IPHAS Data Release 2.
 
 Contents
 --------
-* scripts: Python/stilts scripts used to generate the iphasDetection and iphasSource tables.
+* dr2: Python DR2 package, consisting of the following modules:
+  * detections.py: converts CASU pipeline output to tables with IPHAS columns
+  * offsets.py: computes the photometric shifts between exposure overlaps
+  * calibration.py: computes a global photometric calibration from the offsets
+  * bandmerging.py: merges the H-alpha/r/i detections for the same pointing
+  * seaming.py: identifies multiple detections of the same source
+  * concatenating.py: produces the final Primary Source Catalogue
+* scripts: scripts used to run the pipeline on a computing cluster.
 * documentation: description of tables.
+
+Workflow
+--------
+To carry out a global photometric calibration, run the following modules:
+detections.py => offsets.py => calibration.py
+
+To generate the catalogues:
+detections.py => bandmerging.py => seaming.py => concatenating.py
 
 Dependencies
 ------------
-numpy, astropy.
+astropy, numpy, scipy.
 
 License
 --------
