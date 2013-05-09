@@ -9,6 +9,12 @@ detection and the 'partner' (same night) detection.
 Finally, this information is then added to the bandmerged catalogues.
 
 Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
+
+TODO:
+* Add calibration shifts, i.e.:
+                         replacecol peakMag  "toFloat(peakMag  + {shift_r})";
+                         replacecol aperMag2 "toFloat(aperMag2 + {shift_r})";
+                         replacecol aperMag3 "toFloat(aperMag3 + {shift_r})";' \
 """
 from __future__ import division, print_function, unicode_literals
 import os

@@ -20,9 +20,9 @@ colmeta -name iDec dec_2
 colmeta -name haDec dec_3
 # Fill in RA/Dec if not provided by the r-band
 replacecol ra "NULL_ra?iRA:ra"
-replacecol ra "NULL_ra?haRA:ra"
+replacecol ra -desc "Right Ascension"  "NULL_ra?haRA:ra"
 replacecol dec "NULL_dec?iDec:dec"
-replacecol dec "NULL_dec?haDec:dec"
+replacecol dec -desc "Declination"  "NULL_dec?haDec:dec"
 colmeta -name posErr posErr_1
 replacecol posErr "NULL_posErr?posErr_2:posErr"
 replacecol posErr "NULL_posErr?posErr_3:posErr"
@@ -30,10 +30,10 @@ replacecol posErr "NULL_posErr?posErr_3:posErr"
 addskycoords -inunit deg -outunit deg icrs galactic ra dec l b;
 
 # Position offsets
-addcol iXi "toFloat(3600.0*(iRA-ra))"
-addcol iEta "toFloat(3600.0*(iDec-dec))"
-addcol haXi "toFloat(3600.0*(haRA-ra))"
-addcol haEta "toFloat(3600.0*(haDec-dec))"
+addcol -desc "Position offset of the i-band detection in RA" iXi "toFloat(3600.0*(iRA-ra))"
+addcol -desc "Position offset of the i-band detection in DEC" iEta "toFloat(3600.0*(iDec-dec))"
+addcol -desc "Position offset of the Ha-band detection in RA" haXi "toFloat(3600.0*(haRA-ra))"
+addcol -desc "Position offset of the Ha-band detection in DEC" haEta "toFloat(3600.0*(haDec-dec))"
 
 # Rename r-band columns
 colmeta -name r aperMag2_1
@@ -57,6 +57,7 @@ colmeta -name rErrBits errBits_1
 colmeta -name rMJD mjd_1
 colmeta -name rSeeing seeing_1
 colmeta -name rDetectionID detectionID_1
+colmeta -name rCCD ccd_1
 colmeta -name rX x_1
 colmeta -name rY y_1
 colmeta -name rPlaneX planeX_1
@@ -84,6 +85,7 @@ colmeta -name iErrBits errBits_2
 colmeta -name iMJD mjd_2
 colmeta -name iSeeing seeing_2
 colmeta -name iDetectionID detectionID_2
+colmeta -name iCCD ccd_2
 colmeta -name iX x_2
 colmeta -name iY y_2
 colmeta -name iPlaneX planeX_2
@@ -111,6 +113,7 @@ colmeta -name haErrBits errBits_3
 colmeta -name haMJD mjd_3
 colmeta -name haSeeing seeing_3
 colmeta -name haDetectionID detectionID_3
+colmeta -name haCCD ccd_3
 colmeta -name haX x_3
 colmeta -name haY y_3
 colmeta -name haPlaneX planeX_3
@@ -150,32 +153,33 @@ addcol -desc "Probability the source is saturated." pSaturated "pSaturatedProd /
 
 # Assign the actual mergedClass flag, following the procedure described at
 # http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass
-addcol mergedClass "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGalaxy>=0.699?-3:pNoise>=0.899?0:pSaturated>=0.899?-9:NULL )"
+addcol mergedClass -desc "See http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass" "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGalaxy>=0.699?-3:pNoise>=0.899?0:pSaturated>=0.899?-9:NULL )"
 
 # mergedClassStat
 addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
 
 
 # merged quality flags
-addcol -desc "True if a very bright star is nearby." brightNeighb "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
+addcol brightNeighb  -desc "True if a very bright star is nearby."  "(NULL_rBrightNeighb ? false : rBrightNeighb) || (NULL_iBrightNeighb ? false : iBrightNeighb) || (NULL_haBrightNeighb ? false : haBrightNeighb)"
 
-addcol -desc "True if the source was blended with a nearby neighbour." deblend "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
+addcol deblend  -desc "True if the source was blended with a nearby neighbour."  "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
 
-addcol saturated "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated)"
+addcol saturated  -desc "True if saturated in one or more bands."  "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated)"
 
-addcol -desc "True if in part of focal plane where image quality is poor." vignetted "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
+addcol vignetted  -desc "True if in part of focal plane where image quality is poor."  "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
 
-addcol -desc "True if close to the CCD boundary." truncated "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
+addcol truncated  -desc "True if close to the CCD boundary."  "(NULL_rTruncated ? false : rTruncated) || (NULL_iTruncated ? false : iTruncated) || (NULL_haTruncated ? false : haTruncated)"
 
-addcol -desc "True if one or more bad pixel(s) in the aperture." badPix "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
+addcol badPix  -desc "True if one or more bad pixel(s) in the aperture."  "(NULL_rBadPix ? false : rBadPix>=1) || (NULL_iBadPix ? false : iBadPix>=1) || (NULL_haBadPix ? false : haBadPix>=1)"
 
-addcol errBits "toInteger( maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits)) )"
+addcol errBits -desc "Bitmask indicating bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." "toInteger( maximum(array(NULL_rErrBits ? 0 : rErrBits, NULL_iErrBits ? 0 : iErrBits, NULL_haErrBits ? 0 : haErrBits)) )"
 
+# Number of bands with a detection
+addcol nBands -desc "Number of bands in which the source is detected." "sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1))"
 
-addcol reliable "(NULL_rErr?false:rErr<0.198) & (NULL_iErr?false:iErr<0.198) & (NULL_haErr?false:haErr<0.198) & errBits == 0"
+# Reliable means detected in all three bands at >5-sigma & max(errBits) = 0
+addcol reliable -desc "True if the source is detected in all three bands at >5-sigma and errBits=0." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits == 0"
 
-
-addcol reliableStar "reliable & (NULL_mergedClass ? false: ((mergedClass < -0.5) & (mergedClass > -2.5)))"
 
 # night
 colmeta -name night night_1
@@ -200,9 +204,5 @@ addcol haAxisDist "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2))"
 addcol -desc "Distance from the optical axis" rAxis "toFloat( maximum(array(NULL_rAxisDist?0:rAxisDist, NULL_iAxisDist?0:iAxisDist, NULL_haAxisDist?0:haAxisDist)) )"
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits reliable reliableStar night seeing rAxis fieldID fieldGrade'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rCCD rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iCCD iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haCCD haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits nBands reliable night seeing rAxis fieldID fieldGrade'
 
-# Removed for brevity:
-# rBrightNeighb rDeblend rSaturated rVignetted rTruncated rBadPix
-# iBrightNeighb iDeblend iSaturated iVignetted iTruncated iBadPix
-# haBrightNeighb haDeblend haSaturated haVignetted haTruncated haBadPix

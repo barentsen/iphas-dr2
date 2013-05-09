@@ -684,7 +684,7 @@ class DetectionCatalogue():
         """ Returns a CSV-formatted summary line """
         # Average seeing and ellipticity across CCDs
         avg_seeing = (constants.PXSCALE * np.mean([self.hdr('SEEING', ccd)
-                                         for ccd in EXTS]))
+                                                   for ccd in EXTS]))
         avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
 
         # When the PERCORR keyword is missing, assume it is zero

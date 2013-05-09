@@ -3,19 +3,15 @@
 """Generates the user-friendly band-merged 'iphasSource' catalogues.
 
 This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
-field into band-merged catalogues, following the UKIDSS format.
-
-This script also applies the global calibration to the magnitudes!
+field into band-merged catalogues, following the UKIDSS column definitions.
 
 TODO:
- * calibrate against panstarrs or apass?
  * add htmID?
 """
 from __future__ import print_function, division
 import os
 import sys
 import numpy as np
-from astropy.io import fits
 from astropy import log
 from multiprocessing import Pool
 import constants
@@ -48,17 +44,13 @@ class BandMerge():
     Class to read in iphasSource tables and perform a band-merge.
     """
 
-    def __init__(self, fieldid, fieldgrade, run_ha, run_r, run_i,
-                 shift_ha=0.0, shift_r=0.0, shift_i=0.0):
+    def __init__(self, fieldid, fieldgrade, run_ha, run_r, run_i):
         """Constructor"""
         self.fieldid = fieldid
         self.fieldgrade = fieldgrade
         self.run_ha = run_ha
         self.run_r = run_r
         self.run_i = run_i
-        self.shift_ha = shift_ha
-        self.shift_r = shift_r
-        self.shift_i = shift_i
         self.output = os.path.join(MYDESTINATION, fieldid+'.fits')
 
     def get_catalogue_path(self, run):
@@ -76,9 +68,6 @@ class BandMerge():
                   'runha': self.get_catalogue_path(self.run_ha),
                   'fieldgrade': self.fieldgrade,
                   'fieldid': self.fieldid,
-                  'shift_r': self.shift_r,
-                  'shift_i': self.shift_i,
-                  'shift_ha': self.shift_ha,
                   'ocmd': os.path.join(constants.PACKAGEDIR,
                                        'lib',
                                        'stilts-band-merging.cmd'),
@@ -91,20 +80,11 @@ class BandMerge():
                   icmd1='setparam fieldID "{fieldid}";
                          setparam fieldGrade "{fieldgrade}";
                          select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1";
-                         replacecol peakMag  "toFloat(peakMag  + {shift_r})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {shift_r})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {shift_r})";' \
+                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
                   icmd2='select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1"; \
-                         replacecol peakMag  "toFloat(peakMag  + {shift_i})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {shift_i})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {shift_i})";' \
+                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
                   icmd3='select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1"; \
-                         replacecol peakMag  "toFloat(peakMag  + {shift_ha})";
-                         replacecol aperMag2 "toFloat(aperMag2 + {shift_ha})";
-                         replacecol aperMag3 "toFloat(aperMag3 + {shift_ha})";' \
+                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
                   ocmd=@{ocmd} \
                   progress=none \
                   out='{output}'""".format(**config)
@@ -129,24 +109,15 @@ def run_one(fieldid):
     if len(idx) != 1:
         raise IPHASException('{}: error identifying runs'.format(fieldid))
 
-    # Which calibration shifts to apply?
-    shifts = {}
-    for band in ['h', 'r', 'i']:
-        shifts[band] = (IPHASQC.field('zp{}_pdr'.format(band))[idx[0]]
-                        - IPHASQC.field('zp{}'.format(band))[idx[0]])
-        if np.isnan(shifts[band]):
-            shifts[band] = 0.0
-
     # Carry out the band-merging
     bm = BandMerge(fieldid,
                    IPHASQC.field('qflag')[idx[0]],
                    IPHASQC.field('run_ha')[idx[0]],
                    IPHASQC.field('run_r')[idx[0]],
-                   IPHASQC.field('run_i')[idx[0]],
-                   shifts['h'], shifts['r'], shifts['i'])
+                   IPHASQC.field('run_i')[idx[0]])
     status = bm.run()
 
-    log.info('{}: {}'.format(fieldid, status))
+    log.info('{0}: {1}'.format(fieldid, status))
     return status
 
 
@@ -194,6 +165,7 @@ if __name__ == '__main__':
         lon2 = 360
 
     if constants.DEBUGMODE:
+        log.setLevel('INFO')
         #run_all(lon1=lon1, lon2=lon2, ncores=4)
         run_one('5089o_jun2005')
         #run_one('3561_nov2003')
