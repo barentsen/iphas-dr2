@@ -2,21 +2,20 @@
 IPHAS Data Release 2
 ====================
 
-Python package, scripts and documentation used to produce IPHAS Data Release 2.
-
-:Authors: Geert Barentsen; Hywel Farnhill
-:organization: University of Hertfordshire
+:summary: Python package, scripts and documentation used to produce IPHAS Data Release 2.
+:authors: Geert Barentsen; Hywel Farnhill
+:dependencies: astropy, numpy, scipy.
 
 Contents
 --------
 - **dr2**: Python package consisting of the following modules:
 
-  + **detections.py**: converts CASU pipeline output to tables with IPHAS columns
-  + **offsets.py**: computes the photometric shifts between exposure overlaps
-  + **calibration.py**: computes a global photometric calibration from the offsets
-  + **bandmerging.py**: merges the H-alpha/r/i detections for the same pointing
-  + **seaming.py**: identifies multiple detections of the same source
-  + **concatenating.py**: produces the final Primary Source Catalogue
+  + **detections.py**: converts the detection catalogues from the CASU pipeline into user-friendly tables.
+  + **offsets.py**: computes the photometric shifts between exposure overlaps.
+  + **calibration.py**: computes a global photometric calibration from the offsets.
+  + **bandmerging.py**: merges the H-alpha/r/i detections for the same pointing.
+  + **seaming.py**: identifies multiple detections of the same source, and assigns the best ('primary') detection.
+  + **concatenating.py**: produces the final Primary Source Catalogue.
 - **scripts**: scripts used to run the pipeline on a computing cluster.
 - **documentation**
 
@@ -26,10 +25,6 @@ Workflow
    detections.py => offsets.py => calibration.py
 - To generate the IPHAS Primary Source Catalogue:
    detections.py => bandmerging.py => seaming.py => concatenating.py
-
-Dependencies
-------------
-astropy, numpy, scipy.
 
 License
 --------
