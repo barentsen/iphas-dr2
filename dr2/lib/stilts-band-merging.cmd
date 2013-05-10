@@ -177,8 +177,8 @@ addcol errBits -desc "Bitmask indicating bright neighbour (1), source blending (
 # Number of bands with a detection
 addcol nBands -desc "Number of bands in which the source is detected." "sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1))"
 
-# Reliable means detected in all three bands at >5-sigma & max(errBits) = 0
-addcol reliable -desc "True if the source is detected in all three bands at >5-sigma and errBits=0." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits == 0"
+# Reliable
+addcol reliable -desc "True if the source is detected in all three bands at >5-sigma and errBits <= 1 (or errBits == 1 and the source has been detected more than once)." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits <= 1"
 
 
 # night
