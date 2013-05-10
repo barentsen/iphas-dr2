@@ -105,13 +105,11 @@ class Concatenator(object):
                                    haPlaneX haPlaneY rAxis primaryID" """
         else:
             keepcols = """keepcols "sourceID ra dec \
-                                       mergedClass \
-                                       pStar pGalaxy \
-                                       r rErr rClass \
-                                       i iErr iClass \
-                                       ha haErr haClass \
-                                       brightNeighb deblend saturated \
-                                       errBits reliable" """
+                                       mergedClass
+                                       r rErr \
+                                       i iErr \
+                                       ha haErr \
+                                       errBits" """
 
         instring = ''
         for field in self.fieldlist:
