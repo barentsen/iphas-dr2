@@ -2,7 +2,8 @@
 IPHAS Data Release 2
 ====================
 
-:summary: Python package, scripts and documentation used to produce IPHAS Data Release 2.
+Python package, scripts and documentation used to produce IPHAS Data Release 2.
+
 :authors: Geert Barentsen; Hywel Farnhill
 :dependencies: astropy, numpy, scipy.
 

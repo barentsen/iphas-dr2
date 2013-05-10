@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Creates a global photometric calibration using the Glazebrook algorithm.
+Fits a global photometric calibration using the Glazebrook algorithm.
 
+Depends on the shifts between exposure overlaps computed by the 
+offsets.py module.
+
+TODO
+* Calibrate on a CCD-by-CCD basis?
 """
 import numpy as np
 import os
@@ -16,6 +21,7 @@ from constants import IPHASQC
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Hywel Farnhill', 'Janet Drew']
+
 
 
 class Glazebrook(object):
@@ -84,7 +90,9 @@ class Glazebrook(object):
         f.close()
 
 
-def prepare_glazebrook_data(band='r'):
+def glazebrook_data(band='r'):
+    """Retrieve the offset information needed by the Glazebrook algorithm.
+    """
     assert(band in ['r', 'i', 'ha'])
 
     # Parse data
@@ -135,16 +143,106 @@ def prepare_glazebrook_data(band='r'):
     return (runs, overlaps, anchors)
 
 
-def run_glazebrook(band='r'):
+def run_glazebrook_band(band='r'):
+    """Produce the calibration for a given band.
+    """
     assert(band in ['r', 'i', 'ha'])
     log.info('Running Glazebrook for the {0} band'.format(band))
     filename_output = os.path.join(constants.DESTINATION,
                                    'calibration-{0}.csv'.format(band))
-    runs, overlaps, anchors = prepare_glazebrook_data(band)
+    runs, overlaps, anchors = glazebrook_data(band)
     g = Glazebrook(runs, overlaps, anchors)
     g.solve()
     g.write(filename_output)
 
-if __name__ == '__main__':
+
+def run_glazebrook():
     for band in constants.BANDS:
-        run_glazebrook(band)
+        run_glazebrook_band(band)
+
+
+
+class CalibrationApplicator(object):
+    """Updates the seamed catalogues by applying the calibration shifts."""
+
+    def __init__(self, strip):
+        self.strip = strip
+        self.datadir = os.path.join(constants.DESTINATION,
+                                    'seamed',
+                                    'strip{0}'.format(self.strip))
+        self.outdir = os.path.join(constants.DESTINATION,
+                                   'calibrated',
+                                   'strip{0}'.format(self.strip))
+        if not os.path.exists(self.outdir):
+            os.makedirs(self.outdir)
+
+        # Read in the calibration
+        self.calib = {}
+        for band in constants.BANDS:
+            calib_file = os.path.join(constants.DESTINATION,
+                                      'calibration-{0}.csv'.format(band))
+            self.calib[band] = ascii.read(calib_file)
+
+    def run(self):
+        for filename in os.listdir(self.datadir):
+            log.info('Calibration {0}'.format(filename))
+            self.calibrate(filename)
+
+    def get_shifts(self, filename):
+        fieldid = filename.split('.fits')[0]
+        idx_field = np.argwhere(IPHASQC.field('id') == fieldid)[0]
+
+        shifts = {}
+        for band in constants.BANDS:
+            cond_run = (self.calib[band]['run']
+                        == IPHASQC.field('run_'+band)[idx_field])
+            shifts[band] = self.calib[band]['shift'][cond_run][0]
+
+        log.info("Shifts for {0}: {1}".format(fieldid, shifts))
+        return shifts
+
+    def calibrate(self, filename):
+        path_in = os.path.join(self.datadir, filename)
+        path_out = os.path.join(self.outdir, filename)
+        shifts = self.get_shifts(filename)
+
+        param = {'stilts': constants.STILTS,
+                 'filename_in': path_in,
+                 'filename_out': path_out,
+                 'cmd': """'replacecol r "toFloat(r  + {r})"; \
+                            replacecol rPeakMag "toFloat(rPeakMag  + {r})"; \
+                            replacecol rAperMag3 "toFloat(rAperMag3  + {r})"; \
+                            replacecol i "toFloat(i  + {i})"; \
+                            replacecol iPeakMag "toFloat(iPeakMag  + {i})"; \
+                            replacecol iAperMag3 "toFloat(iAperMag3  + {i})"; \
+                            replacecol ha "toFloat(ha  + {ha})"; \
+                            replacecol haPeakMag "toFloat(haPeakMag  + {ha})"; \
+                            replacecol haAperMag3 "toFloat(haAperMag3  + {ha})"; \
+                            replacecol rmi "toFloat(r-i)"; \
+                            replacecol rmha "toFloat(r-ha)"; \
+                           '""".format(**shifts)}
+
+        cmd = '{stilts} tpipe cmd={cmd} in={filename_in} out={filename_out}'.format(**param)
+        log.debug(cmd)
+        status = os.system(cmd)
+        log.info('tipe status: '+str(status))
+        return status
+
+
+def apply_calibration():
+    longitudes = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
+    for strip in longitudes:
+        ca = CalibrationApplicator(strip)
+        ca.run()
+
+
+if __name__ == '__main__':
+
+    if constants.DEBUGMODE:
+        log.setLevel('DEBUG')
+        ca = CalibrationApplicator(215)
+        ca.run()
+    else:
+        log.setLevel('INFO')
+        #run_glazebrook()
+        apply_calibration()

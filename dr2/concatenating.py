@@ -6,6 +6,8 @@ This script takes the output from the seaming script and concatenates the
 results into the final "Primary Source Catalogue" product,
 which is generated in 5x5 degree tiles.
 
+Both a light and a full version are generated.
+
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -26,8 +28,8 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 #############################
 
 # Where to write the output catalogues?
-MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated-uncalibrated')
-MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated-uncalibrated', 'light')
+MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated')
+MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated', 'light')
 
 ###########
 # CLASSES
@@ -107,8 +109,8 @@ class Concatenator(object):
                                 'strip{0}'.format(self.strip),
                                 '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
-        # & (sourceID == primaryID) \
-        # Note: a bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
+        
+        # A bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
         param = {'stilts': constants.STILTS,
                  'in': instring,
                  'icmd': """'select "(errBits < 64) \
