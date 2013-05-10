@@ -26,8 +26,8 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 #############################
 
 # Where to write the output catalogues?
-MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated')
-MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated', 'light')
+MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated-uncalibrated')
+MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated-uncalibrated', 'light')
 
 ###########
 # CLASSES
@@ -98,7 +98,7 @@ class Concatenator(object):
                                        i iErr iClass \
                                        ha haErr haClass \
                                        brightNeighb deblend saturated \
-                                       errBits reliable reliableStar" """
+                                       errBits reliable" """
 
         instring = ''
         for field in self.fieldlist:
@@ -163,4 +163,4 @@ if __name__ == "__main__":
         run_one(200)
     else:
         log.setLevel('INFO')
-        run_all(4)
+        run_all(3)
