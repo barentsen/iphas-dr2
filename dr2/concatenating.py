@@ -56,10 +56,10 @@ class Concatenator(object):
         # Where to write the output?
         if self.calibrated:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'catalogue')
+                                            'concatenated')
         else:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'catalogue-uncalibrated')
+                                            'concatenated-uncalibrated')
         if mode == 'light':
             self.destination = os.path.join(self.destination, 'light')
 
