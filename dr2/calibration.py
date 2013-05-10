@@ -250,4 +250,4 @@ if __name__ == '__main__':
     else:
         log.setLevel('INFO')
         #run_glazebrook()
-        apply_calibration(2)
+        apply_calibration(4)

@@ -25,7 +25,7 @@ Workflow
 - To carry out a global photometric calibration, call the __main__ functions of the modules in this order:
    detections.py => offsets.py => calibration.py
 - To generate the IPHAS Primary Source Catalogue:
-   detections.py => bandmerging.py => seaming.py => concatenating.py
+   detections.py => bandmerging.py => seaming.py => calibration.py => concatenating.py
 
 License
 --------
