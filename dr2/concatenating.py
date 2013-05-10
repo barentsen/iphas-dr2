@@ -13,7 +13,6 @@ from __future__ import division, print_function, unicode_literals
 import os
 import numpy as np
 from multiprocessing import Pool
-from astropy.io import fits
 from astropy import log
 import constants
 from constants import IPHASQC
@@ -21,14 +20,6 @@ from constants import IPHASQC
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
-
-
-#############################
-# CONSTANTS & CONFIGURATION
-#############################
-
-
-
 
 
 ###########
@@ -77,7 +68,7 @@ class Concatenator(object):
         if self.mode == 'light':
             suffix = '-light'
         else:
-            suffix = ''
+            suffix = '-full'
 
         return os.path.join(self.destination,
                             'iphas-dr2-psc-glon{0:03.0f}{1}{2}.fits'.format(
