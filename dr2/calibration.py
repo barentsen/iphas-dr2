@@ -3,7 +3,7 @@
 """
 Fits a global photometric calibration using the Glazebrook algorithm.
 
-Depends on the shifts between exposure overlaps computed by the 
+Depends on the shifts between exposure overlaps computed by the
 offsets.py module.
 
 TODO
@@ -24,6 +24,9 @@ __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Hywel Farnhill', 'Janet Drew']
 
 
+#############
+# GLAZEBROOK
+#############
 
 class Glazebrook(object):
     """Fit a global calibration using the method by Glazebrook et al. (1994)
@@ -157,11 +160,15 @@ def run_glazebrook_band(band='r'):
     g.write(filename_output)
 
 
-def run_glazebrook():
-    for band in constants.BANDS:
-        run_glazebrook_band(band)
+def run_glazebrook(ncores=3):
+    p = Pool(processes=ncores)
+    p.map(run_glazebrook_band, constants.BANDS)
 
 
+
+######################################
+# APPLY THE CALIBRATION TO CATALOGUES
+######################################
 
 class CalibrationApplicator(object):
     """Updates the seamed catalogues by applying the calibration shifts."""
@@ -242,6 +249,10 @@ def apply_calibration(ncores=2):
     p.map(apply_calibration_strip, strips)
 
 
+###################
+# MAIN EXECUTION
+###################
+
 if __name__ == '__main__':
 
     if constants.DEBUGMODE:
@@ -249,5 +260,5 @@ if __name__ == '__main__':
         apply_calibration_strip(215)
     else:
         log.setLevel('INFO')
-        #run_glazebrook()
-        apply_calibration(4)
+        #run_glazebrook(ncores=3)
+        apply_calibration(ncores=8)
