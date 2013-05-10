@@ -105,11 +105,10 @@ class Concatenator(object):
                                    haPlaneX haPlaneY rAxis primaryID" """
         else:
             keepcols = """keepcols "sourceID ra dec \
-                                       mergedClass
                                        r rErr \
                                        i iErr \
                                        ha haErr \
-                                       errBits"; \
+                                       mergedClass errBits"; \
                           select "nBands == 3";"""
 
         instring = ''
