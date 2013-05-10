@@ -27,9 +27,9 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-# Where to write the output catalogues?
-MYDESTINATION = os.path.join(constants.DESTINATION, 'concatenated')
-MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated', 'light')
+
+
+
 
 ###########
 # CLASSES
@@ -37,12 +37,37 @@ MYDESTINATION_LIGHT = os.path.join(constants.DESTINATION, 'concatenated', 'light
 
 class Concatenator(object):
 
-    def __init__(self, strip, part='a', mode='full'):
+    def __init__(self, strip, part='a', mode='full', calibrated=True):
+        assert(part in ['a', 'b'])
+        assert(mode in ['light', 'full'])
+        assert(calibrated in [True, False])
+
         self.strip = strip
         self.part = part
-        assert(self.part in ['a', 'b'])
         self.mode = mode
-        assert(self.mode in ['light', 'full'])
+        self.calibrated = calibrated
+
+        # Where are the input catalogues?
+        if calibrated:
+            self.datapath = os.path.join(constants.DESTINATION, 'calibrated')
+        else:
+            self.datapath = os.path.join(constants.DESTINATION, 'seamed')
+
+        # Where to write the output?
+        if self.calibrated:
+            self.destination = os.path.join(constants.DESTINATION,
+                                            'catalogue')
+        else:
+            self.destination = os.path.join(constants.DESTINATION,
+                                            'catalogue-uncalibrated')
+        if mode == 'light':
+            self.destination = os.path.join(self.destination, 'light')
+
+        # Make sure our destination exists
+        if not os.path.exists(self.destination):
+            os.makedirs(self.destination)
+
+        # Limits
         self.lon1 = strip
         self.lon2 = strip + constants.STRIPWIDTH
         self.fieldlist = self.get_fieldlist()
@@ -50,16 +75,11 @@ class Concatenator(object):
     def get_output_filename(self):
         """Returns the full path of the output file."""
         if self.mode == 'light':
-            destination = MYDESTINATION_LIGHT
             suffix = '-light'
         else:
-            destination = MYDESTINATION
             suffix = ''
-        # Make sure our destination exists
-        if not os.path.exists(destination):
-            os.makedirs(destination)
 
-        return os.path.join(destination,
+        return os.path.join(self.destination,
                             'iphas-dr2-psc-glon{0:03.0f}{1}{2}.fits'.format(
                                                     self.lon1,
                                                     self.part,
@@ -104,12 +124,11 @@ class Concatenator(object):
 
         instring = ''
         for field in self.fieldlist:
-            path = os.path.join(constants.DESTINATION,
-                                'seamed',
+            path = os.path.join(self.datapath,
                                 'strip{0}'.format(self.strip),
                                 '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
-        
+
         # A bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
         param = {'stilts': constants.STILTS,
                  'in': instring,
@@ -132,7 +151,6 @@ class Concatenator(object):
         status = os.system(mycmd)
         log.info('Concat: '+str(status))
         return status
-
 
 
 ###########
