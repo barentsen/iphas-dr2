@@ -11,6 +11,7 @@ TODO
 """
 import numpy as np
 import os
+from multiprocessing import Pool
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
@@ -229,20 +230,24 @@ class CalibrationApplicator(object):
         return status
 
 
-def apply_calibration():
-    longitudes = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
-    for strip in longitudes:
-        ca = CalibrationApplicator(strip)
-        ca.run()
+def apply_calibration_strip(strip):
+    log.info('Applying calibration to strip {0}'.format(strip))
+    ca = CalibrationApplicator(strip)
+    ca.run()
+
+
+def apply_calibration(ncores=2):
+    strips = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
+    p = Pool(processes=ncores)
+    p.map(apply_calibration_strip, strips)
 
 
 if __name__ == '__main__':
 
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
-        ca = CalibrationApplicator(215)
-        ca.run()
+        apply_calibration_strip(215)
     else:
         log.setLevel('INFO')
         #run_glazebrook()
-        apply_calibration()
+        apply_calibration(2)
