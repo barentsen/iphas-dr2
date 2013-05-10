@@ -109,7 +109,8 @@ class Concatenator(object):
                                        r rErr \
                                        i iErr \
                                        ha haErr \
-                                       errBits" """
+                                       errBits"; \
+                          select "nBands == 3";"""
 
         instring = ''
         for field in self.fieldlist:
