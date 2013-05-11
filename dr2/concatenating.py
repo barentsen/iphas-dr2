@@ -59,7 +59,6 @@ class Concatenator(object):
             os.makedirs(self.destination)
 
         log.info('Reading data from {0}'.format(self.datapath))
-        log.info('Writing data to {0}'.format(self.destination))
 
         # Limits
         self.lon1 = strip
@@ -107,7 +106,7 @@ class Concatenator(object):
                                    haPlaneX haPlaneY rAxis primaryID" """
         else:
             extracmd = """select "nBands == 3"; \
-                          keepcols "sourceID ra dec \
+                          keepcols "ra dec \
                                        r rErr \
                                        i iErr \
                                        ha haErr \
@@ -119,6 +118,9 @@ class Concatenator(object):
                                 'strip{0}'.format(self.strip),
                                 '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
+
+        output_filename = self.get_output_filename()
+        log.info('Writing data to {0}'.format(output_filename))
 
         # A bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
         param = {'stilts': constants.STILTS,
@@ -134,7 +136,7 @@ class Concatenator(object):
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              {0}
                              '""".format(extracmd),
-                 'out': self.get_output_filename()}
+                 'out': output_filename}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
         mycmd = cmd.format(**param)
