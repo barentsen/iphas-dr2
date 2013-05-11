@@ -58,6 +58,9 @@ class Concatenator(object):
         if not os.path.exists(self.destination):
             os.makedirs(self.destination)
 
+        log.info('Reading data from {0}'.format(self.datapath))
+        log.info('Writing data to {0}'.format(self.destination))
+
         # Limits
         self.lon1 = strip
         self.lon2 = strip + constants.STRIPWIDTH
@@ -99,17 +102,16 @@ class Concatenator(object):
         else:
             cond_latitude = "b < 0"
 
-        keepcols = ''
         if self.mode == 'full':
-            keepcols = """delcols "rPlaneX rPlaneY iPlaneX iPlaneY \
+            extracmd = """delcols "rPlaneX rPlaneY iPlaneX iPlaneY \
                                    haPlaneX haPlaneY rAxis primaryID" """
         else:
-            keepcols = """keepcols "sourceID ra dec \
+            extracmd = """select "nBands == 3"; \
+                          keepcols "sourceID ra dec \
                                        r rErr \
                                        i iErr \
                                        ha haErr \
-                                       mergedClass errBits"; \
-                          select "nBands == 3";"""
+                                       mergedClass errBits";"""
 
         instring = ''
         for field in self.fieldlist:
@@ -131,7 +133,7 @@ class Concatenator(object):
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              {0}
-                             '""".format(keepcols),
+                             '""".format(extracmd),
                  'out': self.get_output_filename()}
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
@@ -152,7 +154,7 @@ def run_one(strip):
     log.info('Concatenating L={0}'.format(strip))
     for mode in ['light', 'full']:
         for part in ['a', 'b']:
-            concat = Concatenator(strip, part, mode)
+            concat = Concatenator(strip, part, mode, calibrated=True)
             concat.run()
 
 
@@ -173,4 +175,4 @@ if __name__ == "__main__":
         run_one(200)
     else:
         log.setLevel('INFO')
-        run_all(3)
+        run_all(2)
