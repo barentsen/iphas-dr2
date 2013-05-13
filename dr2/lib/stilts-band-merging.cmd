@@ -40,6 +40,8 @@ colmeta -name r aperMag2_1
 colmeta -name rErr aperMag2Err_1
 colmeta -name rPeakMag peakMag_1
 colmeta -name rPeakMagErr peakMagErr_1
+colmeta -name rAperMag1 aperMag1_1
+colmeta -name rAperMag1Err aperMag1Err_1
 colmeta -name rAperMag3 aperMag3_1
 colmeta -name rAperMag3Err aperMag3Err_1
 colmeta -name rGauSig gauSig_1
@@ -68,6 +70,8 @@ colmeta -name i aperMag2_2
 colmeta -name iErr aperMag2Err_2
 colmeta -name iPeakMag peakMag_2
 colmeta -name iPeakMagErr peakMagErr_2
+colmeta -name iAperMag1 aperMag1_2
+colmeta -name iAperMag1Err aperMag1Err_2
 colmeta -name iAperMag3 aperMag3_2
 colmeta -name iAperMag3Err aperMag3Err_2
 colmeta -name iGauSig gauSig_2
@@ -96,6 +100,8 @@ colmeta -name ha aperMag2_3
 colmeta -name haErr aperMag2Err_3
 colmeta -name haPeakMag peakMag_3
 colmeta -name haPeakMagErr peakMagErr_3
+colmeta -name haAperMag1 aperMag1_3
+colmeta -name haAperMag1Err aperMag1Err_3
 colmeta -name haAperMag3 aperMag3_3
 colmeta -name haAperMag3Err aperMag3Err_3
 colmeta -name haGauSig gauSig_3
@@ -204,5 +210,5 @@ addcol haAxisDist "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2))"
 addcol -desc "Distance from the optical axis" rAxis "toFloat( maximum(array(NULL_rAxisDist?0:rAxisDist, NULL_iAxisDist?0:iAxisDist, NULL_haAxisDist?0:haAxisDist)) )"
 
 # Remove obsolete columns
-keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rCCD rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iCCD iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haCCD haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits nBands reliable night seeing rAxis fieldID fieldGrade'
+keepcols 'sourceID ra dec posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag1 rAperMag1Err rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rCCD rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag1 iAperMag1Err iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iCCD iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag1 haAperMag1Err haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haCCD haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits nBands reliable night seeing rAxis fieldID fieldGrade'
 

@@ -106,6 +106,8 @@ class Concatenator(object):
                                    haPlaneX haPlaneY rAxis primaryID" """
         else:
             extracmd = """select "nBands == 3"; \
+                          replacecol ra "toFloat(ra)";
+                          replacecol dec "toFloat(dec)";
                           keepcols "ra dec \
                                        r rErr \
                                        i iErr \
