@@ -3,7 +3,7 @@
 # Crowded regions need more memory to run
 for LON in `seq 25 5 100`
 do
-    qsub -N seaming$LON -v STRIP=$LON -l pmem=4gb,walltime=08:00:00 pbs-seaming.sh
+    qsub -N seaming$LON -v STRIP=$LON -l pmem=5gb,walltime=08:00:00 pbs-seaming.sh
 done
 
 # Less crowded regions

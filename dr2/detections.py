@@ -149,6 +149,9 @@ class DetectionCatalogue():
                 self.fits[ccd].header['DATE-OBS'] = '2012-11-20'
                 self.fits[ccd].header['MJD-OBS'] = 56251.11666666667
 
+            if self.fits[ccd].header['RUN'] == 943312:
+                self.fits[ccd].header['MJD-OBS'] = 56212.966935185184
+
             # Some runs do not have date/time stored due to a glitch in the
             # Telescope Control System. We consider this a show-stopper.
             if not 'UTSTART' in self.fits[ccd].header:
@@ -993,12 +996,14 @@ if __name__ == '__main__':
     else:
         directory = constants.RAWDATADIR
 
-    if constants.HOSTNAME == 'uhppc11.herts.ac.uk':  # Testing
+    #constants.DEBUGMODE = True
+
+    if constants.DEBUGMODE:  # Testing
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
-        run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
-
+        #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
+        #run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
+        run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
     else:  # Production
         log.setLevel('WARNING')
         run_all(directory, ncores=8)

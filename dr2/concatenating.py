@@ -158,7 +158,7 @@ def run_one(strip):
     log.info('Concatenating L={0}'.format(strip))
     for mode in ['light', 'full']:
         for part in ['a', 'b']:
-            concat = Concatenator(strip, part, mode, calibrated=True)
+            concat = Concatenator(strip, part, mode, calibrated=False)
             concat.run()
 
 
