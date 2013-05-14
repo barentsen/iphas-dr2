@@ -108,6 +108,7 @@ class Concatenator(object):
             extracmd = """select "nBands == 3"; \
                           replacecol ra "toFloat(ra)";
                           replacecol dec "toFloat(dec)";
+                          replacecol errBits "toShort(errBits)";
                           keepcols "ra dec \
                                        r rErr \
                                        i iErr \
