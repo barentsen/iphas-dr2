@@ -55,8 +55,11 @@ class Concatenator(object):
             self.destination = os.path.join(self.destination, 'light')
 
         # Make sure our destination exists
-        if not os.path.exists(self.destination):
-            os.makedirs(self.destination)
+        try:
+            if not os.path.exists(self.destination):
+                os.makedirs(self.destination)
+        except Exception:
+            pass
 
         log.info('Reading data from {0}'.format(self.datapath))
 
