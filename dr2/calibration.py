@@ -110,8 +110,8 @@ def glazebrook_data(band='r'):
 
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
-    #QC_ANCHORS = IPHASQC.field('anchor')
-    
+    QC_ANCHORS = IPHASQC.field('anchor')
+    """
     cond_anchors = ( (IPHASQC.field('qflag') != 'B')
                      & (IPHASQC.field('qflag') != 'C')
                      & (IPHASQC.field('qflag') != 'D')
@@ -127,8 +127,8 @@ def glazebrook_data(band='r'):
                          | (np.abs(IPHASQC.field('apass_i')) < 0.02)
                         )
                      )
-    
-    #cond_anchors = (IPHASQC.field('anchor') == 1)
+    """
+    cond_anchors = (IPHASQC.field('anchor') == 1)
 
     QC_RUNS = IPHASQC.field('run_{0}'.format(band))
     for myrun in runs:
@@ -222,12 +222,15 @@ class CalibrationApplicator(object):
                  'filename_out': path_out,
                  'cmd': """'replacecol r "toFloat(r  + {r})"; \
                             replacecol rPeakMag "toFloat(rPeakMag  + {r})"; \
+                            replacecol rAperMag1 "toFloat(rAperMag1  + {r})"; \
                             replacecol rAperMag3 "toFloat(rAperMag3  + {r})"; \
                             replacecol i "toFloat(i  + {i})"; \
                             replacecol iPeakMag "toFloat(iPeakMag  + {i})"; \
+                            replacecol iAperMag1 "toFloat(iAperMag1  + {i})"; \
                             replacecol iAperMag3 "toFloat(iAperMag3  + {i})"; \
                             replacecol ha "toFloat(ha  + {ha})"; \
                             replacecol haPeakMag "toFloat(haPeakMag  + {ha})"; \
+                            replacecol haAperMag1 "toFloat(haAperMag1  + {ha})"; \
                             replacecol haAperMag3 "toFloat(haAperMag3  + {ha})"; \
                             replacecol rmi "toFloat(r-i)"; \
                             replacecol rmha "toFloat(r-ha)"; \
