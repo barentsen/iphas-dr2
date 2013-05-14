@@ -16,7 +16,7 @@ from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
+__credits__ = ['Hywel Farnhill', 'Janet Drew']
 
 
 #############################
@@ -135,7 +135,7 @@ def offsets_relative(band, ncores=4):
     log.info('Starting to compute offsets for band {0}'.format(band))
 
     # Write the results
-    filename = os.path.join(constants.DESTINATION, 
+    filename = os.path.join(constants.DESTINATION,
                             'offsets-{0}.csv'.format(band))
     out = open(filename, 'w')
     out.write('run1,run2,offset,std,n\n')
