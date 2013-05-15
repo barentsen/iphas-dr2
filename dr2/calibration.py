@@ -15,6 +15,7 @@ from multiprocessing import Pool
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
+from astropy.io import fits
 from astropy import log
 import constants
 from constants import IPHASQC
@@ -77,8 +78,9 @@ class Glazebrook(object):
         # Note: there should be alternative algorithms for symmetric
         # matrices which are faster.
         self.solution = linalg.lsqr(self.A, self.b,
-                                    atol=1e-11, iter_lim=3e5)
-        log.info('Solution found: {0}'.format(self.solution))
+                                    atol=1e-10, iter_lim=2e5, show=False)
+        #log.info('Solution found: {0}'.format(self.solution))
+        log.info('Solution found')
         return self.solution
 
     def write(self, filename):
@@ -111,28 +113,15 @@ def glazebrook_data(band='r'):
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
 
-    cond_weather = (IPHASQC.field('hum_avg') < 50)
-    cond_photometric = (np.isnan(IPHASQC.field('hours_phot_carlsberg'))
-                        | (IPHASQC.field('hours_nonphot_carlsberg') == 0)
-                        | (IPHASQC.field('hours_phot_carlsberg') > 2*IPHASQC.field('hours_nonphot_carlsberg')))
-    cond_quality = ((IPHASQC.field('qflag') != 'B')
-                    & (IPHASQC.field('qflag') != 'C')
-                    & (IPHASQC.field('qflag') != 'D'))
-
     cond_anchors = ( IPHASQC.field('is_best')
-                     & cond_weather
-                     & cond_photometric
-                     & cond_quality
-                     & (
-                         (np.isnan(IPHASQC.field('rshift_apassdr7')) & (IPHASQC.field('anchor') == 1))
-                         | (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.02)
-                         )
-                     & (
-                         (np.isnan(IPHASQC.field('ishift_apassdr7')) & (IPHASQC.field('anchor') == 1))
-                         | (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.02)
+                     & ( (IPHASQC.field('anchor') == 1)
+                         | ( (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
+                            & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03) )
                         )
                      )
+
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
+
 
     """
     cond_anchors = (IPHASQC.field('anchor') == 1)
@@ -190,7 +179,7 @@ class CalibrationApplicator(object):
                                     'seamed',
                                     'strip{0}'.format(self.strip))
         self.outdir = os.path.join(constants.DESTINATION,
-                                   'calibrated-20130515',
+                                   'calibrated',
                                    'strip{0}'.format(self.strip))
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
@@ -263,6 +252,51 @@ def apply_calibration(ncores=2):
     p.map(apply_calibration_strip, strips)
 
 
+
+def evaluate_calibration(band='r'):
+    """Returns the array of residuals of the calibration against APASS"""
+    # Validation data
+    filename_apass = os.path.join(constants.PACKAGEDIR,
+                                  'tests', 
+                                  'apass_validation.fits')
+    apass = fits.getdata(filename_apass, 1)
+
+    filename_calib = os.path.join(constants.DESTINATION,
+                                  'calibration-{0}.csv'.format(band))
+    calib = ascii.read(filename_calib)
+
+    filename_eval = os.path.join(constants.DESTINATION,
+                                  'eval-{0}.csv'.format(band))
+    out = open(filename_eval, 'w')
+    out.write('id,night,l,b,n_apass,apass,calib\n')
+    residuals = []
+    for i in range(len(calib)):
+        idx = np.argwhere(apass['run_{0}'.format(band)] == calib['run'][i])[0]
+        apass_shift = apass['{0}shift_apassdr7'.format(band)][idx][0]
+        calib_shift = calib['shift'][i]
+
+        apass_stars = apass['{0}match_apassdr7'.format(band)][idx][0]
+
+        out.write('{0},{1},{2},{3},{4},{5},{6}\n'.format(apass['id'][idx][0],
+                                                 apass['night'][idx][0],
+                                                 apass['l'][idx][0],
+                                                 apass['b'][idx][0],
+                                                 apass_stars,
+                                                 apass_shift,
+                                                 calib_shift))
+        if not np.isnan(apass_shift):
+            residuals.append( apass_shift - calib_shift )
+
+    out.close()
+
+    print('===== {0} ====='.format(band))        
+    print('mean(residuals {0}): {1:.03f}'.format(band, np.mean(residuals)))
+    print('min(residuals {0}): {1:.03f}'.format(band, np.min(residuals)))
+    print('max(residuals {0}): {1:.03f}'.format(band, np.max(residuals)))
+    print('std(residuals {0}): {1:.03f}'.format(band, np.std(residuals)))
+    return residuals
+    #crossmatch using stilts
+
 ###################
 # MAIN EXECUTION
 ###################
@@ -271,7 +305,15 @@ if __name__ == '__main__':
 
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
-        apply_calibration_strip(215)
+        #run_glazebrook(ncores=3)
+        #apply_calibration_strip(215)
+        bands = ['r', 'i']
+
+        p = Pool(processes=2)
+        p.map(run_glazebrook_band, bands)
+        for band in bands:
+            residuals = evaluate_calibration(band)
+
     else:
         log.setLevel('INFO')
         run_glazebrook(ncores=3)
