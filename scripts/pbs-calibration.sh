@@ -1,5 +1,5 @@
 #!/bin/sh -f    
-#PBS -N iphas-calibration                                                       
+#PBS -N calibration                                                       
 #PBS -m aeb 
 #PBS -M gb
 #PSB -l pmem=1gb
