@@ -2,8 +2,8 @@
 #PBS -N iphas-concatenating                                                        
 #PBS -m b 
 #PBS -M gb
-#PSB -l pmem=3gb
-#PBS -l nodes=1:ppn=8
+#PSB -l pmem=6gb
+#PBS -l nodes=1:ppn=3
 #PBS -k oe                                                                      
 #PBS -q cmain
 #PBS -l walltime=08:00:00                                                       

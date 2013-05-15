@@ -47,12 +47,14 @@ class Concatenator(object):
         # Where to write the output?
         if self.calibrated:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated')
+                                            'concatenated-20130514')
         else:
             self.destination = os.path.join(constants.DESTINATION,
                                             'concatenated-uncalibrated')
         if mode == 'light':
             self.destination = os.path.join(self.destination, 'light')
+        else:
+            self.destination = os.path.join(self.destination, 'full')
 
         # Make sure our destination exists
         try:
@@ -73,10 +75,10 @@ class Concatenator(object):
         if self.mode == 'light':
             suffix = '-light'
         else:
-            suffix = '-full'
+            suffix = ''
 
         return os.path.join(self.destination,
-                            'iphas-dr2-psc-glon{0:03.0f}{1}{2}.fits'.format(
+                            'iphas-dr2-{0:03.0f}{1}{2}.fits'.format(
                                                     self.lon1,
                                                     self.part,
                                                     suffix))
@@ -162,7 +164,7 @@ def run_one(strip):
     log.info('Concatenating L={0}'.format(strip))
     for mode in ['light', 'full']:
         for part in ['a', 'b']:
-            concat = Concatenator(strip, part, mode, calibrated=False)
+            concat = Concatenator(strip, part, mode, calibrated=True)
             concat.run()
 
 
@@ -183,4 +185,4 @@ if __name__ == "__main__":
         run_one(200)
     else:
         log.setLevel('INFO')
-        run_all(2)
+        run_all(3)
