@@ -110,25 +110,33 @@ def glazebrook_data(band='r'):
 
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
-    QC_ANCHORS = IPHASQC.field('anchor')
-    """
-    cond_anchors = ( (IPHASQC.field('qflag') != 'B')
-                     & (IPHASQC.field('qflag') != 'C')
-                     & (IPHASQC.field('qflag') != 'D')
-                     & (IPHASQC.field('hum_avg') < 50)
+
+    cond_weather = (IPHASQC.field('hum_avg') < 50)
+    cond_photometric = (np.isnan(IPHASQC.field('hours_phot_carlsberg'))
+                        | (IPHASQC.field('hours_nonphot_carlsberg') == 0)
+                        | (IPHASQC.field('hours_phot_carlsberg') > 2*IPHASQC.field('hours_nonphot_carlsberg')))
+    cond_quality = ((IPHASQC.field('qflag') != 'B')
+                    & (IPHASQC.field('qflag') != 'C')
+                    & (IPHASQC.field('qflag') != 'D'))
+
+    cond_anchors = ( IPHASQC.field('is_best')
+                     & cond_weather
+                     & cond_photometric
+                     & cond_quality
                      & (
-                         (np.isnan(IPHASQC.field('apass_r'))
-                          & (IPHASQC.field('anchor') == 1))
-                         | (np.abs(IPHASQC.field('apass_r')) < 0.02)
+                         (np.isnan(IPHASQC.field('rshift_apassdr7')) & (IPHASQC.field('anchor') == 1))
+                         | (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.02)
                          )
                      & (
-                         (np.isnan(IPHASQC.field('apass_i'))
-                          & (IPHASQC.field('anchor') == 1))
-                         | (np.abs(IPHASQC.field('apass_i')) < 0.02)
+                         (np.isnan(IPHASQC.field('ishift_apassdr7')) & (IPHASQC.field('anchor') == 1))
+                         | (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.02)
                         )
                      )
+    log.info('Found {0} anchors'.format(cond_anchors.sum()))
+
     """
     cond_anchors = (IPHASQC.field('anchor') == 1)
+    """
 
     QC_RUNS = IPHASQC.field('run_{0}'.format(band))
     for myrun in runs:
@@ -182,7 +190,7 @@ class CalibrationApplicator(object):
                                     'seamed',
                                     'strip{0}'.format(self.strip))
         self.outdir = os.path.join(constants.DESTINATION,
-                                   'calibrated',
+                                   'calibrated-20130515',
                                    'strip{0}'.format(self.strip))
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
