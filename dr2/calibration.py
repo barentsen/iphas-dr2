@@ -175,12 +175,16 @@ class CalibrationApplicator(object):
 
     def __init__(self, strip):
         self.strip = strip
+        #self.datadir = os.path.join(constants.DESTINATION,
+        #                            'seamed',
+        #                            'strip{0}'.format(self.strip))
+        #self.outdir = os.path.join(constants.DESTINATION,
+        #                           'calibrated',
+        #                           'strip{0}'.format(self.strip))
         self.datadir = os.path.join(constants.DESTINATION,
-                                    'seamed',
-                                    'strip{0}'.format(self.strip))
+                                    'bandmerged')
         self.outdir = os.path.join(constants.DESTINATION,
-                                   'calibrated',
-                                   'strip{0}'.format(self.strip))
+                                   'bandmerged-calibrated')
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
@@ -236,7 +240,7 @@ class CalibrationApplicator(object):
         cmd = '{stilts} tpipe cmd={cmd} in={filename_in} out={filename_out}'.format(**param)
         log.debug(cmd)
         status = os.system(cmd)
-        log.info('tipe status: '+str(status))
+        log.info('stilts status: '+str(status))
         return status
 
 
@@ -316,5 +320,7 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        run_glazebrook(ncores=3)
-        apply_calibration(ncores=8)
+        #run_glazebrook(ncores=3)
+        #apply_calibration(ncores=8)
+        apply_calibration_strip(0)
+
