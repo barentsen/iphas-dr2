@@ -223,3 +223,11 @@ iphas_oct2005b/r475385_cat.fits  3  7408_oct2005b   r   iphas_oct2005b/r475386_c
 iphas_oct2005b/r475726_cat.fits  3  7418_oct2005b   Halpha  iphas_oct2005b/r475728_cat.fits
 iphas_oct2005b/r475727_cat.fits  3  7418_oct2005b   r  iphas_oct2005b/r475728_cat.fits
 iphas_oct2005b/r475728_cat.fits  3  7418_oct2005b   i  iphas_oct2005b/r475728_cat.fits
+iphas_aug2009/r687822_cat.fits   1  1231_aug2009    r   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687822_cat.fits   2  1231_aug2009    r   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687822_cat.fits   3  1231_aug2009    r   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687822_cat.fits   4  1231_aug2009    r   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687823_cat.fits   1  1231_aug2009    i   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687823_cat.fits   2  1231_aug2009    i   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687823_cat.fits   3  1231_aug2009    i   iphas_aug2009/r687821_cat.fits
+iphas_aug2009/r687823_cat.fits   4  1231_aug2009    i   iphas_aug2009/r687821_cat.fits

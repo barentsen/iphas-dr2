@@ -3,8 +3,10 @@
 """
 Fits a global photometric calibration using the Glazebrook algorithm.
 
-Depends on the shifts between exposure overlaps computed by the
-offsets.py module.
+The algorithm finds a set of zeropoint shifts which minimizes the magnitude
+offsets between overlapping exposures (computed using the dr2.offsets module.)
+
+This file also contains a class to apply the calibration to the catalogues.
 
 TODO
 * Calibrate on a CCD-by-CCD basis?
@@ -165,10 +167,9 @@ def run_glazebrook(ncores=3):
     p.map(run_glazebrook_band, constants.BANDS)
 
 
-
-######################################
-# APPLY THE CALIBRATION TO CATALOGUES
-######################################
+###################################################
+# CLASS USED TO APPLY THE CALIBRATION TO CATALOGUES
+###################################################
 
 class CalibrationApplicator(object):
     """Updates the seamed catalogues by applying the calibration shifts."""
@@ -252,12 +253,11 @@ def apply_calibration(ncores=2):
     p.map(apply_calibration_strip, strips)
 
 
-
 def evaluate_calibration(band='r'):
     """Returns the array of residuals of the calibration against APASS"""
     # Validation data
     filename_apass = os.path.join(constants.PACKAGEDIR,
-                                  'tests', 
+                                  'tests',
                                   'apass_validation.fits')
     apass = fits.getdata(filename_apass, 1)
 
@@ -266,7 +266,7 @@ def evaluate_calibration(band='r'):
     calib = ascii.read(filename_calib)
 
     filename_eval = os.path.join(constants.DESTINATION,
-                                  'eval-{0}.csv'.format(band))
+                                 'eval-{0}.csv'.format(band))
     out = open(filename_eval, 'w')
     out.write('id,night,l,b,n_apass,apass,calib\n')
     residuals = []
@@ -289,7 +289,7 @@ def evaluate_calibration(band='r'):
 
     out.close()
 
-    print('===== {0} ====='.format(band))        
+    print('===== {0} ====='.format(band))
     print('mean(residuals {0}): {1:.03f}'.format(band, np.mean(residuals)))
     print('min(residuals {0}): {1:.03f}'.format(band, np.min(residuals)))
     print('max(residuals {0}): {1:.03f}'.format(band, np.max(residuals)))
@@ -308,7 +308,6 @@ if __name__ == '__main__':
         #run_glazebrook(ncores=3)
         #apply_calibration_strip(215)
         bands = ['r', 'i']
-
         p = Pool(processes=2)
         p.map(run_glazebrook_band, bands)
         for band in bands:
