@@ -6,7 +6,7 @@
 #PBS -l nodes=1:ppn=8
 #PBS -k oe                                                                      
 #PBS -q cmain
-#PBS -l walltime=23:59:00                                                       
+#PBS -l walltime=11:59:00                                                       
 
 echo $1
 
