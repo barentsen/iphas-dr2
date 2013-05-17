@@ -1008,4 +1008,4 @@ if __name__ == '__main__':
         log.setLevel('WARNING')
         #run_all(directory, ncores=8)
         for row in ascii.read('wcs-tuning/needfix.txt'):
-            run_one(constants.RAWDATADIR+row[0])
+            run_one( os.path.join(constants.RAWDATADIR, row[0]) )
