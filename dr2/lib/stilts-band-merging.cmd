@@ -9,7 +9,7 @@
 # sourceID (use the first non-NULL value of detectionID_1/2/3)
 addcol sourceID "detectionID_1"
 replacecol sourceID "NULL_sourceID?detectionID_2:sourceID"
-replacecol sourceID "NULL_sourceID?detectionID_3:sourceID"
+replacecol sourceID -desc "Unique identification number of the source. Identical to rDetectionID if the source was detected in the r-band; identical to iDetectionID or haDetectionID otherwise." "NULL_sourceID?detectionID_3:sourceID"
 
 # Rename RA/Dec
 colmeta -name ra ra_1
@@ -20,12 +20,12 @@ colmeta -name iDec dec_2
 colmeta -name haDec dec_3
 # Fill in RA/Dec if not provided by the r-band
 replacecol ra "NULL_ra?iRA:ra"
-replacecol ra -desc "Right Ascension"  "NULL_ra?haRA:ra"
+replacecol ra -desc "J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H-alpha coordinate is given."  "NULL_ra?haRA:ra"
 replacecol dec "NULL_dec?iDec:dec"
-replacecol dec -desc "Declination"  "NULL_dec?haDec:dec"
+replacecol dec -desc "J2000 Declination. See comments for ra."  "NULL_dec?haDec:dec"
 colmeta -name posErr posErr_1
 replacecol posErr "NULL_posErr?posErr_2:posErr"
-replacecol posErr "NULL_posErr?posErr_3:posErr"
+replacecol posErr -desc "Astrometric fit error (RMS). Be aware that the error might be significantly larger than this near CCD edges." "NULL_posErr?posErr_3:posErr"
 # Add galactic coordinates
 addskycoords -inunit deg -outunit deg icrs galactic ra dec l b;
 
@@ -36,92 +36,92 @@ addcol -desc "Position offset of the Ha-band detection in RA" haXi "toFloat(3600
 addcol -desc "Position offset of the Ha-band detection in DEC" haEta "toFloat(3600.0*(haDec-dec))"
 
 # Rename r-band columns
-colmeta -name r aperMag2_1
-colmeta -name rErr aperMag2Err_1
-colmeta -name rPeakMag peakMag_1
-colmeta -name rPeakMagErr peakMagErr_1
-colmeta -name rAperMag1 aperMag1_1
-colmeta -name rAperMag1Err aperMag1Err_1
-colmeta -name rAperMag3 aperMag3_1
-colmeta -name rAperMag3Err aperMag3Err_1
-colmeta -name rGauSig gauSig_1
-colmeta -name rEll ell_1
-colmeta -name rPA pa_1
-colmeta -name rClass class_1
-colmeta -name rClassStat classStat_1
+colmeta -name r -desc "Default r-band magnitude using a 2.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag2_1
+colmeta -name rErr -desc "Uncertainty for r. Does not include systematic errors." aperMag2Err_1
+colmeta -name rPeakMag -desc "Alternative r-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system." peakMag_1
+colmeta -name rPeakMagErr -desc "Uncertainty in rPeakMag. Does not include systematics." peakMagErr_1
+colmeta -name rAperMag1 -desc "Alternative r-band magnitude using a 1.2 arcsec aperture diameter. Calibrated in the Vega system." aperMag1_1
+colmeta -name rAperMag1Err -desc "Uncertainty in rAperMag1. Does not include systematics." aperMag1Err_1
+colmeta -name rAperMag3 -desc "Alternative r-band magnitude using a 3.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag3_1
+colmeta -name rAperMag3Err -desc "Uncertainty in rAperMag3. Does not include systematics." aperMag3Err_1
+colmeta -name rGauSig -desc "RMS of axes of ellipse fit in r." gauSig_1
+colmeta -name rEll -desc "Ellipticity in the r-band." ell_1
+colmeta -name rPA -desc "Position angle in the r-band." pa_1
+colmeta -name rClass -desc "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)." class_1
+colmeta -name rClassStat -desc "N(0,1) stellarness-of-profile statistic." classStat_1
 colmeta -name rBrightNeighb brightNeighb_1
 colmeta -name rDeblend deblend_1
 colmeta -name rSaturated saturated_1
 colmeta -name rVignetted vignetted_1
 colmeta -name rTruncated truncated_1
 colmeta -name rBadPix badPix_1
-colmeta -name rErrBits errBits_1
-colmeta -name rMJD mjd_1
-colmeta -name rSeeing seeing_1
-colmeta -name rDetectionID detectionID_1
-colmeta -name rCCD ccd_1
-colmeta -name rX x_1
-colmeta -name rY y_1
+colmeta -name rErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_1
+colmeta -name rMJD -desc "Modified Julian Date at the start of the r-band exposure." mjd_1
+colmeta -name rSeeing -desc "Average FWHM in the r-band exposure." seeing_1
+colmeta -name rDetectionID -desc "Unique identifier of the r-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_1
+colmeta -name rCCD -desc "CCD-chip number on the INT Wide Field Camera for the r-band detection." ccd_1
+colmeta -name rX -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." x_1
+colmeta -name rY -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." y_1
 colmeta -name rPlaneX planeX_1
 colmeta -name rPlaneY planeY_1
 
 # Rename i-band columns
-colmeta -name i aperMag2_2
-colmeta -name iErr aperMag2Err_2
-colmeta -name iPeakMag peakMag_2
-colmeta -name iPeakMagErr peakMagErr_2
-colmeta -name iAperMag1 aperMag1_2
-colmeta -name iAperMag1Err aperMag1Err_2
-colmeta -name iAperMag3 aperMag3_2
-colmeta -name iAperMag3Err aperMag3Err_2
-colmeta -name iGauSig gauSig_2
-colmeta -name iEll ell_2
-colmeta -name iPA pa_2
-colmeta -name iClass class_2
-colmeta -name iClassStat classStat_2
+colmeta -name i -desc "Default i-band magnitude using a 2.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag2_2
+colmeta -name iErr -desc "Uncertainty for i. Does not include systematic errors." aperMag2Err_2
+colmeta -name iPeakMag -desc "Alternative i-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system." peakMag_2
+colmeta -name iPeakMagErr -desc "Uncertainty in iPeakMag. Does not include systematics." peakMagErr_2
+colmeta -name iAperMag1 -desc "Alternative i-band magnitude using a 1.2 arcsec aperture diameter. Calibrated in the Vega system." aperMag1_2
+colmeta -name iAperMag1Err -desc "Uncertainty in iAperMag1. Does not include systematics." aperMag1Err_2
+colmeta -name iAperMag3 -desc "Alternative i-band magnitude using a 3.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag3_2
+colmeta -name iAperMag3Err -desc "Uncertainty in iAperMag3. Does not include systematics." aperMag3Err_2
+colmeta -name iGauSig -desc "RMS of axes of ellipse fit in i." gauSig_2
+colmeta -name iEll -desc "Ellipticity in the i-band." ell_2
+colmeta -name iPA -desc "Position angle in the i-band." pa_2
+colmeta -name iClass -desc "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)." class_2
+colmeta -name iClassStat -desc "N(0,1) stellarness-of-profile statistic." classStat_2
 colmeta -name iBrightNeighb brightNeighb_2
 colmeta -name iDeblend deblend_2
 colmeta -name iSaturated saturated_2
 colmeta -name iVignetted vignetted_2
 colmeta -name iTruncated truncated_2
 colmeta -name iBadPix badPix_2
-colmeta -name iErrBits errBits_2
-colmeta -name iMJD mjd_2
-colmeta -name iSeeing seeing_2
-colmeta -name iDetectionID detectionID_2
-colmeta -name iCCD ccd_2
-colmeta -name iX x_2
-colmeta -name iY y_2
+colmeta -name iErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_2
+colmeta -name iMJD -desc "Modified Julian Date at the start of the i-band exposure." mjd_2
+colmeta -name iSeeing -desc "Average FWHM in the i-band exposure." seeing_2
+colmeta -name iDetectionID -desc "Unique identifier of the i-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_2
+colmeta -name iCCD -desc "CCD-chip number on the INT Wide Field Camera for the i-band detection." ccd_2
+colmeta -name iX -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." x_2
+colmeta -name iY -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." y_2
 colmeta -name iPlaneX planeX_2
 colmeta -name iPlaneY planeY_2
 
 # Rename H-alpha columns
-colmeta -name ha aperMag2_3
-colmeta -name haErr aperMag2Err_3
-colmeta -name haPeakMag peakMag_3
-colmeta -name haPeakMagErr peakMagErr_3
-colmeta -name haAperMag1 aperMag1_3
-colmeta -name haAperMag1Err aperMag1Err_3
-colmeta -name haAperMag3 aperMag3_3
-colmeta -name haAperMag3Err aperMag3Err_3
-colmeta -name haGauSig gauSig_3
-colmeta -name haEll ell_3
-colmeta -name haPA pa_3
-colmeta -name haClass class_3
-colmeta -name haClassStat classStat_3
+colmeta -name ha -desc "Default H-alpha magnitude using a 2.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag2_3
+colmeta -name haErr -desc "Uncertainty for ha. Does not include systematic errors." aperMag2Err_3
+colmeta -name haPeakMag -desc "Alternative H-alpha magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system." peakMag_3
+colmeta -name haPeakMagErr -desc "Uncertainty in haPeakMag. Does not include systematics." peakMagErr_3
+colmeta -name haAperMag1 -desc "Alternative H-alpha magnitude using a 1.2 arcsec aperture diameter. Calibrated in the Vega system." aperMag1_3
+colmeta -name haAperMag1Err -desc "Uncertainty in haAperMag1. Does not include systematics." aperMag1Err_3
+colmeta -name haAperMag3 -desc "Alternative H-alpha magnitude using a 3.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag3_3
+colmeta -name haAperMag3Err -desc "Uncertainty in haAperMag3. Does not include systematics." aperMag3Err_3
+colmeta -name haGauSig -desc "RMS of axes of ellipse fit in H-alpha." gauSig_3
+colmeta -name haEll -desc "Ellipticity in H-alpha." ell_3
+colmeta -name haPA -desc "Position angle in H-alpha." pa_3
+colmeta -name haClass -desc "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)." class_3
+colmeta -name haClassStat -desc "N(0,1) stellarness-of-profile statistic." classStat_3
 colmeta -name haBrightNeighb brightNeighb_3
 colmeta -name haDeblend deblend_3
 colmeta -name haSaturated saturated_3
 colmeta -name haVignetted vignetted_3
 colmeta -name haTruncated truncated_3
 colmeta -name haBadPix badPix_3
-colmeta -name haErrBits errBits_3
-colmeta -name haMJD mjd_3
-colmeta -name haSeeing seeing_3
-colmeta -name haDetectionID detectionID_3
-colmeta -name haCCD ccd_3
-colmeta -name haX x_3
-colmeta -name haY y_3
+colmeta -name haErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_3
+colmeta -name haMJD -desc "Modified Julian Date at the start of the H-alpha exposure." mjd_3
+colmeta -name haSeeing -desc "Average FWHM in the H-alpha exposure."  seeing_3
+colmeta -name haDetectionID -desc "Unique identifier of the H-alpha detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_3
+colmeta -name haCCD -desc "CCD-chip number on the INT Wide Field Camera for the H-alpha detection." ccd_3
+colmeta -name haX -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." x_3
+colmeta -name haY -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." y_3
 colmeta -name haPlaneX planeX_3
 colmeta -name haPlaneY planeY_3
 
@@ -162,7 +162,7 @@ addcol -desc "Probability the source is saturated." pSaturated "pSaturatedProd /
 addcol mergedClass -desc "See http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass" "toShort( pStar>0.899?-1:pStar>=0.699?-2:pGalaxy>=0.899?1:pGalaxy>=0.699?-3:pNoise>=0.899?0:pSaturated>=0.899?-9:NULL )"
 
 # mergedClassStat
-addcol mergedClassStat "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
+addcol mergedClassStat -desc "See http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat" "toFloat( mean(array(rClassStat, iClassStat, haClassStat)) * sqrt(count(array(rClassStat, iClassStat, haClassStat))) )"
 
 
 # merged quality flags
@@ -184,13 +184,13 @@ addcol errBits -desc "Bitmask indicating bright neighbour (1), source blending (
 addcol nBands -desc "Number of bands in which the source is detected." "toShort(sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1)))"
 
 # Reliable
-addcol reliable -desc "True if the source is detected in all three bands at >5-sigma and errBits <= 1." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits <= 1"
+addcol reliable -desc "True if the source is detected in all three bands with SNR better than 5-sigma and errBits <= 1." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits <= 1"
 
 
 # night
 colmeta -name night night_1
 replacecol night "NULL_night?night_2:night"
-replacecol night "NULL_night?night_3:night"
+replacecol -desc "Night of the observation (YYYYMMDD)." night "NULL_night?night_3:night"
 
 # seeing
 addcol -desc "Worst seeing amongst the three bands." seeing "toFloat( maximum(array(NULL_rSeeing ? 0 : rSeeing, NULL_iSeeing ? 0 : iSeeing, NULL_haSeeing ? 0 : haSeeing)) )"
