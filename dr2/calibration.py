@@ -282,12 +282,12 @@ def evaluate_calibration(band='r'):
         apass_stars = apass['{0}match_apassdr7'.format(band)][idx][0]
 
         out.write('{0},{1},{2},{3},{4},{5},{6}\n'.format(apass['id'][idx][0],
-                                                 apass['night'][idx][0],
-                                                 apass['l'][idx][0],
-                                                 apass['b'][idx][0],
-                                                 apass_stars,
-                                                 apass_shift,
-                                                 calib_shift))
+                                                    apass['night'][idx][0],
+                                                    apass['l'][idx][0],
+                                                    apass['b'][idx][0],
+                                                    apass_stars,
+                                                    apass_shift,
+                                                    calib_shift))
         if not np.isnan(apass_shift):
             residuals.append( apass_shift - calib_shift )
 
@@ -319,7 +319,6 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        #run_glazebrook(ncores=3)
+        run_glazebrook(ncores=3)
         #apply_calibration(ncores=8)
         apply_calibration_strip(0)
-
