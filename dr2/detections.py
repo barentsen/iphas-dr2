@@ -577,7 +577,7 @@ class DetectionCatalogue():
         """
         magnitudes = np.array([])
         exptime = self.get_exptime()
-
+        
         # Loop over the four CCD extensions and compute the magnitudes
         # Note: APCOR differs on a CCD-by-CCD basis!
         for ccd in EXTS:
@@ -1007,7 +1007,7 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
+        run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
     else:  # Production
         log.setLevel('WARNING')
