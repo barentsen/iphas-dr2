@@ -73,18 +73,17 @@ class BandMerge():
                                        'stilts-band-merging.cmd'),
                   'output': self.output}
 
+        # Note: we filter out sources detected at <0.5sigma
+        # (i.e. magnitude error < -2.5*log(1+3) = 1.19)
         cmd = """{stilts} tmatchn matcher=sky params=0.5 multimode=group \
                   nin=3 in1={runr} in2={runi} in3={runha} \
                   join1=always join2=always join3=always \
                   values1='ra dec' values2='ra dec' values3='ra dec' \
                   icmd1='setparam fieldID "{fieldid}";
                          setparam fieldGrade "{fieldgrade}";
-                         select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
-                  icmd2='select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
-                  icmd3='select "aperMag2Err > 0 & aperMag2Err < 1
-                                 & aperMag3Err > 0 & aperMag3Err < 1";' \
+                         select "aperMag2Err > 0 & aperMag2Err < 1.19";' \
+                  icmd2='select "aperMag2Err > 0 & aperMag2Err < 1.19";' \
+                  icmd3='select "aperMag2Err > 0 & aperMag2Err < 1.19";' \
                   ocmd=@{ocmd} \
                   progress=none \
                   out='{output}'""".format(**config)

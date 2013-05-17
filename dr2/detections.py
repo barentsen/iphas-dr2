@@ -251,8 +251,13 @@ class DetectionCatalogue():
         return path[len(constants.RAWDATADIR):]
 
     def get_exptime(self):
-        """Return the exposure time for the catalogue, while taking into
-        account the quirky nature of EXPTIME as recorded by WFC.
+        """Return the exposure time.
+
+        We do not simply return the 'EXPTIME' value recorded in the header,
+        because the WFC has a quirky nature to record the EXPTIME incorrectly.
+        In general, the *requested* exposure time is more reliable than the
+        recorded time, and hence we return the requested values which are
+        typical for the IPHAS survey.
 
         This follows the original perl script from Brent:
 
@@ -270,11 +275,11 @@ class DetectionCatalogue():
         }
         """
         t = self.hdr('EXPTIME')
-        if t < 15 and abs(t-10) > 0.1:
+        if t > 5 and t < 15 and abs(t-10) > 0.1:
             return 10.00
-        elif t > 15 and t < 35 and abs(t-30) > 0.1:
+        elif t > 25 and t < 35 and abs(t-30) > 0.1:
             return 30.00
-        elif t > 100 and abs(t-120) > 0.1:
+        elif t > 110 and t < 130 and abs(t-120) > 0.1:
             return 120.00
         else:
             return t
@@ -1002,10 +1007,10 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        #run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
-        run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381808_cat.fits')
+        #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
     else:  # Production
         log.setLevel('WARNING')
-        #run_all(directory, ncores=8)
-        for row in ascii.read('wcs-tuning/needfix.txt'):
-            run_one( os.path.join(constants.RAWDATADIR, row[0]) )
+        run_all(directory, ncores=8)
+        #for row in ascii.read('wcs-tuning/needfix.txt'):
+        #    run_one( os.path.join(constants.RAWDATADIR, row[0]) )
