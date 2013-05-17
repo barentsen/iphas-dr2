@@ -996,7 +996,7 @@ if __name__ == '__main__':
     else:
         directory = constants.RAWDATADIR
 
-    #constants.DEBUGMODE = True
+    #constants.DEBUGMODE = False
 
     if constants.DEBUGMODE:  # Testing
         log.setLevel('INFO')
@@ -1006,4 +1006,6 @@ if __name__ == '__main__':
         run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
     else:  # Production
         log.setLevel('WARNING')
-        run_all(directory, ncores=8)
+        #run_all(directory, ncores=8)
+        for row in ascii.read('wcs-tuning/needfix.txt'):
+            run_one(constants.RAWDATADIR+row[0])
