@@ -105,7 +105,7 @@ def run_one(fieldid):
     """ Band-merge a single field """
     # Which index does the field have in the QC table?
     idx = np.where(IPHASQC.field('id') == fieldid)[0]
-    if len(idx) != 1:
+    if len(idx) < 1:
         raise IPHASException('{}: error identifying runs'.format(fieldid))
 
     # Carry out the band-merging

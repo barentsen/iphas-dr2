@@ -40,14 +40,14 @@ class Concatenator(object):
 
         # Where are the input catalogues?
         if calibrated:
-            self.datapath = os.path.join(constants.DESTINATION, 'calibrated')
+            self.datapath = os.path.join(constants.DESTINATION, 'bandmerged-calibrated')
         else:
             self.datapath = os.path.join(constants.DESTINATION, 'seamed')
 
         # Where to write the output?
         if self.calibrated:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated-20130514')
+                                            'concatenated-20130520')
         else:
             self.destination = os.path.join(constants.DESTINATION,
                                             'concatenated-uncalibrated')

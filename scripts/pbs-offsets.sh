@@ -2,7 +2,7 @@
 #PBS -N iphas-calibration                                                            
 #PBS -m aeb 
 #PBS -M gb
-#PSB -l pmem=1gb
+#PSB -l pmem=2gb
 #PBS -l nodes=1:ppn=8
 #PBS -k oe                                                                      
 #PBS -q cmain

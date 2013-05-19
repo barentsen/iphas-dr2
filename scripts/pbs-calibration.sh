@@ -3,10 +3,10 @@
 #PBS -m aeb 
 #PBS -M gb
 #PSB -l pmem=1gb
-#PBS -l nodes=1:ppn=8
+#PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      
 #PBS -q cmain
-#PBS -l walltime=8:00:00                                                       
+#PBS -l walltime=23:59:00                                                       
 
 echo $1
 

@@ -188,7 +188,7 @@ class SeamMachine(object):
     def filename(self, fieldid):
         """Returns the path of the bandmerged catalogue for a given field."""
         return os.path.join(constants.DESTINATION,
-                            'bandmerged',
+                            'bandmerged-calibrated',
                             '{0}.fits'.format(fieldid))
 
     def crossmatch_command(self):
