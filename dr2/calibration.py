@@ -171,21 +171,18 @@ def run_glazebrook(ncores=3):
 # CLASS USED TO APPLY THE CALIBRATION TO CATALOGUES
 ###################################################
 
-class CalibrationApplicator(object):
-    """Updates the seamed catalogues by applying the calibration shifts."""
+PATH_UNCALIBRATED = os.path.join(constants.DESTINATION,
+                                 'bandmerged')
+PATH_CALIBRATED = os.path.join(constants.DESTINATION,
+                               'bandmerged-calibrated')
 
-    def __init__(self, strip):
-        self.strip = strip
-        #self.datadir = os.path.join(constants.DESTINATION,
-        #                            'seamed',
-        #                            'strip{0}'.format(self.strip))
-        #self.outdir = os.path.join(constants.DESTINATION,
-        #                           'calibrated',
-        #                           'strip{0}'.format(self.strip))
-        self.datadir = os.path.join(constants.DESTINATION,
-                                    'bandmerged')
-        self.outdir = os.path.join(constants.DESTINATION,
-                                   'bandmerged-calibrated')
+
+class CalibrationApplicator(object):
+    """Updates the bandmerged catalogues by applying the calibration shifts."""
+
+    def __init__(self):
+        self.datadir = PATH_UNCALIBRATED
+        self.outdir = PATH_CALIBRATED
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
@@ -196,10 +193,10 @@ class CalibrationApplicator(object):
                                       'calibration-{0}.csv'.format(band))
             self.calib[band] = ascii.read(calib_file)
 
-    def run(self):
-        for filename in os.listdir(self.datadir):
-            log.info('Calibration {0}'.format(filename))
-            self.calibrate(filename)
+    def run(self, filename):
+        #for filename in os.listdir(self.datadir):
+        log.info('Correcting {0}'.format(filename))
+        self.calibrate(filename)
 
     def get_shifts(self, filename):
         fieldid = filename.split('.fits')[0]
@@ -245,16 +242,27 @@ class CalibrationApplicator(object):
         return status
 
 
+"""
 def apply_calibration_strip(strip):
     log.info('Applying calibration to strip {0}'.format(strip))
     ca = CalibrationApplicator(strip)
     ca.run()
 
-
 def apply_calibration(ncores=2):
     strips = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
     p = Pool(processes=ncores)
     p.map(apply_calibration_strip, strips)
+"""
+
+def calibration_worker(filename):
+    ca = CalibrationApplicator()
+    ca.run(filename)
+
+
+def apply_calibration(ncores=2):
+    filenames = os.listdir(PATH_UNCALIBRATED)
+    p = Pool(processes=ncores)
+    p.map(calibration_worker, filenames)
 
 
 def evaluate_calibration(band='r'):
@@ -321,4 +329,4 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         run_glazebrook(ncores=3)
         #apply_calibration(ncores=8)
-        apply_calibration_strip(0)
+        apply_calibration(8)
