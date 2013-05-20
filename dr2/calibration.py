@@ -184,8 +184,11 @@ class CalibrationApplicator(object):
     def __init__(self):
         self.datadir = PATH_UNCALIBRATED
         self.outdir = PATH_CALIBRATED
-        if not os.path.exists(self.outdir):
-            os.makedirs(self.outdir)
+        try:
+            if not os.path.exists(self.outdir):
+                os.makedirs(self.outdir)
+        except OSError:
+            pass
 
         # Read in the calibration
         self.calib = {}
@@ -323,7 +326,7 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        run_glazebrook(ncores=3)
+        #run_glazebrook(ncores=3)
         apply_calibration(ncores=8)
 
 

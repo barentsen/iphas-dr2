@@ -3,7 +3,7 @@
 #PBS -m aeb 
 #PBS -M gb
 #PSB -l pmem=1gb
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=8
 #PBS -k oe                                                                      
 #PBS -q cmain
 #PBS -l walltime=23:59:00                                                       
