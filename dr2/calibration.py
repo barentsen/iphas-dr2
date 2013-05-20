@@ -291,7 +291,8 @@ def evaluate_calibration(band='r'):
                                                     apass_stars,
                                                     apass_shift,
                                                     calib_shift))
-        if not np.isnan(apass_shift):
+
+        if (not np.isnan(apass_shift)) & (apass_stars >= 20):
             residuals.append( apass_shift - calib_shift )
 
     out.close()
