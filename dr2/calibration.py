@@ -115,19 +115,20 @@ def glazebrook_data(band='r'):
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
 
+    APASS_OK = ( (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.04)
+                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.04)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.04) )
+    APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
+                    | np.isnan(IPHASQC.field('rshift_apassdr7')) )
+
     cond_anchors = ( IPHASQC.field('is_best')
-                     & ( (IPHASQC.field('anchor') == 1)
-                         | ( (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
-                            & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03) )
-                        )
-                     )
+                    & ( 
+                      ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
+                      | APASS_OK )
+                    )
 
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
 
-
-    """
-    cond_anchors = (IPHASQC.field('anchor') == 1)
-    """
 
     QC_RUNS = IPHASQC.field('run_{0}'.format(band))
     for myrun in runs:
@@ -267,12 +268,6 @@ def apply_calibration(ncores=2):
 
 def evaluate_calibration(band='r'):
     """Returns the array of residuals of the calibration against APASS"""
-    # Validation data
-    filename_apass = os.path.join(constants.PACKAGEDIR,
-                                  'tests',
-                                  'apass_validation.fits')
-    apass = fits.getdata(filename_apass, 1)
-
     filename_calib = os.path.join(constants.DESTINATION,
                                   'calibration-{0}.csv'.format(band))
     calib = ascii.read(filename_calib)
@@ -283,16 +278,16 @@ def evaluate_calibration(band='r'):
     out.write('id,night,l,b,n_apass,apass,calib\n')
     residuals = []
     for i in range(len(calib)):
-        idx = np.argwhere(apass['run_{0}'.format(band)] == calib['run'][i])[0]
-        apass_shift = apass['{0}shift_apassdr7'.format(band)][idx][0]
+        idx = np.argwhere(IPHASQC['run_{0}'.format(band)] == calib['run'][i])[0]
+        apass_shift = IPHASQC['{0}shift_apassdr7'.format(band)][idx][0]
         calib_shift = calib['shift'][i]
 
-        apass_stars = apass['{0}match_apassdr7'.format(band)][idx][0]
+        apass_stars = IPHASQC['{0}match_apassdr7'.format(band)][idx][0]
 
-        out.write('{0},{1},{2},{3},{4},{5},{6}\n'.format(apass['id'][idx][0],
-                                                    apass['night'][idx][0],
-                                                    apass['l'][idx][0],
-                                                    apass['b'][idx][0],
+        out.write('{0},{1},{2},{3},{4},{5},{6}\n'.format(IPHASQC['id'][idx][0],
+                                                    IPHASQC['night'][idx][0],
+                                                    IPHASQC['l'][idx][0],
+                                                    IPHASQC['b'][idx][0],
                                                     apass_stars,
                                                     apass_shift,
                                                     calib_shift))
@@ -328,5 +323,87 @@ if __name__ == '__main__':
     else:
         log.setLevel('INFO')
         run_glazebrook(ncores=3)
-        #apply_calibration(ncores=8)
-        apply_calibration(8)
+        apply_calibration(ncores=8)
+
+
+"""
+ANCHORS = APASS_3%
+
+===== r =====
+mean(residuals r): 0.000
+min(residuals r): -0.389
+max(residuals r): 0.186
+std(residuals r): 0.033
+===== i =====
+mean(residuals i): -0.006
+min(residuals i): -0.745
+max(residuals i): 0.195
+std(residuals i): 0.043
+
+
+ANCHORS = OLD
+
+===== r =====
+mean(residuals r): -0.003
+min(residuals r): -0.223
+max(residuals r): 0.175
+std(residuals r): 0.045
+===== i =====
+mean(residuals i): -0.009
+min(residuals i): -0.288
+max(residuals i): 0.203
+std(residuals i): 0.046
+
+ANCHORS = OLD & APASS_2%
+
+===== r =====
+mean(residuals r): 0.001
+min(residuals r): -0.203
+max(residuals r): 0.181
+std(residuals r): 0.035
+===== i =====
+mean(residuals i): -0.004
+min(residuals i): -0.271
+max(residuals i): 0.206
+std(residuals i): 0.038
+
+ANCHORS = OLD & APASS_3%
+
+===== r =====
+mean(residuals r): 0.002
+min(residuals r): -0.182
+max(residuals r): 0.157
+std(residuals r): 0.032
+===== i =====
+mean(residuals i): -0.003
+min(residuals i): -0.271
+max(residuals i): 0.187
+std(residuals i): 0.035
+
+ANCHORS = OLD & APASS_4%
+
+===== r =====
+mean(residuals r): 0.002
+min(residuals r): -0.162
+max(residuals r): 0.156
+std(residuals r): 0.031
+===== i =====
+mean(residuals i): -0.003
+min(residuals i): -0.271
+max(residuals i): 0.184
+std(residuals i): 0.033
+
+ANCHORS = OLD & APASS_5%
+
+===== r =====
+mean(residuals r): 0.002
+min(residuals r): -0.162
+max(residuals r): 0.156
+std(residuals r): 0.032
+===== i =====
+mean(residuals i): -0.003
+min(residuals i): -0.271
+max(residuals i): 0.183
+std(residuals i): 0.033
+
+"""
