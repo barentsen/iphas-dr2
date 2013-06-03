@@ -21,7 +21,6 @@ existing_overrides = ascii.read(filename_brent)
 
 
 filename_runs = os.path.join(constants.DESTINATION, 'runs.csv')
-filename_runs = '/home/gb/tmp/test.csv'
 runs = ascii.read(filename_runs)
 
 os.system('cp {0} {1}'.format(filename_brent, filename_target))
@@ -35,7 +34,7 @@ for row in runs:
             pass
 
         # Figure out the index of r-band runs in the same night
-        idx_r = np.argwhere((np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.2)
+        idx_r = np.argwhere((np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.4)
                             & (runs.field('WFFBAND') == 'r'))[0][0]
 
         zp = runs[idx_r]['MAGZPT'] - 3.14

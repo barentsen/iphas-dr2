@@ -60,6 +60,11 @@ EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
 WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
 WCSFIXES = ascii.read(WCSFIXES_PATH)
 
+# Table detaling zeropoint overrides; used to enforce zp(r)-zp(Halpha)=3.14
+ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR, 'lib',
+                                        'zeropoint-overrides.csv')
+ZEROPOINT_OVERRIDES = ascii.read(ZEROPOINT_OVERRIDES_PATH)
+
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}
 
@@ -106,6 +111,9 @@ class DetectionCatalogue():
         self.cat_path = self.strip_basedir(path)
         self.image_path = self.get_image_path()
         self.conf_path = self.get_conf_path()
+
+        self.exptime = self.get_exptime()
+        self.zeropoint = self.get_zeropoint()
 
     def hdr(self, field, ext=1):
         """Return the value of the header keyword from extension `ext`."""
@@ -283,6 +291,20 @@ class DetectionCatalogue():
             return 120.00
         else:
             return t
+
+    def get_zeropoint(self):
+        """Return the magnitude zeropoint.
+
+        Returns the nightly zeropoint from the 'MAGZPT' value recorded in the
+        header, unless an override appears in the ZEROPOINT_OVERRIDES table.
+        """
+        if self.hdr('RUN') in ZEROPOINT_OVERRIDES['run']:
+            idx_run = np.argwhere(ZEROPOINT_OVERRIDES['run']
+                                  == self.hdr('RUN'))[0][0]
+            zp = ZEROPOINT_OVERRIDES[idx_run]['zp']
+        else:
+            zp = self.hdr('MAGZPT')
+        return zp
 
     def column_runID(self):
         runID = np.array([self.hdr('RUN')] * self.objectcount)
@@ -576,8 +598,7 @@ class DetectionCatalogue():
         Be aware that APCOR and PERCORR differ on a CCD-by-CCD basis.
         """
         magnitudes = np.array([])
-        exptime = self.get_exptime()
-        
+
         # Loop over the four CCD extensions and compute the magnitudes
         # Note: APCOR differs on a CCD-by-CCD basis!
         for ccd in EXTS:
@@ -588,8 +609,8 @@ class DetectionCatalogue():
                 mypercorr = 0.0
 
             flux = self.fits[ccd].data.field(flux_field)
-            mag = (self.hdr('MAGZPT', ccd)
-                   - 2.5 * np.log10(flux / exptime)
+            mag = (self.zeropoint
+                   - 2.5 * np.log10(flux / self.exptime)
                    - self.hdr(apcor_field, ccd)
                    - mypercorr)
             magnitudes = np.concatenate((magnitudes, mag))
@@ -923,8 +944,8 @@ def run_one(path):
     path -- of the pipeline table.
     """
     try:
-        pc = DetectionCatalogue(path)
-        pc.save_detections()
+        cat = DetectionCatalogue(path)
+        cat.save_detections()
     except CatalogueException, e:
         log.warning('%s: CatalogueException: %s' % (path, e))
         return None
@@ -956,8 +977,8 @@ def index_one(path):
     """Returns the CSV summary line."""
     csv_row_string = None
     try:
-        pc = DetectionCatalogue(path)
-        csv_row_string = pc.get_csv_summary()
+        cat = DetectionCatalogue(path)
+        csv_row_string = cat.get_csv_summary()
     except CatalogueException, e:
         log.warning('%s: CatalogueException: %s' % (path, e))
         return None
@@ -1031,9 +1052,10 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413422_cat.fits')
         #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
-        index_all(directory)
+        #index_all(directory)
     else:  # Production
         log.setLevel('WARNING')
         run_all(directory, ncores=8)
