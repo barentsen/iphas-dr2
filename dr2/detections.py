@@ -13,7 +13,7 @@ celestial coordinates and adding flags to indicate quality problems.
 The script also checks the header for known errors and fixes the World
 Coordinate System (WCS) where necessary.
 
-This script will also produce a table called 'index.csv' which
+This script can also produce a table called 'runs.csv' which
 provides a table of all available IPHAS exposures.
 
 Computing requirements: 6h CPU on 8 cores. Low RAM.
@@ -924,9 +924,7 @@ def run_one(path):
     """
     try:
         pc = DetectionCatalogue(path)
-        csv = pc.get_csv_summary()
         pc.save_detections()
-        return csv
     except CatalogueException, e:
         log.warning('%s: CatalogueException: %s' % (path, e))
         return None
@@ -950,10 +948,29 @@ def run_all(directory, ncores=4):
 
     # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
-    results = p.imap(run_one, catalogues)  # returns an iterator
+    results = p.map(run_one, catalogues)  # returns an iterator
+    return results
 
+
+def index_one(path):
+    """Returns the CSV summary line."""
+    csv_row_string = None
+    try:
+        pc = DetectionCatalogue(path)
+        csv_row_string = pc.get_csv_summary()
+    except CatalogueException, e:
+        log.warning('%s: CatalogueException: %s' % (path, e))
+        return None
+    except Exception, e:
+        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+        return None
+    return csv_row_string
+
+
+def index_all(directory, ncores=8):
+    """Produces a CSV file detailing the properties of all runs."""
     # Write the results
-    filename = os.path.join(MYDESTINATION, 'index.csv')
+    filename = os.path.join(constants.DESTINATION, 'runs.csv')
     out = open(filename, 'w')
 
     out.write('catalogue,image,conf,run,object,ra,dec,field,'
@@ -981,11 +998,18 @@ def run_all(directory, ncores=4):
               + 'CCD4_PV2_1,CCD4_PV2_2,CCD4_PV2_3,'
               + 'CCDSPEED,OBSERVER,'
               + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID\n')
+
+    # Where are the pipeline catalogues?
+    catalogues = list_catalogues(directory)
+
+    # Run the processing for each pipeline catalogue
+    p = Pool(processes=ncores)
+    results = p.imap(index_one, catalogues)  # returns an iterator
     for r in results:
         if r is None:
             continue
         out.write(r+'\n')
-        out.flush()
+
     out.close()
 
 
@@ -1007,8 +1031,9 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
+        #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
+        index_all(directory)
     else:  # Production
         log.setLevel('WARNING')
         run_all(directory, ncores=8)

@@ -80,7 +80,7 @@ class Glazebrook(object):
         # Note: there should be alternative algorithms for symmetric
         # matrices which are faster.
         self.solution = linalg.lsqr(self.A, self.b,
-                                    atol=1e-10, iter_lim=2e5, show=False)
+                                    atol=1e-8, iter_lim=2e5, show=False)
         #log.info('Solution found: {0}'.format(self.solution))
         log.info('Solution found')
         return self.solution
@@ -96,6 +96,16 @@ class Glazebrook(object):
         for myrun in self.runs[self.anchors]:
             f.write('{0},{1}\n'.format(myrun, 0.0))
         f.close()
+
+
+def partnerid(fieldid):
+    if fieldid.split('_')[0][-1] == 'o':
+        partnerid = '{0}_{1}'.format(fieldid.split('_')[0][0:-1],
+                                     fieldid.split('_')[1])
+    else:
+        partnerid = '{0}o_{1}'.format(fieldid.split('_')[0],
+                                      fieldid.split('_')[1])
+    return partnerid
 
 
 def glazebrook_data(band='r'):
@@ -115,16 +125,32 @@ def glazebrook_data(band='r'):
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
 
-    APASS_OK = ( (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.04)
-                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.04)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.04) )
+
+
+    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= 20)
+                 & (IPHASQC.field('imatch_apassdr7') >= 20)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
+                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.03) )
     APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | np.isnan(IPHASQC.field('rshift_apassdr7')) )
+                    | np.isnan(IPHASQC.field('rshift_apassdr7'))
+                    | (IPHASQC.field('rmatch_apassdr7') < 20)
+                    | (IPHASQC.field('imatch_apassdr7') < 20) )
+
+    PARTNER_OK = []
+    partners = [partnerid(fieldid) for fieldid in IPHASQC.field('id')]
+    for myid in partners:
+        idx = np.where(myid == IPHASQC.field('id'))[0]
+        if len(idx) == 0:
+            PARTNER_OK.append(False)
+        else:
+            PARTNER_OK.append( APASS_OK[idx[0]] )
+    PARTNER_OK = np.array(PARTNER_OK)
 
     cond_anchors = ( IPHASQC.field('is_best')
                     & ( 
                       ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
-                      | APASS_OK )
+                      | (APASS_OK ) )
                     )
 
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
@@ -326,7 +352,7 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        #run_glazebrook(ncores=3)
+        run_glazebrook(ncores=3)
         apply_calibration(ncores=8)
 
 
@@ -409,5 +435,47 @@ mean(residuals i): -0.003
 min(residuals i): -0.271
 max(residuals i): 0.183
 std(residuals i): 0.033
+
+
+=====================
+
+APASS 4p 4p
+
+===== r =====
+mean(residuals r): 0.002
+min(residuals r): -0.144
+max(residuals r): 0.131
+std(residuals r): 0.028
+===== i =====
+mean(residuals i): -0.003
+min(residuals i): -0.190
+max(residuals i): 0.186
+std(residuals i): 0.031
+
+APASS 3p 3p
+
+===== r =====
+mean(residuals r): 0.001
+min(residuals r): -0.148
+max(residuals r): 0.139
+std(residuals r): 0.031
+===== i =====
+mean(residuals i): -0.003
+min(residuals i): -0.212
+max(residuals i): 0.207
+std(residuals i): 0.034
+
+APASS 3p 3p / stars >=20
+
+===== r =====
+mean(residuals r): 0.001
+min(residuals r): -0.176
+max(residuals r): 0.137
+std(residuals r): 0.031
+===== i =====
+mean(residuals i): -0.004
+min(residuals i): -0.220
+max(residuals i): 0.205
+std(residuals i): 0.034
 
 """
