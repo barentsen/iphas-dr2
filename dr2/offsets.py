@@ -74,6 +74,7 @@ class OffsetMachine(object):
         log.debug('Computing offsets for run {0}'.format(self.run))
         offsets = []
         for run2 in self.overlap_runs():
+            log.debug(str(run2))
             result = self._compute_relative_offsets(run2)
             if result is not None:
                 offsets.append(result)
@@ -104,7 +105,7 @@ class OffsetMachine(object):
             if idx2 is not None:
                 offsets.append(self.data['aperMag2'][idx1]
                                - offset_data['aperMag2'][cond_reliable2][idx2])
-
+        print(offsets)
         if len(offsets) < 5:
             return None
         else:
@@ -168,9 +169,10 @@ if __name__ == '__main__':
     else:
         raise Exception('Please give the band as the first argument')
 
+    #constants.DEBUGMODE = True
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
-        #o = offsets_relative_one(571029)
+        #o = offsets_relative_one(484350)
         #print(o)
         offsets_relative(band, 4)
     else:

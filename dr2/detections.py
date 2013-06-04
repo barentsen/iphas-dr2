@@ -1046,13 +1046,13 @@ if __name__ == '__main__':
     else:
         directory = constants.RAWDATADIR
 
-    #constants.DEBUGMODE = False
+    #constants.DEBUGMODE = True
 
     if constants.DEBUGMODE:  # Testing
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413422_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_dec2005/r484350_cat.fits')
         #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
         #index_all(directory)

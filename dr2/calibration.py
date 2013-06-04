@@ -232,7 +232,11 @@ class CalibrationApplicator(object):
         for band in constants.BANDS:
             cond_run = (self.calib[band]['run']
                         == IPHASQC.field('run_' + band)[idx_field])
-            shifts[band] = self.calib[band]['shift'][cond_run][0]
+            if cond_run.sum() > 0:
+                shifts[band] = self.calib[band]['shift'][cond_run][0]
+            else:
+                log.warning('No shift for %s' % filename)
+                shifts[band] = 0.0
 
         log.info("Shifts for {0}: {1}".format(fieldid, shifts))
         return shifts
@@ -338,16 +342,19 @@ def evaluate_calibration(band='r'):
 ###################
 
 if __name__ == '__main__':
-
+    #constants.DEBUGMODE = True
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
         #run_glazebrook(ncores=3)
         #apply_calibration_strip(215)
+        """
         bands = ['r', 'i']
         p = Pool(processes=2)
         p.map(run_glazebrook_band, bands)
         for band in bands:
             residuals = evaluate_calibration(band)
+        """
+        calibration_worker('3174_dec2005.fits')
 
     else:
         log.setLevel('INFO')
