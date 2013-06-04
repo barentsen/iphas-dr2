@@ -27,6 +27,12 @@ __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Hywel Farnhill', 'Janet Drew']
 
 
+PATH_UNCALIBRATED = os.path.join(constants.DESTINATION,
+                                 'bandmerged')
+PATH_CALIBRATED = os.path.join(constants.DESTINATION,
+                               'bandmerged-calibrated')
+
+
 #############
 # GLAZEBROOK
 #############
@@ -197,12 +203,6 @@ def run_glazebrook(ncores=3):
 ###################################################
 # CLASS USED TO APPLY THE CALIBRATION TO CATALOGUES
 ###################################################
-
-PATH_UNCALIBRATED = os.path.join(constants.DESTINATION,
-                                 'bandmerged')
-PATH_CALIBRATED = os.path.join(constants.DESTINATION,
-                               'bandmerged-calibrated')
-
 
 class CalibrationApplicator(object):
     """Updates the bandmerged catalogues by applying the calibration shifts."""

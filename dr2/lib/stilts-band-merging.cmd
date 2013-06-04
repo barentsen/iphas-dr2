@@ -59,7 +59,6 @@ colmeta -name rErrBits -desc "Bitmask used to flag a bright neighbour (1), sourc
 colmeta -name rMJD -desc "Modified Julian Date at the start of the r-band exposure." mjd_1
 colmeta -name rSeeing -desc "Average FWHM in the r-band exposure." seeing_1
 colmeta -name rDetectionID -desc "Unique identifier of the r-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_1
-colmeta -name rCCD -desc "CCD-chip number on the INT Wide Field Camera for the r-band detection." ccd_1
 colmeta -name rX -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." x_1
 colmeta -name rY -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." y_1
 colmeta -name rPlaneX planeX_1
@@ -89,7 +88,6 @@ colmeta -name iErrBits -desc "Bitmask used to flag a bright neighbour (1), sourc
 colmeta -name iMJD -desc "Modified Julian Date at the start of the i-band exposure." mjd_2
 colmeta -name iSeeing -desc "Average FWHM in the i-band exposure." seeing_2
 colmeta -name iDetectionID -desc "Unique identifier of the i-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_2
-colmeta -name iCCD -desc "CCD-chip number on the INT Wide Field Camera for the i-band detection." ccd_2
 colmeta -name iX -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." x_2
 colmeta -name iY -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." y_2
 colmeta -name iPlaneX planeX_2
@@ -119,7 +117,6 @@ colmeta -name haErrBits -desc "Bitmask used to flag a bright neighbour (1), sour
 colmeta -name haMJD -desc "Modified Julian Date at the start of the H-alpha exposure." mjd_3
 colmeta -name haSeeing -desc "Average FWHM in the H-alpha exposure."  seeing_3
 colmeta -name haDetectionID -desc "Unique identifier of the H-alpha detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_3
-colmeta -name haCCD -desc "CCD-chip number on the INT Wide Field Camera for the H-alpha detection." ccd_3
 colmeta -name haX -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." x_3
 colmeta -name haY -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." y_3
 colmeta -name haPlaneX planeX_3
@@ -199,6 +196,11 @@ addcol -desc "Worst seeing amongst the three bands." seeing "toFloat( maximum(ar
 addcol fieldID "param$fieldID"
 addcol fieldGrade "param$fieldGrade"
 
+# CCD column
+colmeta -name ccd ccd_1
+replacecol ccd "NULL_ccd?ccd_2:ccd"
+replacecol ccd -desc "CCD-chip number on the INT Wide Field Camera of the detection." "NULL_ccd?ccd_3:ccd"
+
 # Colours
 addcol -desc "(r' - i') colour" rmi "r - i"
 addcol -desc "(r' - Ha) colour" rmha "r - ha"
@@ -210,5 +212,5 @@ addcol haAxisDist "sqrt(pow(haPlaneX,2)+pow(haPlaneY,2))"
 addcol -desc "Distance from the optical axis" rAxis "toFloat( maximum(array(NULL_rAxisDist?0:rAxisDist, NULL_iAxisDist?0:iAxisDist, NULL_haAxisDist?0:haAxisDist)) )"
 
 # Remove obsolete columns
-keepcols 'ra dec sourceID posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag1 rAperMag1Err rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rCCD rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag1 iAperMag1Err iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iCCD iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag1 haAperMag1Err haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haCCD haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits nBands reliable night seeing rAxis fieldID fieldGrade'
+keepcols 'ra dec sourceID posErr l b mergedClass mergedClassStat pStar pGalaxy pNoise pSaturated rmi rmha r rErr rPeakMag rPeakMagErr rAperMag1 rAperMag1Err rAperMag3 rAperMag3Err rGauSig rEll rPA rClass rClassStat rErrBits rMJD rSeeing rDetectionID rX rY rPlaneX rPlaneY i iErr iPeakMag iPeakMagErr iAperMag1 iAperMag1Err iAperMag3 iAperMag3Err iGauSig iEll iPA iClass iClassStat iErrBits iMJD iSeeing iDetectionID iX iY iPlaneX iPlaneY iXi iEta ha haErr haPeakMag haPeakMagErr haAperMag1 haAperMag1Err haAperMag3 haAperMag3Err haGauSig haEll haPA haClass haClassStat haErrBits haMJD haSeeing haDetectionID haX haY haPlaneX haPlaneY haXi haEta brightNeighb deblend saturated vignetted truncated badPix errBits nBands reliable night seeing rAxis ccd fieldID fieldGrade'
 
