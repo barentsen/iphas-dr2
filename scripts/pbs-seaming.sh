@@ -1,5 +1,5 @@
 #!/bin/sh -f                                                                    
-#PBS -m aeb 
+#PBS -m a 
 #PBS -M gb
 #PBS -l nodes=1:ppn=1
 #PBS -k oe                                                                      

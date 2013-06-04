@@ -1,6 +1,6 @@
 #!/bin/sh -f    
 #PBS -N iphas-detections                                                               
-#PBS -m aeb 
+#PBS -m a 
 #PBS -M gb
 #PSB -l pmem=1gb
 #PBS -l nodes=1:ppn=8
