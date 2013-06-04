@@ -128,9 +128,11 @@ class SeamMachine(object):
                                array=matchinfo['nObs'])
         col_primaryID = fits.Column(name='primaryID', format='K',
                                     array=matchinfo['primaryID'])
-        col_partnerID = fits.Column(name='partnerID', format='K',
+        col_partnerID = fits.Column(name='sourceID2', format='K',
                                     null=-9223372036854775808,
                                     array=matchinfo['partnerID'])
+        col_fieldID2 = fits.Column(name='fieldID2', format='15A',
+                                   array=matchinfo['fieldID2'])
         col_r2 = fits.Column(name='r2', format='E', unit='Magnitude',
                              array=matchinfo['r2'])
         col_rErr2 = fits.Column(name='rErr2', format='E', unit='Sigma',
@@ -150,6 +152,7 @@ class SeamMachine(object):
                              col_nObs,
                              col_primaryID,
                              col_partnerID,
+                             col_fieldID2,
                              col_r2, col_rErr2,
                              col_i2, col_iErr2,
                              col_ha2, col_haErr2,
@@ -263,6 +266,7 @@ class SeamMachine(object):
         # Which columns are important?
         idx = (np.arange(self.overlaps.size+1) + 1)  # 1 2 3 ...
         sourceID_cols = np.array(['sourceID_{0}'.format(i) for i in idx])
+        fieldID_cols = np.array(['fieldID_{0}'.format(i) for i in idx])
         nBands_cols = np.array(['nBands_{0}'.format(i) for i in idx])
         errBits_cols = np.array(['errBits_{0}'.format(i) for i in idx])
         seeing_cols = np.array(['seeing_{0}'.format(i) for i in idx])
@@ -277,7 +281,8 @@ class SeamMachine(object):
 
         # Save in memory to speed up what follows
         matchdata = {}
-        for col in np.concatenate((sourceID_cols, nBands_cols, errBits_cols,
+        for col in np.concatenate((sourceID_cols, fieldID_cols,
+                                   nBands_cols, errBits_cols,
                                    seeing_cols, rAxis_cols, rMJD_cols,
                                    r_cols, rErr_cols,
                                    i_cols, iErr_cols,
@@ -289,6 +294,8 @@ class SeamMachine(object):
 
         primaryID = []  # will hold the result
         partnerID = []
+
+        partner_fieldID = []
         partner_r, partner_rErr = [], []
         partner_i, partner_iErr = [], []
         partner_ha, partner_haErr = [], []
@@ -311,6 +318,7 @@ class SeamMachine(object):
                 # Index 0 is the source itself!
                 idx_partner = 1 + cond_partner.nonzero()[0][0]
                 partnerID.append(sourceID[idx_partner])
+                partner_fieldID.append(matchdata[fieldID_cols[idx_partner]][rowno])
 
                 partner_r.append(
                     matchdata[r_cols[idx_partner]][rowno])
@@ -328,6 +336,7 @@ class SeamMachine(object):
                     matchdata[errBits_cols[idx_partner]][rowno])
             else:
                 partnerID.append(-9223372036854775808)  # null value
+                partner_fieldID.append('')
                 partner_r.append(np.nan)
                 partner_rErr.append(np.nan)
                 partner_i.append(np.nan)
@@ -389,6 +398,7 @@ class SeamMachine(object):
         matchinfo = {'nObs': np.array(nObs),
                      'primaryID': np.array(primaryID),
                      'partnerID':  np.array(partnerID),
+                     'fieldID2':  np.array(partner_fieldID),
                      'r2': np.array(partner_r),
                      'rErr2': np.array(partner_rErr),
                      'i2': np.array(partner_i),
