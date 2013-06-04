@@ -20,6 +20,7 @@ filename_runs = os.path.join(constants.DESTINATION, 'runs.csv')
 runs = ascii.read(filename_runs)
 
 out = file(filename_target, 'w')
+out.write('run,zp\n')
 
 # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
 for row in runs:
