@@ -17,7 +17,6 @@ from multiprocessing import Pool
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
-from astropy.io import fits
 from astropy import log
 import constants
 from constants import IPHASQC
@@ -131,8 +130,6 @@ def glazebrook_data(band='r'):
     # 'anchors' is a boolean array indicating anchor status
     anchors = []
 
-
-
     APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= 20)
                  & (IPHASQC.field('imatch_apassdr7') >= 20)
                  & (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
@@ -154,13 +151,12 @@ def glazebrook_data(band='r'):
     PARTNER_OK = np.array(PARTNER_OK)
 
     cond_anchors = ( IPHASQC.field('is_best')
-                    & ( 
+                    & (
                       ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
                       | (APASS_OK ) )
                     )
 
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
-
 
     QC_RUNS = IPHASQC.field('run_{0}'.format(band))
     for myrun in runs:
@@ -235,7 +231,7 @@ class CalibrationApplicator(object):
         shifts = {}
         for band in constants.BANDS:
             cond_run = (self.calib[band]['run']
-                        == IPHASQC.field('run_'+band)[idx_field])
+                        == IPHASQC.field('run_' + band)[idx_field])
             shifts[band] = self.calib[band]['shift'][cond_run][0]
 
         log.info("Shifts for {0}: {1}".format(fieldid, shifts))
@@ -285,8 +281,11 @@ def apply_calibration(ncores=2):
 """
 
 def calibration_worker(filename):
-    ca = CalibrationApplicator()
-    ca.run(filename)
+    try:
+        ca = CalibrationApplicator()
+        ca.run(filename)
+    except Exception, e:
+        log.error('%s: *UNEXPECTED EXCEPTION*: calibration_worker: %s' % (filename, e))
 
 
 def apply_calibration(ncores=2):
@@ -352,7 +351,7 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        run_glazebrook(ncores=3)
+        #run_glazebrook(ncores=3)
         apply_calibration(ncores=8)
 
 
