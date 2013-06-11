@@ -86,7 +86,7 @@ class Glazebrook(object):
         # Note: there should be alternative algorithms for symmetric
         # matrices which are faster.
         self.solution = linalg.lsqr(self.A, self.b,
-                                    atol=1e-8, iter_lim=2e5, show=False)
+                                    atol=1e-10, iter_lim=2e5, show=False)
         log.info('Solution found')
         log.info('mean shift = {0}'.format(np.mean(self.solution[0])))
         return self.solution
