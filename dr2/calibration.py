@@ -88,7 +88,9 @@ class Glazebrook(object):
         self.solution = linalg.lsqr(self.A, self.b,
                                     atol=1e-8, iter_lim=2e5, show=False)
         log.info('Solution found')
-        log.info('mean shift = {0}'.format(np.mean(self.solution[0])))
+        log.info('mean shift = {0} +/- {1}'.format(
+                                            np.mean(self.solution[0]),
+                                            np.std(self.solution[0])))
         return self.solution
 
     def write(self, filename):
@@ -159,10 +161,10 @@ def glazebrook_data(band='r'):
             PARTNER_OK.append( APASS_OK[idx[0]] )
     PARTNER_OK = np.array(PARTNER_OK)
 
-    cond_anchors = ( IPHASQC.field('is_best')
+    cond_anchors = (constants.IPHASQC_COND_RELEASE
                     & (
-                      ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
-                      | (APASS_OK ) )
+                        ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
+                        | (APASS_OK ) )
                     )
 
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
@@ -407,7 +409,7 @@ def evaluate_calibration(band='r'):
     print('max(residuals {0}): {1:.03f}'.format(band, np.max(residuals)))
     print('std(residuals {0}): {1:.03f}'.format(band, np.std(residuals)))
     return residuals
-    #crossmatch using stilts
+
 
 ###################
 # MAIN EXECUTION
