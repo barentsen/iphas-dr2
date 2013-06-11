@@ -62,7 +62,7 @@ WCSFIXES = ascii.read(WCSFIXES_PATH)
 
 # Table detaling zeropoint overrides; used to enforce zp(r)-zp(Halpha)=3.14
 ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR, 'lib',
-                                        'zeropoint-overrides.csv')
+                                        'zeropoints.csv')
 ZEROPOINT_OVERRIDES = ascii.read(ZEROPOINT_OVERRIDES_PATH)
 
 # Cache dict to hold the confidence maps for each filter/directory
@@ -1030,6 +1030,29 @@ def index_all(directory, ncores=8):
         if r is None:
             continue
         out.write(r+'\n')
+
+    out.close()
+
+
+def sanitise_zeropoints():
+    """Writes a CSV file containing zeropoint overrides."""
+    filename_runs = os.path.join(constants.DESTINATION,
+                                 'runs.csv')
+    runs = ascii.read(filename_runs)
+
+    filename_target = os.path.join(constants.PACKAGEDIR, 'lib',
+                                   'zeropoints.csv')
+    out = file(filename_target, 'w')
+
+    # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
+    for row in runs:
+        if row['WFFBAND'] == 'Halpha':
+            # Figure out the index of r-band runs in the same night
+            idx_r = np.argwhere(
+                        (np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.4)
+                        & (runs.field('WFFBAND') == 'r'))[0][0]
+            zp = runs[idx_r]['MAGZPT'] - 3.14
+            out.write('{0},{1}\n'.format(row['run'], zp))
 
     out.close()
 

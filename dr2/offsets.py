@@ -1,7 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Computes magnitude offsets between overlapping fields for calibration.
+"""Computes magnitude offsets between overlapping exposures.
 
+This script carries out pair-wise crossmatching of reliable objects in
+overlapping exposures. It then computes the median offset between those
+magnitudes, which provides the input required to carry out a global
+re-calibration.
+
+The output is a CSV file stored at "constants.DESTINATION/offsets-{band}.csv"
+
+The columns in the CSV file are:
+run1   -- reference run number
+run2   -- comparison run number
+offset -- median(run1_magnitudes - run2_magnitudes)
+std    -- std(run1_magnitudes - run2_magnitudes)
+n      -- len(run1_magnitudes - run2_magnitudes)
+
+Only runs which are part of the data release are included.
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -23,7 +38,7 @@ __credits__ = ['Hywel Farnhill', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-# Magnitude limits to compute offsets from
+# Magnitude ranges across whcih we will compute the median offsets
 MAGLIMITS = {'r': [15, 17.5], 'i': [14, 16.5], 'ha': [15, 17.5]}
 
 
@@ -97,7 +112,6 @@ class OffsetMachine(object):
                           & (offset_data['errBits'] == 0))
 
         for idx1 in np.argwhere(cond_reliable1):
-
             idx2 = util.crossmatch(self.data['ra'][idx1],
                                    self.data['dec'][idx1],
                                    offset_data['ra'][cond_reliable2],

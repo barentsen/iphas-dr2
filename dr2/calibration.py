@@ -17,6 +17,7 @@ from multiprocessing import Pool
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
+from astropy.io import fits
 from astropy import log
 import constants
 from constants import IPHASQC
@@ -86,8 +87,8 @@ class Glazebrook(object):
         # matrices which are faster.
         self.solution = linalg.lsqr(self.A, self.b,
                                     atol=1e-8, iter_lim=2e5, show=False)
-        #log.info('Solution found: {0}'.format(self.solution))
         log.info('Solution found')
+        log.info('mean shift = {0}'.format(np.mean(self.solution[0])))
         return self.solution
 
     def write(self, filename):
@@ -113,12 +114,20 @@ def partnerid(fieldid):
     return partnerid
 
 
+
 def glazebrook_data(band='r'):
     """Retrieve the offset information needed by the Glazebrook algorithm.
+
+    Returns a tuple (runs, overlaps, anchors):
+    runs     -- array of runs
+    overlaps -- dictionary:
+                overlaps[run]['runs']  -- overlapping runs
+                overlaps[run]['offsets'] -- their offsets
+    anchors  -- boolean array; True if run is an anchor
     """
     assert(band in ['r', 'i', 'ha'])
 
-    # Parse data
+    # Parse data: file containing offsets for runs in the data release
     filename_offsets = os.path.join(constants.DESTINATION,
                                     'offsets-{0}.csv'.format(band))
     log.info('Reading {0}'.format(filename_offsets))
@@ -178,22 +187,85 @@ def glazebrook_data(band='r'):
     return (runs, overlaps, anchors)
 
 
+def run_glazebrook_band_halpha():
+    """H-alpha is treated different from r/i because no APASS data exists
+    in this band. Instead, we adopt the r-band shifts for this bands,
+    except for nights which were non-photometric, where we do apply Glazebrook.
+    """
+    log.info('Running Glazebrook for H-alpha')
+    filename_output = os.path.join(constants.DESTINATION,
+                                   'calibration-ha.csv')
+    # Table containing information on photometric stability
+    stabfile = os.path.join(constants.PACKAGEDIR,
+                            'lib',
+                            'photometric-stability.fits')
+    stab = fits.getdata(stabfile, 1)
+
+    runs, overlaps, anchors = glazebrook_data('ha')
+
+    rcalib_file = os.path.join(constants.DESTINATION, 'calibration-r.csv')
+    rcalib = ascii.read(rcalib_file)
+    rshifts = dict(zip(rcalib['run'], rcalib['shift']))
+
+    run_ha2r = dict(zip(IPHASQC['run_ha'], IPHASQC['run_r']))
+
+    # For each pair, correct for the r-band offset and review anchor status
+    for i, run in enumerate(runs):
+        for j, run2 in enumerate(overlaps[run]['runs']):
+            overlaps[run]['offsets'][j] += (rshifts[run_ha2r[run]]
+                                            - rshifts[run_ha2r[run2]])
+
+        anchors[i] = False  # Default
+        # Is the run stable photometrically?
+        cond_run = (stab['run_ha'] == run)
+        if cond_run.sum() > 0:
+            idx_run = np.argwhere(cond_run)[0][0]
+            if ( (stab[idx_run]['hadiff'] > (-0.008-0.01))
+                 and (stab[idx_run]['hadiff'] < (-0.008+0.01))
+                 and (stab[idx_run]['rdiff'] > (-0.007-0.01))
+                 and (stab[idx_run]['rdiff'] < (-0.007+0.01)) ):
+                anchors[i] = True
+
+    log.info('Found {0} H-alpha anchors'.format(anchors.sum()))
+
+    g = Glazebrook(runs, overlaps, anchors)
+    g.solve()
+
+    log.info('Writing results to {0}'.format(filename_output))
+    f = open(filename_output, 'w')
+    f.write('run,shift\n')
+    for i, myrun in enumerate(g.runs[~g.anchors]):
+        shift = g.solution[0][i] + rshifts[run_ha2r[myrun]]
+        f.write('{0},{1}\n'.format(myrun, shift))
+    for myrun in g.runs[g.anchors]:
+        shift = rshifts[run_ha2r[myrun]]
+        f.write('{0},{1}\n'.format(myrun, shift))
+    f.close()
+
+
 def run_glazebrook_band(band='r'):
     """Produce the calibration for a given band.
     """
     assert(band in ['r', 'i', 'ha'])
+    # H-alpha is a special case
+    if band == 'ha':
+        return run_glazebrook_band_halpha()
+
     log.info('Running Glazebrook for the {0} band'.format(band))
     filename_output = os.path.join(constants.DESTINATION,
                                    'calibration-{0}.csv'.format(band))
+
     runs, overlaps, anchors = glazebrook_data(band)
     g = Glazebrook(runs, overlaps, anchors)
     g.solve()
     g.write(filename_output)
 
 
-def run_glazebrook(ncores=3):
+def run_glazebrook(ncores=2):
     p = Pool(processes=ncores)
-    p.map(run_glazebrook_band, constants.BANDS)
+    p.map(run_glazebrook_band, ['r', 'i'])
+    # H-alpha depends on the output of r
+    run_glazebrook_band('ha')
 
 
 ###################################################
@@ -354,7 +426,9 @@ if __name__ == '__main__':
         for band in bands:
             residuals = evaluate_calibration(band)
         """
-        calibration_worker('3174_dec2005.fits')
+        run_glazebrook_band('ha')
+
+        #calibration_worker('3174_dec2005.fits')
 
     else:
         log.setLevel('INFO')
@@ -362,126 +436,3 @@ if __name__ == '__main__':
         apply_calibration(ncores=8)
 
 
-"""
-ANCHORS = APASS_3%
-
-===== r =====
-mean(residuals r): 0.000
-min(residuals r): -0.389
-max(residuals r): 0.186
-std(residuals r): 0.033
-===== i =====
-mean(residuals i): -0.006
-min(residuals i): -0.745
-max(residuals i): 0.195
-std(residuals i): 0.043
-
-
-ANCHORS = OLD
-
-===== r =====
-mean(residuals r): -0.003
-min(residuals r): -0.223
-max(residuals r): 0.175
-std(residuals r): 0.045
-===== i =====
-mean(residuals i): -0.009
-min(residuals i): -0.288
-max(residuals i): 0.203
-std(residuals i): 0.046
-
-ANCHORS = OLD & APASS_2%
-
-===== r =====
-mean(residuals r): 0.001
-min(residuals r): -0.203
-max(residuals r): 0.181
-std(residuals r): 0.035
-===== i =====
-mean(residuals i): -0.004
-min(residuals i): -0.271
-max(residuals i): 0.206
-std(residuals i): 0.038
-
-ANCHORS = OLD & APASS_3%
-
-===== r =====
-mean(residuals r): 0.002
-min(residuals r): -0.182
-max(residuals r): 0.157
-std(residuals r): 0.032
-===== i =====
-mean(residuals i): -0.003
-min(residuals i): -0.271
-max(residuals i): 0.187
-std(residuals i): 0.035
-
-ANCHORS = OLD & APASS_4%
-
-===== r =====
-mean(residuals r): 0.002
-min(residuals r): -0.162
-max(residuals r): 0.156
-std(residuals r): 0.031
-===== i =====
-mean(residuals i): -0.003
-min(residuals i): -0.271
-max(residuals i): 0.184
-std(residuals i): 0.033
-
-ANCHORS = OLD & APASS_5%
-
-===== r =====
-mean(residuals r): 0.002
-min(residuals r): -0.162
-max(residuals r): 0.156
-std(residuals r): 0.032
-===== i =====
-mean(residuals i): -0.003
-min(residuals i): -0.271
-max(residuals i): 0.183
-std(residuals i): 0.033
-
-
-=====================
-
-APASS 4p 4p
-
-===== r =====
-mean(residuals r): 0.002
-min(residuals r): -0.144
-max(residuals r): 0.131
-std(residuals r): 0.028
-===== i =====
-mean(residuals i): -0.003
-min(residuals i): -0.190
-max(residuals i): 0.186
-std(residuals i): 0.031
-
-APASS 3p 3p
-
-===== r =====
-mean(residuals r): 0.001
-min(residuals r): -0.148
-max(residuals r): 0.139
-std(residuals r): 0.031
-===== i =====
-mean(residuals i): -0.003
-min(residuals i): -0.212
-max(residuals i): 0.207
-std(residuals i): 0.034
-
-APASS 3p 3p / stars >=20
-
-===== r =====
-mean(residuals r): 0.001
-min(residuals r): -0.176
-max(residuals r): 0.137
-std(residuals r): 0.031
-===== i =====
-mean(residuals i): -0.004
-min(residuals i): -0.220
-max(residuals i): 0.205
-std(residuals i): 0.034
-
-"""
