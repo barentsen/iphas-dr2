@@ -87,9 +87,9 @@ class Concatenator(object):
         # Which are our fields?
         # Note: we must allow for border overlaps
         if self.part == 'a':
-            cond_b = IPHASQC['b'] < (0 - constants.FIELD_MAXDIST)
+            cond_b = IPHASQC['b'] < (0 + constants.FIELD_MAXDIST)
         else:
-            cond_b = IPHASQC['b'] > (0 + constants.FIELD_MAXDIST)
+            cond_b = IPHASQC['b'] > (0 - constants.FIELD_MAXDIST)
 
         cond_strip = (constants.IPHASQC_COND_RELEASE
                       & cond_b
