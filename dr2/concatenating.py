@@ -47,7 +47,7 @@ class Concatenator(object):
         # Where to write the output?
         if self.calibrated:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated-20130521')
+                                            'concatenated-20130612')
         else:
             self.destination = os.path.join(constants.DESTINATION,
                                             'concatenated-uncalibrated')
@@ -102,9 +102,9 @@ class Concatenator(object):
     def run(self):
         """Performs the concatenation of the strip."""
         if self.part == 'a':
-            cond_latitude = "b >= 0"
-        else:
             cond_latitude = "b < 0"
+        else:
+            cond_latitude = "b >= 0"
 
         if self.mode == 'full':
             extracmd = """delcols "rPlaneX rPlaneY iPlaneX iPlaneY \
@@ -185,4 +185,4 @@ if __name__ == "__main__":
         run_one(200)
     else:
         log.setLevel('INFO')
-        run_all(3)
+        run_all(1)
