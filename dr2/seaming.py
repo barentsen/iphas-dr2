@@ -313,7 +313,7 @@ class SeamMachine(object):
 
             # First, identify the partnerID
             mjd = np.array([matchdata[col][rowno] for col in rMJD_cols])
-            cond_partner = np.abs(mjd[1:] - mjd[0]) < 0.5  # within 30 mins
+            cond_partner = np.abs(mjd[1:] - mjd[0]) < 0.020833  # within 30 mins
             if cond_partner.sum() > 0:  # Partner found!
                 # Index 0 is the source itself!
                 idx_partner = 1 + cond_partner.nonzero()[0][0]
