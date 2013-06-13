@@ -108,10 +108,11 @@ class Concatenator(object):
 
         if self.mode == 'full':
             extracmd = """delcols "rPlaneX rPlaneY iPlaneX iPlaneY \
-                                   haPlaneX haPlaneY rAxis primaryID" """
+                                   haPlaneX haPlaneY rAxis primaryID
+                                   vignetted truncated badPix" """
         else:
-            extracmd = """select "nBands == 3"; \
-                          replacecol ra "toFloat(ra)";
+            # select "nBands == 3"; \
+            extracmd = """replacecol ra "toFloat(ra)";
                           replacecol dec "toFloat(dec)";
                           replacecol errBits "toShort(errBits)";
                           keepcols "ra dec \

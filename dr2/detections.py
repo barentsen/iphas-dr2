@@ -62,7 +62,7 @@ WCSFIXES = ascii.read(WCSFIXES_PATH)
 
 # Table detaling zeropoint overrides; used to enforce zp(r)-zp(Halpha)=3.14
 ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR, 'lib',
-                                        'zeropoints.csv')
+                                        'zeropoint-overrides.csv')
 ZEROPOINT_OVERRIDES = ascii.read(ZEROPOINT_OVERRIDES_PATH)
 
 # Cache dict to hold the confidence maps for each filter/directory
@@ -336,7 +336,7 @@ class DetectionCatalogue():
                                                 col_ccd.array[i],
                                                 col_seqNum.array[i])
                                 for i in xrange(self.objectcount)],
-                                dtype='i8')
+                               dtype='i8')
         return fits.Column(name='detectionID', format='K', unit='Number',
                            array=detectionID)
 
@@ -483,10 +483,12 @@ class DetectionCatalogue():
 
     def column_saturated(self):
         """Which stars are saturated?"""
-        # The saturation level is stored in the SATURATE keyword for each ccd
+        # We assume that stars which peak at >55000 counts cannot be
+        # measured accurately
         saturated = np.concatenate([(self.fits[ccd].data.field('Peak_height')
-                                     > self.fits[ccd].header.get('SATURATE'))
+                                     > 55000)
                                     for ccd in EXTS])
+
         return fits.Column(name='saturated', format='L',
                            unit='Boolean', array=saturated)
 
@@ -1075,7 +1077,10 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2005/r484350_cat.fits')
+        #run_one(constants.RAWDATADIR+'/iphas_dec2005/r484350_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_nov2012/r948994_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_nov2012/r948995_cat.fits')
+        run_one(constants.RAWDATADIR+'/iphas_nov2012/r948996_cat.fits')
         #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
         #index_all(directory)

@@ -30,10 +30,10 @@ replacecol posErr -desc "Astrometric fit error (RMS). Be aware that the error mi
 addskycoords -inunit deg -outunit deg icrs galactic ra dec l b;
 
 # Position offsets
-addcol -desc "Position offset of the i-band detection in RA" iXi "toFloat(3600.0*(iRA-ra))"
-addcol -desc "Position offset of the i-band detection in DEC" iEta "toFloat(3600.0*(iDec-dec))"
-addcol -desc "Position offset of the Ha-band detection in RA" haXi "toFloat(3600.0*(haRA-ra))"
-addcol -desc "Position offset of the Ha-band detection in DEC" haEta "toFloat(3600.0*(haDec-dec))"
+addcol -desc "Position offset of the i-band detection in RA" -units "arcsec" iXi "toFloat(3600.0*(iRA-ra))"
+addcol -desc "Position offset of the i-band detection in DEC" -units "arcsec" iEta "toFloat(3600.0*(iDec-dec))"
+addcol -desc "Position offset of the Ha-band detection in RA" -units "arcsec" haXi "toFloat(3600.0*(haRA-ra))"
+addcol -desc "Position offset of the Ha-band detection in DEC" -units "arcsec" haEta "toFloat(3600.0*(haDec-dec))"
 
 # Rename r-band columns
 colmeta -name r -desc "Default r-band magnitude using a 2.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag2_1
