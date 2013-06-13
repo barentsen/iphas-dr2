@@ -12,6 +12,7 @@ Both a light and a full version are generated.
 from __future__ import division, print_function, unicode_literals
 import os
 import numpy as np
+import datetime
 from multiprocessing import Pool
 from astropy import log
 import constants
@@ -131,10 +132,17 @@ class Concatenator(object):
         output_filename = self.get_output_filename()
         log.info('Writing data to {0}'.format(output_filename))
 
+        version = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
         # A bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
         param = {'stilts': constants.STILTS,
                  'in': instring,
-                 'icmd': """'select "(errBits < 64) \
+                 'icmd': """'clearparams *; \
+                             setparam NAME "IPHAS DR2 Source Catalogue"; \
+                             setparam ORIGIN "www.iphas.org"; \
+                             setparam AUTHOR "Geert Barentsen, Hywel Farnhill, Janet Drew"; \
+                             setparam VERSION \""""+version+""""; \
+                             select "(errBits < 64) \
                                       & (rErr < 0.198 || iErr < 0.198 || haErr < 0.198)
                                       & (pStar > 0.2 || pGalaxy > 0.2) \
                                       & l >= """+str(self.lon1)+""" \
@@ -151,7 +159,14 @@ class Concatenator(object):
         mycmd = cmd.format(**param)
         log.debug(mycmd)
         status = os.system(mycmd)
-        log.info('Concat: '+str(status))
+        log.info('concat: '+str(status))
+
+        # zip
+        mycmd = 'gzip {0}'.format(output_filename)
+        log.debug(mycmd)
+        status = os.system(mycmd)
+        log.info('gzip: '+str(status))
+
         return status
 
 
