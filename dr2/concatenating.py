@@ -48,7 +48,7 @@ class Concatenator(object):
         # Where to write the output?
         if self.calibrated:
             self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated-20130612')
+                                            'concatenated')
         else:
             self.destination = os.path.join(constants.DESTINATION,
                                             'concatenated-uncalibrated')
@@ -191,6 +191,36 @@ def run_all(ncores=2):
     p.map(run_one, longitudes)
 
 
+def merge_light_catalogue():
+    """Merge the light tiled catalogues into one big file."""
+    output_filename = os.path.join(constants.DESTINATION,
+                                   'concatenated',
+                                   'iphas-dr2-light.fits')
+
+    instring = ''
+    for lon in np.arange(25, 215+1, constants.STRIPWIDTH):
+        for part in ['a', 'b']:
+            path = os.path.join(constants.DESTINATION,
+                                'concatenated',
+                                'light',
+                                'iphas-dr2-glon{0:03d}{1}-light.fits'.format(
+                                                                    lon, part))
+            instring += 'in={0} '.format(path)
+
+    # Warning: a bug in stilts causes long fieldIDs to be truncated if -utype S15 is not set
+    param = {'stilts': constants.STILTS,
+             'in': instring,
+             'out': output_filename}
+
+    cmd = '{stilts} tcat {in} countrows=true lazy=true out={out}'
+    mycmd = cmd.format(**param)
+    log.debug(mycmd)
+    status = os.system(mycmd)
+    log.info('concat: '+str(status))
+
+    return status
+
+
 ###################
 # MAIN EXECUTION
 ###################
@@ -202,3 +232,4 @@ if __name__ == "__main__":
     else:
         log.setLevel('INFO')
         run_all(1)
+        merge_light_catalogue()
