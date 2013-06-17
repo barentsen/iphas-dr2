@@ -203,7 +203,7 @@ def merge_light_catalogue():
             path = os.path.join(constants.DESTINATION,
                                 'concatenated',
                                 'light',
-                                'iphas-dr2-glon{0:03d}{1}-light.fits'.format(
+                                'iphas-dr2-{0:03d}{1}-light.fits'.format(
                                                                     lon, part))
             instring += 'in={0} '.format(path)
 
