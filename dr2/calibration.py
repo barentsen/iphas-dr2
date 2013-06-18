@@ -445,5 +445,3 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         run_glazebrook(ncores=3)
         apply_calibration(ncores=8)
-
-
