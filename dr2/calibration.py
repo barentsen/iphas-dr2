@@ -151,6 +151,7 @@ def glazebrook_data(band='r'):
                     | (IPHASQC.field('rmatch_apassdr7') < 20)
                     | (IPHASQC.field('imatch_apassdr7') < 20) )
 
+    """
     PARTNER_OK = []
     partners = [partnerid(fieldid) for fieldid in IPHASQC.field('id')]
     for myid in partners:
@@ -160,6 +161,7 @@ def glazebrook_data(band='r'):
         else:
             PARTNER_OK.append( APASS_OK[idx[0]] )
     PARTNER_OK = np.array(PARTNER_OK)
+    """
 
     cond_anchors = (constants.IPHASQC_COND_RELEASE
                     & (
@@ -169,9 +171,16 @@ def glazebrook_data(band='r'):
 
     log.info('Found {0} anchors'.format(cond_anchors.sum()))
 
+    zp_override_runs = [430347, 430348, 381709, 381710, 381202,
+                        530707, 530708, 948377, 948378, 598691,
+                        598692, 471736, 471737, 528580, 528581,
+                        381256, 381257, 530659, 530660, 597862,
+                        597863, 381679, 381680, 381203, 486267,
+                        486268]
+
     QC_RUNS = IPHASQC.field('run_{0}'.format(band))
     for myrun in runs:
-        if cond_anchors[QC_RUNS == myrun][0]:
+        if (cond_anchors[QC_RUNS == myrun][0]) or (myrun in zp_override_runs):
             anchors.append(True)
         else:
             anchors.append(False)
@@ -434,7 +443,7 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        #run_glazebrook(ncores=3)
+        run_glazebrook(ncores=3)
         apply_calibration(ncores=8)
 
 
