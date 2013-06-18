@@ -166,8 +166,24 @@ if __name__ == '__main__':
     if constants.DEBUGMODE:
         log.setLevel('INFO')
         #run_all(lon1=lon1, lon2=lon2, ncores=4)
-        run_one('5089o_jun2005')
+        #run_one('5089o_jun2005')
         #run_one('3561_nov2003')
         #run_all(lon1=208, lon2=209, ncores=6)
+
+        run_one('2925o_dec2003')
+        run_one('2832_dec2007')
+        run_one('2914o_dec2003')
+        run_one('2327_dec2007')
+        run_one('2426_oct2006')
+        run_one('6745_sep2005')
+        run_one('2798_nov2012')
+        run_one('3367o_oct2006')
+        run_one('3352o_oct2006')
+        run_one('1385o_oct2004')
+        run_one('2694o_dec2005')
+        run_one('2817o_dec2003')
+        run_one('2694o_dec2005')
+        run_one('2831o_dec2003')
+
     else:  # production
         run_all(lon1=lon1, lon2=lon2, ncores=8)
