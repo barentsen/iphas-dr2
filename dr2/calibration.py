@@ -428,7 +428,7 @@ if __name__ == '__main__':
     #constants.DEBUGMODE = True
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
-        #run_glazebrook(ncores=3)
+        run_glazebrook(ncores=3)
         #apply_calibration_strip(215)
         """
         bands = ['r', 'i']
