@@ -990,11 +990,9 @@ def convert_all_parallel(directory, clusterview):
     return result
 
 
-def index_setup():
-    """Returns file object."""
-    filename = os.path.join(constants.DESTINATION, 'runs.csv')
-    out = open(filename, 'w')
-
+def index_setup(destination):
+    """Sets up the CSV text file object."""
+    out = open(destination, 'w')
     out.write('catalogue,image,conf,run,object,ra,dec,field,'
               + 'SEEING,CCD1_SEEING,CCD2_SEEING,CCD3_SEEING,CCD4_SEEING,'
               + 'ELLIPTIC,CCD1_ELLIPTIC,CCD2_ELLIPTIC,CCD3_ELLIPTIC,CCD4_ELLIPTIC,'
@@ -1025,6 +1023,8 @@ def index_setup():
 
 def index_one(path):
     """Returns the CSV summary line."""
+    pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(data)
+    log.debug(pid+': '+path)
     csv_row_string = None
     try:
         cat = DetectionCatalogue(path)
@@ -1038,10 +1038,12 @@ def index_one(path):
     return csv_row_string
 
 
-def index_all(directory, ncores=8):
+def index_all(datadir=constants.RAWDATADIR,
+              destination=os.path.join(constants.DESTINATION, 'runs.csv'),
+              ncores=8):
     """Produces a CSV file detailing the properties of all runs."""
-    out = index_setup()
-    catalogues = list_catalogues(directory)
+    out = index_setup(destination)
+    catalogues = list_catalogues(datadir)
 
     # Index each pipeline catalogue
     p = Pool(processes=ncores)
@@ -1050,14 +1052,16 @@ def index_all(directory, ncores=8):
         if r is None:
             continue
         out.write(r+'\n')
-
     out.close()
 
 
-def index_all_parallel(directory, clusterview):
+def index_all_parallel(clusterview,
+                       datadir=constants.RAWDATADIR,
+                       destination=os.path.join(constants.DESTINATION,
+                                                'runs.csv')):
     """Produces a CSV file detailing the properties of all runs."""
-    out = index_setup()
-    catalogues = list_catalogues(directory)
+    out = index_setup(destination)
+    catalogues = list_catalogues(datadir)
 
     # Index each pipeline catalogue
     results = clusterview.imap(index_one, catalogues)  # returns an iterator
@@ -1065,7 +1069,7 @@ def index_all_parallel(directory, clusterview):
         if r is None:
             continue
         out.write(r+'\n')
-
+        out.flush()
     out.close()
 
 

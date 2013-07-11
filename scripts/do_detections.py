@@ -1,12 +1,17 @@
+import sys
+from IPython import parallel
+from astropy import log
+
 sys.path.append('/home/gb/dev/iphas-dr2')
 from dr2 import constants
 from dr2 import detections
-from IPython import parallel
+
+log.setLevel('DEBUG')
 
 client = parallel.Client(profile='mpi')
 clusterview = client.load_balanced_view()
 
-detections.index_all_parallel(constants.RAWDATADIR, clusterview)
+detections.index_all_parallel(clusterview)
 #detections.convert_all_parallel(clusterview, constants.RAWDATADIR)
 
 """
