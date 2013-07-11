@@ -974,7 +974,7 @@ def index_one(path):
     """Returns the CSV summary line."""
     import socket
     import os
-    pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(data)
+    pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
     log.debug(pid+': '+path)
     csv_row_string = None
     try:
