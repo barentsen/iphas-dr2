@@ -9,13 +9,16 @@ from dr2 import detections
 log.setLevel('DEBUG')
 
 client = parallel.Client(profile='mpi')
-clusterview = client.load_balanced_view()
+cluster = client.load_balanced_view()
 
-detections.index_all_parallel(clusterview)
-#detections.convert_all_parallel(clusterview, constants.RAWDATADIR)
+detections.create_index(cluster,
+                        data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
+                        target=os.path.join(constants.DESTINATION, 'runs.csv'))
+#detections.sanitise_zeropoints()         # Produces zeropoints.csv
+#detections.create_catalogues(cluster,
+#                             target=os.path.join(constants.DESTINATION, 'detected'))
 
 """
-detections.sanitise_zeropoints()         # Produces zeropoints.csv
 detections.create_catalogues(directory)  # Single-filter catalogues
 offsets.compute_offsets()
 calibration.run_glazebrook()             # Re-calibration (minimises offsets)

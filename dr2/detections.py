@@ -30,7 +30,6 @@ import numpy as np
 import os
 import sys
 import datetime
-from multiprocessing import Pool
 import constants
 
 __author__ = 'Geert Barentsen'
@@ -940,56 +939,6 @@ def list_catalogues(directory):
     return catalogues
 
 
-def convert_one(path):
-    """Created a catalogue from one given pipeline table.
-
-    path -- of the pipeline table.
-    """
-    try:
-        cat = DetectionCatalogue(path)
-        cat.save_detections()
-    except CatalogueException, e:
-        log.warning('%s: CatalogueException: %s' % (path, e))
-        return None
-    except Exception, e:
-        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-        return None
-
-
-def convert_setup():
-    # Make sure the output directory exists
-    if not os.path.exists(MYDESTINATION):
-        os.makedirs(MYDESTINATION)
-
-
-def convert_all(directory, ncores=4):
-    """Creates catalogues for all pipeline tables found in the data directory.
-
-    directory -- containing Cambridge's pipeline catalogues.
-    ncores -- number of parallel processes.
-    """
-    convert_setup()
-
-    # Where are the pipeline catalogues?
-    catalogues = list_catalogues(directory)
-
-    # Run the processing for each pipeline catalogue
-    p = Pool(processes=ncores)
-    results = p.map(convert_one, catalogues)  # returns an iterator
-    return results
-
-
-def convert_all_parallel(directory, clusterview):
-    convert_setup()
-
-    # Where are the pipeline catalogues?
-    catalogues = list_catalogues(directory)
-
-    # Run the conversion for each pipeline catalogue
-    result = clusterview.map(convert_one, catalogues, block=True)
-    return result
-
-
 def index_setup(destination):
     """Sets up the CSV text file object."""
     out = open(destination, 'w')
@@ -1038,12 +987,13 @@ def index_one(path):
     return csv_row_string
 
 
-def index_all(datadir=constants.RAWDATADIR,
-              destination=os.path.join(constants.DESTINATION, 'runs.csv'),
+def index_all(target=os.path.join(constants.DESTINATION, 'runs.csv'),
+              data=constants.RAWDATADIR,
               ncores=8):
     """Produces a CSV file detailing the properties of all runs."""
-    out = index_setup(destination)
-    catalogues = list_catalogues(datadir)
+    from multiprocessing import Pool
+    out = index_setup(target)
+    catalogues = list_catalogues(data)
 
     # Index each pipeline catalogue
     p = Pool(processes=ncores)
@@ -1055,13 +1005,12 @@ def index_all(datadir=constants.RAWDATADIR,
     out.close()
 
 
-def index_all_parallel(clusterview,
-                       datadir=constants.RAWDATADIR,
-                       destination=os.path.join(constants.DESTINATION,
-                                                'runs.csv')):
+def create_index(clusterview,
+                 target=os.path.join(constants.DESTINATION, 'runs.csv'),
+                 data=constants.RAWDATADIR):
     """Produces a CSV file detailing the properties of all runs."""
-    out = index_setup(destination)
-    catalogues = list_catalogues(datadir)
+    out = index_setup(target)
+    catalogues = list_catalogues(data)
 
     # Index each pipeline catalogue
     results = clusterview.imap(index_one, catalogues)  # returns an iterator
@@ -1095,6 +1044,58 @@ def sanitise_zeropoints():
 
     out.close()
 
+
+def convert_one(path):
+    """Created a catalogue from one given pipeline table.
+
+    path -- of the pipeline table.
+    """
+    try:
+        cat = DetectionCatalogue(path)
+        cat.save_detections()
+    except CatalogueException, e:
+        log.warning('%s: CatalogueException: %s' % (path, e))
+        return None
+    except Exception, e:
+        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+        return None
+
+
+def convert_setup(target):
+    # Make sure the output directory exists
+    if not os.path.exists(target):
+        os.makedirs(target)
+
+
+def convert_all(target=os.path.join(constants.DESTINATION, 'detected'),
+                data=constants.RAWDATADIR,
+                ncores=4):
+    """Creates catalogues for all pipeline tables found in the data directory.
+
+    directory -- containing Cambridge's pipeline catalogues.
+    ncores -- number of parallel processes.
+    """
+    from multiprocessing import Pool
+    # Setup the target directory
+    convert_setup(target)
+    # Create a list of all pipeline catalogues?
+    catalogues = list_catalogues(data)
+    # Run the processing for each catalogue
+    p = Pool(processes=ncores)
+    results = p.map(convert_one, catalogues)  # returns an iterator
+    return results
+
+
+def create_catalogues(clusterview,
+                      target=os.path.join(constants.DESTINATION, 'detected'),
+                      data=constants.RAWDATADIR):
+    # Setup the target directory
+    convert_setup(target)
+    # Create a list of all pipeline catalogues?
+    catalogues = list_catalogues(data)
+    # Run the conversion for each catalogue
+    result = clusterview.map(convert_one, catalogues, block=True)
+    return result
 
 ###################
 # MAIN EXECUTION
