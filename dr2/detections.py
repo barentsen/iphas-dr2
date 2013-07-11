@@ -940,7 +940,7 @@ def list_catalogues(directory):
     return catalogues
 
 
-def run_one(path):
+def convert_one(path):
     """Created a catalogue from one given pipeline table.
 
     path -- of the pipeline table.
@@ -956,43 +956,42 @@ def run_one(path):
         return None
 
 
-def run_all(directory, ncores=4):
+def convert_setup():
+    # Make sure the output directory exists
+    if not os.path.exists(MYDESTINATION):
+        os.makedirs(MYDESTINATION)
+
+
+def convert_all(directory, ncores=4):
     """Creates catalogues for all pipeline tables found in the data directory.
 
     directory -- containing Cambridge's pipeline catalogues.
     ncores -- number of parallel processes.
     """
-    # Make sure the output directory exists
-    if not os.path.exists(MYDESTINATION):
-        os.makedirs(MYDESTINATION)
+    convert_setup()
 
     # Where are the pipeline catalogues?
     catalogues = list_catalogues(directory)
 
     # Run the processing for each pipeline catalogue
     p = Pool(processes=ncores)
-    results = p.map(run_one, catalogues)  # returns an iterator
+    results = p.map(convert_one, catalogues)  # returns an iterator
     return results
 
 
-def index_one(path):
-    """Returns the CSV summary line."""
-    csv_row_string = None
-    try:
-        cat = DetectionCatalogue(path)
-        csv_row_string = cat.get_csv_summary()
-    except CatalogueException, e:
-        log.warning('%s: CatalogueException: %s' % (path, e))
-        return None
-    except Exception, e:
-        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-        return None
-    return csv_row_string
+def convert_all_parallel(directory, clusterview):
+    convert_setup()
+
+    # Where are the pipeline catalogues?
+    catalogues = list_catalogues(directory)
+
+    # Run the conversion for each pipeline catalogue
+    result = clusterview.map(convert_one, catalogues, block=True)
+    return result
 
 
-def index_all(directory, ncores=8):
-    """Produces a CSV file detailing the properties of all runs."""
-    # Write the results
+def index_setup():
+    """Returns file object."""
     filename = os.path.join(constants.DESTINATION, 'runs.csv')
     out = open(filename, 'w')
 
@@ -1021,13 +1020,47 @@ def index_all(directory, ncores=8):
               + 'CCD4_PV2_1,CCD4_PV2_2,CCD4_PV2_3,'
               + 'CCDSPEED,OBSERVER,'
               + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID\n')
+    return out
 
-    # Where are the pipeline catalogues?
+
+def index_one(path):
+    """Returns the CSV summary line."""
+    csv_row_string = None
+    try:
+        cat = DetectionCatalogue(path)
+        csv_row_string = cat.get_csv_summary()
+    except CatalogueException, e:
+        log.warning('%s: CatalogueException: %s' % (path, e))
+        return None
+    except Exception, e:
+        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+        return None
+    return csv_row_string
+
+
+def index_all(directory, ncores=8):
+    """Produces a CSV file detailing the properties of all runs."""
+    out = index_setup()
     catalogues = list_catalogues(directory)
 
-    # Run the processing for each pipeline catalogue
+    # Index each pipeline catalogue
     p = Pool(processes=ncores)
     results = p.imap(index_one, catalogues)  # returns an iterator
+    for r in results:
+        if r is None:
+            continue
+        out.write(r+'\n')
+
+    out.close()
+
+
+def index_all_parallel(directory, clusterview):
+    """Produces a CSV file detailing the properties of all runs."""
+    out = index_setup()
+    catalogues = list_catalogues(directory)
+
+    # Index each pipeline catalogue
+    results = clusterview.imap(index_one, catalogues)  # returns an iterator
     for r in results:
         if r is None:
             continue
@@ -1116,6 +1149,6 @@ if __name__ == '__main__':
 
     else:  # Production
         log.setLevel('WARNING')
-        run_all(directory, ncores=8)
+        convert_all(directory, ncores=8)
         #for row in ascii.read('wcs-tuning/needfix.txt'):
         #    run_one( os.path.join(constants.RAWDATADIR, row[0]) )
