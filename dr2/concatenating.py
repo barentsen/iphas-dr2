@@ -212,7 +212,7 @@ def merge_light_catalogue():
              'in': instring,
              'out': output_filename}
 
-    cmd = '{stilts} tcat {in} countrows=true lazy=true out={out}'
+    cmd = '{stilts} tcat {in} countrows=true lazy=true ofmt=colfits-basic out={out}'
     mycmd = cmd.format(**param)
     log.debug(mycmd)
     status = os.system(mycmd)
@@ -231,5 +231,5 @@ if __name__ == "__main__":
         run_one(200)
     else:
         log.setLevel('INFO')
-        run_all(1)
+        #run_all(1)
         merge_light_catalogue()

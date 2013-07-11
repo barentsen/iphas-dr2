@@ -163,6 +163,8 @@ if __name__ == '__main__':
         lon1 = 0
         lon2 = 360
 
+    #constants.DEBUGMODE = True
+
     if constants.DEBUGMODE:
         log.setLevel('INFO')
         #run_all(lon1=lon1, lon2=lon2, ncores=4)
