@@ -974,7 +974,6 @@ def index_one(path):
     """Returns the CSV summary line."""
     with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_index_one.log')):
         import socket
-        import os
         pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
         log.debug(pid+': '+path)
         csv_row_string = None
