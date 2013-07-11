@@ -1,41 +1,37 @@
-import sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Produces IPHAS Data Release 2 using an MPI computing cluster."""
 import os
 from IPython import parallel
-from astropy import log
 
-sys.path.append('/home/gb/dev/iphas-dr2')
-from dr2 import constants
-from dr2 import detections
+__author__ = 'Geert Barentsen'
 
-log.setLevel('DEBUG')
-
+# Create the cluster view
 client = parallel.Client(profile='mpi')
 cluster = client.load_balanced_view()
 
-
-def create_index(clusterview,
-                 target=os.path.join(constants.DESTINATION, 'runs.csv'),
-                 data=constants.RAWDATADIR):
-    """Produces a CSV file detailing the properties of all runs."""
-    out = detections.index_setup(target)
-    catalogues = detections.list_catalogues(data)
-
-    # Index each pipeline catalogue
-    results = clusterview.imap(detections.index_one, catalogues)  # returns an iterator
-    for r in results:
-        if r is None:
-            continue
-        out.write(r+'\n')
-        out.flush()
-    out.close()
+# Sync imports across all nodes
+with client[:].sync_imports():
+    # Make sure the IPHAS DR2 module is in the path
+    import sys
+    sys.path.append('/home/gb/dev/iphas-dr2')
+    client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
+    # Import DR2 generation modules
+    from dr2 import constants
+    from dr2 import detections
 
 
-create_index(cluster,
-             data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
-             target=os.path.join(constants.DESTINATION, 'runs.csv'))
+
+detections.create_index(cluster,
+                        data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
+                        target=os.path.join(constants.DESTINATION, 'runs.csv'))
 #detections.sanitise_zeropoints()         # Produces zeropoints.csv
-#detections.create_catalogues(cluster,
-#                             target=os.path.join(constants.DESTINATION, 'detected'))
+
+"""
+detections.create_catalogues(cluster,
+                             data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
+                             target=os.path.join(constants.DESTINATION, 'detected'))
+"""
 
 """
 detections.create_catalogues(directory)  # Single-filter catalogues

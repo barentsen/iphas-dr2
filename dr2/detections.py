@@ -972,22 +972,22 @@ def index_setup(destination):
 
 def index_one(path):
     """Returns the CSV summary line."""
-    import socket
-    import os
-    from astropy import log
-    pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
-    log.debug(pid+': '+path)
-    csv_row_string = None
-    try:
-        cat = DetectionCatalogue(path)
-        csv_row_string = cat.get_csv_summary()
-    except CatalogueException, e:
-        log.warning('%s: CatalogueException: %s' % (path, e))
-        return None
-    except Exception, e:
-        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-        return None
-    return csv_row_string
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_index_one.log')):
+        import socket
+        import os
+        pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
+        log.debug(pid+': '+path)
+        csv_row_string = None
+        try:
+            cat = DetectionCatalogue(path)
+            csv_row_string = cat.get_csv_summary()
+        except CatalogueException, e:
+            log.warning('%s: CatalogueException: %s' % (path, e))
+            return None
+        except Exception, e:
+            log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+            return None
+        return csv_row_string
 
 
 def index_all(target=os.path.join(constants.DESTINATION, 'runs.csv'),
@@ -1021,7 +1021,6 @@ def create_index(clusterview,
         if r is None:
             continue
         out.write(r+'\n')
-        out.flush()
     out.close()
 
 
@@ -1053,15 +1052,17 @@ def convert_one(path):
 
     path -- of the pipeline table.
     """
-    try:
-        cat = DetectionCatalogue(path)
-        cat.save_detections()
-    except CatalogueException, e:
-        log.warning('%s: CatalogueException: %s' % (path, e))
-        return None
-    except Exception, e:
-        log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
-        return None
+    with log.log_to_file(os.path.join(constants.LOGDIR,
+                         'dr2_convert_one.log')):
+        try:
+            cat = DetectionCatalogue(path)
+            cat.save_detections()
+        except CatalogueException, e:
+            log.warning('%s: CatalogueException: %s' % (path, e))
+            return None
+        except Exception, e:
+            log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
+            return None
 
 
 def convert_setup(target):
