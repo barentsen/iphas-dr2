@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Produces IPHAS Data Release 2 using an MPI computing cluster."""
-import os
 from IPython import parallel
 
 __author__ = 'Geert Barentsen'
@@ -13,6 +12,7 @@ cluster = client.load_balanced_view()
 # Sync imports across all nodes
 with client[:].sync_imports():
     # Make sure the IPHAS DR2 module is in the path
+    import os
     import sys
     sys.path.append('/home/gb/dev/iphas-dr2')
     client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
