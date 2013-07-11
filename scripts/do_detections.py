@@ -19,19 +19,19 @@ with client[:].sync_imports():
     # Import DR2 generation modules
     from dr2 import constants
     from dr2 import detections
+    from dr2 import bandmerging
 
 
 
-detections.create_index(cluster,
-                        target=os.path.join(constants.DESTINATION, 'runs.csv'))
+#detections.create_index(cluster)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
-detections.sanitise_zeropoints()         # Produces zeropoints.csv
-detections.create_catalogues(cluster,
-                             target=os.path.join(constants.DESTINATION, 'detected'))
+#detections.sanitise_zeropoints()         # Produces zeropoints.csv
+detections.create_catalogues(cluster)
+
+#bandmerging.bandmerge(cluster)
 
 
 """
-detections.create_catalogues(directory)  # Single-filter catalogues
 offsets.compute_offsets()
 calibration.run_glazebrook()             # Re-calibration (minimises offsets)
 bandmerging.bandmerge()                  # Band-merge

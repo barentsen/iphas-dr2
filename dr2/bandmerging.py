@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Generates the user-friendly band-merged 'iphasSource' catalogues.
+"""Generates the user-friendly band-merged catalogues.
 
 This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
 field into band-merged catalogues, following the UKIDSS column definitions.
@@ -101,8 +101,8 @@ class BandMerge():
 # FUNCTIONS
 ###########
 
-def run_one(fieldid):
-    """ Band-merge a single field """
+def bandmerge_one(fieldid):
+    """Band-merge a single field """
     # Which index does the field have in the QC table?
     idx = np.where(IPHASQC.field('id') == fieldid)[0]
     if len(idx) < 1:
@@ -120,24 +120,12 @@ def run_one(fieldid):
     return status
 
 
-def run_all(lon1=20, lon2=220, ncores=4):
-    """ Band-merge all fields """
-    log.info('Band-merging in longitude range [{0},{1}['.format(lon1, lon2))
-
-    # Make sure the output directory exists
+def bandmerge(clusterview):
+    """Band-merge all fields."""
+     # Make sure the output directory exists
     if not os.path.exists(MYDESTINATION):
         os.makedirs(MYDESTINATION)
-
-    # Which fields do we want to merge?
-    idx = np.where(constants.IPHASQC_COND_RELEASE
-                   & (IPHASQC.field('l') >= lon1)
-                   & (IPHASQC.field('l') < lon2))[0]
-    fieldids = IPHASQC.field('id')[idx]
-    # Distribute the work over ncores
-    p = Pool(processes=ncores)
-    results = p.imap(run_one, fieldids)
-    for i in results:
-        pass
+    return clusterview.map(bandmerge_one, IPHASQC.field('id'), block=True)
 
 
 ###################
@@ -145,47 +133,8 @@ def run_all(lon1=20, lon2=220, ncores=4):
 ###################
 
 if __name__ == '__main__':
-    """Bandmerges fields in the IPHAS survey within a given gal. long. range.
-
-    Arguments
-    ---------
-    lon1: number, default 0
-    begin galactic longitude (default: 0)
-    lon2: number, default 360
-    end galactic longitude (default: 360)
-    """
-
-    # Which longitude strip to process?
-    if len(sys.argv) > 2:
-        lon1 = int(sys.argv[1])
-        lon2 = int(sys.argv[2])
-    else:  # Do all
-        lon1 = 0
-        lon2 = 360
-
-    #constants.DEBUGMODE = True
-
     if constants.DEBUGMODE:
         log.setLevel('INFO')
         #run_all(lon1=lon1, lon2=lon2, ncores=4)
-        #run_one('5089o_jun2005')
-        #run_one('3561_nov2003')
-        #run_all(lon1=208, lon2=209, ncores=6)
-
-        run_one('2925o_dec2003')
-        run_one('2832_dec2007')
-        run_one('2914o_dec2003')
-        run_one('2327_dec2007')
-        run_one('2426_oct2006')
-        run_one('6745_sep2005')
-        run_one('2798_nov2012')
-        run_one('3367o_oct2006')
-        run_one('3352o_oct2006')
-        run_one('1385o_oct2004')
-        run_one('2694o_dec2005')
-        run_one('2817o_dec2003')
-        run_one('2694o_dec2005')
-        run_one('2831o_dec2003')
-
-    else:  # production
-        run_all(lon1=lon1, lon2=lon2, ncores=8)
+        #bandmerge_one('5089o_jun2005')
+        #bandmerge_one('3561_nov2003')

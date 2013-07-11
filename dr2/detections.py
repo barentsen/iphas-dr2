@@ -989,24 +989,6 @@ def index_one(path):
         return csv_row_string
 
 
-def index_all(target=os.path.join(constants.DESTINATION, 'runs.csv'),
-              data=constants.RAWDATADIR,
-              ncores=8):
-    """Produces a CSV file detailing the properties of all runs."""
-    from multiprocessing import Pool
-    out = index_setup(target)
-    catalogues = list_catalogues(data)
-
-    # Index each pipeline catalogue
-    p = Pool(processes=ncores)
-    results = p.imap(index_one, catalogues)  # returns an iterator
-    for r in results:
-        if r is None:
-            continue
-        out.write(r+'\n')
-    out.close()
-
-
 def create_index(clusterview,
                  target=os.path.join(constants.DESTINATION, 'runs.csv'),
                  data=constants.RAWDATADIR):
@@ -1064,36 +1046,16 @@ def convert_one(path):
             return None
 
 
-def convert_setup(target):
-    # Make sure the output directory exists
-    if not os.path.exists(target):
-        os.makedirs(target)
-
-
-def convert_all(target=os.path.join(constants.DESTINATION, 'detected'),
-                data=constants.RAWDATADIR,
-                ncores=4):
+def create_catalogues(clusterview, data=constants.RAWDATADIR):
     """Creates catalogues for all pipeline tables found in the data directory.
 
-    directory -- containing Cambridge's pipeline catalogues.
-    ncores -- number of parallel processes.
+    clusterview -- IPython.parallel cluster view
+    data -- directory containing Cambridge's pipeline catalogues.
     """
-    from multiprocessing import Pool
-    # Setup the target directory
-    convert_setup(target)
-    # Create a list of all pipeline catalogues?
-    catalogues = list_catalogues(data)
-    # Run the processing for each catalogue
-    p = Pool(processes=ncores)
-    results = p.map(convert_one, catalogues)  # returns an iterator
-    return results
-
-
-def create_catalogues(clusterview,
-                      target=os.path.join(constants.DESTINATION, 'detected'),
-                      data=constants.RAWDATADIR):
-    # Setup the target directory
-    convert_setup(target)
+    # Make sure the output directory exists
+    target = os.path.join(constants.DESTINATION, 'detected')
+    if not os.path.exists(target):
+        os.makedirs(target)
     # Create a list of all pipeline catalogues?
     catalogues = list_catalogues(data)
     # Run the conversion for each catalogue
@@ -1118,42 +1080,9 @@ if __name__ == '__main__':
         log.setLevel('INFO')
         #run_all(directory, ncores=7)
         #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        #run_one(constants.RAWDATADIR+'/iphas_dec2005/r484350_cat.fits')
-        #run_one(constants.RAWDATADIR+'/iphas_nov2012/r948994_cat.fits')
-        #run_one(constants.RAWDATADIR+'/iphas_nov2012/r948995_cat.fits')
-        #run_one(constants.RAWDATADIR+'/iphas_nov2012/r948996_cat.fits')
         #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
         #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
         #index_all(directory)
-
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381709_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381710_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2007/r597862_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2007/r597863_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381679_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381680_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2007/r598691_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2007/r598692_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r528580_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r528581_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_sep2005/r471736_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_sep2005/r471737_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_nov2012/r948377_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_nov2012/r948378_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r530707_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r530708_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r530659_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2006/r530660_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r430347_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r430348_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2005/r486267_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2005/r486268_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381202_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381203_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2005/r486267_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2005/r486268_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381256_cat.fits')
-        run_one(constants.RAWDATADIR+'/iphas_dec2003/r381257_cat.fits')
 
     else:  # Production
         log.setLevel('WARNING')
