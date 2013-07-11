@@ -23,15 +23,12 @@ with client[:].sync_imports():
 
 
 detections.create_index(cluster,
-                        data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
                         target=os.path.join(constants.DESTINATION, 'runs.csv'))
+#data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
 #detections.sanitise_zeropoints()         # Produces zeropoints.csv
-
-"""
 detections.create_catalogues(cluster,
-                             data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
                              target=os.path.join(constants.DESTINATION, 'detected'))
-"""
+
 
 """
 detections.create_catalogues(directory)  # Single-filter catalogues
