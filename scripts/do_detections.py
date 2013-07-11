@@ -12,9 +12,27 @@ log.setLevel('DEBUG')
 client = parallel.Client(profile='mpi')
 cluster = client.load_balanced_view()
 
-detections.create_index(cluster,
-                        data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
-                        target=os.path.join(constants.DESTINATION, 'runs.csv'))
+
+def create_index(clusterview,
+                 target=os.path.join(constants.DESTINATION, 'runs.csv'),
+                 data=constants.RAWDATADIR):
+    """Produces a CSV file detailing the properties of all runs."""
+    out = detections.index_setup(target)
+    catalogues = detections.list_catalogues(data)
+
+    # Index each pipeline catalogue
+    results = clusterview.imap(detections.index_one, catalogues)  # returns an iterator
+    for r in results:
+        if r is None:
+            continue
+        out.write(r+'\n')
+        out.flush()
+    out.close()
+
+
+create_index(cluster,
+             data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
+             target=os.path.join(constants.DESTINATION, 'runs.csv'))
 #detections.sanitise_zeropoints()         # Produces zeropoints.csv
 #detections.create_catalogues(cluster,
 #                             target=os.path.join(constants.DESTINATION, 'detected'))
