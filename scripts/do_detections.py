@@ -1,4 +1,5 @@
 import sys
+import os
 from IPython import parallel
 from astropy import log
 
