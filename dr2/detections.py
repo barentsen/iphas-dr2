@@ -974,6 +974,7 @@ def index_one(path):
     """Returns the CSV summary line."""
     import socket
     import os
+    from astropy import log
     pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
     log.debug(pid+': '+path)
     csv_row_string = None
