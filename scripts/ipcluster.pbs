@@ -1,6 +1,6 @@
 #!/bin/sh -f    
 #PBS -N ipcluster                                                           
-#PBS -l nodes=64:ppn=1
+#PBS -l nodes=32:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l walltime=48:00:00
