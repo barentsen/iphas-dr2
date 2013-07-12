@@ -51,7 +51,7 @@ class BandMerge():
         self.run_ha = run_ha
         self.run_r = run_r
         self.run_i = run_i
-        self.output = os.path.join(MYDESTINATION, fieldid+'.fits')
+        self.output = os.path.join(MYDESTINATION, fieldid.strip()+'.fits')
 
     def get_catalogue_path(self, run):
         """Returns the full path of a run's 'iphasDetection' catalogue."""
