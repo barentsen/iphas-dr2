@@ -60,7 +60,8 @@ WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv'
 WCSFIXES = ascii.read(WCSFIXES_PATH)
 
 # Table detaling zeropoint overrides; used to enforce zp(r)-zp(Halpha)=3.14
-ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR, 'lib',
+ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR,
+                                        'lib',
                                         'zeropoint-overrides.csv')
 ZEROPOINT_OVERRIDES = ascii.read(ZEROPOINT_OVERRIDES_PATH)
 

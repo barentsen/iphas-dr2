@@ -135,17 +135,17 @@ class OffsetMachine(object):
 # FUNCTIONS
 ###########
 
-def offsets_relative_one(run):
-    try:
-        om = OffsetMachine(run)
-        return om.relative_offsets()
-    except Exception, e:
-        log.error('UNEXPECTED EXCEPTION FOR RUN {0}: {1}'.format(run, e))
-        return [None]
+def offsets_one(run):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_offsets_one.log')):
+        try:
+            om = OffsetMachine(run)
+            return om.relative_offsets()
+        except Exception, e:
+            log.error('UNEXPECTED EXCEPTION FOR RUN {0}: {1}'.format(run, e))
+            return [None]
 
-
+"""
 def offsets_relative(band, ncores=4):
-    """Writes the file offsets-relative.csv with overlap offsets."""
     assert(band in constants.BANDS)
     log.info('Starting to compute offsets for band {0}'.format(band))
 
@@ -169,6 +169,40 @@ def offsets_relative(band, ncores=4):
             out.flush()
 
     out.close()
+"""
+
+
+def compute_offsets_band(clusterview, band):
+    """Writes the file offsets-relative.csv with overlap offsets."""
+    assert(band in constants.BANDS)
+    log.info('Starting to compute offsets for band {0}'.format(band))
+
+    # Write the results
+    filename = os.path.join(constants.DESTINATION,
+                            'offsets-{0}.csv'.format(band))
+    out = open(filename, 'w')
+    out.write('run1,run2,offset,std,n\n')
+
+    # Distribute the work over ncores
+    runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
+
+    results = clusterview.imap(offsets_one, runs)
+    for i, field in enumerate(results):
+        log.info('Completed run {0}/{1}'.format(i, len(runs)))
+        for row in field:
+            if row is not None:
+                out.write('{run1},{run2},{offset},{std},{n}\n'.format(**row))
+
+        if (i % 20) == 0:  # Make sure we write at least every 20 runs
+            out.flush()
+
+    out.close()
+
+
+def compute_offsets(clusterview):
+    for band in constants.BANDS:
+        compute_offsets_band(clusterview, band)
+
 
 
 ###################

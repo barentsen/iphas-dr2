@@ -19,17 +19,18 @@ with client[:].sync_imports():
     # Import DR2 generation modules
     from dr2 import constants
     from dr2 import detections
-    from dr2 import bandmerging
     from dr2 import offsets
+    from dr2 import bandmerging
 
 
 
 #detections.create_index(cluster)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
-detections.sanitise_zeropoints()         # Produces zeropoints.csv
-#detections.convert_catalogues(cluster)
-#bandmerging.bandmerge(cluster)
+#detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
+detections.convert_catalogues(cluster)
 #offsets.compute_offsets(cluster)
+#bandmerging.bandmerge(cluster)
+
 
 
 """
