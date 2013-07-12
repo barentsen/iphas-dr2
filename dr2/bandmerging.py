@@ -103,21 +103,22 @@ class BandMerge():
 
 def bandmerge_one(fieldid):
     """Band-merge a single field """
-    # Which index does the field have in the QC table?
-    idx = np.where(IPHASQC.field('id') == fieldid)[0]
-    if len(idx) < 1:
-        raise IPHASException('{}: error identifying runs'.format(fieldid))
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_bandmerge_one.log')):
+        # Which index does the field have in the QC table?
+        idx = np.where(IPHASQC.field('id') == fieldid)[0]
+        if len(idx) < 1:
+            raise IPHASException('{}: error identifying runs'.format(fieldid))
 
-    # Carry out the band-merging
-    bm = BandMerge(fieldid,
-                   IPHASQC.field('qflag')[idx[0]],
-                   IPHASQC.field('run_ha')[idx[0]],
-                   IPHASQC.field('run_r')[idx[0]],
-                   IPHASQC.field('run_i')[idx[0]])
-    status = bm.run()
+        # Carry out the band-merging
+        bm = BandMerge(fieldid,
+                       IPHASQC.field('qflag')[idx[0]],
+                       IPHASQC.field('run_ha')[idx[0]],
+                       IPHASQC.field('run_r')[idx[0]],
+                       IPHASQC.field('run_i')[idx[0]])
+        status = bm.run()
 
-    log.info('{0}: {1}'.format(fieldid, status))
-    return status
+        log.info('{0}: {1}'.format(fieldid, status))
+        return status
 
 
 def bandmerge(clusterview):
