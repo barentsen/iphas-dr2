@@ -105,6 +105,9 @@ class BandMerge():
 def bandmerge_one(fieldid):
     """Band-merge a single field """
     with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_bandmerge_one.log')):
+        engine = socket.gethostname()+'/'+str(os.getpid())
+        log.info('Starting {0} on {1}'.format(fieldid, engine))
+
         # Which index does the field have in the QC table?
         idx = np.where(IPHASQC.field('id') == fieldid)[0]
         if len(idx) < 1:
@@ -118,8 +121,9 @@ def bandmerge_one(fieldid):
                        IPHASQC.field('run_i')[idx[0]])
         status = bm.run()
 
-        engine = socket.gethostname()+'/'+str(os.getpid())
-        log.info('{0}: {1} on {2}'.format(fieldid, status, engine))
+        log.info('Finished {0} on {1} (returned {2})'.format(fieldid,
+                                                             engine,
+                                                             status))
         return status
 
 
@@ -128,7 +132,7 @@ def bandmerge(clusterview):
      # Make sure the output directory exists
     if not os.path.exists(MYDESTINATION):
         os.makedirs(MYDESTINATION)
-    return clusterview.map(bandmerge_one, IPHASQC.field('id'), block=True)
+    clusterview.map(bandmerge_one, IPHASQC.field('id'), block=True)
 
 
 ###################

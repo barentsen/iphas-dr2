@@ -6,7 +6,7 @@ from IPython import parallel
 __author__ = 'Geert Barentsen'
 
 # Create the cluster view
-client = parallel.Client(profile='mpi')
+client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
 cluster = client.load_balanced_view()
 
 # Sync imports across all nodes
@@ -26,9 +26,9 @@ with client[:].sync_imports():
 
 #detections.create_index(cluster)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
-#detections.sanitise_zeropoints()         # Produces zeropoints.csv
-#detections.create_catalogues(cluster)
-bandmerging.bandmerge(cluster)
+detections.sanitise_zeropoints()         # Produces zeropoints.csv
+#detections.convert_catalogues(cluster)
+#bandmerging.bandmerge(cluster)
 #offsets.compute_offsets(cluster)
 
 

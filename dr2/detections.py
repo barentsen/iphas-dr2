@@ -1011,9 +1011,7 @@ def sanitise_zeropoints():
                                  'runs.csv')
     runs = ascii.read(filename_runs)
 
-    filename_target = os.path.join(constants.PACKAGEDIR, 'lib',
-                                   'zeropoints.csv')
-    out = file(filename_target, 'w')
+    out = file(ZEROPOINT_OVERRIDES_PATH, 'w')
 
     # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
     for row in runs:
@@ -1046,7 +1044,7 @@ def convert_one(path):
             return None
 
 
-def create_catalogues(clusterview, data=constants.RAWDATADIR):
+def convert_catalogues(clusterview, data=constants.RAWDATADIR):
     """Creates catalogues for all pipeline tables found in the data directory.
 
     clusterview -- IPython.parallel cluster view

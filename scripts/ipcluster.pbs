@@ -1,5 +1,5 @@
 #!/bin/sh -f    
-#PBS -N ipcluster                                                           
+#PBS -N pipeline                                                           
 #PBS -l nodes=32:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
@@ -30,7 +30,7 @@ export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
 
 echo "Starting cluster"
 # This will block
-ipcluster start --n=$NP --engines=MPI --profile=mpi
+ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=pipeline
 
 echo "Stopping cluster"
 ipcluster stop --profile=mpi

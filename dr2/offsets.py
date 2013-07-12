@@ -119,7 +119,7 @@ class OffsetMachine(object):
             if idx2 is not None:
                 offsets.append(self.data['aperMag2'][idx1]
                                - offset_data['aperMag2'][cond_reliable2][idx2])
-        print(offsets)
+
         if len(offsets) < 5:
             return None
         else:

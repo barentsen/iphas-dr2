@@ -21,6 +21,7 @@ from astropy.io import fits
 from astropy import log
 import constants
 from constants import IPHASQC
+from constants import IPHASQC_COND_RELEASE
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -31,6 +32,153 @@ PATH_UNCALIBRATED = os.path.join(constants.DESTINATION,
                                  'bandmerged')
 PATH_CALIBRATED = os.path.join(constants.DESTINATION,
                                'bandmerged-calibrated')
+
+
+class Calibration(object):
+    """Holds the calibration shifts for all fields in the survey."""
+
+    def __init__(self, band):
+        """runs -- array of run identifiers"""
+        #self.calib = np.array(zip(runs, np.zeros(len(runs))),
+        #                      dtype=[('runs', 'i4'), ('shifts', 'f4')])
+        assert(band in constants.BANDS)
+        self.band = band
+
+        self.runs = IPHASQC['run_'+band][IPHASQC_COND_RELEASE]
+        self.shifts = np.zeros(len(self.runs))  # Shifts to be *ADDED*
+
+        # APASS comparison data
+        if band in ['r', 'i']:
+            self.apass_shifts = IPHASQC[band+'shift_apassdr7'][IPHASQC_COND_RELEASE]
+            self.apass_matches = IPHASQC[band+'match_apassdr7'][IPHASQC_COND_RELEASE]
+        else:
+            self.apass_shifts = np.zeros(len(self.runs))
+            self.apass_matches = np.zeros(len(self.runs))
+
+        assert(len(self.runs) == len(self.shifts))
+        assert(len(self.runs) == len(self.apass_shifts))
+        assert(len(self.apass_shifts) == len(self.apass_matches))
+
+        self._load_offsetdata()
+
+    def _load_offsetdata(self):
+        filename_offsets = os.path.join(constants.DESTINATION,
+                                        'offsets-{0}.csv'.format(self.band))
+        log.info('Reading {0}'.format(filename_offsets))
+        self.offsetdata = ascii.read(filename_offsets)
+
+    def add_shifts(self, shifts):
+        self.shifts += shifts
+
+    def get_shift(self, run):
+        """Shifts to be *ADDED* to the magnitudes of a run."""
+        return self.shifts[self.runs == run][0]
+
+    def evaluate(self):
+        """Against APASS."""
+        c_use = (self.apass_matches > 20)
+        delta = self.shifts[c_use] + self.apass_shifts[c_use]
+        stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
+                                                          np.std(delta))
+        stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
+                                                        np.max(delta))
+        log.info(stats)
+
+    def write(self, filename):
+        """Write shifts to disk.
+        """
+        log.info('Writing results to {0}'.format(filename))
+        f = open(filename, 'w')
+        f.write('run,shift\n')
+        for myrun, myshift in zip(self.runs, self.shifts):
+            f.write('{0},{1}\n'.format(myrun, myshift))
+        f.close()
+
+    def get_overlaps(self):
+        """Returns a dict with the magnitude offsets between run overlaps.
+
+        Takes the current calibration into account.
+        """
+        log.info('Loading calibration-corrected overlap shifts')
+        # Performance optimisation
+        current_shifts = dict(zip(self.runs, self.shifts))
+
+        # Dictionary of field overlaps
+        overlaps = {}
+        for row in self.offsetdata:
+            myrun1 = row['run1']
+            myrun2 = row['run2']
+            if myrun1 in self.runs and myrun2 in self.runs:
+                # Offset is (run1 - run2), hence correcting for calibration
+                # means adding (shift_run1 - shift_run2)
+                myoffset = (row['offset'] 
+                            + current_shifts[myrun1]
+                            - current_shifts[myrun2])
+                if myrun1 not in overlaps:
+                    overlaps[myrun1] = {'runs': [], 'offsets': []}
+                overlaps[myrun1]['runs'].append(myrun2)
+                overlaps[myrun1]['offsets'].append(myoffset)
+
+        return overlaps
+
+
+
+def apass_anchors():
+    """Returns a boolean array indicating anchor status."""
+    # 'anchors' is a boolean array indicating anchor status
+    anchors = []
+    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= 20)
+                 & (IPHASQC.field('imatch_apassdr7') >= 20)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
+                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.03) )
+    APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
+                    | np.isnan(IPHASQC.field('rshift_apassdr7'))
+                    | (IPHASQC.field('rmatch_apassdr7') < 20)
+                    | (IPHASQC.field('imatch_apassdr7') < 20) )
+
+    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
+                | (APASS_OK )
+              )
+    return anchors[IPHASQC_COND_RELEASE]
+
+
+def calibrate_band(band='r'):
+    """Calibrate a single band.
+
+    band -- one of 'r', 'i', 'ha'
+    """
+    log.info('Starting to calibrate the {0} band'.format(band))
+
+    cal = Calibration(band)
+    cal.evaluate()
+
+    # Correct outliers
+    log.info('Correcting obvious outliers based on APASS')
+    myshifts = np.zeros(len(cal.runs))
+    c_outlier = ((cal.apass_matches > 20)
+                 & (np.abs(cal.apass_shifts) > 0.05))
+    myshifts[c_outlier] = -cal.apass_shifts[c_outlier]  # apass_shifts = (iphas-apass)
+    cal.add_shifts(myshifts)
+    cal.evaluate()
+
+    # Minimize overlap offsets
+    anchors = apass_anchors()
+    overlaps = cal.get_overlaps()
+    solver = Glazebrook(cal.runs, overlaps, anchors)    
+    solver.solve()
+    cal.add_shifts( solver.get_shifts() )
+
+    # Finish
+    cal.evaluate()
+    cal.write('/home/gb/tmp/calibration-{0}.csv'.format(band))
+
+
+
+def calibrate(clusterview):
+    calibrate_band('r')
+    #calibrate_band('i')
+
 
 
 #############
@@ -48,32 +196,55 @@ class Glazebrook(object):
         self.runs = runs
         self.overlaps = overlaps
         self.anchors = anchors
+        self.nonanchors = ~anchors
+        self.n_nonanchors = self.nonanchors.sum()
         log.info('There are {0} runs ({1} are anchors)'.format(len(runs),
                                                                anchors.sum()))
-        self.n_nonanchors = (~anchors).sum()
 
     def _A(self):
-        """Returns the matrix called "A" in [Glazebrook]
+        """Returns the matrix called "A" in [Glazebrook 1994]
         """
-        log.info('Creating a sparse {0}x{0} matrix'.format(self.n_nonanchors))
+        log.info('Creating a sparse {0}x{0} matrix (might take a while)'.format(self.n_nonanchors))
         A = sparse.lil_matrix((self.n_nonanchors,
                                self.n_nonanchors))
-        for i, run in enumerate(self.runs[~self.anchors]):
-            for j, run2 in enumerate(self.runs[~self.anchors]):
+
+        nonanchorruns = self.runs[self.nonanchors]
+        # Loop over all non-anchors that make up the matrix
+        for i, run in enumerate(nonanchorruns):
+            overlapping_runs = self.overlaps[run]['runs']
+            
+            # On the diagonal, the matrix holds the negative number of overlaps
+            A[i, i] = -float(len(overlapping_runs))
+
+            # Off the diagonal, the matrix holds a 1 where two runs overlap
+            for run2 in overlapping_runs:
+                idx_run2 = np.argwhere(run2 == nonanchorruns)
+                if len(idx_run2) > 0:
+                    j = idx_run2[0]  # Index of the overlapping run
+                    A[i, j] = 1.
+                    A[j, i] = 1.     # Symmetric matrix
+
+        """
+        # Old, slow code:
+        for i, run in enumerate(self.runs[self.nonanchors]):
+            log.info(str(i))
+            overlapping_runs = self.overlaps[run]['runs']
+            for j, run2 in enumerate(self.runs[self.nonanchors]):
                 if j < i:  # Symmetric matrix
                     continue
                 elif i == j:
                     A[i, j] = -len(self.overlaps[run2]['runs'])
-                elif run2 in self.overlaps[run]['runs']:
-                    A[i, j] = 1
-                    A[j, i] = 1  # Symmetric matrix
+                elif run2 in overlapping_runs:
+                    A[i, j] = 1.
+                    A[j, i] = 1.  # Symmetric matrix
+        """
         return A
 
     def _b(self):
-        """Returns the vector called "b" in [Glazebrook]
+        """Returns the vector called "b" in [Glazebrook 1994]
         """
         b = np.zeros(self.n_nonanchors)
-        for i, run in enumerate(self.runs[~self.anchors]):
+        for i, run in enumerate(self.runs[self.nonanchors]):
             b[i] = np.sum(self.overlaps[run]['offsets'])
         return b
 
@@ -83,15 +254,20 @@ class Glazebrook(object):
         self.A = self._A()
         self.b = self._b()
         log.info('Now solving the matrix equation')
-        # Note: there should be alternative algorithms for symmetric
-        # matrices which are faster.
+        # Note: there may be alternative algorithms
+        # which are faster for symmetric matrices.
         self.solution = linalg.lsqr(self.A, self.b,
-                                    atol=1e-10, iter_lim=2e5, show=False)
+                                    atol=1e-8, iter_lim=2e5, show=False)
         log.info('Solution found')
         log.info('mean shift = {0} +/- {1}'.format(
                                             np.mean(self.solution[0]),
                                             np.std(self.solution[0])))
         return self.solution
+
+    def get_shifts(self):
+        shifts = np.zeros(len(self.runs))
+        shifts[self.nonanchors] = self.solution[0]
+        return shifts
 
     def write(self, filename):
         """Write shifts to disk.
@@ -99,7 +275,7 @@ class Glazebrook(object):
         log.info('Writing results to {0}'.format(filename))
         f = open(filename, 'w')
         f.write('run,shift\n')
-        for i, myrun in enumerate(self.runs[~self.anchors]):
+        for i, myrun in enumerate(self.runs[self.nonanchors]):
             f.write('{0},{1}\n'.format(myrun, self.solution[0][i]))
         for myrun in self.runs[self.anchors]:
             f.write('{0},{1}\n'.format(myrun, 0.0))
@@ -425,7 +601,7 @@ def evaluate_calibration(band='r'):
 ###################
 
 if __name__ == '__main__':
-    #constants.DEBUGMODE = True
+    constants.DEBUGMODE = False
     if constants.DEBUGMODE:
         log.setLevel('DEBUG')
         run_glazebrook(ncores=3)
@@ -443,5 +619,6 @@ if __name__ == '__main__':
 
     else:
         log.setLevel('INFO')
-        run_glazebrook(ncores=3)
-        apply_calibration(ncores=8)
+        #run_glazebrook(ncores=3)
+        #apply_calibration(ncores=8)
+        calibrate(None)
