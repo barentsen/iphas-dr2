@@ -4,7 +4,7 @@
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l walltime=24:00:00
-NP=`wc -l ${PBS_NODEFILE}`
+NP=`cat ${PBS_NODEFILE} | wc -l`
 
 echo $1
 echo ------------------------------------------------------
@@ -29,7 +29,7 @@ export PATH=/home/gb/bin/anaconda/bin:$PATH
 export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
 
 echo "Starting cluster"
-ipcluster start --n=128 --engines=MPI --profile=mpi --daemon
+ipcluster start --n=$NP --engines=MPI --profile=mpi --daemon
 
 echo "Sleeping"
 sleep 10
