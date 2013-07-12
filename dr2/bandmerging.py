@@ -16,6 +16,7 @@ from astropy import log
 from multiprocessing import Pool
 import constants
 from constants import IPHASQC
+import socket
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -117,7 +118,8 @@ def bandmerge_one(fieldid):
                        IPHASQC.field('run_i')[idx[0]])
         status = bm.run()
 
-        log.info('{0}: {1}'.format(fieldid, status))
+        engine = socket.gethostname()+'/'+str(os.getpid())
+        log.info('{0}: {1} on {2}'.format(fieldid, status, engine))
         return status
 
 
