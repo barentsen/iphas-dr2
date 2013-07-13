@@ -976,7 +976,7 @@ def index_one(path):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_index_one.log')):
         import socket
         pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
-        log.debug(pid+': '+path)
+        log.info(pid+': '+path)
         csv_row_string = None
         try:
             cat = DetectionCatalogue(path)
@@ -1035,8 +1035,12 @@ def convert_one(path):
     with log.log_to_file(os.path.join(constants.LOGDIR,
                          'dr2_convert_one.log')):
         try:
+            import socket
+            pid = socket.gethostname()+'/'+str(os.getpid())
+            log.info('START:'+pid+': '+path)
             cat = DetectionCatalogue(path)
             cat.save_detections()
+            log.info('FINISH:'+pid+': '+path)
         except CatalogueException, e:
             log.warning('%s: CatalogueException: %s' % (path, e))
             return None

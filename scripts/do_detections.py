@@ -6,9 +6,11 @@ from IPython import parallel
 __author__ = 'Geert Barentsen'
 
 # Create the cluster view
-#client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
-client = parallel.Client(profile='mpi')
-cluster = client.load_balanced_view()
+client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
+#client = parallel.Client(profile='mpi')
+
+#cluster = client.load_balanced_view()
+cluster = client[:]
 
 # Sync imports across all nodes
 with client[:].sync_imports():
