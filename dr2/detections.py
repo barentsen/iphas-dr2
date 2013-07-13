@@ -1013,6 +1013,7 @@ def sanitise_zeropoints():
     runs = ascii.read(filename_runs)
 
     out = file(ZEROPOINT_OVERRIDES_PATH, 'w')
+    out.write('run,zp\n')
 
     # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
     for row in runs:
@@ -1060,7 +1061,7 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
     if not os.path.exists(target):
         os.makedirs(target)
     # Create a list of all pipeline catalogues?
-    catalogues = list_catalogues(data)[0:500]
+    catalogues = list_catalogues(data)
     # Run the conversion for each catalogue
     result = clusterview.map(convert_one, catalogues, block=True)
     return result
