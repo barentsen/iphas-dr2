@@ -161,12 +161,12 @@ def compute_offsets_band(clusterview, band):
 
     results = clusterview.imap(offsets_one, runs)
     for i, field in enumerate(results):
-        log.info('Completed run {0}/{1}'.format(i, len(runs)))
         for row in field:
             if row is not None:
                 out.write('{run1},{run2},{offset},{std},{n}\n'.format(**row))
 
-        if (i % 20) == 0:  # Make sure we write at least every 20 runs
+        if (i % 50) == 0:  # Make sure we write at least every 20 runs
+            log.info('Completed run {0}/{1}'.format(i, len(runs)))
             out.flush()
 
     out.close()
