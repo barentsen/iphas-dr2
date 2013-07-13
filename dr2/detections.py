@@ -1060,7 +1060,7 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
     if not os.path.exists(target):
         os.makedirs(target)
     # Create a list of all pipeline catalogues?
-    catalogues = list_catalogues(data)
+    catalogues = list_catalogues(data)[0:500]
     # Run the conversion for each catalogue
     result = clusterview.map(convert_one, catalogues, block=True)
     return result
