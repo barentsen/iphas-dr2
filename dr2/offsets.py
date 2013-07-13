@@ -138,6 +138,10 @@ class OffsetMachine(object):
 def offsets_one(run):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_offsets_one.log')):
         try:
+            import socket
+            pid = socket.gethostname()+'/'+str(os.getpid())
+            log.info('Computing offsets for '+str(run)+' on '+pid)
+
             om = OffsetMachine(run)
             return om.relative_offsets()
         except Exception, e:
@@ -165,7 +169,7 @@ def compute_offsets_band(clusterview, band):
             if row is not None:
                 out.write('{run1},{run2},{offset},{std},{n}\n'.format(**row))
 
-        if (i % 50) == 0:  # Make sure we write at least every 20 runs
+        if (i % 20) == 0:  # Make sure we write at least every 20 runs
             log.info('Completed run {0}/{1}'.format(i, len(runs)))
             out.flush()
 
