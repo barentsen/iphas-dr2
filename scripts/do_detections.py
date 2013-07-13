@@ -11,6 +11,7 @@ client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontro
 
 #cluster = client.load_balanced_view()
 cluster = client[:]
+log.info('Using {0} cores'.format(len(cluster)))
 
 # Sync imports across all nodes
 with client[:].sync_imports():
