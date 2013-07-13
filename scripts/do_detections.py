@@ -9,8 +9,8 @@ __author__ = 'Geert Barentsen'
 client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
 #client = parallel.Client(profile='mpi')
 
-cluster = client.load_balanced_view()
-#cluster = client[:]
+#cluster = client.load_balanced_view()
+cluster = client[:]
 
 # Sync imports across all nodes
 with client[:].sync_imports():
@@ -33,8 +33,8 @@ client[:].execute('reload(bandmerging)', block=True)
 #detections.create_index(cluster)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
 #detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
-detections.convert_catalogues(cluster)
-#offsets.compute_offsets(cluster)
+#detections.convert_catalogues(cluster)
+offsets.compute_offsets(cluster)
 #bandmerging.bandmerge(cluster)
 
 

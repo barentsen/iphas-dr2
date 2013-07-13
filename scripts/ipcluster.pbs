@@ -1,9 +1,9 @@
 #!/bin/sh -f    
 #PBS -N pipeline                                                           
-#PBS -l nodes=32:ppn=1
+#PBS -l nodes=80:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
-#PBS -l walltime=72:00:00
+#PBS -l walltime=120:00:00
 NP=`cat ${PBS_NODEFILE} | wc -l`
 
 echo $1
