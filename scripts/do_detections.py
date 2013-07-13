@@ -9,8 +9,8 @@ __author__ = 'Geert Barentsen'
 client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
 #client = parallel.Client(profile='mpi')
 
-#cluster = client.load_balanced_view()
-cluster = client[:]
+cluster = client.load_balanced_view()
+#cluster = client[:]
 
 # Sync imports across all nodes
 with client[:].sync_imports():
@@ -25,7 +25,10 @@ with client[:].sync_imports():
     from dr2 import offsets
     from dr2 import bandmerging
 
-
+client[:].execute('reload(constants)', block=True)
+client[:].execute('reload(detections)', block=True)
+client[:].execute('reload(offsets)', block=True)
+client[:].execute('reload(bandmerging)', block=True)
 
 #detections.create_index(cluster)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
