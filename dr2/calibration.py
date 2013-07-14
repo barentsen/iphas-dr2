@@ -294,8 +294,10 @@ def calibrate(clusterview=multiprocessing.Pool(2)):
     if not os.path.exists(target):
         os.makedirs(target)
 
-    clusterview.map(calibrate_band, ['r'])
-    clusterview.map(calibrate_band, ['i', 'ha'])
+    for band in ['r', 'i', 'ha']:
+        calibrate_band(band)
+    #clusterview.map(calibrate_band, ['r'])
+    #clusterview.map(calibrate_band, ['i', 'ha'])
     #clusterview.map(calibrate_band, ['r', 'i'])
     # H-alpha depends on the output of r
     #clusterview.map(calibrate_band, ['ha'])
@@ -653,19 +655,8 @@ class CalibrationApplicator(object):
         return status
 
 
-"""
-def apply_calibration_strip(strip):
-    log.info('Applying calibration to strip {0}'.format(strip))
-    ca = CalibrationApplicator(strip)
-    ca.run()
-
-def apply_calibration(ncores=2):
-    strips = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
-    p = Pool(processes=ncores)
-    p.map(apply_calibration_strip, strips)
-"""
-
 def calibrate_one(filename):
+    """Applies the photometric re-calibration to a single bandmerged field catalogue."""
     with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_calibrate_one.log')):
         try:
             ca = CalibrationApplicator()
@@ -675,6 +666,7 @@ def calibrate_one(filename):
 
 
 def apply_calibration(clusterview=multiprocessing.Pool(2)):
+    """Applies the photometric re-calibration to all bandmerged field catalogues."""
     filenames = os.listdir(PATH_UNCALIBRATED)
     clusterview.map(calibrate_one, filenames)
 
