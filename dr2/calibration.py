@@ -13,7 +13,7 @@ TODO
 """
 import numpy as np
 import os
-from multiprocessing import Pool
+import multiprocessing
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
@@ -77,7 +77,7 @@ class Calibration(object):
     def evaluate(self):
         """Against APASS."""
         c_use = (self.apass_matches > 20)
-        delta = self.shifts[c_use] + self.apass_shifts[c_use]
+        delta = self.apass_shifts[c_use] - self.shifts[c_use]
         stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
                                                           np.std(delta))
         stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
@@ -99,7 +99,7 @@ class Calibration(object):
 
         Takes the current calibration into account.
         """
-        log.info('Loading calibration-corrected overlap shifts')
+        log.info('Loading calibration-corrected magnitude offsets')
         # Performance optimisation
         current_shifts = dict(zip(self.runs, self.shifts))
 
@@ -126,21 +126,47 @@ class Calibration(object):
 def apass_anchors():
     """Returns a boolean array indicating anchor status."""
     # 'anchors' is a boolean array indicating anchor status
+    tolerance = 0.03  # Default = 0.03
+    min_matches = 20  # Default = 20
     anchors = []
-    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= 20)
-                 & (IPHASQC.field('imatch_apassdr7') >= 20)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
-                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03)
+    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
+                 & (IPHASQC.field('imatch_apassdr7') >= min_matches)
+                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
+                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
                  & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.03) )
     APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
                     | np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | (IPHASQC.field('rmatch_apassdr7') < 20)
-                    | (IPHASQC.field('imatch_apassdr7') < 20) )
+                    | (IPHASQC.field('rmatch_apassdr7') < min_matches)
+                    | (IPHASQC.field('imatch_apassdr7') < min_matches) )
 
     anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
                 | (APASS_OK )
               )
     return anchors[IPHASQC_COND_RELEASE]
+
+def halpha_anchors(runs):
+    # Table containing information on photometric stability
+    stabfile = os.path.join(constants.PACKAGEDIR,
+                            'lib',
+                            'photometric-stability.fits')
+    stab = fits.getdata(stabfile, 1)
+
+    anchors = []
+    for i, run in enumerate(runs):
+        # Is the run stable photometrically?
+        cond_run = (stab['run_ha'] == run)
+        if cond_run.sum() > 0:
+            idx_run = np.argwhere(cond_run)[0][0]
+            if ( (stab[idx_run]['hadiff'] > (-0.008-0.01))
+                 and (stab[idx_run]['hadiff'] < (-0.008+0.01))
+                 and (stab[idx_run]['rdiff'] > (-0.007-0.01))
+                 and (stab[idx_run]['rdiff'] < (-0.007+0.01)) ):
+                anchors.append(True)
+            else:
+                anchors.append(False)
+    anchors = np.array(anchors)
+    log.info('Found {0} H-alpha anchors'.format(anchors.sum()))
+    return anchors
 
 
 def calibrate_band(band='r'):
@@ -150,16 +176,8 @@ def calibrate_band(band='r'):
     """
     log.info('Starting to calibrate the {0} band'.format(band))
 
+    """
     cal = Calibration(band)
-    cal.evaluate()
-
-    # Correct outliers
-    log.info('Correcting obvious outliers based on APASS')
-    myshifts = np.zeros(len(cal.runs))
-    c_outlier = ((cal.apass_matches > 20)
-                 & (np.abs(cal.apass_shifts) > 0.05))
-    myshifts[c_outlier] = -cal.apass_shifts[c_outlier]  # apass_shifts = (iphas-apass)
-    cal.add_shifts(myshifts)
     cal.evaluate()
 
     # Minimize overlap offsets
@@ -168,16 +186,119 @@ def calibrate_band(band='r'):
     solver = Glazebrook(cal.runs, overlaps, anchors)    
     solver.solve()
     cal.add_shifts( solver.get_shifts() )
-
-    # Finish
     cal.evaluate()
-    cal.write('/home/gb/tmp/calibration-{0}.csv'.format(band))
+    plot_evaluation(cal, '/home/gb/tmp/cal-A.png', 'Strategy A')   
+    """
+
+    if band == 'ha':
+        rcalib_file = os.path.join(constants.DESTINATION, 'calibration', 'calibration-r.csv')
+        rcalib = ascii.read(rcalib_file)
+
+        cal = Calibration(band)
+        cal.shifts = rcalib['shift']
+
+        overlaps = cal.get_overlaps()
+        anchors = halpha_anchors(cal.runs)
+        solver = Glazebrook(cal.runs, overlaps, anchors)    
+        solver.solve()
+
+    else:
+    
+        cal = Calibration(band)
+        plot_evaluation(cal, '{0}-step0.png'.format(band), 
+                       '{0} - IPHAS-APASS uncalibrated'.format(band))
+
+        # Correct outliers
+        tolerance = 0.03  # Default = 0.03
+        min_matches = 20  # Default = 20
+        log.info('Correcting obvious outliers based on APASS')
+        myshifts = np.zeros(len(cal.runs))
+        c_outlier = ((cal.apass_matches > min_matches)
+                     & (np.abs(cal.apass_shifts) > tolerance))
+        myshifts[c_outlier] = cal.apass_shifts[c_outlier]
+        cal.add_shifts(myshifts)
+        cal.evaluate()
+        plot_evaluation(cal, '{0}-step1.png'.format(band),
+                        '{0} - Step 1: set initial conditions'.format(band))
+
+        # Minimize overlap offsets
+        anchors = apass_anchors()
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, anchors)    
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate()
+        plot_evaluation(cal, '{0}-step2.png'.format(band),
+                       '{0} - Step 2: Glazebrook pass 1'.format(band))    
+        
+        # Add extra anchors
+        delta = np.abs(cal.apass_shifts-cal.shifts)
+        cond_extra_anchors = (cal.apass_matches > 20) & ~np.isnan(delta) & (delta > 0.05)
+        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
+        idx_extra_anchors = np.where(cond_extra_anchors)
+        anchors = apass_anchors()
+        anchors[idx_extra_anchors] = True
+        cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
+        plot_evaluation(cal, '{0}-step3.png'.format(band),
+                       '{0} - Step 3: added {1} extra anchors'.format(band, cond_extra_anchors.sum()))
+
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, anchors)    
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate()
+        plot_evaluation(cal, '{0}-step4.png'.format(band),
+                        '{0} - Step 4 - Glazebrook pass 2'.format(band))     
+        
+
+    filename = os.path.join(constants.DESTINATION, 
+                            'calibration',
+                            'calibration-{0}.csv'.format(band))
+    #cal.write(filename)
+
+    return cal
 
 
+def plot_evaluation(cal,
+                    filename, 
+                    title='IPHAS-APASS after calibration'):
+    c_use = (cal.apass_matches > 20)
+    delta = cal.apass_shifts[c_use] - cal.shifts[c_use]
+    l = IPHASQC['l'][IPHASQC_COND_RELEASE][c_use]
+    b = IPHASQC['b'][IPHASQC_COND_RELEASE][c_use]
 
-def calibrate(clusterview):
-    calibrate_band('r')
-    #calibrate_band('i')
+    from matplotlib import pyplot as plt
+    fig = plt.figure(figsize=(12,6))
+    fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)
+    p = fig.add_subplot(111)
+    p.set_title(title)
+    scat = p.scatter(l, b, c=delta, vmin=-0.13, vmax=+0.13,
+                     edgecolors='none',
+                     s=10, marker='h')
+    plt.colorbar(scat)
+    p.set_xlim([28, 217])
+    p.set_ylim([-5.2, +5.2])
+    p.set_xlabel('l')
+    p.set_ylabel('b')
+
+    path = os.path.join(constants.DESTINATION, 'calibration', filename)
+    fig.savefig(path)
+    log.info('Wrote {0}'.format(path))
+
+    plt.close()
+    return fig
+
+def calibrate(clusterview=multiprocessing.Pool(2)):
+    # Make sure the output directory exists
+    target = os.path.join(constants.DESTINATION, 'calibration')
+    if not os.path.exists(target):
+        os.makedirs(target)
+
+    clusterview.map(calibrate_band, ['r'])
+    clusterview.map(calibrate_band, ['i', 'ha'])
+    #clusterview.map(calibrate_band, ['r', 'i'])
+    # H-alpha depends on the output of r
+    #clusterview.map(calibrate_band, ['ha'])
 
 
 
@@ -468,13 +589,14 @@ class CalibrationApplicator(object):
         try:
             if not os.path.exists(self.outdir):
                 os.makedirs(self.outdir)
-        except OSError:
+        except OSError:  # "File already exist" can occur due to parallel running
             pass
 
         # Read in the calibration
         self.calib = {}
         for band in constants.BANDS:
             calib_file = os.path.join(constants.DESTINATION,
+                                      'calibration',
                                       'calibration-{0}.csv'.format(band))
             self.calib[band] = ascii.read(calib_file)
 
@@ -543,18 +665,18 @@ def apply_calibration(ncores=2):
     p.map(apply_calibration_strip, strips)
 """
 
-def calibration_worker(filename):
-    try:
-        ca = CalibrationApplicator()
-        ca.run(filename)
-    except Exception, e:
-        log.error('%s: *UNEXPECTED EXCEPTION*: calibration_worker: %s' % (filename, e))
+def calibrate_one(filename):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_calibrate_one.log')):
+        try:
+            ca = CalibrationApplicator()
+            ca.run(filename)
+        except Exception, e:
+            log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
 
 
-def apply_calibration(ncores=2):
+def apply_calibration(clusterview=multiprocessing.Pool(2)):
     filenames = os.listdir(PATH_UNCALIBRATED)
-    p = Pool(processes=ncores)
-    p.map(calibration_worker, filenames)
+    clusterview.map(calibrate_one, filenames)
 
 
 def evaluate_calibration(band='r'):

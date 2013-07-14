@@ -194,12 +194,3 @@ if __name__ == '__main__':
     else:
         raise Exception('Please give the band as the first argument')
 
-    #constants.DEBUGMODE = True
-    if constants.DEBUGMODE:
-        log.setLevel('DEBUG')
-        #o = offsets_relative_one(484350)
-        #print(o)
-        offsets_relative(band, 4)
-    else:
-        log.setLevel('INFO')
-        offsets_relative(band, 8)

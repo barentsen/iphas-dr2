@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Produces IPHAS Data Release 2 using an MPI computing cluster."""
 from IPython import parallel
+from astropy import log
 
 __author__ = 'Geert Barentsen'
 
@@ -35,8 +36,10 @@ client[:].execute('reload(bandmerging)', block=True)
 #data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
 #detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
 #detections.convert_catalogues(cluster)
-offsets.compute_offsets(cluster)
+#offsets.compute_offsets(cluster)
+calibration.calibrate()
 #bandmerging.bandmerge(cluster)
+calibration.apply_calibration()
 
 
 
