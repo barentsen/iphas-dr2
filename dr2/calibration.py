@@ -254,7 +254,7 @@ def calibrate_band(band='r'):
     filename = os.path.join(constants.DESTINATION, 
                             'calibration',
                             'calibration-{0}.csv'.format(band))
-    #cal.write(filename)
+    cal.write(filename)
 
     return cal
 
@@ -268,7 +268,7 @@ def plot_evaluation(cal,
     b = IPHASQC['b'][IPHASQC_COND_RELEASE][c_use]
 
     import matplotlib
-    matplotlib.use('Agg')
+    matplotlib.use('Agg')  # Cluster does not have an X backend
     from matplotlib import pyplot as plt
     fig = plt.figure(figsize=(12,6))
     fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)
@@ -290,7 +290,7 @@ def plot_evaluation(cal,
     plt.close()
     return fig
 
-def calibrate(clusterview=multiprocessing.Pool(2)):
+def calibrate(clusterview):
     # Make sure the output directory exists
     target = os.path.join(constants.DESTINATION, 'calibration')
     if not os.path.exists(target):
