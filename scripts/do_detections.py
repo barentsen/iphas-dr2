@@ -19,17 +19,19 @@ with client[:].sync_imports():
     # Make sure the IPHAS DR2 module is in the path
     import os
     import sys
-    #sys.path.append('/home/gb/dev/iphas-dr2')
-    #client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
+    sys.path.append('/home/gb/dev/iphas-dr2')
+    client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
     # Import DR2 generation modules
     from dr2 import constants
     from dr2 import detections
     from dr2 import offsets
+    from dr2 import calibration
     from dr2 import bandmerging
 
 client[:].execute('reload(constants)', block=True)
 client[:].execute('reload(detections)', block=True)
 client[:].execute('reload(offsets)', block=True)
+client[:].execute('reload(calibration)', block=True)
 client[:].execute('reload(bandmerging)', block=True)
 
 #detections.create_index(cluster)
@@ -37,13 +39,9 @@ client[:].execute('reload(bandmerging)', block=True)
 #detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
 #detections.convert_catalogues(cluster)
 #offsets.compute_offsets(cluster)
-calibration.calibrate()
+#calibration.calibrate()
 #bandmerging.bandmerge(cluster)
-calibration.apply_calibration()
+calibration.apply_calibration(cluster)
 
 
-
-"""
-calibration.run_glazebrook()             # Re-calibration (minimises offsets)
-concatenation.concatenate()
-"""
+#concatenation.concatenate()

@@ -13,7 +13,6 @@ TODO
 """
 import numpy as np
 import os
-import multiprocessing
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
@@ -662,7 +661,7 @@ def calibrate_one(filename):
             log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
 
 
-def apply_calibration(clusterview=multiprocessing.Pool(2)):
+def apply_calibration(clusterview):
     """Applies the photometric re-calibration to all bandmerged field catalogues."""
     filenames = os.listdir(PATH_UNCALIBRATED)
     clusterview.map(calibrate_one, filenames)
