@@ -664,7 +664,7 @@ def calibrate_one(filename):
 def apply_calibration(clusterview):
     """Applies the photometric re-calibration to all bandmerged field catalogues."""
     filenames = os.listdir(PATH_UNCALIBRATED)
-    clusterview.map(calibrate_one, filenames)
+    clusterview.map(calibrate_one, filenames, block=True)
 
 
 def evaluate_calibration(band='r'):
