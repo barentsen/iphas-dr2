@@ -267,6 +267,8 @@ def plot_evaluation(cal,
     l = IPHASQC['l'][IPHASQC_COND_RELEASE][c_use]
     b = IPHASQC['b'][IPHASQC_COND_RELEASE][c_use]
 
+    import matplotlib
+    matplotlib.use('Agg')
     from matplotlib import pyplot as plt
     fig = plt.figure(figsize=(12,6))
     fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)

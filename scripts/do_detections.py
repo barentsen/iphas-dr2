@@ -19,8 +19,8 @@ with client[:].sync_imports():
     # Make sure the IPHAS DR2 module is in the path
     import os
     import sys
-    sys.path.append('/home/gb/dev/iphas-dr2')
-    client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
+    #sys.path.append('/home/gb/dev/iphas-dr2')
+    #client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
     # Import DR2 generation modules
     from dr2 import constants
     from dr2 import detections
