@@ -290,7 +290,7 @@ def plot_evaluation(cal,
     plt.close()
     return fig
 
-def calibrate(clusterview):
+def calibrate():
     # Make sure the output directory exists
     target = os.path.join(constants.DESTINATION, 'calibration')
     if not os.path.exists(target):
@@ -298,11 +298,6 @@ def calibrate(clusterview):
 
     for band in ['r', 'i', 'ha']:
         calibrate_band(band)
-    #clusterview.map(calibrate_band, ['r'])
-    #clusterview.map(calibrate_band, ['i', 'ha'])
-    #clusterview.map(calibrate_band, ['r', 'i'])
-    # H-alpha depends on the output of r
-    #clusterview.map(calibrate_band, ['ha'])
 
 
 
