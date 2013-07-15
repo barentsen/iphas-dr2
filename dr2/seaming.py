@@ -37,7 +37,7 @@ __credits__ = ['Hywel Farnhill', 'Janet Drew']
 MYDESTINATION = os.path.join(constants.DESTINATION, 'seamed')
 
 # Where to store temporary files
-TMPDIR = '/dev/shm'
+TMPDIR = '/tmp'
 
 # CACHE registers sourceID's for wich a primaryID has already been assigned
 CACHE = {}  # (Beats any key-value db)
@@ -231,6 +231,7 @@ class SeamMachine(object):
         status = os.system(cmd)
         self.log_info('crossmatch: stilts returned '+str(status))
         if status == 256:
+            self.log_info('Failed command: '+str(cmd))
             raise SeamingException('Crossmatch failed for %s' % self.fieldid)
         return status
 

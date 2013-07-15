@@ -40,7 +40,7 @@ client[:].execute('reload(bandmerging)', block=True)
 #detections.convert_catalogues(cluster)
 #offsets.compute_offsets(cluster)
 #calibration.calibrate()
-#bandmerging.bandmerge(cluster)
+bandmerging.bandmerge(cluster)
 calibration.apply_calibration(cluster)
 
 

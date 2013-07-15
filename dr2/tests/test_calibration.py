@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import all, abs
-from .. import glazebrook
+from .. import calibration
 
 
 def test_glazebrook_equation():
@@ -18,7 +18,7 @@ def test_glazebrook_equation():
                 5: {'runs': [4],    'offsets': [-1.0]},
                 6: {'runs': [1, 2], 'offsets': [-1.25, -0.75]}}
 
-    g = glazebrook.Glazebrook(runs, overlaps, anchors)
+    g = calibration.Glazebrook(runs, overlaps, anchors)
     solution = g.solve()
 
     A_expected = np.matrix([[-2.,  1.,  0.,  0.],
