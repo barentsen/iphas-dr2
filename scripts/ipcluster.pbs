@@ -24,7 +24,7 @@ echo PBS: current home directory is $PBS_O_HOME
 echo PBS: PATH = $PBS_O_PATH
 echo ------------------------------------------------------
 
-export PYTHONPATH=/home/gb/bin/anaconda/lib/python2.7/site-packages/
+export PYTHONPATH=/home/gb/dev/iphas-dr2:/home/gb/bin/anaconda/lib/python2.7/site-packages/:$PYTHONPATH
 export PATH=/home/gb/bin/anaconda/bin:$PATH
 export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
 

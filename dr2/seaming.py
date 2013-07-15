@@ -413,76 +413,82 @@ class SeamMachine(object):
 # FUNCTIONS
 ###########
 
-def run_strip(strip):
-    """Seams the fields in a given longitude strip."""
-    # Strips are defined by the start longitude of a 10 deg-wide strip
-    assert(strip in np.arange(25, 215+1, constants.STRIPWIDTH))
-    log.info('{0}: strip{1}: START'.format(str(datetime.datetime.now())[0:19],
-                                           strip))
-    # Intialize caching dictionary
-    CACHE[strip] = {}
+def seam_one(strip,
+             logfile = os.path.join(constants.LOGDIR, 'dr2_seam_one.log')):
+    with log.log_to_file(logfile)):
 
-    # Which are our boundaries?
-    # Note: we must allow FIELD_MAXDIST for border overlaps!
-    lon1 = strip - constants.FIELD_MAXDIST
-    lon2 = strip + constants.STRIPWIDTH + constants.FIELD_MAXDIST
+        """Seams the fields in a given longitude strip."""
+        # Strips are defined by the start longitude of a 10 deg-wide strip
+        assert(strip in np.arange(25, 215+1, constants.STRIPWIDTH))
+        log.info('{0}: strip{1}: START'.format(str(datetime.datetime.now())[0:19],
+                                               strip))
+        # Intialize caching dictionary
+        CACHE[strip] = {}
 
-    cond_strip = (constants.IPHASQC_COND_RELEASE
-                  & (IPHASQC['l'] >= lon1)
-                  & (IPHASQC['l'] < lon2))
-    n_fields = cond_strip.sum()  # How many fields are in our strip?
-    n_processed = 0
+        # Which are our boundaries?
+        # Note: we must allow FIELD_MAXDIST for border overlaps!
+        lon1 = strip - constants.FIELD_MAXDIST
+        lon2 = strip + constants.STRIPWIDTH + constants.FIELD_MAXDIST
 
-    # Testcase in strip 215:
-    #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')
+        cond_strip = (constants.IPHASQC_COND_RELEASE
+                      & (IPHASQC['l'] >= lon1)
+                      & (IPHASQC['l'] < lon2))
+        n_fields = cond_strip.sum()  # How many fields are in our strip?
+        n_processed = 0
 
-    # Seam fields; do the best-seeing fields first!
-    for idx in np.argsort(IPHASQC['seeing_max']):
-        if cond_strip[idx]:
-            n_processed += 1
-            log.info('{0}: strip{1}: {2}/{3}: seaming {4}'.format(
-                                        str(datetime.datetime.now())[0:19],
-                                        strip,
-                                        n_processed,
-                                        n_fields,
-                                        IPHASQC['id'][idx]))
-            log.info('{0}: strip{1}: cached {2:.2f} GB'.format(
-                                        str(datetime.datetime.now())[0:19],
-                                        strip,
-                                        sys.getsizeof(CACHE[strip])/(1024**3)))
+        # Testcase in strip 215:
+        #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')
 
-            try:
-                s = SeamMachine(IPHASQC['id'][idx],
-                                IPHASQC['ra'][idx],
-                                IPHASQC['dec'][idx],
-                                strip)
-                s.run()
-            except SeamingException, e:
-                log.error(str(e))
-            except Exception, e:
-                log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
-                                                strip, IPHASQC['id'][idx], e))
+        # Seam fields; do the best-seeing fields first!
+        for idx in np.argsort(IPHASQC['seeing_max']):
+            if cond_strip[idx]:
+                n_processed += 1
+                log.info('{0}: strip{1}: {2}/{3}: seaming {4}'.format(
+                                            str(datetime.datetime.now())[0:19],
+                                            strip,
+                                            n_processed,
+                                            n_fields,
+                                            IPHASQC['id'][idx]))
+                log.info('{0}: strip{1}: cached {2:.2f} GB'.format(
+                                            str(datetime.datetime.now())[0:19],
+                                            strip,
+                                            sys.getsizeof(CACHE[strip])/(1024**3)))
 
-    del CACHE[strip]  # Clear cache
-    # We're done
-    log.info('{0}: strip{1}: ENDED'.format(str(datetime.datetime.now())[0:19],
-                                           strip))
+                try:
+                    s = SeamMachine(IPHASQC['id'][idx],
+                                    IPHASQC['ra'][idx],
+                                    IPHASQC['dec'][idx],
+                                    strip)
+                    s.run()
+                except SeamingException, e:
+                    log.error(str(e))
+                except Exception, e:
+                    log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
+                                                    strip, IPHASQC['id'][idx], e))
 
+        del CACHE[strip]  # Clear cache
+        # We're done
+        log.info('{0}: strip{1}: ENDED'.format(str(datetime.datetime.now())[0:19],
+                                               strip))
 
+"""
 def run_all(lon1=25, lon2=215, ncores=2):
-    """Seam the fields in all 10-degree wide longitude strips.
-
-    Be aware that the densest strips need ~8 GB RAM each.
-    Set ncores to avoid swapping at all cost!
-    """
+    #Be aware that the densest strips need ~8 GB RAM each.
+    #Set ncores to avoid swapping at all cost!
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH)
     log.info('Seaming in longitude strips %s' % (strips))
 
     # Distribute the work over ncores
     p = Pool(processes=ncores)
-    results = p.imap(run_strip, strips)
+    results = p.imap(seam_one, strips)
     for i in results:
         pass
+"""
+def seam(clusterview, lon1=25, lon2=215):
+    """Warning: nodes must have ~5 GB memory each at l < 100"""
+    strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH)
+    log.info('Seaming in longitude strips %s' % (strips))
+    clusterview.map(seam_one, strips)
 
 
 ###################

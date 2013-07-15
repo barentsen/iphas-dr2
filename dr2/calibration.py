@@ -275,7 +275,7 @@ def plot_evaluation(cal,
     p.set_title(title)
     scat = p.scatter(l, b, c=delta, vmin=-0.13, vmax=+0.13,
                      edgecolors='none',
-                     s=10, marker='h')
+                     s=8, marker='h')
     plt.colorbar(scat)
     p.set_xlim([28, 217])
     p.set_ylim([-5.2, +5.2])
@@ -283,7 +283,7 @@ def plot_evaluation(cal,
     p.set_ylabel('b')
 
     path = os.path.join(constants.DESTINATION, 'calibration', filename)
-    fig.savefig(path)
+    fig.savefig(path, dpi=200)
     log.info('Wrote {0}'.format(path))
 
     plt.close()
