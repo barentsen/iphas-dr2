@@ -81,7 +81,7 @@ class SeamMachine(object):
                                                                    strip,
                                                                    fieldid))
         # Where to store the results?
-        self.output_dir = os.path.join(MYDESTINATION, 'strip{0}'.format(strip))
+        self.output_dir = os.path.join(MYDESTINATION, 'strip{0:.0f}'.format(strip))
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
         self.output_file = os.path.join(self.output_dir,
@@ -415,7 +415,7 @@ class SeamMachine(object):
 
 def seam_one(strip,
              logfile = os.path.join(constants.LOGDIR, 'dr2_seam_one.log')):
-    with log.log_to_file(logfile)):
+    with log.log_to_file(logfile):
 
         """Seams the fields in a given longitude strip."""
         # Strips are defined by the start longitude of a 10 deg-wide strip
@@ -488,7 +488,7 @@ def seam(clusterview, lon1=25, lon2=215):
     """Warning: nodes must have ~5 GB memory each at l < 100"""
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH)
     log.info('Seaming in longitude strips %s' % (strips))
-    clusterview.map(seam_one, strips)
+    clusterview.map(seam_one, strips, block=True)
 
 
 ###################
