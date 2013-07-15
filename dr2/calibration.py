@@ -258,6 +258,33 @@ def calibrate_band(band='r'):
     return cal
 
 
+def calibrate_test(band='r'):
+    """Calibrate a single band.
+
+    band -- one of 'r', 'i', 'ha'
+    """
+    log.info('Starting to calibrate the {0} band'.format(band))
+
+    if band == 'ha':
+        return Exception()
+
+    else:
+    
+        cal = Calibration(band)
+
+        # Minimize overlap offsets
+        anchors = apass_anchors()
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, anchors)    
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate()
+        plot_evaluation(cal, '{0}-noinit.png'.format(band),
+                       '{0} - Glazebrook without initial conditions changed'.format(band))    
+    
+    return cal
+
+
 def plot_evaluation(cal,
                     filename, 
                     title='IPHAS-APASS after calibration'):

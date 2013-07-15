@@ -95,6 +95,8 @@ class BandMerge():
         """Perform the band-merging."""
         cmd = self.get_stilts_command()
         status = os.system(cmd)
+        if status != 0:
+            log.error('{0}: Unexpected status ("{1}"): command was: {2}'.format(self.fieldid, status, cmd))
         return status
 
 
