@@ -1,6 +1,6 @@
 #!/bin/sh -f    
 #PBS -N pipeline                                                           
-#PBS -l nodes=128:ppn=1
+#PBS -l nodes=80:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l walltime=120:00:00
@@ -30,7 +30,7 @@ export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
 
 echo "Starting cluster"
 # This will block
-ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=pipeline --debug
+ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=pipeline --debug 
 
 echo "Stopping cluster"
 ipcluster stop --profile=mpi

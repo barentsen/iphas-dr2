@@ -7,7 +7,7 @@ from astropy import log
 __author__ = 'Geert Barentsen'
 
 # Create the cluster view
-client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-pipeline-client.json')
+client = parallel.Client('/home/gb/.config/ipython/profile_mpi/security/ipcontroller-seaming-client.json')
 cluster = client[:]
 log.info('Using {0} cores'.format(len(cluster)))
 

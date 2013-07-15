@@ -1,6 +1,6 @@
 #!/bin/sh -f    
 #PBS -N seaming-pipeline                                                           
-#PBS -l nodes=16:ppn=1
+#PBS -l nodes=40:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l pmem=5gb,walltime=120:00:00
@@ -30,7 +30,7 @@ export LD_LIBRARY_PATH=/home/gb/bin/wcslib-4.15/lib:$LD_LIBRARY_PATH
 
 echo "Starting cluster"
 # This will block
-ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=pipeline --debug
+ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=seaming --debug
 
 echo "Stopping cluster"
 ipcluster stop --profile=mpi
