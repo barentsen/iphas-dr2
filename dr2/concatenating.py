@@ -125,7 +125,7 @@ class Concatenator(object):
         instring = ''
         for field in self.fieldlist:
             path = os.path.join(self.datapath,
-                                'strip{0}'.format(self.strip),
+                                'strip{0:.0f}'.format(self.strip),
                                 '{0}.fits'.format(field))
             instring += 'in={0} '.format(path)
 
