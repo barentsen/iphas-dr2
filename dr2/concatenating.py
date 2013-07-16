@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Concatenates the source lists into the final Source Catalogue.
+"""Concatenates the bandmerged field catalogues into a "Point Source Catalogue".
 
 This script takes the output from the seaming script and concatenates the
 results into the final "Primary Source Catalogue" product,
 which is generated in 5x5 degree tiles.
 
-Both a light and a full version are generated.
-
+Both a light and a full version are produced.
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -29,29 +28,21 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 
 class Concatenator(object):
 
-    def __init__(self, strip, part='a', mode='full', calibrated=True):
+    def __init__(self, strip, part='a', mode='full'):
         assert(part in ['a', 'b'])
         assert(mode in ['light', 'full'])
-        assert(calibrated in [True, False])
 
         self.strip = strip
         self.part = part
         self.mode = mode
-        self.calibrated = calibrated
-
+        
         # Where are the input catalogues?
-        if calibrated:
-            self.datapath = os.path.join(constants.DESTINATION, 'seamed')
-        else:
-            self.datapath = os.path.join(constants.DESTINATION, 'seamed')
+        self.datapath = os.path.join(constants.DESTINATION, 'seamed')
 
         # Where to write the output?
-        if self.calibrated:
-            self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated')
-        else:
-            self.destination = os.path.join(constants.DESTINATION,
-                                            'concatenated-uncalibrated')
+        self.destination = os.path.join(constants.DESTINATION,
+                                        'concatenated')
+        
         if mode == 'light':
             self.destination = os.path.join(self.destination, 'light')
         else:
@@ -174,21 +165,20 @@ class Concatenator(object):
 # FUNCTIONS
 ###########
 
-def run_one(strip):
-    # Strips are defined by the start longitude of a 10 deg-wide strip
-    #assert(strip in np.arange(30, 210+1, 10))
-    log.info('Concatenating L={0}'.format(strip))
-    for mode in ['light', 'full']:
-        for part in ['a', 'b']:
-            concat = Concatenator(strip, part, mode, calibrated=True)
-            concat.run()
+def concatenate_one(strip,
+                    logfile = os.path.join(constants.LOGDIR, 'dr2_concatenate_one.log')):
+    with log.log_to_file(logfile):
+        # Strips are defined by the start longitude
+        log.info('Concatenating L={0}'.format(strip))
+        for mode in ['light', 'full']:
+            for part in ['a', 'b']:
+                concat = Concatenator(strip, part, mode)
+                concat.run()
 
 
-def run_all(ncores=2):
-    longitudes = np.arange(25, 215+1, constants.STRIPWIDTH)[::-1]
-    # Run the processing for each pipeline catalogue
-    p = Pool(processes=ncores)
-    p.map(run_one, longitudes)
+def concatenate(clusterview):
+    strips = np.arange(25, 215+1, constants.STRIPWIDTH)
+    clusterview.map(concatenate_one, strips, block=True)
 
 
 def merge_light_catalogue():

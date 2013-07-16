@@ -21,8 +21,11 @@ with client[:].sync_imports():
     # Import DR2 generation modules
     from dr2 import constants
     from dr2 import seaming
+    from dr2 import concatenating
 
 client[:].execute('reload(constants)', block=True)
 client[:].execute('reload(seaming)', block=True)
+client[:].execute('reload(concatenating)', block=True)
 
 seaming.seam(cluster)
+#concatenating.concatenate(cluster)

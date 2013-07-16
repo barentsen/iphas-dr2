@@ -486,7 +486,10 @@ def run_all(lon1=25, lon2=215, ncores=2):
         pass
 """
 def seam(clusterview, lon1=25, lon2=215):
-    """Warning: nodes must have ~5 GB memory each at l < 100"""
+    """Add primaryID and partnerID columns to all bandmerged catalogues.
+
+    Warning: cluster nodes must have ~5 GB memory each to avoid swapping at l < 100
+    """
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH, dtype='int')
     log.info('Seaming in longitude strips %s' % (strips))
     clusterview.map(seam_one, strips, block=True)
