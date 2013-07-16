@@ -27,5 +27,5 @@ client[:].execute('reload(constants)', block=True)
 client[:].execute('reload(seaming)', block=True)
 client[:].execute('reload(concatenating)', block=True)
 
-seaming.seam(cluster)
-#concatenating.concatenate(cluster)
+#seaming.seam(cluster)
+concatenating.concatenate(client[0,4,8,12])
