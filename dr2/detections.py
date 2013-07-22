@@ -331,13 +331,17 @@ class DetectionCatalogue():
                            array=self.concat('Number'))
 
     def column_detectionID(self, col_ccd, col_seqNum):
-        """Returns the FITS column with the detectionIDs."""
+        """Returns the FITS column with the detectionIDs.
+
+        The detectionID is a unique identifier of the detection.
+        It is composed of the INT telescope run number (digits 1-7),
+        CCD number (digit 8) and a sequential source number (digits 9-14).
+        """
         detectionID = np.array(['%07d%d%06d' % (self.hdr('RUN'),
                                                 col_ccd.array[i],
                                                 col_seqNum.array[i])
-                                for i in xrange(self.objectcount)],
-                               dtype='i8')
-        return fits.Column(name='detectionID', format='K', unit='Number',
+                                for i in xrange(self.objectcount)])
+        return fits.Column(name='detectionID', format='14A', unit='String',
                            array=detectionID)
 
     def column_x(self):
@@ -1072,24 +1076,7 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
 
 if __name__ == '__main__':
 
-    # Which directory to process?
-    if len(sys.argv) > 1:
-        directory = os.path.join(constants.RAWDATADIR, sys.argv[1])
-    else:
-        directory = constants.RAWDATADIR
+    log.setLevel('INFO')
+    # Test-case
+    convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
 
-    #constants.DEBUGMODE = True
-
-    if constants.DEBUGMODE:  # Testing
-        log.setLevel('INFO')
-        #run_all(directory, ncores=7)
-        #run_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-        #run_one(constants.RAWDATADIR+'/run14/r921486_cat.fits')
-        #run_one('/car-data/gb/iphas/uvex_oct2012/r943312_cat.fits')
-        #index_all(directory)
-
-    else:  # Production
-        log.setLevel('WARNING')
-        convert_all(directory, ncores=8)
-        #for row in ascii.read('wcs-tuning/needfix.txt'):
-        #    run_one( os.path.join(constants.RAWDATADIR, row[0]) )

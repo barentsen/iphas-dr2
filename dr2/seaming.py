@@ -472,19 +472,7 @@ def seam_one(strip,
         log.info('{0}: strip{1}: ENDED'.format(str(datetime.datetime.now())[0:19],
                                                strip))
 
-"""
-def run_all(lon1=25, lon2=215, ncores=2):
-    #Be aware that the densest strips need ~8 GB RAM each.
-    #Set ncores to avoid swapping at all cost!
-    strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH)
-    log.info('Seaming in longitude strips %s' % (strips))
 
-    # Distribute the work over ncores
-    p = Pool(processes=ncores)
-    results = p.imap(seam_one, strips)
-    for i in results:
-        pass
-"""
 def seam(clusterview, lon1=25, lon2=215):
     """Add primaryID and partnerID columns to all bandmerged catalogues.
 
@@ -500,12 +488,4 @@ def seam(clusterview, lon1=25, lon2=215):
 ###################
 
 if __name__ == "__main__":
-
-    log.setLevel('INFO')
-
-    # Which longitude range to process?
-    if len(sys.argv) > 1:
-        strip = int(sys.argv[1])
-        run_strip(strip)
-    else:
-        print('Give the strip number as the first argument')
+    log.setLevel('DEBUG')
