@@ -37,7 +37,7 @@ FIELD_MAXDIST = 0.8  # degrees
 STRIPWIDTH = 5  # degrees galactic longitude
 
 # Detections within this radius will be considered identical
-MATCHING_DISTANCE = 0.5  # arcsec
+MATCHING_DISTANCE = 1.0 # 0.5  # arcsec
 
  #INT/WFC CCD pixel scale
 PXSCALE = 0.333  # arcsec/pix
