@@ -123,13 +123,13 @@ class SeamMachine(object):
     def save(self, sourceID, matchinfo):
         """Writes a new catalogue with primaryID to disk."""
         # Write the (sourceID,primaryID)s to a table
-        col_sourceID = fits.Column(name='sourceID', format='K', array=sourceID)
+        col_sourceID = fits.Column(name='sourceID', format='14A', array=sourceID)
         col_nObs = fits.Column(name='nObs', format='B', 
                                array=matchinfo['nObs'])
-        col_primaryID = fits.Column(name='primaryID', format='K',
+        col_primaryID = fits.Column(name='primaryID', format='14A',
                                     array=matchinfo['primaryID'])
-        col_partnerID = fits.Column(name='sourceID2', format='K',
-                                    null=-9223372036854775808,
+        col_partnerID = fits.Column(name='sourceID2', format='14A',
+                                    null='',
                                     array=matchinfo['partnerID'])
         col_fieldID2 = fits.Column(name='fieldID2', format='15A',
                                    array=matchinfo['fieldID2'])
