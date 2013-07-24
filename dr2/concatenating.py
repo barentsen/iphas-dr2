@@ -216,10 +216,4 @@ def merge_light_catalogue():
 ###################
 
 if __name__ == "__main__":
-    if constants.DEBUGMODE:
-        log.setLevel('INFO')
-        run_one(200)
-    else:
-        log.setLevel('INFO')
-        #run_all(1)
-        merge_light_catalogue()
+    log.setLevel('DEBUG')

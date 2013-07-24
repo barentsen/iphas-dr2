@@ -35,13 +35,9 @@ client[:].execute('reload(calibration)', block=True)
 client[:].execute('reload(bandmerging)', block=True)
 
 #detections.create_index(cluster)
-#data=os.path.join(constants.RAWDATADIR, 'iphas_sep2005'),
 #detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
-#detections.convert_catalogues(cluster)
-#offsets.compute_offsets(cluster)
-#calibration.calibrate()
+detections.convert_catalogues(cluster)
 bandmerging.bandmerge(cluster)
+#offsets.compute_offsets(cluster)
+calibration.calibrate()
 calibration.apply_calibration(cluster)
-
-
-#concatenation.concatenate()

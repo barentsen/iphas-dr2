@@ -7,8 +7,7 @@ from astropy.io import fits
 DEBUGMODE = False
 
 RAWDATADIR = '/car-data/gb/iphas'  # Where are the pipeline-reduced catalogues?
-DESTINATION = '/car-data/gb/iphas-dr2'  # Where to write output catalogues?
-LOGDIR = '/home/gb/tmp'  # Where to store logs?
+DESTINATION = '/car-data/gb/iphas-dr2-20130724'  # Where to write output catalogues?
 
 HOSTNAME = os.uname()[1]
 if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
@@ -19,6 +18,12 @@ if HOSTNAME == 'gvm':  # testing machine
     DEBUGMODE = True
     RAWDATADIR = '/media/uh/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = '/home/gb/tmp/iphas-dr2'
+
+LOGDIR = os.path.join(DESTINATION, 'log')  # Where to store logs?
+# Make sure destination and logging dir exist
+if not os.path.exists(LOGDIR):
+    os.makedirs(LOGDIR)
+
 
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -37,7 +42,7 @@ FIELD_MAXDIST = 0.8  # degrees
 STRIPWIDTH = 5  # degrees galactic longitude
 
 # Detections within this radius will be considered identical
-MATCHING_DISTANCE = 0.5  # arcsec
+MATCHING_DISTANCE = 1.0 # 0.5  # arcsec
 
  #INT/WFC CCD pixel scale
 PXSCALE = 0.333  # arcsec/pix

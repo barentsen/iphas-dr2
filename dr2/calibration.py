@@ -200,6 +200,7 @@ def calibrate_band(band='r'):
         anchors = halpha_anchors(cal.runs)
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
+        cal.add_shifts( solver.get_shifts() )
 
     else:
     
@@ -332,10 +333,19 @@ def calibrate():
 #############
 
 class Glazebrook(object):
-    """Fit a global calibration using the method by Glazebrook et al. (1994)
+    """Finds zeropoints which minimise the offsets between overlapping fields.
 
-    Glazebrook et al. (1994) is hereafter referred to as [Glazebrook]
-    Uses sparse matrix functions (scipy.sparse) for efficiency.
+    This class allows a set of catalogues with independently derived zeropoints
+    to be brought to a global calibration with minimal magnitude offsets
+    where fields overlap.
+
+    This is achieved using the method detailed in the paper by 
+    Glazebrook et al. 1994 (http://adsabs.harvard.edu/abs/1994MNRAS.266...65G).
+    In brief, a set of equations are set up which allow the magnitude offsets
+    between field overlaps to be minimised in a least squares sense.
+
+    This class uses sparse matrix functions (scipy.sparse) to solve the large
+    matrix equation in an efficient fashion.
     """
 
     def __init__(self, runs, overlaps, anchors):
@@ -348,7 +358,7 @@ class Glazebrook(object):
                                                                anchors.sum()))
 
     def _A(self):
-        """Returns the matrix called "A" in [Glazebrook 1994]
+        """Returns the matrix called "A" in [Glazebrook 1994, Section 3.3]
         """
         log.info('Creating a sparse {0}x{0} matrix (might take a while)'.format(self.n_nonanchors))
         A = sparse.lil_matrix((self.n_nonanchors,
@@ -369,25 +379,10 @@ class Glazebrook(object):
                     j = idx_run2[0]  # Index of the overlapping run
                     A[i, j] = 1.
                     A[j, i] = 1.     # Symmetric matrix
-
-        """
-        # Old, slow code:
-        for i, run in enumerate(self.runs[self.nonanchors]):
-            log.info(str(i))
-            overlapping_runs = self.overlaps[run]['runs']
-            for j, run2 in enumerate(self.runs[self.nonanchors]):
-                if j < i:  # Symmetric matrix
-                    continue
-                elif i == j:
-                    A[i, j] = -len(self.overlaps[run2]['runs'])
-                elif run2 in overlapping_runs:
-                    A[i, j] = 1.
-                    A[j, i] = 1.  # Symmetric matrix
-        """
         return A
 
     def _b(self):
-        """Returns the vector called "b" in [Glazebrook 1994]
+        """Returns the vector called "b" in [Glazebrook 1994, Section 3.3]
         """
         b = np.zeros(self.n_nonanchors)
         for i, run in enumerate(self.runs[self.nonanchors]):
@@ -428,185 +423,13 @@ class Glazebrook(object):
         f.close()
 
 
-def partnerid(fieldid):
-    if fieldid.split('_')[0][-1] == 'o':
-        partnerid = '{0}_{1}'.format(fieldid.split('_')[0][0:-1],
-                                     fieldid.split('_')[1])
-    else:
-        partnerid = '{0}o_{1}'.format(fieldid.split('_')[0],
-                                      fieldid.split('_')[1])
-    return partnerid
-
-
-
-def glazebrook_data(band='r'):
-    """Retrieve the offset information needed by the Glazebrook algorithm.
-
-    Returns a tuple (runs, overlaps, anchors):
-    runs     -- array of runs
-    overlaps -- dictionary:
-                overlaps[run]['runs']  -- overlapping runs
-                overlaps[run]['offsets'] -- their offsets
-    anchors  -- boolean array; True if run is an anchor
-    """
-    assert(band in ['r', 'i', 'ha'])
-
-    # Parse data: file containing offsets for runs in the data release
-    filename_offsets = os.path.join(constants.DESTINATION,
-                                    'offsets-{0}.csv'.format(band))
-    log.info('Reading {0}'.format(filename_offsets))
-    offsetdata = ascii.read(filename_offsets)
-
-    # All the runs, sorted numerically
-    runs = np.sort(np.unique(offsetdata['run1']))
-
-    # 'anchors' is a boolean array indicating anchor status
-    anchors = []
-
-    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= 20)
-                 & (IPHASQC.field('imatch_apassdr7') >= 20)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= 0.03)
-                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= 0.03)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.03) )
-    APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | (IPHASQC.field('rmatch_apassdr7') < 20)
-                    | (IPHASQC.field('imatch_apassdr7') < 20) )
-
-    """
-    PARTNER_OK = []
-    partners = [partnerid(fieldid) for fieldid in IPHASQC.field('id')]
-    for myid in partners:
-        idx = np.where(myid == IPHASQC.field('id'))[0]
-        if len(idx) == 0:
-            PARTNER_OK.append(False)
-        else:
-            PARTNER_OK.append( APASS_OK[idx[0]] )
-    PARTNER_OK = np.array(PARTNER_OK)
-    """
-
-    cond_anchors = (constants.IPHASQC_COND_RELEASE
-                    & (
-                        ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
-                        | (APASS_OK ) )
-                    )
-
-    log.info('Found {0} anchors'.format(cond_anchors.sum()))
-
-    zp_override_runs = [430347, 430348, 381709, 381710, 381202,
-                        530707, 530708, 948377, 948378, 598691,
-                        598692, 471736, 471737, 528580, 528581,
-                        381256, 381257, 530659, 530660, 597862,
-                        597863, 381679, 381680, 381203, 486267,
-                        486268]
-
-    QC_RUNS = IPHASQC.field('run_{0}'.format(band))
-    for myrun in runs:
-        if (cond_anchors[QC_RUNS == myrun][0]) or (myrun in zp_override_runs):
-            anchors.append(True)
-        else:
-            anchors.append(False)
-    anchors = np.array(anchors)
-
-    # Dictionary of field overlaps
-    overlaps = {}
-    for row in offsetdata:
-        myrun = row['run1']
-        if myrun not in overlaps:
-            overlaps[myrun] = {'runs': [], 'offsets': []}
-        overlaps[myrun]['runs'].append( row['run2'] )
-        overlaps[myrun]['offsets'].append( row['offset'] )
-
-    return (runs, overlaps, anchors)
-
-
-def run_glazebrook_band_halpha():
-    """H-alpha is treated different from r/i because no APASS data exists
-    in this band. Instead, we adopt the r-band shifts for this bands,
-    except for nights which were non-photometric, where we do apply Glazebrook.
-    """
-    log.info('Running Glazebrook for H-alpha')
-    filename_output = os.path.join(constants.DESTINATION,
-                                   'calibration-ha.csv')
-    # Table containing information on photometric stability
-    stabfile = os.path.join(constants.PACKAGEDIR,
-                            'lib',
-                            'photometric-stability.fits')
-    stab = fits.getdata(stabfile, 1)
-
-    runs, overlaps, anchors = glazebrook_data('ha')
-
-    rcalib_file = os.path.join(constants.DESTINATION, 'calibration-r.csv')
-    rcalib = ascii.read(rcalib_file)
-    rshifts = dict(zip(rcalib['run'], rcalib['shift']))
-
-    run_ha2r = dict(zip(IPHASQC['run_ha'], IPHASQC['run_r']))
-
-    # For each pair, correct for the r-band offset and review anchor status
-    for i, run in enumerate(runs):
-        for j, run2 in enumerate(overlaps[run]['runs']):
-            overlaps[run]['offsets'][j] += (rshifts[run_ha2r[run]]
-                                            - rshifts[run_ha2r[run2]])
-
-        anchors[i] = False  # Default
-        # Is the run stable photometrically?
-        cond_run = (stab['run_ha'] == run)
-        if cond_run.sum() > 0:
-            idx_run = np.argwhere(cond_run)[0][0]
-            if ( (stab[idx_run]['hadiff'] > (-0.008-0.01))
-                 and (stab[idx_run]['hadiff'] < (-0.008+0.01))
-                 and (stab[idx_run]['rdiff'] > (-0.007-0.01))
-                 and (stab[idx_run]['rdiff'] < (-0.007+0.01)) ):
-                anchors[i] = True
-
-    log.info('Found {0} H-alpha anchors'.format(anchors.sum()))
-
-    g = Glazebrook(runs, overlaps, anchors)
-    g.solve()
-
-    log.info('Writing results to {0}'.format(filename_output))
-    f = open(filename_output, 'w')
-    f.write('run,shift\n')
-    for i, myrun in enumerate(g.runs[~g.anchors]):
-        shift = g.solution[0][i] + rshifts[run_ha2r[myrun]]
-        f.write('{0},{1}\n'.format(myrun, shift))
-    for myrun in g.runs[g.anchors]:
-        shift = rshifts[run_ha2r[myrun]]
-        f.write('{0},{1}\n'.format(myrun, shift))
-    f.close()
-
-
-def run_glazebrook_band(band='r'):
-    """Produce the calibration for a given band.
-    """
-    assert(band in ['r', 'i', 'ha'])
-    # H-alpha is a special case
-    if band == 'ha':
-        return run_glazebrook_band_halpha()
-
-    log.info('Running Glazebrook for the {0} band'.format(band))
-    filename_output = os.path.join(constants.DESTINATION,
-                                   'calibration-{0}.csv'.format(band))
-
-    runs, overlaps, anchors = glazebrook_data(band)
-    g = Glazebrook(runs, overlaps, anchors)
-    g.solve()
-    g.write(filename_output)
-
-
-def run_glazebrook(ncores=2):
-    p = Pool(processes=ncores)
-    p.map(run_glazebrook_band, ['r', 'i'])
-    # H-alpha depends on the output of r
-    run_glazebrook_band('ha')
-
-
-###################################################
-# CLASS USED TO APPLY THE CALIBRATION TO CATALOGUES
-###################################################
-
 class CalibrationApplicator(object):
-    """Updates the bandmerged catalogues by applying the calibration shifts."""
+    """Applies the calibration to the catalogues.
+
+    This class will read a bandmerged catalogue from the 'bandmerged' directory,
+    apply the appropriate calibration shifts as listed in 
+    'calibration/calibration-{r,i,ha}.csv', and then write the updated 
+    catalogue to a new directory 'bandmerged-calibrated'."""
 
     def __init__(self):
         self.datadir = PATH_UNCALIBRATED
@@ -694,68 +517,10 @@ def apply_calibration(clusterview):
     clusterview.map(calibrate_one, filenames, block=True)
 
 
-def evaluate_calibration(band='r'):
-    """Returns the array of residuals of the calibration against APASS"""
-    filename_calib = os.path.join(constants.DESTINATION,
-                                  'calibration-{0}.csv'.format(band))
-    calib = ascii.read(filename_calib)
-
-    filename_eval = os.path.join(constants.DESTINATION,
-                                 'eval-{0}.csv'.format(band))
-    out = open(filename_eval, 'w')
-    out.write('id,night,l,b,n_apass,apass,calib\n')
-    residuals = []
-    for i in range(len(calib)):
-        idx = np.argwhere(IPHASQC['run_{0}'.format(band)] == calib['run'][i])[0]
-        apass_shift = IPHASQC['{0}shift_apassdr7'.format(band)][idx][0]
-        calib_shift = calib['shift'][i]
-
-        apass_stars = IPHASQC['{0}match_apassdr7'.format(band)][idx][0]
-
-        out.write('{0},{1},{2},{3},{4},{5},{6}\n'.format(IPHASQC['id'][idx][0],
-                                                    IPHASQC['night'][idx][0],
-                                                    IPHASQC['l'][idx][0],
-                                                    IPHASQC['b'][idx][0],
-                                                    apass_stars,
-                                                    apass_shift,
-                                                    calib_shift))
-
-        if (not np.isnan(apass_shift)) & (apass_stars >= 20):
-            residuals.append( apass_shift - calib_shift )
-
-    out.close()
-
-    print('===== {0} ====='.format(band))
-    print('mean(residuals {0}): {1:.03f}'.format(band, np.mean(residuals)))
-    print('min(residuals {0}): {1:.03f}'.format(band, np.min(residuals)))
-    print('max(residuals {0}): {1:.03f}'.format(band, np.max(residuals)))
-    print('std(residuals {0}): {1:.03f}'.format(band, np.std(residuals)))
-    return residuals
-
-
 ###################
 # MAIN EXECUTION
 ###################
 
 if __name__ == '__main__':
-    constants.DEBUGMODE = False
-    if constants.DEBUGMODE:
-        log.setLevel('DEBUG')
-        run_glazebrook(ncores=3)
-        #apply_calibration_strip(215)
-        """
-        bands = ['r', 'i']
-        p = Pool(processes=2)
-        p.map(run_glazebrook_band, bands)
-        for band in bands:
-            residuals = evaluate_calibration(band)
-        """
-        run_glazebrook_band('ha')
-
-        #calibration_worker('3174_dec2005.fits')
-
-    else:
-        log.setLevel('INFO')
-        #run_glazebrook(ncores=3)
-        #apply_calibration(ncores=8)
-        calibrate(None)
+    log.setLevel('DEBUG')
+    calibrate()

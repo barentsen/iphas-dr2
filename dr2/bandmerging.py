@@ -64,6 +64,7 @@ class BandMerge():
         """Returns the stilts command used to perform a band-merge."""
 
         config = {'stilts': constants.STILTS,
+                  'MATCHING_DISTANCE': constants.MATCHING_DISTANCE,
                   'runr': self.get_catalogue_path(self.run_r),
                   'runi': self.get_catalogue_path(self.run_i),
                   'runha': self.get_catalogue_path(self.run_ha),
@@ -76,8 +77,9 @@ class BandMerge():
 
         # Note: we filter out sources detected at <0.5sigma
         # (i.e. magnitude error < -2.5*log(1+3) = 1.19)
-        cmd = """{stilts} tmatchn matcher=sky params=0.5 multimode=group \
-                  nin=3 in1={runr} in2={runi} in3={runha} \
+        cmd = """{stilts} tmatchn matcher=sky params=MATCHING_DISTANCE \
+                  multimode=group nin=3 \
+                  in1={runr} in2={runi} in3={runha} \
                   join1=always join2=always join3=always \
                   values1='ra dec' values2='ra dec' values3='ra dec' \
                   icmd1='setparam fieldID "{fieldid}";
