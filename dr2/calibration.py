@@ -200,6 +200,7 @@ def calibrate_band(band='r'):
         anchors = halpha_anchors(cal.runs)
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
+        cal.add_shifts( solver.get_shifts() )
 
     else:
     

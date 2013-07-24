@@ -4,6 +4,7 @@
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l pmem=5gb,walltime=120:00:00
+#PBS -m abe
 NP=`cat ${PBS_NODEFILE} | wc -l`
 
 echo $1
