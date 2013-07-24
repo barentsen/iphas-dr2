@@ -471,6 +471,7 @@ def seam_one(strip,
         # We're done
         log.info('{0}: strip{1}: ENDED'.format(str(datetime.datetime.now())[0:19],
                                                strip))
+    return strip
 
 
 def seam(clusterview, lon1=25, lon2=215):
@@ -480,7 +481,18 @@ def seam(clusterview, lon1=25, lon2=215):
     """
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH, dtype='int')
     log.info('Seaming in longitude strips %s' % (strips))
-    clusterview.map(seam_one, strips, block=True)
+
+    # Spread the work across the cluster
+    results = clusterview.imap(seam_one, strips)
+
+    # Print a friendly message once in a while
+    i = 0
+    for mystrip in results:
+        i += 1
+        log.info('Completed strip {0} ({1}/{2})'.format(mystrip,
+                                                        i,
+                                                        len(strips)))
+    log.info('Seaming finished')
 
 
 ###################

@@ -1,4 +1,5 @@
-#!/bin/sh -f    
+#!/bin/sh -f
+# Starts an IPython cluster; setup using 'qsub pipeline-cluster.pbs'
 #PBS -N pipeline                                                           
 #PBS -l nodes=80:ppn=1
 #PBS -k oe                                                          

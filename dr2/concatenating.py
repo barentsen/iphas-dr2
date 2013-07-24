@@ -174,11 +174,22 @@ def concatenate_one(strip,
             for part in ['a', 'b']:
                 concat = Concatenator(strip, part, mode)
                 concat.run()
+    return strip
 
 
 def concatenate(clusterview):
+    # Spread the work across the cluster
     strips = np.arange(25, 215+1, constants.STRIPWIDTH)
-    clusterview.map(concatenate_one, strips, block=True)
+    results = clusterview.imap(concatenate_one, strips)
+
+    # Print a friendly message once in a while
+    i = 0
+    for mystrip in results:
+        i += 1
+        log.info('Completed strip {0} ({1}/{2})'.format(mystrip,
+                                                        i,
+                                                        len(strips)))
+    log.info('Concatenating finished')
 
 
 def merge_light_catalogue():

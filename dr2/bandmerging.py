@@ -136,7 +136,19 @@ def bandmerge(clusterview):
      # Make sure the output directory exists
     if not os.path.exists(MYDESTINATION):
         os.makedirs(MYDESTINATION)
-    clusterview.map(bandmerge_one, IPHASQC.field('id'), block=True)
+
+    # Spread the work across the cluster
+    field_ids = IPHASQC.field('id')
+    results = clusterview.imap(bandmerge_one, field_ids)
+
+    # Print a friendly message once in a while
+    i = 0
+    for status in results:
+        i += 1
+        if (i % 1000) == 0:
+            log.info('Completed field {0}/{1}'.format(i, len(field_ids)))
+    log.info('Bandmerging finished')
+
 
 
 ###################
