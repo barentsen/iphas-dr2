@@ -37,7 +37,7 @@ client[:].execute('reload(bandmerging)', block=True)
 #detections.create_index(cluster)
 #detections.sanitise_zeropoints()         # Produces zeropoint-overrides.csv
 detections.convert_catalogues(cluster)
+bandmerging.bandmerge(cluster)
 #offsets.compute_offsets(cluster)
 calibration.calibrate()
-bandmerging.bandmerge(cluster)
 calibration.apply_calibration(cluster)
