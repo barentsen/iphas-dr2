@@ -138,7 +138,7 @@ def apass_anchors():
                     | (IPHASQC.field('rmatch_apassdr7') < min_matches)
                     | (IPHASQC.field('imatch_apassdr7') < min_matches) )
 
-    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN )
+    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN  )
                 | (APASS_OK )
               )
     return anchors[IPHASQC_COND_RELEASE]
