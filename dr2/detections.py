@@ -977,7 +977,7 @@ def index_setup(destination):
 
 def index_one(path):
     """Returns the CSV summary line."""
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_index_one.log')):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'index.log')):
         import socket
         pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
         log.info(pid+': '+path)
@@ -1038,7 +1038,7 @@ def convert_one(path):
     path -- of the pipeline table.
     """
     with log.log_to_file(os.path.join(constants.LOGDIR,
-                         'dr2_convert_one.log')):
+                         'detections.log')):
         try:
             import socket
             pid = socket.gethostname()+'/'+str(os.getpid())

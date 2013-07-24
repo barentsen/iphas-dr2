@@ -108,7 +108,7 @@ class BandMerge():
 
 def bandmerge_one(fieldid):
     """Band-merge a single field """
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_bandmerge_one.log')):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'bandmerging.log')):
         engine = socket.gethostname()+'/'+str(os.getpid())
         log.info('Starting {0} on {1}'.format(fieldid, engine))
 

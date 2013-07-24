@@ -136,7 +136,7 @@ class OffsetMachine(object):
 ###########
 
 def offsets_one(run):
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_offsets_one.log')):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'offsets.log')):
         try:
             import socket
             pid = socket.gethostname()+'/'+str(os.getpid())

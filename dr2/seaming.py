@@ -415,7 +415,7 @@ class SeamMachine(object):
 ###########
 
 def seam_one(strip,
-             logfile = os.path.join(constants.LOGDIR, 'dr2_seam_one.log')):
+             logfile = os.path.join(constants.LOGDIR, 'seaming.log')):
     with log.log_to_file(logfile):
 
         """Seams the fields in a given longitude strip."""

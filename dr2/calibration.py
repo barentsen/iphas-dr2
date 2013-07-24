@@ -503,7 +503,7 @@ class CalibrationApplicator(object):
 
 def calibrate_one(filename):
     """Applies the photometric re-calibration to a single bandmerged field catalogue."""
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'dr2_calibrate_one.log')):
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'apply_calibration.log')):
         try:
             ca = CalibrationApplicator()
             ca.run(filename)
