@@ -77,7 +77,7 @@ class BandMerge():
 
         # Note: we filter out sources detected at <0.5sigma
         # (i.e. magnitude error < -2.5*log(1+3) = 1.19)
-        cmd = """{stilts} tmatchn matcher=sky params=MATCHING_DISTANCE \
+        cmd = """{stilts} tmatchn matcher=sky params={MATCHING_DISTANCE} \
                   multimode=group nin=3 \
                   in1={runr} in2={runi} in3={runha} \
                   join1=always join2=always join3=always \
