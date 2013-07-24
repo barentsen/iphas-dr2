@@ -19,7 +19,7 @@ if HOSTNAME == 'gvm':  # testing machine
     RAWDATADIR = '/media/uh/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = '/home/gb/tmp/iphas-dr2'
 
-LOGDIR = os.path.join(constants.DESTINATION, 'log')  # Where to store logs?
+LOGDIR = os.path.join(DESTINATION, 'log')  # Where to store logs?
 # Make sure destination and logging dir exist
 if not os.path.exists(LOGDIR):
     os.makedirs(LOGDIR)
