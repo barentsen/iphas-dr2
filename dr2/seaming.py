@@ -99,6 +99,7 @@ class SeamMachine(object):
         assert(len(sourceID) == len(matchinfo['primaryID']))  # sanity check
         assert(len(sourceID) == len(matchinfo['partnerID']))
         self.save(sourceID, matchinfo)
+        self._clean_tmp_files()
 
     def _clean_tmp_files(self):
         """Removes temporary files created by run()."""
