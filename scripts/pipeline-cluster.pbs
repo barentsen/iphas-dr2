@@ -35,7 +35,7 @@ echo "Starting cluster"
 ipcluster start --n=$NP --engines=MPI --profile=mpi --cluster-id=pipeline --debug 
 
 echo "Stopping cluster"
-ipcluster stop --profile=mpi
+ipcluster stop --profile=mpi --cluster-id=pipeline
 
 echo ------------------------------------------------------                                  
 echo Job ends 

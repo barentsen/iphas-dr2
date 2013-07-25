@@ -509,12 +509,21 @@ def calibrate_one(filename):
             ca.run(filename)
         except Exception, e:
             log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
+        return filename
 
 
 def apply_calibration(clusterview):
     """Applies the photometric re-calibration to all bandmerged field catalogues."""
     filenames = os.listdir(PATH_UNCALIBRATED)
-    clusterview.map(calibrate_one, filenames, block=True)
+    results = clusterview.imap(calibrate_one, filenames)
+
+    # Print a friendly message once in a while
+    i = 0
+    for filename in results:
+        i += 1
+        if (i % 1000) == 0:
+            log.info('Completed file {0}/{1}'.format(i, len(filenames)))
+    log.info('Application of calibration finished')
 
 
 ###################

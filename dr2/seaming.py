@@ -309,7 +309,7 @@ class SeamMachine(object):
             mySourceID = sourceID[0]  # sourceID of the current row
 
             # Count number of observations
-            n = (sourceID > 0).sum()
+            n = (sourceID > != '').sum()
             nObs.append(n)
 
             # First, identify the partnerID
@@ -336,7 +336,7 @@ class SeamMachine(object):
                 partner_errBits.append(
                     matchdata[errBits_cols[idx_partner]][rowno])
             else:
-                partnerID.append(-9223372036854775808)  # null value
+                partnerID.append('')  # null value
                 partner_fieldID.append('')
                 partner_r.append(np.nan)
                 partner_rErr.append(np.nan)
@@ -355,7 +355,7 @@ class SeamMachine(object):
 
                 # Discard unmatched sources
                 win = winning_template.copy()
-                win[sourceID < 0] = False
+                win[sourceID == ''] = False
 
                 if win.sum() > 1:
                     # Discard source with few bands
@@ -389,7 +389,7 @@ class SeamMachine(object):
                 winnerID = sourceID[win.nonzero()[0][0]]
 
                 # Update cache
-                for candidate in sourceID[sourceID > 0][1:]:
+                for candidate in sourceID[sourceID != ''][1:]:
                     self.cache_set(candidate, winnerID)
 
             primaryID.append(winnerID)
