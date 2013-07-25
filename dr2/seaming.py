@@ -309,7 +309,7 @@ class SeamMachine(object):
             mySourceID = sourceID[0]  # sourceID of the current row
 
             # Count number of observations
-            n = (sourceID > != '').sum()
+            n = (sourceID != '').sum()
             nObs.append(n)
 
             # First, identify the partnerID
