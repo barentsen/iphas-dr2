@@ -1,6 +1,11 @@
 IPHAS Data Release Processing Scripts
 =====================================
 
+Dependencies
+------------
+* Python modules: numpy, scipy, astropy (v0.2), IPython.parallel
+* Java (topcat/stilts is used for crossmatching)
+
 Scope
 -----
 The scripts carry out four processing stages:
