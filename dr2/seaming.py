@@ -14,6 +14,7 @@ Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
 from __future__ import division, print_function, unicode_literals
 import os
 import glob
+import socket
 import sys
 import time
 import numpy as np
@@ -468,8 +469,9 @@ def seam_one(strip,
                 except SeamingException, e:
                     log.error(str(e))
                 except Exception, e:
-                    log.error('strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
-                                                    strip, IPHASQC['id'][idx], e))
+                    pid = socket.gethostname()+'/'+str(os.getpid())
+                    log.error('%s strip %s: %s: *UNEXPECTED EXCEPTION*: %s' % (
+                                          pid, strip, IPHASQC['id'][idx], e))
 
         del CACHE[strip]  # Clear cache
         # We're done
