@@ -13,6 +13,7 @@ Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
 """
 from __future__ import division, print_function, unicode_literals
 import os
+import glob
 import sys
 import time
 import numpy as np
@@ -87,6 +88,9 @@ class SeamMachine(object):
         self.output_file = os.path.join(self.output_dir,
                                         '{0}.fits'.format(fieldid))
 
+    def __del__(self):
+        self._clean_tmp_files()
+
     def run(self):
         """Main function."""
         self.overlaps = self.overlaps()
@@ -95,9 +99,8 @@ class SeamMachine(object):
         assert(len(sourceID) == len(matchinfo['primaryID']))  # sanity check
         assert(len(sourceID) == len(matchinfo['partnerID']))
         self.save(sourceID, matchinfo)
-        self.clean()
 
-    def clean(self):
+    def _clean_tmp_files(self):
         """Removes temporary files created by run()."""
         os.remove(self.crossmatch_file)
         os.remove(self.primaryid_file)
@@ -494,6 +497,14 @@ def seam(clusterview, lon1=25, lon2=215):
                                                         len(strips)))
     log.info('Seaming finished')
 
+
+"""
+def cleanup_one():
+    myjunk = os.path.join(TMPDIR, 'seaming_*)'
+    r = glob.glob(test)
+    for i in r:
+        os.remove(i)
+"""
 
 ###################
 # MAIN EXECUTION
