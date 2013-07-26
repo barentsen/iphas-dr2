@@ -70,3 +70,4 @@ def get_pid():
     """
     pid = '{0}/{1}'.format(socket.gethostname(),
                            os.getpid())
+    return pid
