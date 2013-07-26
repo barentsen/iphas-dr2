@@ -32,6 +32,7 @@ with client[:].sync_imports():
     sys.path.append('/home/gb/dev/iphas-dr2')
     client[:].execute("sys.path.append('/home/gb/dev/iphas-dr2')", block=True)
     from dr2 import constants
+    from dr2 import util
     from dr2 import detections
     from dr2 import offsets
     from dr2 import calibration
@@ -42,6 +43,7 @@ with client[:].sync_imports():
 # While in development, reload every module by default
 # This is to make sure that the latest version gets used
 client[:].execute('reload(constants)', block=True)
+client[:].execute('reload(util)', block=True)
 client[:].execute('reload(detections)', block=True)
 client[:].execute('reload(offsets)', block=True)
 client[:].execute('reload(calibration)', block=True)
