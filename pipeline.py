@@ -65,7 +65,7 @@ Pipeline starts here
 #bandmerging.bandmerge(cluster)  # produces 'bandmerged/nnnn.fits'
 
 # Compute the magnitude offsets between all runs; necessary for re-calibration
-#offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
+offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
 
 # Find the set of zeropoint shifts which minimize the offsets obtained above
 #calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
@@ -76,8 +76,8 @@ Pipeline starts here
 # Identify duplicate detections where multiple pointings overlap ('seams');
 # this requires up to 4 GB RAM per process,
 # hence we only use only every fourth cluster. node (each having 1 GB).
-cluster_highmem = client[::3]
-seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
+#cluster_highmem = client[::3]
+#seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
 
 # Finally, concatenate the individual pointings into a single catalogue 
-concatenating.concatenate(cluster_highmem)
+#concatenating.concatenate(cluster_highmem)

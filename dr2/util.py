@@ -3,6 +3,8 @@
 """Utility functions for data releases."""
 from __future__ import division, print_function, unicode_literals
 import numpy as np
+import socket
+import os
 
 
 def sphere_dist(lon1, lat1, lon2, lat2):
@@ -56,3 +58,15 @@ def crossmatch(ra, dec, ra_array, dec_array, matchdist=0.5):
         return np.argwhere(precut)[idx_closest]
     else:
         return None
+
+
+def get_pid():
+    """Returns the hostname and process identifier.
+
+    Returns
+    -------
+    pid : string
+        A string of the form "hostname/process_id".
+    """
+    pid = '{0}/{1}'.format(socket.gethostname(),
+                           os.getpid())

@@ -166,7 +166,7 @@ class Concatenator(object):
 ###########
 
 def concatenate_one(strip,
-                    logfile = os.path.join(constants.LOGDIR, 'dr2_concatenate_one.log')):
+                    logfile = os.path.join(constants.LOGDIR, 'concatenation.log')):
     with log.log_to_file(logfile):
         # Strips are defined by the start longitude
         log.info('Concatenating L={0}'.format(strip))

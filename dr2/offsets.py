@@ -7,7 +7,8 @@ overlapping exposures. It then computes the median offset between those
 magnitudes, which provides the input required to carry out a global
 re-calibration.
 
-The output is a CSV file stored at "constants.DESTINATION/offsets-{band}.csv"
+The output is a CSV file written to 
+"{constants.DESTINATION}/calibration/offsets-{band}.csv"
 
 The columns in the CSV file are:
 run1   -- reference run number
@@ -15,8 +16,6 @@ run2   -- comparison run number
 offset -- median(run1_magnitudes - run2_magnitudes)
 std    -- std(run1_magnitudes - run2_magnitudes)
 n      -- len(run1_magnitudes - run2_magnitudes)
-
-Only runs which are part of the data release are included.
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -50,6 +49,12 @@ class OffsetMachine(object):
     """Computes photometric offsets between exposures."""
 
     def __init__(self, run):
+        """
+        Parameters
+        ----------
+        run : string or int
+            Telescope exposure identifier.
+        """
         self.run = run
         self.data = self.get_data(run)
         self.band = self.data['band']
@@ -71,21 +76,35 @@ class OffsetMachine(object):
                             '{0}_det.fits'.format(run))
 
     def overlap_runs(self):
-        """Returns overlapping runs which are in the data release and in the same filter."""
+        """Returns the list of overlapping exposures in the same band.
+
+        Returns
+        -------
+        runs : list
+            List of overlapping exposure identifiers.
+        """
         cond_run = (IPHASQC['run_'+str(self.band)] == self.run)
         idx = np.argwhere(cond_run)[0]
         myra = IPHASQC['ra'][idx]
         mydec = IPHASQC['dec'][idx]
 
         dist = util.sphere_dist(myra, mydec, IPHASQC['ra'], IPHASQC['dec'])
-        idx2 = (constants.IPHASQC_COND_RELEASE
-                & (dist < constants.FIELD_MAXDIST)
-                & (IPHASQC['run_'+str(self.band)] != self.run))
+        idx2 = (
+                    (dist < constants.FIELD_MAXDIST)
+                    & (IPHASQC['run_'+str(self.band)] != self.run)
+                )
 
         return IPHASQC['run_'+str(self.band)][idx2]
 
     def relative_offsets(self):
-        """Returns the offsets."""
+        """Returns the offsets for all runs that overlap with self.run.
+
+        Returns
+        -------
+        offsets : list of dictionaries.
+            Each dictionary contains the offset information for an overlapping 
+            exposure.
+        """
         log.debug('Computing offsets for run {0}'.format(self.run))
         offsets = []
         for run2 in self.overlap_runs():
@@ -96,7 +115,18 @@ class OffsetMachine(object):
         return offsets
 
     def _compute_relative_offsets(self, run2):
-        """Computes the offset against a specified run."""
+        """Computes the offset against a specified run.
+
+        Parameters
+        ----------
+        run2 : string or int
+            The run to compare against.
+
+        Returns
+        -------
+        offsets : dictionary
+            Containing the fields run1, run2, offset, std, n.
+        """
         limit_bright = MAGLIMITS[self.band][0]
         limit_faint = MAGLIMITS[self.band][1]
 
@@ -107,8 +137,8 @@ class OffsetMachine(object):
         cond_reliable1 = ((self.data['aperMag2'] > limit_bright)
                           & (self.data['aperMag2'] < limit_faint)
                           & (self.data['errBits'] == 0))
-        cond_reliable2 = ((offset_data['aperMag2'] > limit_bright-0.2)
-                          & (offset_data['aperMag2'] < limit_faint+0.2)
+        cond_reliable2 = ((offset_data['aperMag2'] > (limit_bright-0.2))
+                          & (offset_data['aperMag2'] < (limit_faint+0.2))
                           & (offset_data['errBits'] == 0))
 
         for idx1 in np.argwhere(cond_reliable1):
@@ -136,12 +166,22 @@ class OffsetMachine(object):
 ###########
 
 def offsets_one(run):
+    """Returns all offsets for a given reference exposure.
+
+    Parameters
+    ----------
+    run : integer or string
+        Telescope run number.
+
+    Returns
+    -------
+    offsets : list of dictionaries
+        A sequence of dictionaries for each overlapping run. 
+        Each dictionary contains the fields run1/run2/offset/std/n.
+    """
     with log.log_to_file(os.path.join(constants.LOGDIR, 'offsets.log')):
         try:
-            import socket
-            pid = socket.gethostname()+'/'+str(os.getpid())
-            log.info('Computing offsets for '+str(run)+' on '+pid)
-
+            log.info('Computing offsets for '+str(run)+' on '+util.get_pid())
             om = OffsetMachine(run)
             return om.relative_offsets()
         except Exception, e:
@@ -150,18 +190,36 @@ def offsets_one(run):
 
 
 def compute_offsets_band(clusterview, band):
-    """Writes the file offsets-relative.csv with overlap offsets."""
+    """Computes magnitude offsets between all overlapping runs in a given band.
+
+    The output is a file called offsets-{band}.csv which contains the columns
+        run1   -- reference exposure (telescope run number)
+        run2   -- comparison exposure (telescope run number)
+        offset -- median(run1_magnitudes - run2_magnitudes)
+        std    -- stdev(run1_magnitudes - run2_magnitudes)
+        n      -- number of crossmatched stars used in computing offset/std.
+
+    Parameters
+    ----------
+    clusterview : cluster view derived used e.g. IPython.parallel.Client()[:]
+        Work will be spread across the nodes in this cluster view.
+
+    band : string
+        One of 'r', 'i', 'ha'.
+    """
     assert(band in constants.BANDS)
     log.info('Starting to compute offsets for band {0}'.format(band))
 
     # Write the results
     filename = os.path.join(constants.DESTINATION,
+                            'calibration',
                             'offsets-{0}.csv'.format(band))
     out = open(filename, 'w')
     out.write('run1,run2,offset,std,n\n')
 
     # Distribute the work over ncores
-    runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
+    #runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
+    runs = IPHASQC['run_'+str(band)]
 
     results = clusterview.imap(offsets_one, runs)
     for i, field in enumerate(results):
@@ -177,20 +235,13 @@ def compute_offsets_band(clusterview, band):
 
 
 def compute_offsets(clusterview):
+    """Computes magnitude offsets for all overlapping runs and all bands.
+
+    Parameters
+    ----------
+    clusterview : cluster view derived used e.g. IPython.parallel.Client()[:]
+        Work will be spread across the nodes in this cluster view.
+    """
     for band in constants.BANDS:
         compute_offsets_band(clusterview, band)
-
-
-
-###################
-# MAIN EXECUTION
-###################
-
-if __name__ == '__main__':
-
-    # Which band to process?
-    if len(sys.argv) > 1:
-        band = sys.argv[1]
-    else:
-        raise Exception('Please give the band as the first argument')
 
