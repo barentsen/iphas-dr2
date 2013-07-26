@@ -217,17 +217,20 @@ def compute_offsets_band(clusterview, band):
     out = open(filename, 'w')
     out.write('run1,run2,offset,std,n\n')
 
-    # Distribute the work over ncores
+    # Distribute the work across the cluster
     #runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
     runs = IPHASQC['run_'+str(band)]
-
     results = clusterview.imap(offsets_one, runs)
-    for i, field in enumerate(results):
-        for row in field:
+
+    # Write offsets to the CSV file as the results are returned
+    i = 0
+    for offsets in results:
+        i += 1
+        for row in offsets:
             if row is not None:
                 out.write('{run1},{run2},{offset},{std},{n}\n'.format(**row))
-
-        if (i % 20) == 0:  # Make sure we write at least every 20 runs
+        # Print a friendly status message once in a while
+        if (i % 50) == 0:
             log.info('Completed run {0}/{1}'.format(i, len(runs)))
             out.flush()
 
