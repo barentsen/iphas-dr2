@@ -46,8 +46,29 @@ def sphere_dist_fast(lon1, lat1, lon2, lat2):
 def crossmatch(ra, dec, ra_array, dec_array, matchdist=0.5):
     """Returns the index of the matched source.
 
-    ra/dec in degrees.
-    matching distance in arcseconds.
+    Parameters
+    ----------
+    ra : float [degrees]
+        Right Ascension of the position to match.
+
+    dec : float [degrees]
+        Declination of the position to match.
+
+    ra_array : array of floats [degrees]
+        Array of candidate positions.
+
+    dec_array : array of floats [degrees]
+        Array of candidate positions.
+
+    matchdist : float [arcsec]
+        Maximum matching distance.
+
+    Returns
+    -------
+    idx : integer or None
+        idx of the object in ra_array/dec_array which most closely matches
+        the position ra/dec. If no match is found within the maximum matching 
+        distance, then None is returned.
     """
     precut = np.abs(dec - dec_array) < (matchdist/3600.)  # Optimized
     if not precut.any():
