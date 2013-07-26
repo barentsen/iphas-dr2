@@ -7,6 +7,8 @@ overlapping exposures. It then computes the median offset between those
 magnitudes, which provides the input required to carry out a global
 re-calibration.
 
+Output
+------
 The output is a CSV file written to 
 "{constants.DESTINATION}/calibration/offsets-{band}.csv"
 
@@ -16,6 +18,11 @@ run2   -- comparison run number
 offset -- median(run1_magnitudes - run2_magnitudes)
 std    -- std(run1_magnitudes - run2_magnitudes)
 n      -- len(run1_magnitudes - run2_magnitudes)
+
+Dependencies
+------------
+* IPHASQC table containing all metadata.
+* single-band detection catalogues.
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -37,8 +44,11 @@ __credits__ = ['Hywel Farnhill', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-# Magnitude ranges across whcih we will compute the median offsets
+# Magnitude ranges to consider reliable
 MAGLIMITS = {'r': [15, 17.5], 'i': [14, 16.5], 'ha': [15, 17.5]}
+
+# Maximum matching distance
+MATCHING_DISTANCE = 0.5  # arcsec
 
 
 ###########
@@ -145,7 +155,8 @@ class OffsetMachine(object):
             idx2 = util.crossmatch(self.data['ra'][idx1],
                                    self.data['dec'][idx1],
                                    offset_data['ra'][cond_reliable2],
-                                   offset_data['dec'][cond_reliable2])
+                                   offset_data['dec'][cond_reliable2],
+                                   matchdist=MATCHING_DISTANCE)
             if idx2 is not None:
                 offsets.append(self.data['aperMag2'][idx1]
                                - offset_data['aperMag2'][cond_reliable2][idx2])
