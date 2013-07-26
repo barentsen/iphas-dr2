@@ -7,7 +7,7 @@ from astropy.io import fits
 DEBUGMODE = False
 
 RAWDATADIR = '/car-data/gb/iphas'  # Where are the pipeline-reduced catalogues?
-DESTINATION = '/car-data/gb/iphas-dr2-20130724'  # Where to write output catalogues?
+DESTINATION = '/car-data/gb/iphas-dr2-rc1'  # Where to write output catalogues?
 
 HOSTNAME = os.uname()[1]
 if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
