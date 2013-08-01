@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Identifies duplicate detections in the IPHAS catalogue.
+"""Identify duplicate detections in the IPHAS catalogue.
 
 This script will identify all the detections for a single astrophysical source
 amongst the IPHAS observations using stilts crossmatching.
@@ -9,7 +9,6 @@ detection and the 'partner' (same night) detection.
 Finally, this information is then added to the bandmerged catalogues.
 
 Computing requirements: the densest strips need ~4h CPU and ~7 GB RAM.
-
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -128,12 +127,12 @@ class SeamMachine(object):
     def save(self, sourceID, matchinfo):
         """Writes a new catalogue with primaryID to disk."""
         # Write the (sourceID,primaryID)s to a table
-        col_sourceID = fits.Column(name='sourceID', format='14A', array=sourceID)
+        col_sourceID = fits.Column(name='sourceID', format='15A', array=sourceID)
         col_nObs = fits.Column(name='nObs', format='B', 
                                array=matchinfo['nObs'])
-        col_primaryID = fits.Column(name='primaryID', format='14A',
+        col_primaryID = fits.Column(name='primaryID', format='15A',
                                     array=matchinfo['primaryID'])
-        col_partnerID = fits.Column(name='sourceID2', format='14A',
+        col_partnerID = fits.Column(name='sourceID2', format='15A',
                                     null='',
                                     array=matchinfo['partnerID'])
         col_fieldID2 = fits.Column(name='fieldID2', format='15A',

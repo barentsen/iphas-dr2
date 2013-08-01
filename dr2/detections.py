@@ -335,14 +335,14 @@ class DetectionCatalogue():
         """Returns the FITS column with the detectionIDs.
 
         The detectionID is a unique identifier of the detection.
-        It is composed of the INT telescope run number (digits 1-7),
-        CCD number (digit 8) and a sequential source number (digits 9-14).
+        It is composed of the INT telescope run number (6 digits),
+        CCD number (1 digit) and a sequential source number (<= 6 digits).
         """
         detectionID = np.array(['%d-%d-%d' % (self.hdr('RUN'),
                                               col_ccd.array[i],
                                               col_seqNum.array[i])
                                 for i in xrange(self.objectcount)])
-        return fits.Column(name='detectionID', format='14A', unit='String',
+        return fits.Column(name='detectionID', format='15A', unit='String',
                            array=detectionID)
 
     def column_x(self):
