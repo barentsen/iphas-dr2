@@ -33,6 +33,18 @@ PATH_CALIBRATED = os.path.join(constants.DESTINATION,
                                'bandmerged-calibrated')
 
 
+# Extra anchors selected in the final phases of the data release,
+# when a few areas with poor anchor coverage were spotted
+EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
+                 '4583_jul2009', '4583o_jul2009',
+                 '4525_jul2004a', '4525o_jul2004a',
+                 '4598_jul2004a', '4598o_jul2004a',
+                 '4087_jun2004',
+                 '4099_jun2004', '4099o_jun2004',
+                 '4110_jun2004', '4110o_jun2004',
+                 '4096_jun2004', '4096o_jun2004']
+                     ]
+
 class Calibration(object):
     """Holds the calibration shifts for all fields in the survey."""
 
@@ -150,8 +162,13 @@ def select_anchors():
                     | (IPHASQC.field('rmatch_sdss') < min_matches)
                     | (IPHASQC.field('imatch_sdss') < min_matches) )
 
-    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
-                | (APASS_OK )
+    # Allow extra anchors to be added
+    EXTRA = np.array([myfield in EXTRA_ANCHORS for myfield in IPHASQC.field('id')])
+
+    anchors = ( 
+                ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
+                | APASS_OK
+                | EXTRA
               )
     return anchors[IPHASQC_COND_RELEASE]
 

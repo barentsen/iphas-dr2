@@ -70,6 +70,17 @@ class OffsetMachine(object):
         self.band = self.data['band']
 
     def get_data(self, myrun):
+        """Returns a dictionary with the data for a given run.
+
+        Parameters
+        ----------
+        myrun : string or int
+            Telescope exposure identifier.
+
+        Returns
+        -------
+        data : dictionary of arrays
+        """
         f = fits.open(self.filename(myrun))
         data = {'ra': f[1].data['ra'],
                 'dec': f[1].data['dec'],
@@ -192,11 +203,13 @@ def offsets_one(run):
     """
     with log.log_to_file(os.path.join(constants.LOGDIR, 'offsets.log')):
         try:
-            log.info('Computing offsets for '+str(run)+' on '+util.get_pid())
+            log.info('{0}: Computing offsets for {1}'.format(util.get_pid(), run)
             om = OffsetMachine(run)
             return om.relative_offsets()
         except Exception, e:
-            log.error('UNEXPECTED EXCEPTION FOR RUN {0}: {1}'.format(run, e))
+            log.error('{0}: UNEXPECTED EXCEPTION FOR RUN {1}: {2}'.format(util.get_pid(),
+                                                                          run,
+                                                                          e))
             return [None]
 
 
@@ -241,7 +254,7 @@ def compute_offsets_band(clusterview, band):
             if row is not None:
                 out.write('{run1},{run2},{offset},{std},{n}\n'.format(**row))
         # Print a friendly status message once in a while
-        if (i % 50) == 0:
+        if (i % 100) == 0:
             log.info('Completed run {0}/{1}'.format(i, len(runs)))
             out.flush()
 
