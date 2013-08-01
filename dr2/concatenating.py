@@ -134,7 +134,7 @@ class Concatenator(object):
                              setparam AUTHOR "Geert Barentsen, Hywel Farnhill, Janet Drew"; \
                              setparam VERSION \""""+version+""""; \
                              select "(errBits < 64) \
-                                      & (rErr < 0.198 || iErr < 0.198 || haErr < 0.198)
+                                      & (rErr < 0.198 || iErr < 0.198 || haErr < 0.198) \
                                       & (pStar > 0.2 || pGalaxy > 0.2) \
                                       & l >= """+str(self.lon1)+""" \
                                       & l < """+str(self.lon2)+""" \
