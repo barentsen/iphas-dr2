@@ -29,7 +29,7 @@ __credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 ################################
 
-DATADIR = '/media/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
+DATADIR = '/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
 EXTS = [1, 2, 3, 4]  # Which extensions to expect in the fits catalogues?
 PXSCALE = 0.333  # Arcsec/pix of the CCD
 
@@ -42,7 +42,8 @@ def twomass_conesearch(ra, dec, radius):
     """
     Returns arrays of ra and dec from a 2MASS conesearch
     """
-    url = 'http://vo.astronet.ru/sai_cas/conesearch?cat=twomass&tab=psc'
+    #url = 'http://vo.astronet.ru/sai_cas/conesearch?cat=twomass&tab=psc'
+    url = 'http://wfaudata.roe.ac.uk/twomass-dsa/DirectCone?DSACAT=TWOMASS&DSATAB=twomass_psc&'
     url += '&RA={0}&DEC={1}&SR={2}'.format(ra, dec, radius)
     response = urllib2.urlopen(url)
     tf = tempfile.NamedTemporaryFile()
