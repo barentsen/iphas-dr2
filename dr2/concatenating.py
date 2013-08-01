@@ -143,7 +143,7 @@ class Concatenator(object):
                              addcol -before ra \
                                     -desc "Source designation, JHHMMSS.ss+DDMMSS.s" \
                                     name \
-                                    'concat(\"J\", replaceAll(degreesToHms(ra, 2), \":\", \"\"), replaceAll(degreesToDms(dec, 1), \":\", \"\"))' \
+                                    \'concat("J", replaceAll(degreesToHms(ra, 2), ":", ""), replaceAll(degreesToDms(dec, 1), ":", ""))\' \
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              {0}
