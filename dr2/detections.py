@@ -34,8 +34,9 @@ import constants
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew',
-               'Cambridge Astronomical Survey Unit']
+__credits__ = ['Geert Barentsen', 'Hywel Farnhill',
+               'Janet Drew', 'Robert Greimel',
+               'Mike Irwin', 'Cambridge Astronomical Surveys Unit']
 
 
 ################################

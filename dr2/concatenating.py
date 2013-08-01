@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Concatenates the bandmerged field catalogues into a "Point Source Catalogue".
+"""Concatenates the seamed and bandmerged fields into the final catalogue".
 
 This script takes the output from the seaming script and concatenates the
-results into the final "Primary Source Catalogue" product,
-which is generated in 5x5 degree tiles.
+results into the final source catalogue products, which contains one entry
+for each unique source and is generated in 5x5 degree tiles. Both a 'light' and 
+a 'full' version of these tiles are generated.
 
-Both a light and a full version are produced.
+This step also creates the source designations "JHHMMSS.ss+DDMMSS.s".
 """
 from __future__ import division, print_function, unicode_literals
 import os
@@ -19,7 +20,7 @@ from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Robert Greimel', 'Janet Drew']
+__credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 
 
 ###########
@@ -107,11 +108,11 @@ class Concatenator(object):
             extracmd = """replacecol ra "toFloat(ra)";
                           replacecol dec "toFloat(dec)";
                           replacecol errBits "toShort(errBits)";
-                          keepcols "ra dec \
-                                       r rErr \
-                                       i iErr \
-                                       ha haErr \
-                                       mergedClass errBits";"""
+                          keepcols "name ra dec \
+                                    r rErr \
+                                    i iErr \
+                                    ha haErr \
+                                    mergedClass errBits";"""
 
         instring = ''
         for field in self.fieldlist:

@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Utility functions for data releases."""
+"""Utility functions for photometric data releases.
+
+This module contains a range of utility functions needed for processing 
+IPHAS/VPHAS data release products.
+"""
 from __future__ import division, print_function, unicode_literals
 import numpy as np
 import socket
 import os
+
+__author__ = 'Geert Barentsen'
+__copyright__ = 'Copyright, The Authors'
+__credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 
 
 def sphere_dist(lon1, lat1, lon2, lat2):

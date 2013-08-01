@@ -28,7 +28,7 @@ from constants import IPHASQC
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
-__credits__ = ['Hywel Farnhill', 'Janet Drew']
+__credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 
 
 #############################
