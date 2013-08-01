@@ -99,8 +99,8 @@ class OffsetMachine(object):
         mydec = IPHASQC['dec'][idx]
 
         dist = util.sphere_dist(myra, mydec, IPHASQC['ra'], IPHASQC['dec'])
-        idx2 = (
-                    (dist < constants.FIELD_MAXDIST)
+        idx2 = ( constants.IPHASQC_COND_RELEASE
+                    & (dist < constants.FIELD_MAXDIST)
                     & (IPHASQC['run_'+str(self.band)] != self.run)
                 )
 
@@ -229,8 +229,8 @@ def compute_offsets_band(clusterview, band):
     out.write('run1,run2,offset,std,n\n')
 
     # Distribute the work across the cluster
-    #runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
-    runs = IPHASQC['run_'+str(band)]
+    runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
+    #runs = IPHASQC['run_'+str(band)]
     results = clusterview.imap(offsets_one, runs)
 
     # Write offsets to the CSV file as the results are returned

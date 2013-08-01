@@ -122,7 +122,7 @@ class Calibration(object):
 
 
 
-def apass_anchors():
+def select_anchors():
     """Returns a boolean array indicating anchor status."""
     # 'anchors' is a boolean array indicating anchor status
     tolerance = 0.03  # Default = 0.03
@@ -132,18 +132,30 @@ def apass_anchors():
                  & (IPHASQC.field('imatch_apassdr7') >= min_matches)
                  & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
                  & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')-IPHASQC.field('ishift_apassdr7')) <= 0.03) )
+                 & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
+
     APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
                     | np.isnan(IPHASQC.field('rshift_apassdr7'))
                     | (IPHASQC.field('rmatch_apassdr7') < min_matches)
                     | (IPHASQC.field('imatch_apassdr7') < min_matches) )
 
-    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN  )
+    SDSS_OK = ( (IPHASQC.field('rmatch_sdss') >= min_matches)
+                 & (IPHASQC.field('imatch_sdss') >= min_matches)
+                 & (np.abs(IPHASQC.field('rshift_sdss')) <= tolerance)
+                 & (np.abs(IPHASQC.field('ishift_sdss')) <= tolerance)
+                 & (np.abs(IPHASQC.field('rshift_sdss') - IPHASQC.field('ishift_sdss')) <= tolerance) )
+
+    SDSS_ISNAN = ( np.isnan(IPHASQC.field('rshift_sdss'))
+                    | np.isnan(IPHASQC.field('rshift_sdss'))
+                    | (IPHASQC.field('rmatch_sdss') < min_matches)
+                    | (IPHASQC.field('imatch_sdss') < min_matches) )
+
+    anchors = ( ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
                 | (APASS_OK )
               )
     return anchors[IPHASQC_COND_RELEASE]
 
-def halpha_anchors(runs):
+def select_anchors_halpha(runs):
     # Table containing information on photometric stability
     stabfile = os.path.join(constants.PACKAGEDIR,
                             'lib',
@@ -180,7 +192,7 @@ def calibrate_band(band='r'):
     cal.evaluate()
 
     # Minimize overlap offsets
-    anchors = apass_anchors()
+    anchors = select_anchors()
     overlaps = cal.get_overlaps()
     solver = Glazebrook(cal.runs, overlaps, anchors)    
     solver.solve()
@@ -189,15 +201,20 @@ def calibrate_band(band='r'):
     plot_evaluation(cal, '/home/gb/tmp/cal-A.png', 'Strategy A')   
     """
 
+    # H-alpha is a special case because the APASS-based selection of anchors
+    # is not possible
     if band == 'ha':
-        rcalib_file = os.path.join(constants.DESTINATION, 'calibration', 'calibration-r.csv')
+        # We use the r-band calibration as the baseline for H-alpha
+        rcalib_file = os.path.join(constants.DESTINATION,
+                                   'calibration',
+                                   'calibration-r.csv')
         rcalib = ascii.read(rcalib_file)
-
         cal = Calibration(band)
         cal.shifts = rcalib['shift']
 
+        # We do run one iteration of Glazebrook using special H-alpha anchors
         overlaps = cal.get_overlaps()
-        anchors = halpha_anchors(cal.runs)
+        anchors = select_anchors_halpha(cal.runs)
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
@@ -221,8 +238,8 @@ def calibrate_band(band='r'):
         plot_evaluation(cal, '{0}-step1.png'.format(band),
                         '{0} - Step 1: set initial conditions'.format(band))
 
-        # Minimize overlap offsets
-        anchors = apass_anchors()
+        # Glazebrook: first pass (minimizes overlap offsets)
+        anchors = select_anchors()
         overlaps = cal.get_overlaps()
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
@@ -236,7 +253,7 @@ def calibrate_band(band='r'):
         cond_extra_anchors = (cal.apass_matches > 20) & ~np.isnan(delta) & (delta > 0.05)
         log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
         idx_extra_anchors = np.where(cond_extra_anchors)
-        anchors = apass_anchors()
+        anchors = select_anchors()
         anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
         plot_evaluation(cal, '{0}-step3.png'.format(band),
@@ -274,7 +291,7 @@ def calibrate_test(band='r'):
         cal = Calibration(band)
 
         # Minimize overlap offsets
-        anchors = apass_anchors()
+        anchors = select_anchors()
         overlaps = cal.get_overlaps()
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
