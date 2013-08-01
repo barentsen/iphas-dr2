@@ -16,7 +16,7 @@ Coordinate System (WCS) where necessary.
 This script can also produce a table called 'runs.csv' which
 provides a table of all available IPHAS exposures.
 
-Computing requirements: 6h CPU on 8 cores. Low RAM.
+Computing requirements: ~48h CPU (2012 hardware). Low on RAM.
 
 TODO
 - look up confidence value for each star in the confidence maps.
@@ -337,9 +337,9 @@ class DetectionCatalogue():
         It is composed of the INT telescope run number (digits 1-7),
         CCD number (digit 8) and a sequential source number (digits 9-14).
         """
-        detectionID = np.array(['%07d%d%06d' % (self.hdr('RUN'),
-                                                col_ccd.array[i],
-                                                col_seqNum.array[i])
+        detectionID = np.array(['%d-%d-%d' % (self.hdr('RUN'),
+                                              col_ccd.array[i],
+                                              col_seqNum.array[i])
                                 for i in xrange(self.objectcount)])
         return fits.Column(name='detectionID', format='14A', unit='String',
                            array=detectionID)
