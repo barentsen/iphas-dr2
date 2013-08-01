@@ -111,7 +111,6 @@
         <p>The IPHAS DR2 source catalogue is distributed as a series of binary FITS tables, each covering a 5x5&thinsp;deg<sup>2</sup> area.
         There is a light (10 columns; 5 GB) and a full version (97 columns; 50 GB). At present the catalogue cannot be queried online, but we are working to make this possible.</p>
 
-
         <p>You may download all the files of the light catalogue (5.4&thinsp;GB) to a local directory using the <a href='http://www.gnu.org/software/wget/'>wget</a> command:</p>
         
         <pre>wget -c -r -np -nH --cut-dirs=4 --accept=fits http://stri-cluster.herts.ac.uk/~gb/iphas-dr2/catalogue/light/</pre>
@@ -1088,6 +1087,12 @@
             <tr><th>Column</th><th>Type</th><th>Unit</th><th>Description</th></tr>
           </thead>
           <tbody>
+            <tr id="name-light">
+              <td>name</td>
+              <td>string</td>
+              <td></td>
+              <td>Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form "IPHAS2 JHHMMSS.ss+DDMMSS.s", where "J" indicates the position is J2000. The "IPHAS2" prefix is not listed explicitly in the column.</td>              
+            </tr>
             <tr id='ra-light'>
               <td>ra</td>
               <td>float</td>
@@ -1144,9 +1149,10 @@
             </tr>
             <tr id='errBits-light'>
               <td>errBits</td>
-              <td>long</td>
+              <td>short</td>
               <td></td>
-              <td>Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).</td>
+              <td>Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8).
+              <!-- Not included: vignetting (64), truncation (128) and bad  pixels (32768). --></td>
             </tr>
         </table>
 
@@ -1156,6 +1162,12 @@
             <tr><th>Column</th><th>Type</th><th>Unit</th><th>Description</th></tr>
           </thead>
           <tbody>
+            <tr id="name">
+              <td>name</td>
+              <td>string</td>
+              <td></td>
+              <td>Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form "IPHAS2 JHHMMSS.ss+DDMMSS.s", where "J" indicates the position is J2000. The "IPHAS2" prefix is not listed explicitly in the column.</td>              
+            </tr>
             <tr id='ra'>
               <td>ra</td>
               <td>double</td>
@@ -1172,7 +1184,7 @@
               <td>sourceID</td>
               <td>string</td>
               <td></td>
-              <td>Unique identification number of the source. Identical to <a href='#rDetectionID'>rDetectionID</a> if the source was detected in the r-band; identical to <a href='#iDetectionID'>iDetectionID</a> or <a href='#haDetectionID'>haDetectionID</a> otherwise.</td>
+              <td>Unique identification number of the detection. Identical to <a href='#rDetectionID'>rDetectionID</a> if the source was detected in the r-band; identical to <a href='#iDetectionID'>iDetectionID</a> or <a href='#haDetectionID'>haDetectionID</a> otherwise.</td>
             </tr>
             <tr id='posErr'>
               <td>posErr</td>
@@ -1231,13 +1243,13 @@
             <tr id='rmi'>
               <td>rmi</td>
               <td>float</td>
-              <td></td>
+              <td>mag</td>
               <td>(r' - i') colour.</td>
             </tr>
             <tr id='rmha'>
               <td>rmha</td>
               <td>float</td>
-              <td></td>
+              <td>mag</td>
               <td>(r' - H&alpha;) colour.</td>
             </tr>            
 
@@ -1309,7 +1321,7 @@
             <tr id='rPA'>
               <td>rPA</td>
               <td>float</td>
-              <td></td>
+              <td>degrees</td>
               <td>Position angle in the r-band.</td>
             </tr>
             <tr id='rClass'>
@@ -1326,9 +1338,9 @@
             </tr>
             <tr id='rErrBits'>
               <td>rErrBits</td>
-              <td>integer</td>
+              <td>short</td>
               <td></td>
-              <td>Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).</td>
+              <td>Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8).<!--, vignetting (64), truncation (128) and bad pixels (32768). --></td>
             </td>
             <tr id='rMJD'>
               <td>rMJD</td>
@@ -1346,7 +1358,7 @@
               <td>rDetectionID</td>
               <td>string</td>
               <td></td>
-              <td>Unique identifier of the r-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14).</td>
+              <td>Unique identifier of the r-band detection in the format "#run-#ccd-#number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number.</td>
             </tr>
             <tr id='rX'>
               <td>rX</td>
@@ -1428,7 +1440,7 @@
             <tr id='iPA'>
               <td>iPA</td>
               <td>float</td>
-              <td></td>
+              <td>degrees</td>
               <td>Position angle.</td>
             </tr>
             <tr id='iClass'>
@@ -1445,9 +1457,9 @@
             </tr>
             <tr id='iErrBits'>
               <td>iErrBits</td>
-              <td>integer</td>
+              <td>short</td>
               <td></td>
-              <td>Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).</td>
+              <td>Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8).<!--, vignetting (64), truncation (128) and bad pixels (32768). --></td>
             </td>
             <tr id='iMJD'>
               <td>iMJD</td>
@@ -1465,7 +1477,7 @@
               <td>iDetectionID</td>
               <td>string</td>
               <td></td>
-              <td>Unique identifier of the single-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14).</td>
+              <td>Unique identifier of the r-band detection in the format "#run-#ccd-#number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number.</td>
             </tr>
             <tr id='iX'>
               <td>iX</td>
@@ -1558,7 +1570,7 @@
             <tr id='haPA'>
               <td>haPA</td>
               <td>float</td>
-              <td></td>
+              <td>degrees</td>
               <td>Position angle.</td>
             </tr>
             <tr id='haClass'>
@@ -1575,9 +1587,9 @@
             </tr>
             <tr id='haErrBits'>
               <td>haErrBits</td>
-              <td>integer</td>
+              <td>short</td>
               <td></td>
-              <td>Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).</td>
+              <td>Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8).<!--, vignetting (64), truncation (128) and bad pixels (32768). --></td>
             </td>
             <tr id='haMJD'>
               <td>haMJD</td>
@@ -1595,7 +1607,7 @@
               <td>haDetectionID</td>
               <td>string</td>
               <td></td>
-              <td>Unique identifier of the single-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14).</td>
+              <td>Unique identifier of the r-band detection in the format "#run-#ccd-#number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number.</td>
             </tr>
             <tr id='haX'>
               <td>haX</td>
@@ -1631,24 +1643,24 @@
               <td>brightNeighb</td>
               <td>boolean</td>
               <td></td>
-              <td>True if a very bright star is nearby. This indicates that the source might be spurious, or the photometry unreliable.</td>
+              <td>True if a very bright star is nearby (i.e. <a href='#errBits'>errBits</a> &ge; 1). This indicates that the source might be spurious, or the photometry unreliable.</td>
             </tr>
             <tr id='deblend'>
               <td>deblend</td>
               <td>boolean</td>
               <td></td>
-              <td>True if the source was blended with a nearby neighbour due to crowding. Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (e.g. colours should not be trusted).</td>
+              <td>True if the source was blended with a nearby neighbour due to crowding (i.e. <a href='#errBits'>errBits</a> &ge; 2). Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (e.g. colours should not be trusted).</td>
             </tr>
             <tr id='saturated'>
               <td>saturated</td>
               <td>boolean</td>
               <td></td>
-              <td>True if the source is saturated (i.e. peak pixel > 55000 counts) in one or more bands. The photometry of saturated stars is affected by systematic errors.</td>
+              <td>True if the source is saturated (i.e. peak pixel > 55000 counts) in one or more bands (i.e. <a href='#errBits'>errBits</a> &ge; 8). The photometry of saturated stars is affected by systematic errors.</td>
             </tr>
 
             <tr id='errBits'>
               <td>errBits</td>
-              <td>long</td>
+              <td>short</td>
               <td></td>
               <td>Maximum value of (<a href='#rErrBits'>rErrBits</a>, <a href='#iErrBits'>iErrBits</a>, <a href='#haErrBits'>haErrBits</a>).</td>
             </tr>
@@ -1752,7 +1764,7 @@
               <td>errBits2</td>
               <td>integer</td>
               <td></td>
-              <td>Bitmask used to flag problems in the partner detection. See <a href='#errBits'>errBits</a>.</td>
+              <td>Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).</td>
             </tr>
           </tbody>
         </table>
@@ -1764,7 +1776,7 @@
           <h2>Source code</h2>
         </div>
 
-        <p>The Python package that was used to generate the Primary Source Catalogue is hosted on the GitHub source code repository at:</p>
+        <p>The source catalogue was generated from the single-band data using a Python module called "iphas-dr2", which is hosted on the GitHub source code repository:</p>
 
         <p>
         <a href='https://www.github.com/barentsen/iphas-dr2'>https://www.github.com/barentsen/iphas-dr2</a>

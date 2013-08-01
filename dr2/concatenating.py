@@ -152,6 +152,10 @@ class Concatenator(object):
                                             )"; \
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
+                             replacecol errBits "toShort(errBits)";
+                             replacecol rErrBits "toShort(rErrBits)";
+                             replacecol iErrBits "toShort(iErrBits)";
+                             replacecol haErrBits "toShort(haErrBits)";
                              {0}
                              '""".format(extracmd),
                  'out': output_filename}

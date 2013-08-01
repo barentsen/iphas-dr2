@@ -30,10 +30,10 @@ replacecol posErr -desc "Astrometric fit error (RMS). Be aware that the error mi
 addskycoords -inunit deg -outunit deg icrs galactic ra dec l b;
 
 # Position offsets
-addcol -desc "Position offset of the i-band detection in RA" -units "arcsec" iXi "toFloat(3600.0*(iRA-ra))"
-addcol -desc "Position offset of the i-band detection in DEC" -units "arcsec" iEta "toFloat(3600.0*(iDec-dec))"
-addcol -desc "Position offset of the Ha-band detection in RA" -units "arcsec" haXi "toFloat(3600.0*(haRA-ra))"
-addcol -desc "Position offset of the Ha-band detection in DEC" -units "arcsec" haEta "toFloat(3600.0*(haDec-dec))"
+addcol -desc "Position offset of the i-band detection in RA" -units "Arcsec" iXi "toFloat(3600.0*(iRA-ra))"
+addcol -desc "Position offset of the i-band detection in DEC" -units "Arcsec" iEta "toFloat(3600.0*(iDec-dec))"
+addcol -desc "Position offset of the Ha-band detection in RA" -units "Arcsec" haXi "toFloat(3600.0*(haRA-ra))"
+addcol -desc "Position offset of the Ha-band detection in DEC" -units "Arcsec" haEta "toFloat(3600.0*(haDec-dec))"
 
 # Rename r-band columns
 colmeta -name r -desc "Default r-band magnitude using a 2.3 arcsec aperture diameter. Calibrated in the Vega system." aperMag2_1
@@ -202,8 +202,8 @@ replacecol ccd "NULL_ccd?ccd_2:ccd"
 replacecol ccd -desc "CCD-chip number on the INT Wide Field Camera of the detection." "NULL_ccd?ccd_3:ccd"
 
 # Colours
-addcol -desc "(r' - i') colour" rmi "r - i"
-addcol -desc "(r' - Ha) colour" rmha "r - ha"
+addcol -desc "(r' - i') colour" -units "Magnitude" rmi "r - i"
+addcol -desc "(r' - Ha) colour" -units "Magnitude" rmha "r - ha"
 
 # Distance from optical axis
 addcol rAxisDist "sqrt(pow(rPlaneX,2)+pow(rPlaneY,2))"
