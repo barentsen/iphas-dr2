@@ -152,7 +152,7 @@ class Concatenator(object):
 
         cmd = '{stilts} tcat {in} icmd={icmd} countrows=true lazy=true out={out}'
         mycmd = cmd.format(**param)
-        log.debug(mycmd)
+        log.info(mycmd)
         status = os.system(mycmd)
         log.info('concat: '+str(status))
 
