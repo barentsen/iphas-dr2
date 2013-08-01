@@ -9,7 +9,7 @@
 # sourceID (use the first non-NULL value of detectionID_1/2/3)
 addcol sourceID "detectionID_1"
 replacecol sourceID "NULL_sourceID?detectionID_2:sourceID"
-replacecol sourceID -desc "Unique identification number of the source. Identical to rDetectionID if the source was detected in the r-band; identical to iDetectionID or haDetectionID otherwise." "NULL_sourceID?detectionID_3:sourceID"
+replacecol sourceID -desc "Unique identification of the band-merged detection. Identical to rDetectionID if the source was detected in the r-band; identical to iDetectionID or haDetectionID otherwise." "NULL_sourceID?detectionID_3:sourceID"
 
 # Rename RA/Dec
 colmeta -name ra ra_1
@@ -58,7 +58,7 @@ colmeta -name rBadPix badPix_1
 colmeta -name rErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_1
 colmeta -name rMJD -desc "Modified Julian Date at the start of the r-band exposure." mjd_1
 colmeta -name rSeeing -desc "Average FWHM in the r-band exposure." seeing_1
-colmeta -name rDetectionID -desc "Unique identifier of the r-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_1
+colmeta -name rDetectionID -desc "Unique identifier of the r-band detection. Composed of the INT telescope run number, CCD number and a sequential source detection number, separated by dashes." detectionID_1
 colmeta -name rX -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." x_1
 colmeta -name rY -desc "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD." y_1
 colmeta -name rPlaneX planeX_1
@@ -87,7 +87,7 @@ colmeta -name iBadPix badPix_2
 colmeta -name iErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_2
 colmeta -name iMJD -desc "Modified Julian Date at the start of the i-band exposure." mjd_2
 colmeta -name iSeeing -desc "Average FWHM in the i-band exposure." seeing_2
-colmeta -name iDetectionID -desc "Unique identifier of the i-band detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_2
+colmeta -name iDetectionID -desc "Unique identifier of the i-band detection. Composed of the INT telescope run number, CCD number and a sequential source detection number, separated by dashes." detectionID_2
 colmeta -name iX -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." x_2
 colmeta -name iY -desc "Pixel coordinate of the source in the i-band exposure, in the coordinate system of the CCD." y_2
 colmeta -name iPlaneX planeX_2
@@ -116,7 +116,7 @@ colmeta -name haBadPix badPix_3
 colmeta -name haErrBits -desc "Bitmask used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits_3
 colmeta -name haMJD -desc "Modified Julian Date at the start of the H-alpha exposure." mjd_3
 colmeta -name haSeeing -desc "Average FWHM in the H-alpha exposure."  seeing_3
-colmeta -name haDetectionID -desc "Unique identifier of the H-alpha detection. Composed of the INT telescope run number (digits 1-7), CCD number (digit 8) and a sequential source detection number (digits 9-14)." detectionID_3
+colmeta -name haDetectionID -desc "Unique identifier of the H-alpha detection. Composed of the INT telescope run number, CCD number and a sequential source detection number, separated by dashes." detectionID_3
 colmeta -name haX -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." x_3
 colmeta -name haY -desc "Pixel coordinate of the source in the H-alpha exposure, in the coordinate system of the CCD." y_3
 colmeta -name haPlaneX planeX_3

@@ -140,6 +140,8 @@ class Concatenator(object):
                                       & l < """+str(self.lon2)+""" \
                                       & """+str(cond_latitude)+""" \
                                       & sourceID == primaryID"; \
+                             addcol -before ra -desc "Source designation, JHHMMSS.ss+DDMMSS.s" \
+                                    name "concat("J", replaceAll(degreesToHms(ra, 2), ":", ""), replaceAll(degreesToDms(dec, 1), ":", ""))" \
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              {0}
