@@ -561,16 +561,22 @@ def apply_calibration(clusterview):
 
 
 def median_rmha_one(path):
+    """Returns the median of a single band-merged catalogue."""
     mydata = fits.getdata(path, 1)
     mask_reliable = mydata['reliable']
     fieldid = path.split('.')[-2]
     median = np.median(mydata['rmha'][mask_reliable])
     return (fieldid, median)
 
-def median_rmha(directory=PATH_UNCALIBRATED,
+def median_rmha(clusterview,
+                directory=PATH_UNCALIBRATED,
                 output_filename = os.path.join(constants.DESTINATION,
                                               'calibration',
                                               'median-rmha.csv')):
+    """Computes the median r-Ha colour in all fields.
+
+    This will be used as an input to evaluate the H-alpha calibration.
+    """
     log.info('Starting to compute median(r-ha) values.')
     paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
