@@ -18,6 +18,7 @@ from scipy.sparse import linalg
 from astropy.io import ascii
 from astropy.io import fits
 from astropy import log
+import util
 import constants
 from constants import IPHASQC
 from constants import IPHASQC_COND_RELEASE
@@ -353,10 +354,7 @@ def plot_evaluation(cal,
 
 def calibrate():
     # Make sure the output directory exists
-    target = os.path.join(constants.DESTINATION, 'calibration')
-    if not os.path.exists(target):
-        os.makedirs(target)
-
+    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration')
     for band in ['r', 'i', 'ha']:
         calibrate_band(band)
 
@@ -468,11 +466,7 @@ class CalibrationApplicator(object):
     def __init__(self):
         self.datadir = PATH_UNCALIBRATED
         self.outdir = PATH_CALIBRATED
-        try:
-            if not os.path.exists(self.outdir):
-                os.makedirs(self.outdir)
-        except OSError:  # "File already exist" can occur due to parallel running
-            pass
+        util.setup_dir(self.outdir)
 
         # Read in the calibration
         self.calib = {}
@@ -578,6 +572,7 @@ def median_rmha(clusterview,
     This will be used as an input to evaluate the H-alpha calibration.
     """
     log.info('Starting to compute median(r-ha) values.')
+    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration')
     paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
     results = clusterview.imap(median_rmha_one, paths[0:10])

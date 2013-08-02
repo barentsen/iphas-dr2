@@ -100,3 +100,18 @@ def get_pid():
     pid = '{0}/{1}'.format(socket.gethostname(),
                            os.getpid())
     return pid
+
+
+def setup_dir(path):
+    """Setup an output directory, i.e. make sure it exists.
+
+    Parameters
+    ----------
+    path : string
+        Directory to create if it does not already exist.
+    """
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+    except OSError:  # "File already exist" can occur due to parallel running
+        pass
