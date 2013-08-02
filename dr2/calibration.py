@@ -41,10 +41,31 @@ EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
                  '4583_jul2009', '4583o_jul2009',
                  '4525_jul2004a', '4525o_jul2004a',
                  '4598_jul2004a', '4598o_jul2004a',
-                 '4087_jun2004',
+                 '4087_jun2004', '4087o_jun2004',
+                 '4093_jun2004', '4093o_jun2004',
+                 '4084_jun2007', '4084o_jun2007',
+                 '4106_jun2007', '4106o_jun2007',
+                 '4085_jul2009', '4085o_jul2009',
+                 '4140_jun2004', '4140o_jun2004',
+                 '4128_jun2004', '4128o_jun2004',
+                 '4102_jun2004', '4102o_jun2004',
+                 '4139_jun2004', '4139o_jun2004',
+                 '4118_jun2004', '4118o_jun2004',
+                 '4088_jun2004', '4088o_jun2004',
+                 '4089_jun2004', '4089o_jun2004',
+                 '4091_jun2004', '4091o_jun2004',
+                 '4092_jun2004', '4092o_jun2004',
+                 '4103_jun2007', '4103o_jun2007',
+                 '4114_jun2004', '4114o_jun2004',
+                 '4088_jun2004', '4088o_jun2004',
                  '4099_jun2004', '4099o_jun2004',
                  '4110_jun2004', '4110o_jun2004',
-                 '4096_jun2004', '4096o_jun2004']
+                 '4096_jun2004', '4096o_jun2004',
+                 '4127_jun2004', '4127o_jun2004',
+                 '6094_oct2003', '6094o_oct2003']
+# Lower left corner
+EXTRA_ANCHORS.append('4480_jul2004a')
+EXTRA_ANCHORS.append('4480o_jul2004a')
 
 
 class Calibration(object):
@@ -94,7 +115,7 @@ class Calibration(object):
         statsfile = os.path.join(constants.DESTINATION, 'calibration', 'stats.txt')
         with open(statsfile, 'w') as out:
             # Against APASS
-            mask_use = (self.apass_matches > 10)
+            mask_use = (self.apass_matches > 30)
             l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
             b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
             delta = self.apass_shifts[mask_use] - self.shifts[mask_use]
@@ -109,7 +130,7 @@ class Calibration(object):
             log.info(stats)
 
             # Against SDSS
-            mask_use = (self.sdss_matches > 10)
+            mask_use = (self.sdss_matches > 30)
             l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
             b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
             delta = self.sdss_shifts[mask_use] - self.shifts[mask_use]
@@ -151,12 +172,12 @@ class Calibration(object):
         return fig
 
     def write(self, filename):
-        """Write shifts to disk.
+        """Writes calibration shifts to a CSV file on disk.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         filename : string
-            Filename of the CSV file to write the calibration shifts to.
+            Filename of the CSV file to write the calibration shifts.
         """
         log.info('Writing results to {0}'.format(filename))
         f = open(filename, 'w')
@@ -198,7 +219,7 @@ def select_anchors():
     """Returns a boolean array indicating anchor status."""
     # 'anchors' is a boolean array indicating anchor status
     tolerance = 0.03  # Default = 0.03
-    min_matches = 20  # Default = 20
+    min_matches = 30  # Default = 20
     anchors = []
     APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
                  & (IPHASQC.field('imatch_apassdr7') >= min_matches)
@@ -224,12 +245,13 @@ def select_anchors():
 
     # Allow extra anchors to be added
     EXTRA = np.array([myfield in EXTRA_ANCHORS for myfield in IPHASQC.field('id')])
+    log.info('Adding {0} extra anchors'.format(EXTRA.sum()))
 
     anchors = ( 
                 ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
                 | APASS_OK
                 | EXTRA
-              )
+              ) | (IPHASQC.field('anchor') == 1)
     return anchors[IPHASQC_COND_RELEASE]
 
 def select_anchors_halpha(runs):
@@ -297,7 +319,7 @@ def calibrate_band(band='r'):
 
         # Correct outliers
         tolerance = 0.03  # Default = 0.03
-        min_matches = 20  # Default = 20
+        min_matches = 30  # Default = 20
         log.info('Correcting obvious outliers based on APASS')
         myshifts = np.zeros(len(cal.runs))
         c_outlier = ((cal.apass_matches > min_matches)
@@ -318,7 +340,7 @@ def calibrate_band(band='r'):
         
         # Add extra anchors
         delta = np.abs(cal.apass_shifts-cal.shifts)
-        cond_extra_anchors = (cal.apass_matches > 20) & ~np.isnan(delta) & (delta > 0.05)
+        cond_extra_anchors = (cal.apass_matches > 30) & ~np.isnan(delta) & (delta > 0.03)
         log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
         idx_extra_anchors = np.where(cond_extra_anchors)
         anchors = select_anchors()
@@ -379,13 +401,13 @@ class Glazebrook(object):
         self.anchors = anchors
         self.nonanchors = ~anchors
         self.n_nonanchors = self.nonanchors.sum()
-        log.info('There are {0} runs ({1} are anchors)'.format(len(runs),
+        log.info('Glazebrook: there are {0} runs ({1} are anchors)'.format(len(runs),
                                                                anchors.sum()))
 
     def _A(self):
         """Returns the matrix called "A" in [Glazebrook 1994, Section 3.3]
         """
-        log.info('Creating a sparse {0}x{0} matrix (might take a while)'.format(self.n_nonanchors))
+        log.info('Glazebrook: creating a sparse {0}x{0} matrix (might take a while)'.format(self.n_nonanchors))
         A = sparse.lil_matrix((self.n_nonanchors,
                                self.n_nonanchors))
 
@@ -419,13 +441,13 @@ class Glazebrook(object):
         """
         self.A = self._A()
         self.b = self._b()
-        log.info('Now solving the matrix equation')
+        log.info('Glazebrook: now solving the matrix equation')
         # Note: there may be alternative algorithms
         # which are faster for symmetric matrices.
         self.solution = linalg.lsqr(self.A, self.b,
                                     atol=1e-8, iter_lim=2e5, show=False)
-        log.info('Solution found')
-        log.info('mean shift = {0} +/- {1}'.format(
+        log.info('Glazebrook: solution found')
+        log.info('Glazebrook: mean shift = {0} +/- {1}'.format(
                                             np.mean(self.solution[0]),
                                             np.std(self.solution[0])))
         return self.solution
@@ -434,18 +456,6 @@ class Glazebrook(object):
         shifts = np.zeros(len(self.runs))
         shifts[self.nonanchors] = self.solution[0]
         return shifts
-
-    def write(self, filename):
-        """Write shifts to disk.
-        """
-        log.info('Writing results to {0}'.format(filename))
-        f = open(filename, 'w')
-        f.write('run,shift\n')
-        for i, myrun in enumerate(self.runs[self.nonanchors]):
-            f.write('{0},{1}\n'.format(myrun, self.solution[0][i]))
-        for myrun in self.runs[self.anchors]:
-            f.write('{0},{1}\n'.format(myrun, 0.0))
-        f.close()
 
 
 class CalibrationApplicator(object):
