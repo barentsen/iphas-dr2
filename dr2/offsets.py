@@ -31,9 +31,10 @@ from multiprocessing import Pool
 import numpy as np
 from astropy import log
 from astropy.io import fits
-import util
+
 import constants
 from constants import IPHASQC
+import util
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -213,7 +214,9 @@ def offsets_one(run):
             return [None]
 
 
-def compute_offsets_band(clusterview, band):
+def compute_offsets_band(clusterview, band, 
+                         destination=os.path.join(constants.DESTINATION,
+                                                  'calibration')):
     """Computes magnitude offsets between all overlapping runs in a given band.
 
     The output is a file called offsets-{band}.csv which contains the columns
@@ -230,14 +233,16 @@ def compute_offsets_band(clusterview, band):
 
     band : string
         One of 'r', 'i', 'ha'.
+
+    destination : string
+        Directory where the output csv file will be written.
     """
     assert(band in constants.BANDS)
     log.info('Starting to compute offsets for band {0}'.format(band))
 
     # Write the results
-    filename = os.path.join(constants.DESTINATION,
-                            'calibration',
-                            'offsets-{0}.csv'.format(band))
+    util.setup_dir(destination)
+    filename = os.path.join(destination, 'offsets-{0}.csv'.format(band))
     out = open(filename, 'w')
     out.write('run1,run2,offset,std,n\n')
 
@@ -268,7 +273,7 @@ def compute_offsets(clusterview):
     ----------
     clusterview : cluster view derived used e.g. IPython.parallel.Client()[:]
         Work will be spread across the nodes in this cluster view.
-    """
+    """   
     for band in constants.BANDS:
-        compute_offsets_band(clusterview, band)
+        compute_offsets_band(clusterview, band, destination)
 

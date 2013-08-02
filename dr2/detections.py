@@ -30,7 +30,9 @@ import numpy as np
 import os
 import sys
 import datetime
+
 import constants
+import util
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -1063,8 +1065,7 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
     """
     # Make sure the output directory exists
     target = os.path.join(constants.DESTINATION, 'detected')
-    if not os.path.exists(target):
-        os.makedirs(target)
+    util.setup_dir(target)
     # Create a list of all pipeline catalogues?
     catalogues = list_catalogues(data)
     # Run the conversion for each catalogue

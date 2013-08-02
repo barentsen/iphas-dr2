@@ -18,10 +18,11 @@ from scipy.sparse import linalg
 from astropy.io import ascii
 from astropy.io import fits
 from astropy import log
-import util
+
 import constants
 from constants import IPHASQC
 from constants import IPHASQC_COND_RELEASE
+import util
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -59,10 +60,12 @@ class Calibration(object):
         self.runs = IPHASQC['run_'+band][IPHASQC_COND_RELEASE]
         self.shifts = np.zeros(len(self.runs))  # Shifts to be *ADDED*
 
-        # APASS comparison data
+        # Load broad-band comparison data
         if band in ['r', 'i']:
             self.apass_shifts = IPHASQC[band+'shift_apassdr7'][IPHASQC_COND_RELEASE]
             self.apass_matches = IPHASQC[band+'match_apassdr7'][IPHASQC_COND_RELEASE]
+            self.sdss_shifts = IPHASQC[band+'shift_sdss'][IPHASQC_COND_RELEASE]
+            self.sdss_matches = IPHASQC[band+'match_sdss'][IPHASQC_COND_RELEASE]
         else:
             self.apass_shifts = np.zeros(len(self.runs))
             self.apass_matches = np.zeros(len(self.runs))
@@ -75,6 +78,7 @@ class Calibration(object):
 
     def _load_offsetdata(self):
         filename_offsets = os.path.join(constants.DESTINATION,
+                                        'calibration',
                                         'offsets-{0}.csv'.format(self.band))
         log.info('Reading {0}'.format(filename_offsets))
         self.offsetdata = ascii.read(filename_offsets)
@@ -86,18 +90,73 @@ class Calibration(object):
         """Shifts to be *ADDED* to the magnitudes of a run."""
         return self.shifts[self.runs == run][0]
 
-    def evaluate(self):
-        """Against APASS."""
-        c_use = (self.apass_matches > 20)
-        delta = self.apass_shifts[c_use] - self.shifts[c_use]
-        stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
-                                                          np.std(delta))
-        stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
-                                                        np.max(delta))
-        log.info(stats)
+    def evaluate(self, name, title):
+        statsfile = os.path.join(constants.DESTINATION, 'calibration', 'stats.txt')
+        with open(statsfile, 'w') as out:
+            # Against APASS
+            mask_use = (self.apass_matches > 10)
+            l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
+            b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
+            delta = self.apass_shifts[mask_use] - self.shifts[mask_use]
+            self._spatial_plot(l, b, delta, 'apass-'+name, 'APASS: '+title)
+
+            stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
+                                                       np.std(delta))
+            stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
+                                                      np.max(delta))
+
+            out.write(stats)
+            log.info(stats)
+
+            # Against SDSS
+            mask_use = (self.sdss_matches > 10)
+            l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
+            b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
+            delta = self.sdss_shifts[mask_use] - self.shifts[mask_use]
+            self._spatial_plot(l, b, delta, 'sdss-'+name, 'SDSS '+title)
+
+            # Plot the absolute calibration shifts
+            l = IPHASQC['l'][IPHASQC_COND_RELEASE]
+            b = IPHASQC['b'][IPHASQC_COND_RELEASE]
+            self._spatial_plot(l, b, self.shifts, 
+                               'calib-'+name, 'Calibration '+title)
+
+
+    def _spatial_plot(self, l, b, shifts, name, title=''):
+        """Creates a spatial plot of l/b against shifts."""
+        import matplotlib
+        matplotlib.use('Agg')  # Cluster does not have an X backend
+        from matplotlib import pyplot as plt
+
+        fig = plt.figure(figsize=(12,6))
+        fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)
+        p = fig.add_subplot(111)
+        p.set_title(title)
+        scat = p.scatter(l, b, c=shifts, vmin=-0.13, vmax=+0.13,
+                         edgecolors='none',
+                         s=8, marker='h')
+        plt.colorbar(scat)
+        p.set_xlim([28, 217])
+        p.set_ylim([-5.2, +5.2])
+        p.set_xlabel('l')
+        p.set_ylabel('b')
+
+        path = os.path.join(constants.DESTINATION,
+                            'calibration',
+                            self.band+'-'+name+'.png')
+        fig.savefig(path, dpi=200)
+        log.info('Wrote {0}'.format(path))
+
+        plt.close()
+        return fig
 
     def write(self, filename):
         """Write shifts to disk.
+
+        Arguments
+        ---------
+        filename : string
+            Filename of the CSV file to write the calibration shifts to.
         """
         log.info('Writing results to {0}'.format(filename))
         f = open(filename, 'w')
@@ -201,23 +260,16 @@ def select_anchors_halpha(runs):
 def calibrate_band(band='r'):
     """Calibrate a single band.
 
-    band -- one of 'r', 'i', 'ha'
+    Parameters
+    ----------
+    band : one of 'r', 'i', 'ha'
+
+    Returns
+    -------
+    cal : Calibration class
+        object entailing the shifts to be added (cal.shifts)
     """
     log.info('Starting to calibrate the {0} band'.format(band))
-
-    """
-    cal = Calibration(band)
-    cal.evaluate()
-
-    # Minimize overlap offsets
-    anchors = select_anchors()
-    overlaps = cal.get_overlaps()
-    solver = Glazebrook(cal.runs, overlaps, anchors)    
-    solver.solve()
-    cal.add_shifts( solver.get_shifts() )
-    cal.evaluate()
-    plot_evaluation(cal, '/home/gb/tmp/cal-A.png', 'Strategy A')   
-    """
 
     # H-alpha is a special case because the APASS-based selection of anchors
     # is not possible
@@ -240,8 +292,8 @@ def calibrate_band(band='r'):
     else:
     
         cal = Calibration(band)
-        plot_evaluation(cal, '{0}-step0.png'.format(band), 
-                       '{0} - IPHAS-APASS uncalibrated'.format(band))
+        cal.evaluate('step0', 
+                     '{0} - uncalibrated'.format(band))
 
         # Correct outliers
         tolerance = 0.03  # Default = 0.03
@@ -252,9 +304,8 @@ def calibrate_band(band='r'):
                      & (np.abs(cal.apass_shifts) > tolerance))
         myshifts[c_outlier] = cal.apass_shifts[c_outlier]
         cal.add_shifts(myshifts)
-        cal.evaluate()
-        plot_evaluation(cal, '{0}-step1.png'.format(band),
-                        '{0} - Step 1: set initial conditions'.format(band))
+        cal.evaluate('step1',
+                     '{0} - step 1: set initial conditions'.format(band))
 
         # Glazebrook: first pass (minimizes overlap offsets)
         anchors = select_anchors()
@@ -262,9 +313,8 @@ def calibrate_band(band='r'):
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
-        cal.evaluate()
-        plot_evaluation(cal, '{0}-step2.png'.format(band),
-                       '{0} - Step 2: Glazebrook pass 1'.format(band))    
+        cal.evaluate('step2',
+                     '{0} - step 2: Glazebrook pass 1'.format(band))    
         
         # Add extra anchors
         delta = np.abs(cal.apass_shifts-cal.shifts)
@@ -274,83 +324,25 @@ def calibrate_band(band='r'):
         anchors = select_anchors()
         anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
-        plot_evaluation(cal, '{0}-step3.png'.format(band),
-                       '{0} - Step 3: added {1} extra anchors'.format(band, cond_extra_anchors.sum()))
+        cal.evaluate('step3',
+                     '{0} - step 3: added {1} extra anchors'.format(
+                                       band, cond_extra_anchors.sum()))
 
         overlaps = cal.get_overlaps()
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
-        cal.evaluate()
-        plot_evaluation(cal, '{0}-step4.png'.format(band),
-                        '{0} - Step 4 - Glazebrook pass 2'.format(band))     
+        cal.evaluate('step4',
+                     '{0} - step 4 - Glazebrook pass 2'.format(band))
         
 
-    filename = os.path.join(constants.DESTINATION, 
+    filename = os.path.join(constants.DESTINATION,
                             'calibration',
                             'calibration-{0}.csv'.format(band))
     cal.write(filename)
 
     return cal
 
-
-def calibrate_test(band='r'):
-    """Calibrate a single band.
-
-    band -- one of 'r', 'i', 'ha'
-    """
-    log.info('Starting to calibrate the {0} band'.format(band))
-
-    if band == 'ha':
-        return Exception()
-
-    else:
-    
-        cal = Calibration(band)
-
-        # Minimize overlap offsets
-        anchors = select_anchors()
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, anchors)    
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate()
-        plot_evaluation(cal, '{0}-noinit.png'.format(band),
-                       '{0} - Glazebrook without initial conditions changed'.format(band))    
-    
-    return cal
-
-
-def plot_evaluation(cal,
-                    filename, 
-                    title='IPHAS-APASS after calibration'):
-    c_use = (cal.apass_matches > 20)
-    delta = cal.apass_shifts[c_use] - cal.shifts[c_use]
-    l = IPHASQC['l'][IPHASQC_COND_RELEASE][c_use]
-    b = IPHASQC['b'][IPHASQC_COND_RELEASE][c_use]
-
-    import matplotlib
-    matplotlib.use('Agg')  # Cluster does not have an X backend
-    from matplotlib import pyplot as plt
-    fig = plt.figure(figsize=(12,6))
-    fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)
-    p = fig.add_subplot(111)
-    p.set_title(title)
-    scat = p.scatter(l, b, c=delta, vmin=-0.13, vmax=+0.13,
-                     edgecolors='none',
-                     s=8, marker='h')
-    plt.colorbar(scat)
-    p.set_xlim([28, 217])
-    p.set_ylim([-5.2, +5.2])
-    p.set_xlabel('l')
-    p.set_ylabel('b')
-
-    path = os.path.join(constants.DESTINATION, 'calibration', filename)
-    fig.savefig(path, dpi=200)
-    log.info('Wrote {0}'.format(path))
-
-    plt.close()
-    return fig
 
 def calibrate():
     # Make sure the output directory exists
@@ -559,7 +551,7 @@ def median_colours_one(path):
     """Returns the median of a single band-merged catalogue."""
     mydata = fits.getdata(path, 1)
     mask_reliable = mydata['reliable']
-    fieldid = path.split('.')[-2]
+    fieldid = path.split('/')[-1].split('.')[-2]
     median_rmi = np.median(mydata['rmi'][mask_reliable])
     median_rmha = np.median(mydata['rmha'][mask_reliable])
     return (fieldid, median_rmi, median_rmha)
@@ -570,7 +562,7 @@ def compute_median_colours(clusterview,
                            output_filename = os.path.join(
                                                    constants.DESTINATION,
                                                   'calibration',
-                                                  'median-rmha.csv')):
+                                                  'median-colours.csv')):
     """Computes the median r-Ha colour in all fields.
 
     This will be used as an input to evaluate the H-alpha calibration.

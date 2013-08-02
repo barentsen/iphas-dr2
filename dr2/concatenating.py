@@ -15,8 +15,10 @@ import numpy as np
 import datetime
 from multiprocessing import Pool
 from astropy import log
+
 import constants
 from constants import IPHASQC
+import util
 
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
@@ -44,17 +46,12 @@ class Concatenator(object):
         self.destination = os.path.join(constants.DESTINATION,
                                         'concatenated')
         
+        # Setup the destination directory
         if mode == 'light':
             self.destination = os.path.join(self.destination, 'light')
         else:
             self.destination = os.path.join(self.destination, 'full')
-
-        # Make sure our destination exists
-        try:
-            if not os.path.exists(self.destination):
-                os.makedirs(self.destination)
-        except Exception:
-            pass
+        util.setup_dir(self.destination)
 
         log.info('Reading data from {0}'.format(self.datapath))
 

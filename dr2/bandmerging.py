@@ -15,6 +15,7 @@ import numpy as np
 from astropy import log
 from multiprocessing import Pool
 import constants
+import util
 from constants import IPHASQC
 import socket
 
@@ -134,9 +135,7 @@ def bandmerge_one(fieldid):
 
 def bandmerge(clusterview):
     """Band-merge all fields."""
-     # Make sure the output directory exists
-    if not os.path.exists(MYDESTINATION):
-        os.makedirs(MYDESTINATION)
+    util.setup_dir(MYDESTINATION)
 
     # Spread the work across the cluster
     field_ids = IPHASQC.field('id')
