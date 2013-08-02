@@ -573,8 +573,8 @@ def median_rmha(clusterview,
     This will be used as an input to evaluate the H-alpha calibration.
     """
     log.info('Starting to compute median(r-ha) values.')
-    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration')
-    paths = [os.path.join(directory, filename) \
+    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
+    paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
     results = clusterview.imap(median_rmha_one, paths[0:10])
     # Write the results to a csv file
