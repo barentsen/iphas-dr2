@@ -560,6 +560,29 @@ def apply_calibration(clusterview):
     log.info('Application of calibration finished')
 
 
+def median_rmha_one(path):
+    mydata = fits.getdata(path, 1)
+    mask_reliable = mydata['reliable']
+    fieldid = path.split('.')[-2]
+    median = np.median(mydata['rmha'][mask_reliable])
+    return (fieldid, median)
+
+def median_rmha(directory=PATH_UNCALIBRATED,
+                output_filename = os.path.join(constants.DESTINATION,
+                                              'calibration',
+                                              'median-rmha.csv')):
+    log.info('Starting to compute median(r-ha) values.')
+    paths = [os.path.join(directory, filename) 
+             for filename in os.listdir(directory)]
+    results = clusterview.imap(median_rmha_one, paths[0:10])
+    # Write the results to a csv file
+    with open(output_filename, 'w') as out:
+        out.write('field,median_rmha\n')
+        for (myfield, mymedian) in results:
+            out.write('{0},{1}\n'.format(myfield, mymedian))
+    log.info('Computing median(r-ha) values finished.')    
+
+
 ###################
 # MAIN EXECUTION
 ###################
