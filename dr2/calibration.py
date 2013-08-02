@@ -354,7 +354,8 @@ def plot_evaluation(cal,
 
 def calibrate():
     # Make sure the output directory exists
-    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration')
+    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
+    
     for band in ['r', 'i', 'ha']:
         calibrate_band(band)
 
