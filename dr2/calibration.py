@@ -581,11 +581,11 @@ def compute_median_colours(clusterview,
     util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
     paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
-    results = clusterview.imap(median_colours_one, paths[0:10])
+    results = clusterview.imap(median_colours_one, paths)
 
     # Write the results to a csv file
     with open(output_filename, 'w') as out:
-        out.write('field,median_rmha\n')
+        out.write('field,median_rmi,median_rmha\n')
         for (field, median_rmi, median_rmha) in results:
             out.write('{0},{1},{2}\n'.format(field,
                                              median_rmi,
