@@ -43,7 +43,7 @@ EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
                  '4099_jun2004', '4099o_jun2004',
                  '4110_jun2004', '4110o_jun2004',
                  '4096_jun2004', '4096o_jun2004']
-                     ]
+
 
 class Calibration(object):
     """Holds the calibration shifts for all fields in the survey."""
