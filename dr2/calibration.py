@@ -555,33 +555,42 @@ def apply_calibration(clusterview):
     log.info('Application of calibration finished')
 
 
-def median_rmha_one(path):
+def median_colours_one(path):
     """Returns the median of a single band-merged catalogue."""
     mydata = fits.getdata(path, 1)
     mask_reliable = mydata['reliable']
     fieldid = path.split('.')[-2]
-    median = np.median(mydata['rmha'][mask_reliable])
-    return (fieldid, median)
+    median_rmi = np.median(mydata['rmi'][mask_reliable])
+    median_rmha = np.median(mydata['rmha'][mask_reliable])
+    return (fieldid, median_rmi, median_rmha)
 
-def median_rmha(clusterview,
-                directory=PATH_UNCALIBRATED,
-                output_filename = os.path.join(constants.DESTINATION,
-                                              'calibration',
-                                              'median-rmha.csv')):
+
+def compute_median_colours(clusterview,
+                           directory=PATH_UNCALIBRATED,
+                           output_filename = os.path.join(
+                                                   constants.DESTINATION,
+                                                  'calibration',
+                                                  'median-rmha.csv')):
     """Computes the median r-Ha colour in all fields.
 
     This will be used as an input to evaluate the H-alpha calibration.
     """
     log.info('Starting to compute median(r-ha) values.')
+
+    # Start the work on the cluster
     util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
     paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
-    results = clusterview.imap(median_rmha_one, paths[0:10])
+    results = clusterview.imap(median_colours_one, paths[0:10])
+
     # Write the results to a csv file
     with open(output_filename, 'w') as out:
         out.write('field,median_rmha\n')
-        for (myfield, mymedian) in results:
-            out.write('{0},{1}\n'.format(myfield, mymedian))
+        for (field, median_rmi, median_rmha) in results:
+            out.write('{0},{1},{2}\n'.format(field,
+                                             median_rmi,
+                                             median_rmha))
+
     log.info('Computing median(r-ha) values finished.')    
 
 
