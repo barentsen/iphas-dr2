@@ -78,7 +78,7 @@ Pipeline starts here
 # Identify duplicate detections where multiple pointings overlap ('seams');
 # this requires up to 4 GB RAM per process,
 # hence we only use only every fourth cluster. node (each having 1 GB).
-cluster_highmem = client[::3]
+cluster_highmem = client[::4]
 seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
 
 # Finally, concatenate the individual pointings into a single catalogue 
