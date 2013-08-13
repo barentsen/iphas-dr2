@@ -485,6 +485,7 @@ def seam(clusterview, lon1=25, lon2=215):
     Warning: cluster nodes must have ~5 GB memory each to avoid swapping at l < 100
     """
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH, dtype='int')
+    np.random.shuffle(strips)
     log.info('Seaming in longitude strips %s' % (strips))
 
     # Spread the work across the cluster
