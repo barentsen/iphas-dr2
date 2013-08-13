@@ -47,6 +47,7 @@ __credits__ = ['Geert Barentsen', 'Hywel Farnhill',
 
 # Where the write output catalogues?
 MYDESTINATION = os.path.join(constants.DESTINATION, 'detected')
+util.setup_dir(MYDESTINATION)
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
 BSC_PATH = os.path.join(constants.PACKAGEDIR, 'lib', 'BrightStarCat-iphas.fits')
@@ -286,6 +287,42 @@ class DetectionCatalogue():
         }
         """
         t = self.hdr('EXPTIME')
+
+        # Anchor runs for which we know the i-band exptime (9.5s) can be trusted
+        # This was added in during the final stages of DR2 calibration.
+        if self.hdr('RUN') in [364687,
+            368903, 368904, 368923, 368925,
+            369998, 370073, 370076, 370084,
+            370095, 371652, 371695, 372557,
+            372684, 372707, 372751, 372771,
+            372880, 373106, 373111, 373698,
+            374904, 376449, 376461, 376463,
+            376481, 376493, 376530, 401548,
+            401566, 402270, 407505, 407580,
+            407586, 407598, 408287, 408296,
+            413548, 413566, 413596, 413783,
+            413804, 414671, 418169, 418190,
+            418196, 418310, 427588, 427820,
+            457662, 460468, 470277, 470592,
+            470822, 470852, 474652, 476050,
+            476131, 478320, 478434, 478609,
+            478645, 478720, 478795, 537478,
+            537544, 537550, 537565, 537623,
+            538318, 538354, 538366, 538406,
+            538595, 538601, 538759, 540932,
+            541185, 541717, 541948, 568871,
+            568892, 568937, 568970, 568982,
+            569666, 569768, 569816, 
+            570005, 570559, 570601, 570754,
+            571311, 571362, 571377, 571704,
+            597412, 597469, 597778, 598536,
+            598710, 598865, 598880, 647562,
+            649761, 686153, 686264, 687199,
+            687757, 702703, 702724, 702769,
+            703360, 703408, 703741]:
+            log.info('EXPTIME {0}s trusted for run {1}'.format(t, self.hdr('RUN')))
+            return t
+
         if t > 5 and t < 15 and abs(t-10) > 0.1:
             return 10.00
         elif t > 25 and t < 35 and abs(t-30) > 0.1:
@@ -1081,4 +1118,6 @@ if __name__ == '__main__':
     log.setLevel('INFO')
     # Test-case
     convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
+    convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
+    
 

@@ -7,9 +7,6 @@ The algorithm finds a set of zeropoint shifts which minimizes the magnitude
 offsets between overlapping exposures (computed using the dr2.offsets module.)
 
 This file also contains a class to apply the calibration to the catalogues.
-
-TODO
-* Calibrate on a CCD-by-CCD basis?
 """
 import numpy as np
 import os
@@ -66,6 +63,9 @@ EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
 # Lower left corner
 EXTRA_ANCHORS.append('4480_jul2004a')
 EXTRA_ANCHORS.append('4480o_jul2004a')
+
+# Make sure the following runs are under no circumstance anchors
+ANCHOR_BLACKLIST = ['0546_oct2003', '0546o_oct2003']
 
 
 class Calibration(object):
@@ -201,15 +201,16 @@ class Calibration(object):
             myrun1 = row['run1']
             myrun2 = row['run2']
             if myrun1 in self.runs and myrun2 in self.runs:
-                # Offset is (run1 - run2), hence correcting for calibration
-                # means adding (shift_run1 - shift_run2)
+                # Offset is computed as (run1 - run2), hence correcting 
+                # for calibration means adding (shift_run1 - shift_run2)
                 myoffset = (row['offset'] 
                             + current_shifts[myrun1]
                             - current_shifts[myrun2])
                 if myrun1 not in overlaps:
-                    overlaps[myrun1] = {'runs': [], 'offsets': []}
+                    overlaps[myrun1] = {'runs': [], 'offsets': [], 'weights': []}
                 overlaps[myrun1]['runs'].append(myrun2)
                 overlaps[myrun1]['offsets'].append(myoffset)
+                overlaps[myrun1]['weights'].append(np.sqrt(row['n']))
 
         return overlaps
 
@@ -228,7 +229,7 @@ def select_anchors():
                  & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
 
     APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | np.isnan(IPHASQC.field('rshift_apassdr7'))
+                    | np.isnan(IPHASQC.field('ishift_apassdr7'))
                     | (IPHASQC.field('rmatch_apassdr7') < min_matches)
                     | (IPHASQC.field('imatch_apassdr7') < min_matches) )
 
@@ -239,7 +240,7 @@ def select_anchors():
                  & (np.abs(IPHASQC.field('rshift_sdss') - IPHASQC.field('ishift_sdss')) <= tolerance) )
 
     SDSS_ISNAN = ( np.isnan(IPHASQC.field('rshift_sdss'))
-                    | np.isnan(IPHASQC.field('rshift_sdss'))
+                    | np.isnan(IPHASQC.field('ishift_sdss'))
                     | (IPHASQC.field('rmatch_sdss') < min_matches)
                     | (IPHASQC.field('imatch_sdss') < min_matches) )
 
@@ -247,11 +248,16 @@ def select_anchors():
     EXTRA = np.array([myfield in EXTRA_ANCHORS for myfield in IPHASQC.field('id')])
     log.info('Adding {0} extra anchors'.format(EXTRA.sum()))
 
-    anchors = ( 
+    NOT_IN_BLACKLIST = np.array([myfield not in ANCHOR_BLACKLIST 
+                          for myfield in IPHASQC.field('id')])
+
+    anchors = ( NOT_IN_BLACKLIST & 
+              ( 
                 ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
                 | APASS_OK
                 | EXTRA
               ) | (IPHASQC.field('anchor') == 1)
+              )
     return anchors[IPHASQC_COND_RELEASE]
 
 def select_anchors_halpha(runs):
@@ -332,7 +338,7 @@ def calibrate_band(band='r'):
         # Glazebrook: first pass (minimizes overlap offsets)
         anchors = select_anchors()
         overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, anchors)    
+        solver = Glazebrook(cal.runs, overlaps, anchors)
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
         cal.evaluate('step2',
@@ -356,6 +362,11 @@ def calibrate_band(band='r'):
         cal.add_shifts( solver.get_shifts() )
         cal.evaluate('step4',
                      '{0} - step 4 - Glazebrook pass 2'.format(band))
+
+        anchor_list_filename = os.path.join(constants.DESTINATION,
+                                           'calibration',
+                                           'anchors-{0}.csv'.format(band))
+        solver.write_anchor_list(anchor_list_filename)
         
 
     filename = os.path.join(constants.DESTINATION,
@@ -414,18 +425,18 @@ class Glazebrook(object):
         nonanchorruns = self.runs[self.nonanchors]
         # Loop over all non-anchors that make up the matrix
         for i, run in enumerate(nonanchorruns):
-            overlapping_runs = self.overlaps[run]['runs']
-            
-            # On the diagonal, the matrix holds the negative number of overlaps
-            A[i, i] = -float(len(overlapping_runs))
+                        
+            # On the diagonal, the matrix holds the negative sum of weights
+            A[i, i] = -float(np.sum(self.overlaps[run]['weights']))
 
-            # Off the diagonal, the matrix holds a 1 where two runs overlap
-            for run2 in overlapping_runs:
+            # Off the diagonal, the matrix holds the weight where two runs overlap
+            for run2, weight in zip(self.overlaps[run]['runs'],
+                                    self.overlaps[run]['weights']):
                 idx_run2 = np.argwhere(run2 == nonanchorruns)
                 if len(idx_run2) > 0:
                     j = idx_run2[0]  # Index of the overlapping run
-                    A[i, j] = 1.
-                    A[j, i] = 1.     # Symmetric matrix
+                    A[i, j] = weight
+                    A[j, i] = weight  # Symmetric matrix
         return A
 
     def _b(self):
@@ -433,7 +444,10 @@ class Glazebrook(object):
         """
         b = np.zeros(self.n_nonanchors)
         for i, run in enumerate(self.runs[self.nonanchors]):
-            b[i] = np.sum(self.overlaps[run]['offsets'])
+            b[i] = np.sum(
+                          np.array(self.overlaps[run]['offsets']) *
+                          np.array(self.overlaps[run]['weights'])
+                          )
         return b
 
     def solve(self):
@@ -456,6 +470,12 @@ class Glazebrook(object):
         shifts = np.zeros(len(self.runs))
         shifts[self.nonanchors] = self.solution[0]
         return shifts
+
+    def write_anchor_list(self, filename):
+        with open(filename, 'w') as out:
+            out.write('run,is_anchor\n')
+            for i in range(len(self.runs)):
+                out.write('{0},{1}\n'.format(self.runs[i], self.anchors[i]))
 
 
 class CalibrationApplicator(object):

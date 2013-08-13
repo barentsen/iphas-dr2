@@ -55,7 +55,7 @@ client[:].execute('reload(concatenating)', block=True)
 Pipeline starts here
 """
 # Create an index of all single-band catalogues
-# detections.create_index(cluster)  # produces 'runs.csv'
+detections.create_index(cluster)  # produces 'runs.csv'
 
 # Enforce zp(Halpha) = zp(r) - 3.14
 #detections.sanitise_zeropoints()  # produces 'zeropoint-overrides.csv'
@@ -67,7 +67,7 @@ detections.convert_catalogues(cluster)  # produces 'detected/nnnnnnn_det.fits'
 bandmerging.bandmerge(cluster)  # produces 'bandmerged/nnnn.fits'
 
 # Compute the magnitude offsets between all runs; necessary for re-calibration
-#offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
+offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
 
 # Find the set of zeropoint shifts which minimize the offsets obtained above
 #calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
