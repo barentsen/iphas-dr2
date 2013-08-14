@@ -248,6 +248,7 @@ def compute_offsets_band(clusterview, band,
 
     # Distribute the work across the cluster
     runs = IPHASQC['run_'+str(band)][constants.IPHASQC_COND_RELEASE]
+    np.random.shuffle(runs)  # Avoid one node getting all the crowded fields
     #runs = IPHASQC['run_'+str(band)]
     results = clusterview.imap(offsets_one, runs)
 
