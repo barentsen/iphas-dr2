@@ -204,7 +204,7 @@ def offsets_one(run):
     """
     with log.log_to_file(os.path.join(constants.LOGDIR, 'offsets.log')):
         try:
-            log.info('{0}: Computing offsets for {1}'.format(util.get_pid(), run)
+            log.info('{0}: Computing offsets for {1}'.format(util.get_pid(), run))
             om = OffsetMachine(run)
             return om.relative_offsets()
         except Exception, e:
