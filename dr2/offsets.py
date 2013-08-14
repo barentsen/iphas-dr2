@@ -275,5 +275,5 @@ def compute_offsets(clusterview):
         Work will be spread across the nodes in this cluster view.
     """   
     for band in constants.BANDS:
-        compute_offsets_band(clusterview, band, destination)
+        compute_offsets_band(clusterview, band)
 
