@@ -186,7 +186,7 @@ class Calibration(object):
             f.write('{0},{1}\n'.format(myrun, myshift))
         f.close()
 
-    def get_overlaps(self, weights=False):
+    def get_overlaps(self, weights=True):
         """Returns a dict with the magnitude offsets between run overlaps.
 
         Takes the current calibration into account.
@@ -238,15 +238,12 @@ def select_anchors():
     IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
                              for myfield in IPHASQC.field('id')])
 
-    anchors = ( -IS_BLACKLIST &
-                (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_APASS_ANCHOR)
-              )
+    anchors = -IS_BLACKLIST & (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_APASS_ANCHOR)
 
     log.info('IS_APASS_ANCHOR: {0} fields'.format(IS_APASS_ANCHOR.sum()))
     log.info('IS_OLD_ANCHOR: {0} fields'.format(IS_OLD_ANCHOR.sum()))
     log.info('IS_EXTRA_ANCHOR: {0} fields'.format(IS_EXTRA_ANCHOR.sum()))
     log.info('IS_BLACKLIST: {0} fields'.format(IS_BLACKLIST.sum()))
-
 
     result = anchors[IPHASQC_COND_RELEASE]
     log.info('anchors in data release: {0} fields'.format(result.sum()))
@@ -263,28 +260,12 @@ def select_anchors():
     return result
 
 
-def select_anchors_halpha(runs):
-    # Table containing information on photometric stability
-    stabfile = os.path.join(constants.PACKAGEDIR,
-                            'lib',
-                            'photometric-stability.fits')
-    stab = fits.getdata(stabfile, 1)
-
-    anchors = []
-    for i, run in enumerate(runs):
-        # Is the run stable photometrically?
-        cond_run = (stab['run_ha'] == run)
-        if cond_run.sum() > 0:
-            idx_run = np.argwhere(cond_run)[0][0]
-            if ( (stab[idx_run]['hadiff'] > (-0.008-0.01))
-                 and (stab[idx_run]['hadiff'] < (-0.008+0.01))
-                 and (stab[idx_run]['rdiff'] > (-0.007-0.01))
-                 and (stab[idx_run]['rdiff'] < (-0.007+0.01)) ):
-                anchors.append(True)
-            else:
-                anchors.append(False)
-    anchors = np.array(anchors)
-    log.info('Found {0} H-alpha anchors'.format(anchors.sum()))
+def select_anchors_halpha():
+    IS_STABLE = ( (np.abs(IPHASQC.field('med_dr')) < 0.02) &
+                  (np.abs(IPHASQC.field('med_di')) < 0.02) &
+                  (np.abs(IPHASQC.field('med_dh')) < 0.02) )
+    anchors = IS_STABLE[IPHASQC_COND_RELEASE]
+    log.info('IS_STABLE: {0} fields are H-alpha anchors'.format(anchors.sum()))
     return anchors
 
 
@@ -318,7 +299,7 @@ def calibrate_band(band='r'):
 
         # We do run one iteration of Glazebrook using special H-alpha anchors
         overlaps = cal.get_overlaps()
-        anchors = select_anchors_halpha(cal.runs)
+        anchors = select_anchors_halpha()
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
@@ -343,7 +324,7 @@ def calibrate_band(band='r'):
 
         # Glazebrook: first pass (minimizes overlap offsets)
         anchors = select_anchors()
-        overlaps = cal.get_overlaps(weights=False)
+        overlaps = cal.get_overlaps()
         solver = Glazebrook(cal.runs, overlaps, anchors)
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
@@ -352,7 +333,7 @@ def calibrate_band(band='r'):
         
         # Add extra anchors
         delta = np.abs(cal.apass_shifts - cal.shifts)
-        cond_extra_anchors = (cal.apass_matches > 30) & ~np.isnan(delta) & (delta > 0.03)
+        cond_extra_anchors = -anchors & (cal.apass_matches > 30) & -np.isnan(delta) & (delta > 0.03)
         log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
         idx_extra_anchors = np.where(cond_extra_anchors)
         anchors[idx_extra_anchors] = True
@@ -361,7 +342,7 @@ def calibrate_band(band='r'):
                      '{0} - step 3: added {1} extra anchors'.format(
                                        band, cond_extra_anchors.sum()))
 
-        overlaps = cal.get_overlaps(weights=False)
+        overlaps = cal.get_overlaps()
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
@@ -621,10 +602,11 @@ def compute_median_colours(clusterview,
     log.info('Computing median(r-ha) values finished.')    
 
 
-###################
-# MAIN EXECUTION
-###################
+################################
+# MAIN EXECUTION (FOR DEBUGGING)
+#################################
 
 if __name__ == '__main__':
     log.setLevel('DEBUG')
     calibrate()
+    #calibrate_band('ha')
