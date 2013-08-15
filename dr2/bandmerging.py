@@ -3,10 +3,7 @@
 """Generates the user-friendly band-merged catalogues.
 
 This script will merge the same-epoch H-alpha/r/i exposures of each IPHAS
-field into band-merged catalogues, following the UKIDSS column definitions.
-
-TODO:
- * add htmID?
+field into band-merged catalogues. The column names follow the UKIDSS conventions.
 """
 from __future__ import print_function, division
 import os
