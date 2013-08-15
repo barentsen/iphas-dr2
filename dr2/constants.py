@@ -17,7 +17,7 @@ if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
 if HOSTNAME == 'gvm':  # testing machine
     DEBUGMODE = True
     RAWDATADIR = '/media/uh/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    DESTINATION = '/home/gb/tmp/iphas-dr2'
+    DESTINATION = '/home/gb/tmp/iphas-dr2-rc3'
 
 LOGDIR = os.path.join(DESTINATION, 'log')  # Where to store logs?
 # Make sure destination and logging dir exist

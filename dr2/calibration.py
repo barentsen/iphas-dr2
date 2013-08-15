@@ -186,7 +186,7 @@ class Calibration(object):
             f.write('{0},{1}\n'.format(myrun, myshift))
         f.close()
 
-    def get_overlaps(self):
+    def get_overlaps(self, weights=False):
         """Returns a dict with the magnitude offsets between run overlaps.
 
         Takes the current calibration into account.
@@ -210,7 +210,11 @@ class Calibration(object):
                     overlaps[myrun1] = {'runs': [], 'offsets': [], 'weights': []}
                 overlaps[myrun1]['runs'].append(myrun2)
                 overlaps[myrun1]['offsets'].append(myoffset)
-                overlaps[myrun1]['weights'].append(np.sqrt(row['n']))
+
+                if weights:
+                    overlaps[myrun1]['weights'].append(np.sqrt(row['n']))
+                else:
+                    overlaps[myrun1]['weights'].append(1.0)
 
         return overlaps
 
@@ -222,35 +226,32 @@ def select_anchors():
     tolerance = 0.03  # Default = 0.03
     min_matches = 30  # Default = 20
     anchors = []
-    APASS_OK = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
-                 & (IPHASQC.field('imatch_apassdr7') >= min_matches)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
-                 & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
-                 & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
+    IS_APASS_ANCHOR = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
+                      & (IPHASQC.field('imatch_apassdr7') >= min_matches)
+                      & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
+                      & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
+                      & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
 
-    APASS_ISNAN = ( np.isnan(IPHASQC.field('rshift_apassdr7'))
-                    | np.isnan(IPHASQC.field('ishift_apassdr7'))
-                    | (IPHASQC.field('rmatch_apassdr7') < min_matches)
-                    | (IPHASQC.field('imatch_apassdr7') < min_matches) )
+    IS_OLD_ANCHOR = (IPHASQC.field('anchor') == 1)
+    IS_EXTRA_ANCHOR = np.array([myfield in EXTRA_ANCHORS 
+                                for myfield in IPHASQC.field('id')])
+    IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
+                             for myfield in IPHASQC.field('id')])
 
-    SDSS_OK = ( (IPHASQC.field('rmatch_sdss') >= min_matches)
-                 & (IPHASQC.field('imatch_sdss') >= min_matches)
-                 & (np.abs(IPHASQC.field('rshift_sdss')) <= tolerance)
-                 & (np.abs(IPHASQC.field('ishift_sdss')) <= tolerance)
-                 & (np.abs(IPHASQC.field('rshift_sdss') - IPHASQC.field('ishift_sdss')) <= tolerance) )
+    anchors = ( -IS_BLACKLIST &
+                (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_APASS_ANCHOR)
+              )
 
-    SDSS_ISNAN = ( np.isnan(IPHASQC.field('rshift_sdss'))
-                    | np.isnan(IPHASQC.field('ishift_sdss'))
-                    | (IPHASQC.field('rmatch_sdss') < min_matches)
-                    | (IPHASQC.field('imatch_sdss') < min_matches) )
+    log.info('IS_APASS_ANCHOR: {0} fields'.format(IS_APASS_ANCHOR.sum()))
+    log.info('IS_OLD_ANCHOR: {0} fields'.format(IS_OLD_ANCHOR.sum()))
+    log.info('IS_EXTRA_ANCHOR: {0} fields'.format(IS_EXTRA_ANCHOR.sum()))
+    log.info('IS_BLACKLIST: {0} fields'.format(IS_BLACKLIST.sum()))
 
-    # Allow extra anchors to be added
-    EXTRA = np.array([myfield in EXTRA_ANCHORS for myfield in IPHASQC.field('id')])
-    log.info('Adding {0} extra anchors'.format(EXTRA.sum()))
 
-    NOT_IN_BLACKLIST = np.array([myfield not in ANCHOR_BLACKLIST 
-                          for myfield in IPHASQC.field('id')])
+    result = anchors[IPHASQC_COND_RELEASE]
+    log.info('anchors in data release: {0} fields'.format(result.sum()))
 
+    """
     anchors = ( NOT_IN_BLACKLIST & 
               ( 
                 ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
@@ -258,7 +259,9 @@ def select_anchors():
                 | EXTRA
               ) | (IPHASQC.field('anchor') == 1)
               )
-    return anchors[IPHASQC_COND_RELEASE]
+    """
+    return result
+
 
 def select_anchors_halpha(runs):
     # Table containing information on photometric stability
@@ -299,6 +302,9 @@ def calibrate_band(band='r'):
     """
     log.info('Starting to calibrate the {0} band'.format(band))
 
+    tolerance = 0.03  # Default = 0.03
+    min_matches = 30  # Default = 20
+
     # H-alpha is a special case because the APASS-based selection of anchors
     # is not possible
     if band == 'ha':
@@ -320,12 +326,11 @@ def calibrate_band(band='r'):
     else:
     
         cal = Calibration(band)
-        cal.evaluate('step0', 
+        cal.evaluate('step1', 
                      '{0} - uncalibrated'.format(band))
 
         # Correct outliers
-        tolerance = 0.03  # Default = 0.03
-        min_matches = 30  # Default = 20
+        """
         log.info('Correcting obvious outliers based on APASS')
         myshifts = np.zeros(len(cal.runs))
         c_outlier = ((cal.apass_matches > min_matches)
@@ -334,10 +339,11 @@ def calibrate_band(band='r'):
         cal.add_shifts(myshifts)
         cal.evaluate('step1',
                      '{0} - step 1: set initial conditions'.format(band))
+        """
 
         # Glazebrook: first pass (minimizes overlap offsets)
         anchors = select_anchors()
-        overlaps = cal.get_overlaps()
+        overlaps = cal.get_overlaps(weights=False)
         solver = Glazebrook(cal.runs, overlaps, anchors)
         solver.solve()
         cal.add_shifts( solver.get_shifts() )
@@ -345,18 +351,17 @@ def calibrate_band(band='r'):
                      '{0} - step 2: Glazebrook pass 1'.format(band))    
         
         # Add extra anchors
-        delta = np.abs(cal.apass_shifts-cal.shifts)
+        delta = np.abs(cal.apass_shifts - cal.shifts)
         cond_extra_anchors = (cal.apass_matches > 30) & ~np.isnan(delta) & (delta > 0.03)
         log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
         idx_extra_anchors = np.where(cond_extra_anchors)
-        anchors = select_anchors()
         anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
         cal.evaluate('step3',
                      '{0} - step 3: added {1} extra anchors'.format(
                                        band, cond_extra_anchors.sum()))
 
-        overlaps = cal.get_overlaps()
+        overlaps = cal.get_overlaps(weights=False)
         solver = Glazebrook(cal.runs, overlaps, anchors)    
         solver.solve()
         cal.add_shifts( solver.get_shifts() )

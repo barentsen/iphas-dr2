@@ -17,15 +17,12 @@ Contents
   + **bandmerging.py**: merges the H-alpha/r/i detections for the same pointing.
   + **seaming.py**: identifies multiple detections of the same source, and assigns the best ('primary') detection.
   + **concatenating.py**: produces the final Primary Source Catalogue.
-- **scripts**: scripts used to run the pipeline on a computing cluster.
-- **documentation**
+- **scripts**: various helper scripts.
+- **website**: redesigned website to be launched with DR2.
 
 Workflow
 --------
-- To carry out a global photometric calibration, call the __main__ functions of the modules in this order:
-   detections.py => offsets.py => calibration.py
-- To generate the IPHAS Primary Source Catalogue:
-   detections.py => bandmerging.py => seaming.py => calibration.py => concatenating.py
+The script **pipeline.py** in the root directory contains all the commands necessary to produce the IPHAS DR2 source catalogue.
 
 License
 --------
