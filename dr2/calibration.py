@@ -5,6 +5,8 @@ Fits a global photometric calibration using the Glazebrook algorithm.
 
 The algorithm finds a set of zeropoint shifts which minimizes the magnitude
 offsets between overlapping exposures (computed using the dr2.offsets module.)
+In addition, the APASS survey is used to ensure that we do not deviate from
+the 'absolute truth'.
 
 This file also contains a class to apply the calibration to the catalogues.
 """
@@ -69,10 +71,26 @@ ANCHOR_BLACKLIST = ['0546_oct2003', '0546o_oct2003']
 
 
 class Calibration(object):
-    """Holds the calibration shifts for all fields in the survey."""
+    """Container for calibration information in a single band.
+
+    This class holds information about the offsets between overlaps, 
+    the offsets against other surveys, the choice of anchor fields, 
+    and the calibration shifts required.
+
+    This class is effectively a container to hold everything we know
+    about our survey zeropoints, and contains several functions to 
+    interact with this information (e.g. create spatial plots of zeropoint 
+    offsets.)
+    """
 
     def __init__(self, band):
-        """runs -- array of run identifiers"""
+        """Loads the necessary information about the survey zeropoints.
+
+        Parameters
+        ----------
+        band : string
+            One of 'r', 'i', 'ha'.
+        """
         #self.calib = np.array(zip(runs, np.zeros(len(runs))),
         #                      dtype=[('runs', 'i4'), ('shifts', 'f4')])
         assert(band in constants.BANDS)
@@ -108,7 +126,18 @@ class Calibration(object):
         self.shifts += shifts
 
     def get_shift(self, run):
-        """Shifts to be *ADDED* to the magnitudes of a run."""
+        """Returns the calibrations shift for a given run.
+
+        Parameters
+        ----------
+        run : integer
+            Exosure identifier for which you want to know the calibration shift.
+
+        Returns
+        -------
+        shift : float
+            Shift to be *added* to the magnitudes of the specified run.
+        """
         return self.shifts[self.runs == run][0]
 
     def evaluate(self, name, title):

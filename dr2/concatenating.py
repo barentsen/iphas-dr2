@@ -102,9 +102,7 @@ class Concatenator(object):
                                    vignetted truncated badPix" """
         else:
             # select "nBands == 3"; \
-            extracmd = """replacecol ra "toFloat(ra)";
-                          replacecol dec "toFloat(dec)";
-                          replacecol errBits "toShort(errBits)";
+            extracmd = """replacecol errBits "toShort(errBits)";
                           keepcols "name ra dec \
                                     r rErr \
                                     i iErr \
