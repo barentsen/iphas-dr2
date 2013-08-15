@@ -34,8 +34,14 @@ PATH_CALIBRATED = os.path.join(constants.DESTINATION,
                                'bandmerged-calibrated')
 
 
+# When to trust other surveys?
+TOLERANCE = 0.03
+MIN_MATCHES = 30
+
 # Extra anchors selected in the final phases of the data release,
 # when a few areas with poor anchor coverage were spotted
+
+# Upper left corner
 EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
                  '4583_jul2009', '4583o_jul2009',
                  '4525_jul2004a', '4525o_jul2004a',
@@ -61,13 +67,150 @@ EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
                  '4110_jun2004', '4110o_jun2004',
                  '4096_jun2004', '4096o_jun2004',
                  '4127_jun2004', '4127o_jun2004',
-                 '6094_oct2003', '6094o_oct2003']
+                 '6094_oct2003', '6094o_oct2003',
+                 '4116_jun2004', '4116o_jun2004',
+                 '4120_jun2004', '4120o_jun2004']
 # Lower left corner
 EXTRA_ANCHORS.append('4480_jul2004a')
 EXTRA_ANCHORS.append('4480o_jul2004a')
 
-# Make sure the following runs are under no circumstance anchors
-ANCHOR_BLACKLIST = ['0546_oct2003', '0546o_oct2003']
+# Other pars
+EXTRA_ANCHORS.append('5023_jul2009')
+EXTRA_ANCHORS.append('5023o_jul2009')
+EXTRA_ANCHORS.append('5265_sep2003')
+EXTRA_ANCHORS.append('5265o_sep2003')
+EXTRA_ANCHORS.append('5535_jul2009')
+EXTRA_ANCHORS.append('5535o_jul2009')
+EXTRA_ANCHORS.append('5471_jul2007')
+EXTRA_ANCHORS.append('5471o_jul2007')
+EXTRA_ANCHORS.append('5393_jun2005')
+EXTRA_ANCHORS.append('5393o_jun2005')
+
+ANCHOR_NIGHTS = [20031214, 20070629, 20050711, 20050714, 20061214, 20090701,
+                 20070630, 20061129, 20070627, 20061130, 20080724, 20050710,
+                 20080829, 20051024, 20031101, 20070624, 20051101, 20031117,
+                 20051101, 20051023, 20050723, 20041030, 20100802]
+
+# Make sure the following runs are no anchors
+# cf. e-mail Janet to Geert, 13 Aug 2013
+ANCHOR_BLACKLIST = ['0546_oct2003', '0546o_oct2003',
+                    '0555_oct2003', '0555o_oct2003',
+                    '0886_nov2003b', '0886o_nov2003b',
+                    '6459_aug2004a', '6459o_aug2004a',
+                    '5056_jun2005', '5056o_jun2005',
+                    '5063_jun2005', '5063o_jun2005',
+                    '2627_nov2006d', '2627o_nov2006d',
+                    '2635_nov2006d', '2635o_nov2006d',
+                    '2654_nov2006d', '2654o_nov2006d',
+                    '5239_may2007', '5239o_may2007',
+                    '3886_dec2007', '3886o_dec2007',
+                    '0010_nov2008', '0010o_nov2008',
+                    '0012_nov2008', '0012o_nov2008',
+                    '0332_nov2008', '0332o_nov2008',
+                    '0334_nov2008', '0334o_nov2008',
+                    '0911_aug2009', '0911o_aug2009',
+                    '0825_aug2009', '0825o_aug2009',
+                    ]
+
+
+
+def calibrate_band(band='r'):
+    """Calibrate a single band.
+
+    Parameters
+    ----------
+    band : one of 'r', 'i', 'ha'
+
+    Returns
+    -------
+    cal : Calibration class
+        object entailing the shifts to be added (cal.shifts)
+    """
+    log.info('Starting to calibrate the {0} band'.format(band))
+
+    # H-alpha is a special case because the APASS-based selection of anchors
+    # is not possible
+    if band == 'ha':
+        # We use the r-band calibration as the baseline for H-alpha
+        rcalib_file = os.path.join(constants.DESTINATION,
+                                   'calibration',
+                                   'calibration-r.csv')
+        rcalib = ascii.read(rcalib_file)
+        cal = Calibration(band)
+        cal.shifts = rcalib['shift']
+
+        # We do run one iteration of Glazebrook using special H-alpha anchors
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, cal.anchors)
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate('glazebrook', 
+                     'H-alpha calibration shifts'.format(band))
+
+    else:
+    
+        cal = Calibration(band)
+        cal.evaluate('step1', 
+                     '{0} - uncalibrated'.format(band))
+
+        # Glazebrook: first pass (minimizes overlap offsets)
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, cal.anchors)
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate('step2',
+                     '{0} - step 2: Glazebrook pass 1'.format(band))    
+        
+        # Correct outliers against APASS and fix them as anchors
+        delta = np.abs(cal.apass_shifts - cal.shifts)
+        cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
+                              -np.isnan(delta) &
+                              (delta >= TOLERANCE)
+                             )
+        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
+        idx_extra_anchors = np.where(cond_extra_anchors)
+        cal.anchors[idx_extra_anchors] = True
+        cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
+        cal.evaluate('step3',
+                     '{0} - step 3: added {1} extra anchors'.format(
+                                       band, cond_extra_anchors.sum()))
+
+        # Run Glazebrook again with the newly added anchors
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal.runs, overlaps, cal.anchors)    
+        solver.solve()
+        cal.add_shifts( solver.get_shifts() )
+        cal.evaluate('step4',
+                     '{0} - step 4 - Glazebrook pass 2'.format(band))
+
+        # Write the used anchors to a csv file
+        anchor_list_filename = os.path.join(constants.DESTINATION,
+                                           'calibration',
+                                           'anchors-{0}.csv'.format(band))
+        solver.write_anchor_list(anchor_list_filename)
+        
+
+    filename = os.path.join(constants.DESTINATION,
+                            'calibration',
+                            'calibration-{0}.csv'.format(band))
+    cal.write(filename)
+
+    return cal
+
+
+def calibrate():
+    """Calibrates all bands in the survey.
+
+    Produces files called "calibration{r,i,ha}.csv" which tabulate
+    the zeropoint shifts to be *added* to each exposure.
+    """
+    # Make sure the output directory exists
+    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
+    # Calibrate each band in the survey
+    for band in constants.BANDS:
+        calibrate_band(band)
+
+
 
 
 class Calibration(object):
@@ -81,6 +224,16 @@ class Calibration(object):
     about our survey zeropoints, and contains several functions to 
     interact with this information (e.g. create spatial plots of zeropoint 
     offsets.)
+
+    Attributes
+    ----------
+    band : {'r', 'i', 'ha'}
+    runs : array of int
+        List of exposure numbers for `band` which are part of the data release.
+    shifts : array of float
+        The calibration shifts to be *added* to the magnitudes of `runs`.
+    anchors : array of bool
+        Which exposures can be trusted?
     """
 
     def __init__(self, band):
@@ -97,7 +250,7 @@ class Calibration(object):
         self.band = band
 
         self.runs = IPHASQC['run_'+band][IPHASQC_COND_RELEASE]
-        self.shifts = np.zeros(len(self.runs))  # Shifts to be *ADDED*
+        self.shifts = np.zeros(len(self.runs))  # Shifts to be *ADDED* - init to 0
 
         # Load broad-band comparison data
         if band in ['r', 'i']:
@@ -114,13 +267,7 @@ class Calibration(object):
         assert(len(self.apass_shifts) == len(self.apass_matches))
 
         self._load_offsetdata()
-
-    def _load_offsetdata(self):
-        filename_offsets = os.path.join(constants.DESTINATION,
-                                        'calibration',
-                                        'offsets-{0}.csv'.format(self.band))
-        log.info('Reading {0}'.format(filename_offsets))
-        self.offsetdata = ascii.read(filename_offsets)
+        self.anchors = self.select_anchors()
 
     def add_shifts(self, shifts):
         self.shifts += shifts
@@ -141,35 +288,37 @@ class Calibration(object):
         return self.shifts[self.runs == run][0]
 
     def evaluate(self, name, title):
-        statsfile = os.path.join(constants.DESTINATION, 'calibration', 'stats.txt')
-        with open(statsfile, 'w') as out:
-            # Against APASS
-            mask_use = (self.apass_matches > 30)
-            l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
-            b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
-            delta = self.apass_shifts[mask_use] - self.shifts[mask_use]
-            self._spatial_plot(l, b, delta, 'apass-'+name, 'APASS: '+title)
+        # Plot the absolute calibration shifts
+        l = IPHASQC['l'][IPHASQC_COND_RELEASE]
+        b = IPHASQC['b'][IPHASQC_COND_RELEASE]
+        self._spatial_plot(l, b, self.shifts, 'calib-'+name, 'Calibration '+title)
 
-            stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
-                                                       np.std(delta))
-            stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
-                                                      np.max(delta))
+        if self.band in ['r', 'i']:
+            statsfile = os.path.join(constants.DESTINATION,
+                                     'calibration',
+                                     'stats-{0}.txt'.format(self.band))
+            with open(statsfile, 'w') as out:
+                # Against APASS
+                mask_use = (self.apass_matches >= MIN_MATCHES)
+                l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
+                b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
+                delta = self.apass_shifts[mask_use] - self.shifts[mask_use]
+                self._spatial_plot(l, b, delta, 'apass-'+name, 'APASS: '+title)
 
-            out.write(stats)
-            log.info(stats)
+                stats =  "mean={0:.3f}+/-{1:.3f}, ".format(np.mean(delta),
+                                                           np.std(delta))
+                stats += "min/max={0:.3f}/{1:.3f}".format(np.min(delta),
+                                                          np.max(delta))
 
-            # Against SDSS
-            mask_use = (self.sdss_matches > 30)
-            l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
-            b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
-            delta = self.sdss_shifts[mask_use] - self.shifts[mask_use]
-            self._spatial_plot(l, b, delta, 'sdss-'+name, 'SDSS '+title)
+                out.write(stats)
+                log.info(stats)
 
-            # Plot the absolute calibration shifts
-            l = IPHASQC['l'][IPHASQC_COND_RELEASE]
-            b = IPHASQC['b'][IPHASQC_COND_RELEASE]
-            self._spatial_plot(l, b, self.shifts, 
-                               'calib-'+name, 'Calibration '+title)
+                # Against SDSS
+                mask_use = (self.sdss_matches >= MIN_MATCHES)
+                l = IPHASQC['l'][IPHASQC_COND_RELEASE][mask_use]
+                b = IPHASQC['b'][IPHASQC_COND_RELEASE][mask_use]
+                delta = self.sdss_shifts[mask_use] - self.shifts[mask_use]
+                self._spatial_plot(l, b, delta, 'sdss-'+name, 'SDSS '+title)
 
 
     def _spatial_plot(self, l, b, shifts, name, title=''):
@@ -184,8 +333,13 @@ class Calibration(object):
         p.set_title(title)
         scat = p.scatter(l, b, c=shifts, vmin=-0.13, vmax=+0.13,
                          edgecolors='none',
-                         s=8, marker='h')
+                         s=7, marker='h')
         plt.colorbar(scat)
+        # Indicate anchors
+        p.scatter(IPHASQC['l'][IPHASQC_COND_RELEASE][self.anchors],
+                  IPHASQC['b'][IPHASQC_COND_RELEASE][self.anchors],
+                  edgecolors='black', facecolor='none',
+                  s=15, marker='x', alpha=0.9, lw=0.3)
         p.set_xlim([28, 217])
         p.set_ylim([-5.2, +5.2])
         p.set_xlabel('l')
@@ -215,12 +369,22 @@ class Calibration(object):
             f.write('{0},{1}\n'.format(myrun, myshift))
         f.close()
 
+    def _load_offsetdata(self):
+        filename_offsets = os.path.join(constants.DESTINATION,
+                                        'calibration',
+                                        'offsets-{0}.csv'.format(self.band))
+        log.info('Reading {0}'.format(filename_offsets))
+        mydata = ascii.read(filename_offsets)
+        # Do not use the offsets unless enough stars were used
+        #mask_use = (mydata['n'] >= 5) & (mydata['std'] < 0.07)
+        self.offsetdata = mydata #[mask_use]
+
     def get_overlaps(self, weights=True):
         """Returns a dict with the magnitude offsets between run overlaps.
 
         Takes the current calibration into account.
         """
-        log.info('Loading calibration-corrected magnitude offsets')
+        log.info('Loading calibration-corrected magnitude offsets between overlaps')
         # Performance optimisation
         current_shifts = dict(zip(self.runs, self.shifts))
 
@@ -247,158 +411,58 @@ class Calibration(object):
 
         return overlaps
 
+    def select_anchors(self):
+        """Returns a boolean array indicating which runs are suitable anchors."""
+        median_pair_offset = -0.008 
+        IS_STABLE = ( (IPHASQC.field('med_dr') < (median_pair_offset+0.03)) &
+                      (IPHASQC.field('med_dr') > (median_pair_offset-0.03)) &
+                      (IPHASQC.field('med_di') < (median_pair_offset+0.03)) &
+                      (IPHASQC.field('med_di') > (median_pair_offset-0.03)) &
+                      (IPHASQC.field('med_dh') < (median_pair_offset+0.03)) &
+                      (IPHASQC.field('med_dh') > (median_pair_offset-0.03))
+                    )
 
+        if self.band == 'ha':
+            # Because the H-alpha calibration is tied to the r-band,
+            # we require fields to be "stable" to be an anchor in H-alpha.
+            # "Stable" is defined as the fieldpair not showing great shifts.
+            anchors = IS_STABLE[IPHASQC_COND_RELEASE]
+            log.info('IS_STABLE: {0} fields are H-alpha anchors'.format(anchors.sum()))
+            return anchors
 
-def select_anchors():
-    """Returns a boolean array indicating anchor status."""
-    # 'anchors' is a boolean array indicating anchor status
-    tolerance = 0.03  # Default = 0.03
-    min_matches = 30  # Default = 20
-    anchors = []
-    IS_APASS_ANCHOR = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
-                      & (IPHASQC.field('imatch_apassdr7') >= min_matches)
-                      & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
-                      & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
-                      & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
+        else:
+            tolerance = 0.03  # Default = 0.03
+            min_matches = 30  # Default = 20
+            anchors = []
+            IS_APASS_ANCHOR = ( (IPHASQC.field('rmatch_apassdr7') >= min_matches)
+                              & (IPHASQC.field('imatch_apassdr7') >= min_matches)
+                              & (np.abs(IPHASQC.field('rshift_apassdr7')) <= tolerance)
+                              & (np.abs(IPHASQC.field('ishift_apassdr7')) <= tolerance)
+                              & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
 
-    IS_OLD_ANCHOR = (IPHASQC.field('anchor') == 1)
-    IS_EXTRA_ANCHOR = np.array([myfield in EXTRA_ANCHORS 
-                                for myfield in IPHASQC.field('id')])
-    IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
-                             for myfield in IPHASQC.field('id')])
+            IS_OLD_ANCHOR = (IPHASQC.field('anchor') == 1)
+            IS_EXTRA_ANCHOR = np.array([myfield in EXTRA_ANCHORS 
+                                        for myfield in IPHASQC.field('id')])
+            IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
+                                     for myfield in IPHASQC.field('id')])
 
-    anchors = -IS_BLACKLIST & (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_APASS_ANCHOR)
+            IS_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
+                                       for mynight in IPHASQC.field('night')])
 
-    log.info('IS_APASS_ANCHOR: {0} fields'.format(IS_APASS_ANCHOR.sum()))
-    log.info('IS_OLD_ANCHOR: {0} fields'.format(IS_OLD_ANCHOR.sum()))
-    log.info('IS_EXTRA_ANCHOR: {0} fields'.format(IS_EXTRA_ANCHOR.sum()))
-    log.info('IS_BLACKLIST: {0} fields'.format(IS_BLACKLIST.sum()))
+            anchors = (-IS_BLACKLIST &
+                       IS_STABLE & 
+                       (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_EXTRA_NIGHT | IS_APASS_ANCHOR)
+                      )
+            result = anchors[IPHASQC_COND_RELEASE]
 
-    result = anchors[IPHASQC_COND_RELEASE]
-    log.info('anchors in data release: {0} fields'.format(result.sum()))
+            log.info('IS_APASS_ANCHOR: {0} fields'.format(IS_APASS_ANCHOR.sum()))
+            log.info('IS_OLD_ANCHOR: {0} fields'.format(IS_OLD_ANCHOR.sum()))
+            log.info('IS_EXTRA_ANCHOR: {0} fields'.format(IS_EXTRA_ANCHOR.sum()))
+            log.info('IS_EXTRA_NIGHT: {0} fields'.format(IS_EXTRA_NIGHT.sum()))
+            log.info('IS_BLACKLIST: {0} fields'.format(IS_BLACKLIST.sum()))            
+            log.info('Anchors in data release: {0} fields'.format(result.sum()))
 
-    """
-    anchors = ( NOT_IN_BLACKLIST & 
-              ( 
-                ((IPHASQC.field('anchor') == 1) & APASS_ISNAN & (SDSS_OK | SDSS_ISNAN) )
-                | APASS_OK
-                | EXTRA
-              ) | (IPHASQC.field('anchor') == 1)
-              )
-    """
-    return result
-
-
-def select_anchors_halpha():
-    IS_STABLE = ( (np.abs(IPHASQC.field('med_dr')) < 0.02) &
-                  (np.abs(IPHASQC.field('med_di')) < 0.02) &
-                  (np.abs(IPHASQC.field('med_dh')) < 0.02) )
-    anchors = IS_STABLE[IPHASQC_COND_RELEASE]
-    log.info('IS_STABLE: {0} fields are H-alpha anchors'.format(anchors.sum()))
-    return anchors
-
-
-def calibrate_band(band='r'):
-    """Calibrate a single band.
-
-    Parameters
-    ----------
-    band : one of 'r', 'i', 'ha'
-
-    Returns
-    -------
-    cal : Calibration class
-        object entailing the shifts to be added (cal.shifts)
-    """
-    log.info('Starting to calibrate the {0} band'.format(band))
-
-    tolerance = 0.03  # Default = 0.03
-    min_matches = 30  # Default = 20
-
-    # H-alpha is a special case because the APASS-based selection of anchors
-    # is not possible
-    if band == 'ha':
-        # We use the r-band calibration as the baseline for H-alpha
-        rcalib_file = os.path.join(constants.DESTINATION,
-                                   'calibration',
-                                   'calibration-r.csv')
-        rcalib = ascii.read(rcalib_file)
-        cal = Calibration(band)
-        cal.shifts = rcalib['shift']
-
-        # We do run one iteration of Glazebrook using special H-alpha anchors
-        overlaps = cal.get_overlaps()
-        anchors = select_anchors_halpha()
-        solver = Glazebrook(cal.runs, overlaps, anchors)    
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-
-    else:
-    
-        cal = Calibration(band)
-        cal.evaluate('step1', 
-                     '{0} - uncalibrated'.format(band))
-
-        # Correct outliers
-        """
-        log.info('Correcting obvious outliers based on APASS')
-        myshifts = np.zeros(len(cal.runs))
-        c_outlier = ((cal.apass_matches > min_matches)
-                     & (np.abs(cal.apass_shifts) > tolerance))
-        myshifts[c_outlier] = cal.apass_shifts[c_outlier]
-        cal.add_shifts(myshifts)
-        cal.evaluate('step1',
-                     '{0} - step 1: set initial conditions'.format(band))
-        """
-
-        # Glazebrook: first pass (minimizes overlap offsets)
-        anchors = select_anchors()
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, anchors)
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate('step2',
-                     '{0} - step 2: Glazebrook pass 1'.format(band))    
-        
-        # Add extra anchors
-        delta = np.abs(cal.apass_shifts - cal.shifts)
-        cond_extra_anchors = -anchors & (cal.apass_matches > 30) & -np.isnan(delta) & (delta > 0.03)
-        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
-        idx_extra_anchors = np.where(cond_extra_anchors)
-        anchors[idx_extra_anchors] = True
-        cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
-        cal.evaluate('step3',
-                     '{0} - step 3: added {1} extra anchors'.format(
-                                       band, cond_extra_anchors.sum()))
-
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, anchors)    
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate('step4',
-                     '{0} - step 4 - Glazebrook pass 2'.format(band))
-
-        anchor_list_filename = os.path.join(constants.DESTINATION,
-                                           'calibration',
-                                           'anchors-{0}.csv'.format(band))
-        solver.write_anchor_list(anchor_list_filename)
-        
-
-    filename = os.path.join(constants.DESTINATION,
-                            'calibration',
-                            'calibration-{0}.csv'.format(band))
-    cal.write(filename)
-
-    return cal
-
-
-def calibrate():
-    # Make sure the output directory exists
-    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
-
-    for band in ['r', 'i', 'ha']:
-        calibrate_band(band)
-
+            return result
 
 
 #############
@@ -440,18 +504,22 @@ class Glazebrook(object):
         nonanchorruns = self.runs[self.nonanchors]
         # Loop over all non-anchors that make up the matrix
         for i, run in enumerate(nonanchorruns):
-                        
-            # On the diagonal, the matrix holds the negative sum of weights
-            A[i, i] = -float(np.sum(self.overlaps[run]['weights']))
+            
+            try:
+                # On the diagonal, the matrix holds the negative sum of weights
+                A[i, i] = -float(np.sum(self.overlaps[run]['weights']))
 
-            # Off the diagonal, the matrix holds the weight where two runs overlap
-            for run2, weight in zip(self.overlaps[run]['runs'],
-                                    self.overlaps[run]['weights']):
-                idx_run2 = np.argwhere(run2 == nonanchorruns)
-                if len(idx_run2) > 0:
-                    j = idx_run2[0]  # Index of the overlapping run
-                    A[i, j] = weight
-                    A[j, i] = weight  # Symmetric matrix
+                # Off the diagonal, the matrix holds the weight where two runs overlap
+                for run2, weight in zip(self.overlaps[run]['runs'],
+                                        self.overlaps[run]['weights']):
+                    idx_run2 = np.argwhere(run2 == nonanchorruns)
+                    if len(idx_run2) > 0:
+                        j = idx_run2[0]  # Index of the overlapping run
+                        A[i, j] = weight
+                        A[j, i] = weight  # Symmetric matrix
+            except KeyError:
+                log.warning('Glazebrook: no overlap data for run {0}'.format(run))
+                A[i, i] = -1.0
         return A
 
     def _b(self):
@@ -459,10 +527,14 @@ class Glazebrook(object):
         """
         b = np.zeros(self.n_nonanchors)
         for i, run in enumerate(self.runs[self.nonanchors]):
-            b[i] = np.sum(
-                          np.array(self.overlaps[run]['offsets']) *
-                          np.array(self.overlaps[run]['weights'])
-                          )
+            try:
+                b[i] = np.sum(
+                              np.array(self.overlaps[run]['offsets']) *
+                              np.array(self.overlaps[run]['weights'])
+                              )
+            except KeyError:
+                log.warning('Glazebrook: no overlap data for run {0}'.format(run))
+                b[1] = 0.0
         return b
 
     def solve(self):
