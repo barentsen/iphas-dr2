@@ -8,7 +8,12 @@ offsets between overlapping exposures (computed using the dr2.offsets module.)
 In addition, the APASS survey is used to ensure that we do not deviate from
 the 'absolute truth'.
 
-This file also contains a class to apply the calibration to the catalogues.
+This is the most complicated and tricky part of the data release procedure,
+because IPHAS suffered from a fair number of nights with variable transparency
+and hence zeropoint uncertainties.
+
+This file also contains a class to apply the calibration to the catalogues,
+and functions to plot colour-colour diagrams for quality control.
 """
 import numpy as np
 import os
