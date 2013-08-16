@@ -32,140 +32,18 @@ __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 
 
+############
+# CONSTANTS
+############
+
 # When to trust other surveys?
-TOLERANCE = 0.03
-MIN_MATCHES = 30
+TOLERANCE = 0.03 # abs(iphas-apass) tolerated
+MIN_MATCHES = 30 # minimum number of matches in a field against reference survey
 
 
-
-ANCHOR_NIGHTS = [20030915, 20031018, 20031101, 20031104, 20031108, 20031117,
-                 20040707, 20040805, 20040822, 20041022, 20050629, 20050709,
-                 20050710, 20050711, 20050916, 20050917, 20050918, 20051023,
-                 20051101, 20051102, 20061129, 20061130, 20061214, 20070627,
-                 20070630, 20080722, 20080723, 20090808, 20090810, 20091029,
-                 20091031]
-
-# Nights which should NOT provide anchors
-NIGHT_BLACKLIST = [20031117]
-
-
-
-def calibrate_band(band='r'):
-    """Calibrate a single band.
-
-    Parameters
-    ----------
-    band : one of 'r', 'i', 'ha'
-
-    Returns
-    -------
-    cal : Calibration class
-        object entailing the shifts to be added (cal.shifts)
-    """
-    log.info('Starting to calibrate the {0} band'.format(band))
-
-    # H-alpha is a special case because the APASS-based selection of anchors
-    # is not possible
-    if band == 'ha':
-        # We use the r-band calibration as the baseline for H-alpha
-        rcalib = ascii.read(os.path.join(CALIBDIR, 'calibration-r.csv'))
-        cal = Calibration(band)
-        cal.shifts = rcalib['shift']
-        cal.evaluate('step1', 'H-alpha with r-band shifts')
-
-        # We do run one iteration of Glazebrook using special H-alpha anchors
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal)
-        shifts = solver.solve()
-        cal.add_shifts(shifts)
-        cal.evaluate('step2', 'H-alpha after Glazebrook')
-
-        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
-
-    else:
-    
-        cal = Calibration(band)
-        cal.evaluate('step1', '{0} - uncalibrated'.format(band))
-        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
-
-        # Glazebrook: first pass (minimizes overlap offsets)
-        solver = Glazebrook(cal)
-        shifts = solver.solve()
-        cal.add_shifts(shifts)
-        cal.evaluate('step2', '{0} - step 2: Glazebrook pass 1'.format(band))    
-        # Write the used anchors to a csv file
-
-
-        # Correct outliers against APASS and fix them as anchors
-        delta = np.abs(cal.apass_shifts - cal.shifts)
-        cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
-                              -np.isnan(delta) &
-                              (delta >= TOLERANCE))
-        idx_extra_anchors = np.where(cond_extra_anchors)
-        cal.anchors[idx_extra_anchors] = True
-        cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
-        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
-        cal.evaluate('step3',
-                     '{0} - step 3: added {1} extra anchors'.format(
-                                       band, cond_extra_anchors.sum()))
-
-        # Run Glazebrook again with the newly added anchors
-        solver = Glazebrook(cal)    
-        shifts = solver.solve()
-        cal.add_shifts(shifts)
-        cal.evaluate('step4', '{0} - step 4 - Glazebrook pass 2'.format(band))
-
-        # Remove bad APASS shifts one more time
-        mask_has_apass = ((cal.apass_matches >= MIN_MATCHES) &
-                          -np.isnan(delta))
-        mask_is_outlier = (mask_has_apass &
-                           (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE))
-        idx_outlier = np.where(mask_is_outlier)
-        cal.shifts[idx_outlier] = cal.apass_shifts[idx_outlier]
-        # And make all APASS overlaps anchors
-        cal.anchors[mask_has_apass] = True 
-        cal.evaluate('step5', '{0} - step 5: anchor all APASS fields'.format(band))
-
-        # Run Glazebrook again with the newly added anchors
-        solver = Glazebrook(cal)    
-        shifts = solver.solve()
-        cal.add_shifts( shifts )
-        cal.evaluate('step6', '{0} - step 6 - Glazebrook pass 3'.format(band))
-        
-
-    # This is the important file: the calibration shifts!
-    filename = os.path.join(CALIBDIR, 'calibration-{0}.csv'.format(band))
-    cal.write(filename)
-
-    return cal
-
-
-def calibrate():
-    """Calibrates all bands in the survey.
-
-    Produces files called "calibration{r,i,ha}.csv" which tabulate
-    the zeropoint shifts to be *added* to each exposure.
-    """
-    # Make sure the output directory exists
-    util.setup_dir(CALIBDIR)
-    # Calibrate each band in the survey
-    for band in constants.BANDS:
-        calibrate_band(band)
-
-def calibrate_multiprocessing():
-    """Calibrates all bands in the survey.
-
-    Produces files called "calibration{r,i,ha}.csv" which tabulate
-    the zeropoint shifts to be *added* to each exposure.
-    """
-    # Make sure the output directory exists
-    util.setup_dir(CALIBDIR)
-    # Calibrate each band in the survey
-    from multiprocessing import Pool
-    pool = Pool(2)
-    pool.map(calibrate_band, ['r', 'i'])
-    calibrate_band('ha') # H-alpha depends on output of r
-
+##########
+# CLASSES
+##########
 
 class Calibration(object):
     """Container for calibration information in a single band.
@@ -422,11 +300,23 @@ class Calibration(object):
             ANCHOR_BLACKLIST = ascii.read('lib/anchor-blacklist.txt')['field']
             IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
                                      for myfield in IPHASQC.field('id')])
+
+
+            # Extra night with good conditions
+            ANCHOR_NIGHTS = [20030915, 20031018, 20031101, 20031104, 20031108, 20031117,
+                 20040707, 20040805, 20040822, 20041022, 20050629, 20050709,
+                 20050710, 20050711, 20050916, 20050917, 20050918, 20051023,
+                 20051101, 20051102, 20061129, 20061130, 20061214, 20070627,
+                 20070630, 20080722, 20080723, 20090808, 20090810, 20091029,
+                 20091031]
+            IS_IN_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
+                                       for mynight in IPHASQC.field('night')])
+
+            # Nights which should NOT provide anchors
+            NIGHT_BLACKLIST = [20031117]
             IS_IN_NIGHT_BLACKLIST = np.array([night in NIGHT_BLACKLIST 
                                               for night in IPHASQC.field('night')])
 
-            IS_IN_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
-                                       for mynight in IPHASQC.field('night')])
 
             GOOD_CONDITIONS = ((IPHASQC.field('seeing_max') < 2.0) &
                                (IPHASQC.field('airmass_max') < 1.4))
@@ -616,16 +506,9 @@ class CalibrationApplicator(object):
         return status
 
 
-def calibrate_one(filename):
-    """Applies the photometric re-calibration to a single bandmerged field catalogue."""
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'apply_calibration.log')):
-        try:
-            ca = CalibrationApplicator()
-            ca.run(filename)
-        except Exception, e:
-            log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
-        return filename
-
+##
+## Apply the calibration to the bandmerged catalogues
+##
 
 def apply_calibration(clusterview):
     """Applies the photometric re-calibration to all bandmerged field catalogues."""
@@ -640,45 +523,20 @@ def apply_calibration(clusterview):
             log.info('Completed file {0}/{1}'.format(i, len(filenames)))
     log.info('Application of calibration finished')
 
-
-def median_colours_one(path):
-    """Returns the median of a single band-merged catalogue."""
-    mydata = fits.getdata(path, 1)
-    mask_reliable = mydata['reliable']
-    fieldid = path.split('/')[-1].split('.')[-2]
-    median_rmi = np.median(mydata['rmi'][mask_reliable])
-    median_rmha = np.median(mydata['rmha'][mask_reliable])
-    return (fieldid, median_rmi, median_rmha)
-
-
-def compute_median_colours(clusterview,
-                           directory=constants.PATH_BANDMERGED,
-                           output_filename = os.path.join(CALIBDIR,
-                                                  'median-colours.csv')):
-    """Computes the median r-Ha colour in all fields.
-
-    This will be used as an input to evaluate the H-alpha calibration.
-    """
-    log.info('Starting to compute median(r-ha) values.')
-
-    # Start the work on the cluster
-    util.setup_dir(CALIBDIR)
-    paths = [os.path.join(directory, filename) 
-             for filename in os.listdir(directory)]
-    results = clusterview.imap(median_colours_one, paths)
-
-    # Write the results to a csv file
-    with open(output_filename, 'w') as out:
-        out.write('field,median_rmi,median_rmha\n')
-        for (field, median_rmi, median_rmha) in results:
-            out.write('{0},{1},{2}\n'.format(field,
-                                             median_rmi,
-                                             median_rmha))
-
-    log.info('Computing median(r-ha) values finished.')    
+def calibrate_one(filename):
+    """Applies the photometric re-calibration to a single bandmerged field catalogue."""
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'apply_calibration.log')):
+        try:
+            ca = CalibrationApplicator()
+            ca.run(filename)
+        except Exception, e:
+            log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
+        return filename
 
 
-
+##
+## Plotting colour-colour diagrams of anchors and fields for quality control
+##
 
 def plot_anchors():
     """Plots diagrams of the anchors."""
@@ -691,12 +549,12 @@ def plot_anchors():
     anchor_runs = anchorlist['run'][anchorlist['is_anchor'] == 'True']
     fields = [util.run2field(myrun, 'r') for myrun in anchor_runs]
     # Distribute work
+    log.info('Starting to plot {0} anchors'.format(len(fields)))
     from multiprocessing import Pool
     mypool = Pool(4)
     mypool.map(plot_field, zip(fields,
                                [inputdir]*len(fields),
                                [outputdir]*len(fields)))
-
 
 def plot_calibrated_fields():
     """Plots diagrams of all fields after calibration."""
@@ -716,14 +574,13 @@ def plot_calibrated_fields():
 
 def plot_field(arguments):
     """Plots diagrams for a single anchor."""
-
     field, inputdir, outputdir = arguments
-
+    # Initiate figure
     fig = plt.figure(figsize=(6,4))
     fig.subplots_adjust(0.15, 0.15, 0.95, 0.9)
     p = fig.add_subplot(111)
     p.set_title(field)
-
+    # Load colours from the bandmerged catalogue
     d = fits.getdata(os.path.join(inputdir, field+'.fits'), 1)
     mask_use = (d['r'] < 19.0) & (d['errBits'] == 0) & (d['pStar'] > 0.2)
     p.scatter(d['rmi'][mask_use], d['rmha'][mask_use],
@@ -733,7 +590,7 @@ def plot_field(arguments):
     p.plot([0.029, 0.212, 0.368, 0.445, 0.903, 1.829],
            [0.001, 0.114, 0.204, 0.278, 0.499, 0.889],
            c='black', lw=0.5)
-    # A reddening line
+    # A-type reddening line
     p.plot([0.029, 0.699, 1.352, 1.991, 2.616],
            [0.001, 0.199, 0.355, 0.468, 0.544],
            c='black', lw=0.5)
@@ -742,13 +599,134 @@ def plot_field(arguments):
     p.set_ylim([-0.1, +1.3])
     p.set_xlabel('r-i')
     p.set_ylabel('r-Ha')
-
+    # Write to disk
     path = os.path.join(outputdir, field+'.jpg')
     fig.savefig(path, dpi=200)
+    plt.close()
     log.info('Wrote {0}'.format(path))
 
-    plt.close()
-    return fig
+
+
+##
+## The functions which drive the zeropoint calibration
+##
+
+def calibrate_band(band='r'):
+    """Calibrate a single band.
+
+    Parameters
+    ----------
+    band : one of 'r', 'i', 'ha'
+
+    Returns
+    -------
+    cal : Calibration class
+        object entailing the shifts to be added (cal.shifts)
+    """
+    log.info('Starting to calibrate the {0} band'.format(band))
+
+    # H-alpha is a special case because the APASS-based selection of anchors
+    # is not possible
+    if band == 'ha':
+        # We use the r-band calibration as the baseline for H-alpha
+        rcalib = ascii.read(os.path.join(CALIBDIR, 'calibration-r.csv'))
+        cal = Calibration(band)
+        cal.shifts = rcalib['shift']
+        cal.evaluate('step1', 'H-alpha with r-band shifts')
+
+        # We do run one iteration of Glazebrook using special H-alpha anchors
+        overlaps = cal.get_overlaps()
+        solver = Glazebrook(cal)
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step2', 'H-alpha after Glazebrook')
+
+        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
+
+    else:
+    
+        cal = Calibration(band)
+        cal.evaluate('step1', '{0} - uncalibrated'.format(band))
+        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
+
+        # Glazebrook: first pass (minimizes overlap offsets)
+        solver = Glazebrook(cal)
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step2', '{0} - step 2: Glazebrook pass 1'.format(band))    
+        # Write the used anchors to a csv file
+
+
+        # Correct outliers against APASS and fix them as anchors
+        delta = np.abs(cal.apass_shifts - cal.shifts)
+        cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
+                              -np.isnan(delta) &
+                              (delta >= TOLERANCE))
+        idx_extra_anchors = np.where(cond_extra_anchors)
+        cal.anchors[idx_extra_anchors] = True
+        cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
+        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
+        cal.evaluate('step3',
+                     '{0} - step 3: added {1} extra anchors'.format(
+                                       band, cond_extra_anchors.sum()))
+
+        # Run Glazebrook again with the newly added anchors
+        solver = Glazebrook(cal)    
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step4', '{0} - step 4 - Glazebrook pass 2'.format(band))
+
+        # Remove bad APASS shifts one more time
+        mask_has_apass = ((cal.apass_matches >= MIN_MATCHES) &
+                          -np.isnan(delta))
+        mask_is_outlier = (mask_has_apass &
+                           (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE))
+        idx_outlier = np.where(mask_is_outlier)
+        cal.shifts[idx_outlier] = cal.apass_shifts[idx_outlier]
+        # And make all APASS overlaps anchors
+        cal.anchors[mask_has_apass] = True 
+        cal.evaluate('step5', '{0} - step 5: anchor all APASS fields'.format(band))
+
+        # Run Glazebrook again with the newly added anchors
+        solver = Glazebrook(cal)    
+        shifts = solver.solve()
+        cal.add_shifts( shifts )
+        cal.evaluate('step6', '{0} - step 6 - Glazebrook pass 3'.format(band))
+        
+
+    # This is the important file: the calibration shifts!
+    filename = os.path.join(CALIBDIR, 'calibration-{0}.csv'.format(band))
+    cal.write(filename)
+
+    return cal
+
+
+def calibrate():
+    """Calibrates all bands in the survey.
+
+    Produces files called "calibration{r,i,ha}.csv" which tabulate
+    the zeropoint shifts to be *added* to each exposure.
+    """
+    # Make sure the output directory exists
+    util.setup_dir(CALIBDIR)
+    # Calibrate each band in the survey
+    for band in constants.BANDS:
+        calibrate_band(band)
+
+
+def calibrate_multiprocessing():
+    """Calibrates all bands in the survey.
+
+    Produces files called "calibration{r,i,ha}.csv" which tabulate
+    the zeropoint shifts to be *added* to each exposure.
+    """
+    # Make sure the output directory exists
+    util.setup_dir(CALIBDIR)
+    # Calibrate each band in the survey
+    from multiprocessing import Pool
+    pool = Pool(2)
+    pool.map(calibrate_band, ['r', 'i'])
+    calibrate_band('ha') # H-alpha depends on output of r
 
 
 ################################
