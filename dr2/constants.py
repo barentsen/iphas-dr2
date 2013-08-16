@@ -13,7 +13,7 @@ HOSTNAME = os.uname()[1]
 if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
     DEBUGMODE = True
     RAWDATADIR = '/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
-    DESTINATION = '/home/gb/tmp//iphas-dr2-rc3'
+    DESTINATION = '/home/gb/tmp/iphas-dr2-rc3'
 if HOSTNAME == 'gvm':  # testing machine
     DEBUGMODE = True
     RAWDATADIR = '/media/uh/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
@@ -26,6 +26,10 @@ if not os.path.exists(LOGDIR):
 
 
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
+
+CALIBDIR = os.path.join(DESTINATION, 'calibration')
+PATH_BANDMERGED = os.path.join(DESTINATION, 'bandmerged')
+PATH_BANDMERGED_CALIBRATED = os.path.join(DESTINATION, 'bandmerged-calibrated')
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)

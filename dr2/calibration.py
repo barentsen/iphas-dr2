@@ -12,6 +12,9 @@ This file also contains a class to apply the calibration to the catalogues.
 """
 import numpy as np
 import os
+import matplotlib
+matplotlib.use('Agg')  # Cluster does not have an X backend
+from matplotlib import pyplot as plt
 from scipy import sparse
 from scipy.sparse import linalg
 from astropy.io import ascii
@@ -21,6 +24,7 @@ from astropy import log
 import constants
 from constants import IPHASQC
 from constants import IPHASQC_COND_RELEASE
+from constants import CALIBDIR
 import util
 
 __author__ = 'Geert Barentsen'
@@ -28,89 +32,21 @@ __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 
 
-PATH_UNCALIBRATED = os.path.join(constants.DESTINATION,
-                                 'bandmerged')
-PATH_CALIBRATED = os.path.join(constants.DESTINATION,
-                               'bandmerged-calibrated')
-
-
 # When to trust other surveys?
 TOLERANCE = 0.03
 MIN_MATCHES = 30
 
-# Extra anchors selected in the final phases of the data release,
-# when a few areas with poor anchor coverage were spotted
 
-# Upper left corner
-EXTRA_ANCHORS = ['4510_jul2004a', '4510o_jul2004a',
-                 '4583_jul2009', '4583o_jul2009',
-                 '4525_jul2004a', '4525o_jul2004a',
-                 '4598_jul2004a', '4598o_jul2004a',
-                 '4087_jun2004', '4087o_jun2004',
-                 '4093_jun2004', '4093o_jun2004',
-                 '4084_jun2007', '4084o_jun2007',
-                 '4106_jun2007', '4106o_jun2007',
-                 '4085_jul2009', '4085o_jul2009',
-                 '4140_jun2004', '4140o_jun2004',
-                 '4128_jun2004', '4128o_jun2004',
-                 '4102_jun2004', '4102o_jun2004',
-                 '4139_jun2004', '4139o_jun2004',
-                 '4118_jun2004', '4118o_jun2004',
-                 '4088_jun2004', '4088o_jun2004',
-                 '4089_jun2004', '4089o_jun2004',
-                 '4091_jun2004', '4091o_jun2004',
-                 '4092_jun2004', '4092o_jun2004',
-                 '4103_jun2007', '4103o_jun2007',
-                 '4114_jun2004', '4114o_jun2004',
-                 '4088_jun2004', '4088o_jun2004',
-                 '4099_jun2004', '4099o_jun2004',
-                 '4110_jun2004', '4110o_jun2004',
-                 '4096_jun2004', '4096o_jun2004',
-                 '4127_jun2004', '4127o_jun2004',
-                 '6094_oct2003', '6094o_oct2003',
-                 '4116_jun2004', '4116o_jun2004',
-                 '4120_jun2004', '4120o_jun2004']
-# Lower left corner
-EXTRA_ANCHORS.append('4480_jul2004a')
-EXTRA_ANCHORS.append('4480o_jul2004a')
 
-# Other pars
-EXTRA_ANCHORS.append('5023_jul2009')
-EXTRA_ANCHORS.append('5023o_jul2009')
-EXTRA_ANCHORS.append('5265_sep2003')
-EXTRA_ANCHORS.append('5265o_sep2003')
-EXTRA_ANCHORS.append('5535_jul2009')
-EXTRA_ANCHORS.append('5535o_jul2009')
-EXTRA_ANCHORS.append('5471_jul2007')
-EXTRA_ANCHORS.append('5471o_jul2007')
-EXTRA_ANCHORS.append('5393_jun2005')
-EXTRA_ANCHORS.append('5393o_jun2005')
+ANCHOR_NIGHTS = [20030915, 20031018, 20031101, 20031104, 20031108, 20031117,
+                 20040707, 20040805, 20040822, 20041022, 20050629, 20050709,
+                 20050710, 20050711, 20050916, 20050917, 20050918, 20051023,
+                 20051101, 20051102, 20061129, 20061130, 20061214, 20070627,
+                 20070630, 20080722, 20080723, 20090808, 20090810, 20091029,
+                 20091031]
 
-ANCHOR_NIGHTS = [20031214, 20070629, 20050711, 20050714, 20061214, 20090701,
-                 20070630, 20061129, 20070627, 20061130, 20080724, 20050710,
-                 20080829, 20051024, 20031101, 20070624, 20051101, 20031117,
-                 20051101, 20051023, 20050723, 20041030, 20100802]
-
-# Make sure the following runs are no anchors
-# cf. e-mail Janet to Geert, 13 Aug 2013
-ANCHOR_BLACKLIST = ['0546_oct2003', '0546o_oct2003',
-                    '0555_oct2003', '0555o_oct2003',
-                    '0886_nov2003b', '0886o_nov2003b',
-                    '6459_aug2004a', '6459o_aug2004a',
-                    '5056_jun2005', '5056o_jun2005',
-                    '5063_jun2005', '5063o_jun2005',
-                    '2627_nov2006d', '2627o_nov2006d',
-                    '2635_nov2006d', '2635o_nov2006d',
-                    '2654_nov2006d', '2654o_nov2006d',
-                    '5239_may2007', '5239o_may2007',
-                    '3886_dec2007', '3886o_dec2007',
-                    '0010_nov2008', '0010o_nov2008',
-                    '0012_nov2008', '0012o_nov2008',
-                    '0332_nov2008', '0332o_nov2008',
-                    '0334_nov2008', '0334o_nov2008',
-                    '0911_aug2009', '0911o_aug2009',
-                    '0825_aug2009', '0825o_aug2009',
-                    ]
+# Nights which should NOT provide anchors
+NIGHT_BLACKLIST = [20031117]
 
 
 
@@ -132,67 +68,73 @@ def calibrate_band(band='r'):
     # is not possible
     if band == 'ha':
         # We use the r-band calibration as the baseline for H-alpha
-        rcalib_file = os.path.join(constants.DESTINATION,
-                                   'calibration',
-                                   'calibration-r.csv')
-        rcalib = ascii.read(rcalib_file)
+        rcalib = ascii.read(os.path.join(CALIBDIR, 'calibration-r.csv'))
         cal = Calibration(band)
         cal.shifts = rcalib['shift']
+        cal.evaluate('step1', 'H-alpha with r-band shifts')
 
         # We do run one iteration of Glazebrook using special H-alpha anchors
         overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, cal.anchors)
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate('glazebrook', 
-                     'H-alpha calibration shifts'.format(band))
+        solver = Glazebrook(cal)
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step2', 'H-alpha after Glazebrook')
+
+        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
 
     else:
     
         cal = Calibration(band)
-        cal.evaluate('step1', 
-                     '{0} - uncalibrated'.format(band))
+        cal.evaluate('step1', '{0} - uncalibrated'.format(band))
+        cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
 
         # Glazebrook: first pass (minimizes overlap offsets)
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, cal.anchors)
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate('step2',
-                     '{0} - step 2: Glazebrook pass 1'.format(band))    
-        
+        solver = Glazebrook(cal)
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step2', '{0} - step 2: Glazebrook pass 1'.format(band))    
+        # Write the used anchors to a csv file
+
+
         # Correct outliers against APASS and fix them as anchors
         delta = np.abs(cal.apass_shifts - cal.shifts)
         cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
                               -np.isnan(delta) &
-                              (delta >= TOLERANCE)
-                             )
-        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
+                              (delta >= TOLERANCE))
         idx_extra_anchors = np.where(cond_extra_anchors)
         cal.anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
+        log.info('Adding {0} extra anchors'.format(cond_extra_anchors.sum()))
         cal.evaluate('step3',
                      '{0} - step 3: added {1} extra anchors'.format(
                                        band, cond_extra_anchors.sum()))
 
         # Run Glazebrook again with the newly added anchors
-        overlaps = cal.get_overlaps()
-        solver = Glazebrook(cal.runs, overlaps, cal.anchors)    
-        solver.solve()
-        cal.add_shifts( solver.get_shifts() )
-        cal.evaluate('step4',
-                     '{0} - step 4 - Glazebrook pass 2'.format(band))
+        solver = Glazebrook(cal)    
+        shifts = solver.solve()
+        cal.add_shifts(shifts)
+        cal.evaluate('step4', '{0} - step 4 - Glazebrook pass 2'.format(band))
 
-        # Write the used anchors to a csv file
-        anchor_list_filename = os.path.join(constants.DESTINATION,
-                                           'calibration',
-                                           'anchors-{0}.csv'.format(band))
-        solver.write_anchor_list(anchor_list_filename)
+        # Remove bad APASS shifts one more time
+        mask_has_apass = ((cal.apass_matches >= MIN_MATCHES) &
+                          -np.isnan(delta))
+        mask_is_outlier = (mask_has_apass &
+                           (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE))
+        idx_outlier = np.where(mask_is_outlier)
+        cal.shifts[idx_outlier] = cal.apass_shifts[idx_outlier]
+        # And make all APASS overlaps anchors
+        cal.anchors[mask_has_apass] = True 
+        cal.evaluate('step5', '{0} - step 5: anchor all APASS fields'.format(band))
+
+        # Run Glazebrook again with the newly added anchors
+        solver = Glazebrook(cal)    
+        shifts = solver.solve()
+        cal.add_shifts( shifts )
+        cal.evaluate('step6', '{0} - step 6 - Glazebrook pass 3'.format(band))
         
 
-    filename = os.path.join(constants.DESTINATION,
-                            'calibration',
-                            'calibration-{0}.csv'.format(band))
+    # This is the important file: the calibration shifts!
+    filename = os.path.join(CALIBDIR, 'calibration-{0}.csv'.format(band))
     cal.write(filename)
 
     return cal
@@ -205,12 +147,24 @@ def calibrate():
     the zeropoint shifts to be *added* to each exposure.
     """
     # Make sure the output directory exists
-    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
+    util.setup_dir(CALIBDIR)
     # Calibrate each band in the survey
     for band in constants.BANDS:
         calibrate_band(band)
 
+def calibrate_multiprocessing():
+    """Calibrates all bands in the survey.
 
+    Produces files called "calibration{r,i,ha}.csv" which tabulate
+    the zeropoint shifts to be *added* to each exposure.
+    """
+    # Make sure the output directory exists
+    util.setup_dir(CALIBDIR)
+    # Calibrate each band in the survey
+    from multiprocessing import Pool
+    pool = Pool(2)
+    pool.map(calibrate_band, ['r', 'i'])
+    calibrate_band('ha') # H-alpha depends on output of r
 
 
 class Calibration(object):
@@ -269,6 +223,56 @@ class Calibration(object):
         self._load_offsetdata()
         self.anchors = self.select_anchors()
 
+    def get_runs(self):
+        return self.runs
+
+    def get_anchors(self):
+        return self.anchors
+
+    def get_overlaps(self, weights=True):
+        """Returns a dict with the magnitude offsets between run overlaps.
+
+        Takes the current calibration into account.
+        """
+        log.info('Loading calibration-corrected magnitude offsets between overlaps')
+        # Prepare look-up dictionary which links runs to calibration shifts
+        current_shifts = dict(zip(self.runs, self.shifts))
+
+        # Dictionary of field overlaps
+        overlaps = {}
+        for row in self.offsetdata:
+            myrun1 = row['run1']
+            myrun2 = row['run2']
+            if myrun1 in self.runs and myrun2 in self.runs:
+                # Offset is computed as (run1 - run2), hence correcting 
+                # for calibration means adding (shift_run1 - shift_run2)
+                myoffset = (row['offset'] 
+                            + current_shifts[myrun1]
+                            - current_shifts[myrun2])
+                if myrun1 not in overlaps:
+                    overlaps[myrun1] = {'runs': [], 'offsets': [], 'weights': []}
+                overlaps[myrun1]['runs'].append(myrun2)
+                overlaps[myrun1]['offsets'].append(myoffset)
+
+                if weights:
+                    overlaps[myrun1]['weights'].append(np.sqrt(row['n']))
+                else:
+                    overlaps[myrun1]['weights'].append(1.0)
+
+        return overlaps
+
+    def write_anchor_list(self, filename):
+        """Writes the list of anchors to a csv files.
+
+        Parameters
+        ----------
+        filename : str
+        """
+        with open(filename, 'w') as out:
+            out.write('run,is_anchor\n')
+            for i in range(len(self.runs)):
+                out.write('{0},{1}\n'.format(self.runs[i], self.anchors[i]))
+
     def add_shifts(self, shifts):
         self.shifts += shifts
 
@@ -294,9 +298,7 @@ class Calibration(object):
         self._spatial_plot(l, b, self.shifts, 'calib-'+name, 'Calibration '+title)
 
         if self.band in ['r', 'i']:
-            statsfile = os.path.join(constants.DESTINATION,
-                                     'calibration',
-                                     'stats-{0}.txt'.format(self.band))
+            statsfile = os.path.join(CALIBDIR, 'stats-{0}.txt'.format(self.band))
             with open(statsfile, 'w') as out:
                 # Against APASS
                 mask_use = (self.apass_matches >= MIN_MATCHES)
@@ -323,9 +325,8 @@ class Calibration(object):
 
     def _spatial_plot(self, l, b, shifts, name, title=''):
         """Creates a spatial plot of l/b against shifts."""
-        import matplotlib
-        matplotlib.use('Agg')  # Cluster does not have an X backend
-        from matplotlib import pyplot as plt
+        plotdir = os.path.join(CALIBDIR, 'plots')
+        util.setup_dir(plotdir)
 
         fig = plt.figure(figsize=(12,6))
         fig.subplots_adjust(0.06, 0.15, 0.97, 0.9)
@@ -335,19 +336,21 @@ class Calibration(object):
                          edgecolors='none',
                          s=7, marker='h')
         plt.colorbar(scat)
-        # Indicate anchors
-        p.scatter(IPHASQC['l'][IPHASQC_COND_RELEASE][self.anchors],
-                  IPHASQC['b'][IPHASQC_COND_RELEASE][self.anchors],
-                  edgecolors='black', facecolor='none',
-                  s=15, marker='x', alpha=0.9, lw=0.3)
         p.set_xlim([28, 217])
         p.set_ylim([-5.2, +5.2])
         p.set_xlabel('l')
         p.set_ylabel('b')
 
-        path = os.path.join(constants.DESTINATION,
-                            'calibration',
-                            self.band+'-'+name+'.png')
+        path = os.path.join(plotdir, self.band+'-'+name+'-without-anchors.png')
+        fig.savefig(path, dpi=200)
+        log.info('Wrote {0}'.format(path))
+
+        # Indicate anchors
+        p.scatter(IPHASQC['l'][IPHASQC_COND_RELEASE][self.anchors],
+                  IPHASQC['b'][IPHASQC_COND_RELEASE][self.anchors],
+                  edgecolors='black', facecolor='none',
+                  s=15, marker='x', alpha=0.9, lw=0.3)
+        path = os.path.join(plotdir, self.band+'-'+name+'-with-anchors.png')
         fig.savefig(path, dpi=200)
         log.info('Wrote {0}'.format(path))
 
@@ -370,46 +373,13 @@ class Calibration(object):
         f.close()
 
     def _load_offsetdata(self):
-        filename_offsets = os.path.join(constants.DESTINATION,
-                                        'calibration',
+        filename_offsets = os.path.join(CALIBDIR,
                                         'offsets-{0}.csv'.format(self.band))
         log.info('Reading {0}'.format(filename_offsets))
         mydata = ascii.read(filename_offsets)
         # Do not use the offsets unless enough stars were used
-        #mask_use = (mydata['n'] >= 5) & (mydata['std'] < 0.07)
-        self.offsetdata = mydata #[mask_use]
-
-    def get_overlaps(self, weights=True):
-        """Returns a dict with the magnitude offsets between run overlaps.
-
-        Takes the current calibration into account.
-        """
-        log.info('Loading calibration-corrected magnitude offsets between overlaps')
-        # Performance optimisation
-        current_shifts = dict(zip(self.runs, self.shifts))
-
-        # Dictionary of field overlaps
-        overlaps = {}
-        for row in self.offsetdata:
-            myrun1 = row['run1']
-            myrun2 = row['run2']
-            if myrun1 in self.runs and myrun2 in self.runs:
-                # Offset is computed as (run1 - run2), hence correcting 
-                # for calibration means adding (shift_run1 - shift_run2)
-                myoffset = (row['offset'] 
-                            + current_shifts[myrun1]
-                            - current_shifts[myrun2])
-                if myrun1 not in overlaps:
-                    overlaps[myrun1] = {'runs': [], 'offsets': [], 'weights': []}
-                overlaps[myrun1]['runs'].append(myrun2)
-                overlaps[myrun1]['offsets'].append(myoffset)
-
-                if weights:
-                    overlaps[myrun1]['weights'].append(np.sqrt(row['n']))
-                else:
-                    overlaps[myrun1]['weights'].append(1.0)
-
-        return overlaps
+        #mask_use = (mydata['n'] >= 5) & (mydata['std'] < 0.1)
+        self.offsetdata = mydata
 
     def select_anchors(self):
         """Returns a boolean array indicating which runs are suitable anchors."""
@@ -441,24 +411,38 @@ class Calibration(object):
                               & (np.abs(IPHASQC.field('rshift_apassdr7') - IPHASQC.field('ishift_apassdr7')) <= tolerance) )
 
             IS_OLD_ANCHOR = (IPHASQC.field('anchor') == 1)
+
+            # Extra anchors selected in the final phases of the data release,
+            # when a few areas with poor anchor coverage were spotted
+            EXTRA_ANCHORS = ascii.read('lib/anchor-extra.txt')['field']
             IS_EXTRA_ANCHOR = np.array([myfield in EXTRA_ANCHORS 
                                         for myfield in IPHASQC.field('id')])
+            # Make sure the following runs are no anchors
+            # cf. e-mail Janet to Geert, 13 Aug 2013
+            ANCHOR_BLACKLIST = ascii.read('lib/anchor-blacklist.txt')['field']
             IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
                                      for myfield in IPHASQC.field('id')])
+            IS_IN_NIGHT_BLACKLIST = np.array([night in NIGHT_BLACKLIST 
+                                              for night in IPHASQC.field('night')])
 
-            IS_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
+            IS_IN_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
                                        for mynight in IPHASQC.field('night')])
 
+            GOOD_CONDITIONS = ((IPHASQC.field('seeing_max') < 2.0) &
+                               (IPHASQC.field('airmass_max') < 1.4))
+
             anchors = (-IS_BLACKLIST &
+                       -IS_IN_NIGHT_BLACKLIST &
                        IS_STABLE & 
-                       (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_EXTRA_NIGHT | IS_APASS_ANCHOR)
+                       GOOD_CONDITIONS &
+                       (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_IN_EXTRA_NIGHT | IS_APASS_ANCHOR)
                       )
             result = anchors[IPHASQC_COND_RELEASE]
 
             log.info('IS_APASS_ANCHOR: {0} fields'.format(IS_APASS_ANCHOR.sum()))
             log.info('IS_OLD_ANCHOR: {0} fields'.format(IS_OLD_ANCHOR.sum()))
             log.info('IS_EXTRA_ANCHOR: {0} fields'.format(IS_EXTRA_ANCHOR.sum()))
-            log.info('IS_EXTRA_NIGHT: {0} fields'.format(IS_EXTRA_NIGHT.sum()))
+            log.info('IS_IN_EXTRA_NIGHT: {0} fields'.format(IS_IN_EXTRA_NIGHT.sum()))
             log.info('IS_BLACKLIST: {0} fields'.format(IS_BLACKLIST.sum()))            
             log.info('Anchors in data release: {0} fields'.format(result.sum()))
 
@@ -485,14 +469,17 @@ class Glazebrook(object):
     matrix equation in an efficient fashion.
     """
 
-    def __init__(self, runs, overlaps, anchors):
-        self.runs = runs
-        self.overlaps = overlaps
-        self.anchors = anchors
-        self.nonanchors = ~anchors
+    def __init__(self, cal):
+        self.cal = cal  # Calibration object
+        self.runs = cal.get_runs()
+        self.overlaps = cal.get_overlaps()
+        self.anchors = cal.get_anchors()
+
+        self.nonanchors = ~self.anchors
         self.n_nonanchors = self.nonanchors.sum()
-        log.info('Glazebrook: there are {0} runs ({1} are anchors)'.format(len(runs),
-                                                               anchors.sum()))
+        log.info('Glazebrook: there are {0} runs ({1} are anchors)'.format(
+                                                            len(self.runs),
+                                                            self.anchors.sum()))
 
     def _A(self):
         """Returns the matrix called "A" in [Glazebrook 1994, Section 3.3]
@@ -546,23 +533,15 @@ class Glazebrook(object):
         # Note: there may be alternative algorithms
         # which are faster for symmetric matrices.
         self.solution = linalg.lsqr(self.A, self.b,
-                                    atol=1e-8, iter_lim=2e5, show=False)
+                                    atol=1e-8, iter_lim=1e6, show=False)
         log.info('Glazebrook: solution found')
         log.info('Glazebrook: mean shift = {0} +/- {1}'.format(
                                             np.mean(self.solution[0]),
                                             np.std(self.solution[0])))
-        return self.solution
 
-    def get_shifts(self):
         shifts = np.zeros(len(self.runs))
         shifts[self.nonanchors] = self.solution[0]
         return shifts
-
-    def write_anchor_list(self, filename):
-        with open(filename, 'w') as out:
-            out.write('run,is_anchor\n')
-            for i in range(len(self.runs)):
-                out.write('{0},{1}\n'.format(self.runs[i], self.anchors[i]))
 
 
 class CalibrationApplicator(object):
@@ -574,16 +553,14 @@ class CalibrationApplicator(object):
     catalogue to a new directory 'bandmerged-calibrated'."""
 
     def __init__(self):
-        self.datadir = PATH_UNCALIBRATED
-        self.outdir = PATH_CALIBRATED
+        self.datadir = constants.PATH_BANDMERGED
+        self.outdir = constants.PATH_BANDMERGED_CALIBRATED
         util.setup_dir(self.outdir)
 
         # Read in the calibration
         self.calib = {}
         for band in constants.BANDS:
-            calib_file = os.path.join(constants.DESTINATION,
-                                      'calibration',
-                                      'calibration-{0}.csv'.format(band))
+            calib_file = os.path.join(CALIBDIR, 'calibration-{0}.csv'.format(band))
             self.calib[band] = ascii.read(calib_file)
 
     def run(self, filename):
@@ -652,7 +629,7 @@ def calibrate_one(filename):
 
 def apply_calibration(clusterview):
     """Applies the photometric re-calibration to all bandmerged field catalogues."""
-    filenames = os.listdir(PATH_UNCALIBRATED)
+    filenames = os.listdir(constants.PATH_BANDMERGED)
     results = clusterview.imap(calibrate_one, filenames)
 
     # Print a friendly message once in a while
@@ -675,10 +652,8 @@ def median_colours_one(path):
 
 
 def compute_median_colours(clusterview,
-                           directory=PATH_UNCALIBRATED,
-                           output_filename = os.path.join(
-                                                   constants.DESTINATION,
-                                                  'calibration',
+                           directory=constants.PATH_BANDMERGED,
+                           output_filename = os.path.join(CALIBDIR,
                                                   'median-colours.csv')):
     """Computes the median r-Ha colour in all fields.
 
@@ -687,7 +662,7 @@ def compute_median_colours(clusterview,
     log.info('Starting to compute median(r-ha) values.')
 
     # Start the work on the cluster
-    util.setup_dir(os.path.join(constants.DESTINATION, 'calibration'))
+    util.setup_dir(CALIBDIR)
     paths = [os.path.join(directory, filename) 
              for filename in os.listdir(directory)]
     results = clusterview.imap(median_colours_one, paths)
@@ -703,6 +678,79 @@ def compute_median_colours(clusterview,
     log.info('Computing median(r-ha) values finished.')    
 
 
+
+
+def plot_anchors():
+    """Plots diagrams of the anchors."""
+    # Setup output directory
+    inputdir = constants.PATH_BANDMERGED
+    outputdir = os.path.join(CALIBDIR, 'anchors')
+    util.setup_dir(outputdir)
+    # Which fields to plot?
+    anchorlist = ascii.read(os.path.join(CALIBDIR, 'anchors-r-initial.csv'))
+    anchor_runs = anchorlist['run'][anchorlist['is_anchor'] == 'True']
+    fields = [util.run2field(myrun, 'r') for myrun in anchor_runs]
+    # Distribute work
+    from multiprocessing import Pool
+    mypool = Pool(4)
+    mypool.map(plot_field, zip(fields,
+                               [inputdir]*len(fields),
+                               [outputdir]*len(fields)))
+
+
+def plot_calibrated_fields():
+    """Plots diagrams of all fields after calibration."""
+    # Setup output directory
+    inputdir = constants.PATH_BANDMERGED_CALIBRATED
+    outputdir = os.path.join(CALIBDIR, 'diagrams')
+    util.setup_dir(outputdir)
+    # Which fields to plot?
+    fields = IPHASQC['id'][IPHASQC_COND_RELEASE]
+    # Distribute work
+    from multiprocessing import Pool
+    mypool = Pool(4)
+    mypool.map(plot_field, zip(fields,
+                               [inputdir]*len(fields),
+                               [outputdir]*len(fields)))
+
+
+def plot_field(arguments):
+    """Plots diagrams for a single anchor."""
+
+    field, inputdir, outputdir = arguments
+
+    fig = plt.figure(figsize=(6,4))
+    fig.subplots_adjust(0.15, 0.15, 0.95, 0.9)
+    p = fig.add_subplot(111)
+    p.set_title(field)
+
+    d = fits.getdata(os.path.join(inputdir, field+'.fits'), 1)
+    mask_use = (d['r'] < 19.0) & (d['errBits'] == 0) & (d['pStar'] > 0.2)
+    p.scatter(d['rmi'][mask_use], d['rmha'][mask_use],
+              alpha=0.4, edgecolor="red", facecolor="red",
+              lw=0, s=1, marker='o')
+    # Main sequence
+    p.plot([0.029, 0.212, 0.368, 0.445, 0.903, 1.829],
+           [0.001, 0.114, 0.204, 0.278, 0.499, 0.889],
+           c='black', lw=0.5)
+    # A reddening line
+    p.plot([0.029, 0.699, 1.352, 1.991, 2.616],
+           [0.001, 0.199, 0.355, 0.468, 0.544],
+           c='black', lw=0.5)
+
+    p.set_xlim([-0.2, +2.0])
+    p.set_ylim([-0.1, +1.3])
+    p.set_xlabel('r-i')
+    p.set_ylabel('r-Ha')
+
+    path = os.path.join(outputdir, field+'.jpg')
+    fig.savefig(path, dpi=200)
+    log.info('Wrote {0}'.format(path))
+
+    plt.close()
+    return fig
+
+
 ################################
 # MAIN EXECUTION (FOR DEBUGGING)
 #################################
@@ -710,4 +758,6 @@ def compute_median_colours(clusterview,
 if __name__ == '__main__':
     log.setLevel('DEBUG')
     calibrate()
+    #calibrate_multiprocessing()
     #calibrate_band('ha')
+    #plot_anchors()

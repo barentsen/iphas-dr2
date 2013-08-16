@@ -10,6 +10,8 @@ import numpy as np
 import socket
 import os
 
+from dr2 import constants
+
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
@@ -115,3 +117,12 @@ def setup_dir(path):
             os.makedirs(path)
     except OSError:  # "File already exist" can occur due to parallel running
         pass
+
+def run2field(run, band):
+    """Convert a run number to the field identifier."""
+    assert(band in constants.BANDS)
+    idx = np.where(constants.IPHASQC['run_{0}'.format(band)] == run)
+    if len(idx) > 0:
+        return constants.IPHASQC['id'][idx[0]][0]
+    else:
+        return None
