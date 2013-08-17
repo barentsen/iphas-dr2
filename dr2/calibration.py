@@ -729,7 +729,7 @@ def calibrate_band(band='r'):
             649761, 686153, 686264, 687199,
             687757, 702703, 702724, 702769,
             703360, 703408, 703741]
-        MANUALLY_SHIFTED = np.array([myrun in SHIFTED_RUNS for myrun in cal.runs])
+        IS_MANUALLY_SHIFTED = np.array([myrun in MANUALLY_SHIFTED for myrun in cal.runs])
 
         cal.evaluate('step1', '{0} - uncalibrated'.format(band))
         cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
@@ -747,7 +747,7 @@ def calibrate_band(band='r'):
         cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
                               -np.isnan(delta) &
                               (delta >= TOLERANCE) &
-                              -MANUALLY_SHIFTED)
+                              -IS_MANUALLY_SHIFTED)
         idx_extra_anchors = np.where(cond_extra_anchors)
         cal.anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
@@ -767,7 +767,7 @@ def calibrate_band(band='r'):
                           -np.isnan(delta))
         mask_is_outlier = (mask_has_apass &
                            (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE) &
-                           -MANUALLY_SHIFTED
+                           -IS_MANUALLY_SHIFTED
                            )
         idx_outlier = np.where(mask_is_outlier)
         cal.shifts[idx_outlier] = cal.apass_shifts[idx_outlier]
