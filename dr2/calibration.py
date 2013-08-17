@@ -318,7 +318,7 @@ class Calibration(object):
                                        for mynight in IPHASQC.field('night')])
 
             # Nights which should NOT provide anchors
-            NIGHT_BLACKLIST = [20031117, 20051109, 20101029,]
+            NIGHT_BLACKLIST = [20031117, 20051109, 20091029, 20101029,]
             IS_IN_NIGHT_BLACKLIST = np.array([night in NIGHT_BLACKLIST 
                                               for night in IPHASQC.field('night')])
 
