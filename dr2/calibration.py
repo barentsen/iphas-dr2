@@ -318,18 +318,20 @@ class Calibration(object):
                                        for mynight in IPHASQC.field('night')])
 
             # Nights which should NOT provide anchors
-            NIGHT_BLACKLIST = [20031117]
+            NIGHT_BLACKLIST = [20031117, 20051109, 20101029,]
             IS_IN_NIGHT_BLACKLIST = np.array([night in NIGHT_BLACKLIST 
                                               for night in IPHASQC.field('night')])
 
-
-            GOOD_CONDITIONS = ((IPHASQC.field('seeing_max') < 2.0) &
-                               (IPHASQC.field('airmass_max') < 1.4))
+            # Anchors must not have known quality issues
+            IS_QUALITY_OK = ((IPHASQC.field('seeing_max') < 2.0) &
+                               (IPHASQC.field('airmass_max') < 1.4) &
+                               (IPHASQC.field('qflag') != 'C') &
+                               (IPHASQC.field('qflag') != 'D'))
 
             anchors = (-IS_BLACKLIST &
                        -IS_IN_NIGHT_BLACKLIST &
                        IS_STABLE & 
-                       GOOD_CONDITIONS &
+                       IS_QUALITY_OK &
                        (IS_OLD_ANCHOR | IS_EXTRA_ANCHOR | IS_IN_EXTRA_NIGHT | IS_APASS_ANCHOR)
                       )
             result = anchors[IPHASQC_COND_RELEASE]
