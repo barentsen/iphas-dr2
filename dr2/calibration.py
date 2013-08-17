@@ -696,6 +696,41 @@ def calibrate_band(band='r'):
     else:
     
         cal = Calibration(band)
+
+
+        # Hack: take account of exposure time changes
+        MANUALLY_SHIFTED = [364687,
+            368903, 368904, 368923, 368925,
+            369998, 370073, 370076, 370084,
+            370095, 371652, 371695, 372557,
+            372684, 372707, 372751, 372771,
+            372880, 373106, 373111, 373698,
+            374904, 376449, 376461, 376463,
+            376481, 376493, 376530, 401548,
+            401566, 402270, 407505, 407580,
+            407586, 407598, 408287, 408296,
+            413548, 413566, 413596, 413783,
+            413804, 414671, 418169, 418190,
+            418196, 418310, 427588, 427820,
+            457662, 460468, 470277, 470592,
+            470822, 470852, 474652, 476050,
+            476131, 478320, 478434, 478609,
+            478645, 478720, 478795, 537478,
+            537544, 537550, 537565, 537623,
+            538318, 538354, 538366, 538406,
+            538595, 538601, 538759, 540932,
+            541185, 541717, 541948, 568871,
+            568892, 568937, 568970, 568982,
+            569666, 569768, 569816, 
+            570005, 570559, 570601, 570754,
+            571311, 571362, 571377, 571704,
+            597412, 597469, 597778, 598536,
+            598710, 598865, 598880, 647562,
+            649761, 686153, 686264, 687199,
+            687757, 702703, 702724, 702769,
+            703360, 703408, 703741]
+        MANUALLY_SHIFTED = np.array([myrun in SHIFTED_RUNS for myrun in cal.runs])
+
         cal.evaluate('step1', '{0} - uncalibrated'.format(band))
         cal.write_anchor_list(os.path.join(CALIBDIR, 'anchors-{0}-initial.csv'.format(band)))
 
@@ -711,7 +746,8 @@ def calibrate_band(band='r'):
         delta = np.abs(cal.apass_shifts - cal.shifts)
         cond_extra_anchors = ((cal.apass_matches >= MIN_MATCHES) &
                               -np.isnan(delta) &
-                              (delta >= TOLERANCE))
+                              (delta >= TOLERANCE) &
+                              -MANUALLY_SHIFTED)
         idx_extra_anchors = np.where(cond_extra_anchors)
         cal.anchors[idx_extra_anchors] = True
         cal.shifts[idx_extra_anchors] = cal.apass_shifts[idx_extra_anchors]
@@ -730,7 +766,9 @@ def calibrate_band(band='r'):
         mask_has_apass = ((cal.apass_matches >= MIN_MATCHES) &
                           -np.isnan(delta))
         mask_is_outlier = (mask_has_apass &
-                           (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE))
+                           (np.abs(cal.apass_shifts - cal.shifts) >= TOLERANCE) &
+                           -MANUALLY_SHIFTED
+                           )
         idx_outlier = np.where(mask_is_outlier)
         cal.shifts[idx_outlier] = cal.apass_shifts[idx_outlier]
         # And make all APASS overlaps anchors
@@ -785,8 +823,8 @@ def calibrate_multiprocessing():
 
 if __name__ == '__main__':
     log.setLevel('DEBUG')
-    #calibrate()
+    calibrate()
     #calibrate_multiprocessing()
     #calibrate_band('ha')
-    #plot_anchors()
+    plot_anchors()
     plot_calibrated_fields()
