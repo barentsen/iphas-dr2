@@ -467,6 +467,10 @@ class CalibrationApplicator(object):
 
     def get_shifts(self, filename):
         fieldid = filename.split('.fits')[0]
+        return get_field_shifts(fieldid)
+
+
+    def get_field_shifts(self, fieldid):
         idx_field = np.argwhere(IPHASQC.field('id') == fieldid)[0]
 
         shifts = {}
@@ -480,7 +484,7 @@ class CalibrationApplicator(object):
                 shifts[band] = 0.0
 
         log.info("Shifts for {0}: {1}".format(fieldid, shifts))
-        return shifts
+        return shifts            
 
     def calibrate(self, filename):
         path_in = os.path.join(self.datadir, filename)
@@ -563,22 +567,6 @@ def plot_anchors():
                                [inputdir]*len(fields),
                                [outputdir]*len(fields)))
 
-def plot_calibrated_fields():
-    """Plots diagrams of all fields after calibration."""
-    # Setup output directory
-    inputdir = constants.PATH_BANDMERGED_CALIBRATED
-    outputdir = os.path.join(CALIBDIR, 'diagrams')
-    util.setup_dir(outputdir)
-    # Which fields to plot?
-    fields = IPHASQC['id'][IPHASQC_COND_RELEASE]
-    # Distribute work
-    from multiprocessing import Pool
-    mypool = Pool(4)
-    mypool.map(plot_field, zip(fields,
-                               [inputdir]*len(fields),
-                               [outputdir]*len(fields)))
-
-
 def plot_field(arguments):
     """Plots diagrams for a single anchor."""
     field, inputdir, outputdir = arguments
@@ -611,6 +599,74 @@ def plot_field(arguments):
     fig.savefig(path, dpi=200)
     plt.close()
     log.info('Wrote {0}'.format(path))
+
+"""
+def plot_calibrated_fields():
+    # Plots diagrams of all fields after calibration.
+    # Setup output directory
+    inputdir = constants.PATH_BANDMERGED_CALIBRATED
+    outputdir = os.path.join(CALIBDIR, 'diagrams')
+    util.setup_dir(outputdir)
+    # Which fields to plot?
+    fields = IPHASQC['id'][IPHASQC_COND_RELEASE]
+    # Distribute work
+    from multiprocessing import Pool
+    mypool = Pool(4)
+    mypool.map(plot_field, zip(fields,
+                               [inputdir]*len(fields),
+                               [outputdir]*len(fields)))
+"""
+
+def plot_calibrated_fields():
+    inputdir = constants.PATH_BANDMERGED
+    outputdir = os.path.join(CALIBDIR, 'diagrams')
+    util.setup_dir(outputdir)
+    ca = CalibrationApplicator()
+    args = []
+    for i, field in enumerate(IPHASQC['id'][IPHASQC_COND_RELEASE]):
+        args.append((field, inputdir, outputdir, ca.get_field_shifts(field)))
+    
+    log.info('Starting to plot {0} anchors'.format(len(args)))
+    from multiprocessing import Pool
+    mypool = Pool(4)
+    mypool.map(plot_calib_field, args)
+
+
+def plot_calib_field(arguments):
+    field, inputdir, outputdir, shifts = arguments
+    shift_rmi = shifts['r'] - shifts['i']
+    shift_rmha = shifts['r'] - shifts['ha']
+    # Initiate figure
+    fig = plt.figure(figsize=(6,4))
+    fig.subplots_adjust(0.15, 0.15, 0.95, 0.9)
+    p = fig.add_subplot(111)
+    p.set_title(field)
+    # Load colours from the bandmerged catalogue
+    d = fits.getdata(os.path.join(inputdir, field+'.fits'), 1)
+    mask_use = (d['r'] < 19.0) & (d['errBits'] == 0) & (d['pStar'] > 0.2)
+    p.scatter(d['rmi'][mask_use] + shift_rmi,
+              d['rmha'][mask_use] + shift_rmha,
+              alpha=0.4, edgecolor="red", facecolor="red",
+              lw=0, s=1, marker='o')
+    # Main sequence
+    p.plot([0.029, 0.212, 0.368, 0.445, 0.903, 1.829],
+           [0.001, 0.114, 0.204, 0.278, 0.499, 0.889],
+           c='black', lw=0.5)
+    # A-type reddening line
+    p.plot([0.029, 0.699, 1.352, 1.991, 2.616],
+           [0.001, 0.199, 0.355, 0.468, 0.544],
+           c='black', lw=0.5)
+
+    p.set_xlim([-0.2, +2.0])
+    p.set_ylim([-0.1, +1.3])
+    p.set_xlabel('r-i')
+    p.set_ylabel('r-Ha')
+    # Write to disk
+    path = os.path.join(outputdir, field+'.jpg')
+    fig.savefig(path, dpi=200)
+    plt.close()
+    log.info('Wrote {0}'.format(path))
+
 
 
 
@@ -742,7 +798,8 @@ def calibrate_multiprocessing():
 
 if __name__ == '__main__':
     log.setLevel('DEBUG')
-    calibrate()
+    #calibrate()
     #calibrate_multiprocessing()
     #calibrate_band('ha')
     #plot_anchors()
+    plot_calibrated_fields()
