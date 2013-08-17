@@ -78,8 +78,8 @@ class Calibration(object):
 
         Parameters
         ----------
-        band : string
-            One of 'r', 'i', 'ha'.
+        band : str {'r', 'i', 'ha'}
+            Name of the photometric filter being calibrated.
         """
         #self.calib = np.array(zip(runs, np.zeros(len(runs))),
         #                      dtype=[('runs', 'i4'), ('shifts', 'f4')])
@@ -99,6 +99,7 @@ class Calibration(object):
             self.apass_shifts = np.zeros(len(self.runs))
             self.apass_matches = np.zeros(len(self.runs))
 
+        # Sanity check: we should have the same number of runs and shifts 
         assert(len(self.runs) == len(self.shifts))
         assert(len(self.runs) == len(self.apass_shifts))
         assert(len(self.apass_shifts) == len(self.apass_matches))
@@ -306,14 +307,14 @@ class Calibration(object):
             IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
                                      for myfield in IPHASQC.field('id')])
 
-
             # Extra night with good conditions
-            ANCHOR_NIGHTS = [20030915, 20031018, 20031101, 20031104, 20031108, 20031117,
-                 20040707, 20040805, 20040822, 20041022, 20050629, 20050709,
-                 20050710, 20050711, 20050916, 20050917, 20050918, 20051023,
-                 20051101, 20051102, 20061129, 20061130, 20061214, 20070627,
-                 20070630, 20080722, 20080723, 20090808, 20090810, 20091029,
-                 20091031]
+            ANCHOR_NIGHTS = [20030915, 20031018, 20031101, 20031104, 20031108,
+                             20031117, 20040707, 20040805, 20040822, 20041022,
+                             20050629, 20050709, 20050710, 20050711, 20050916,
+                             20050917, 20050918, 20051023, 20051101, 20051102,
+                             20061129, 20061130, 20061214, 20070627, 20070630,
+                             20080722, 20080723, 20090808, 20090810, 20091029,
+                             20091031]
             IS_IN_EXTRA_NIGHT = np.array([mynight in ANCHOR_NIGHTS 
                                        for mynight in IPHASQC.field('night')])
 
@@ -442,19 +443,20 @@ class Glazebrook(object):
 
 
 class CalibrationApplicator(object):
-    """Applies the calibration to the catalogues.
+    """Applies the calibration to a bandmerged catalogue.
 
-    This class will read a bandmerged catalogue from the 'bandmerged' directory,
-    apply the appropriate calibration shifts as listed in 
+    This class will read a bandmerged catalogue from the 'bandmerged' 
+    directory, apply the appropriate calibration shifts as listed in 
     'calibration/calibration-{r,i,ha}.csv', and then write the updated 
-    catalogue to a new directory 'bandmerged-calibrated'."""
+    catalogue to a new directory called 'bandmerged-calibrated'.
+    """
 
     def __init__(self):
         self.datadir = constants.PATH_BANDMERGED
         self.outdir = constants.PATH_BANDMERGED_CALIBRATED
         util.setup_dir(self.outdir)
 
-        # Read in the calibration
+        # Read the calibration information into a dictionary
         self.calib = {}
         for band in constants.BANDS:
             calib_file = os.path.join(CALIBDIR, 'calibration-{0}.csv'.format(band))
@@ -466,11 +468,25 @@ class CalibrationApplicator(object):
         self.calibrate(filename)
 
     def get_shifts(self, filename):
+        """Retuns the calibration shifts for a given bandmerged catalogue.
+        """
         fieldid = filename.split('.fits')[0]
         return get_field_shifts(fieldid)
 
 
     def get_field_shifts(self, fieldid):
+        """Returns the calibration shifts for a given field.
+
+        Parameters
+        ----------
+        fieldid : str
+            Field identifier, e.g. "0001_aug2003"
+
+        Returns
+        -------
+        shifts : dictionary {'r':shift_r, 'i': shift_i, 'ha': shift_ha}
+            Shifts to add to the magnitudes to calibrate a field.
+        """
         idx_field = np.argwhere(IPHASQC.field('id') == fieldid)[0]
 
         shifts = {}
@@ -483,7 +499,7 @@ class CalibrationApplicator(object):
                 log.warning('No shift for %s' % filename)
                 shifts[band] = 0.0
 
-        log.info("Shifts for {0}: {1}".format(fieldid, shifts))
+        log.debug("Shifts for {0}: {1}".format(fieldid, shifts))
         return shifts            
 
     def calibrate(self, filename):
@@ -609,7 +625,9 @@ def plot_field(arguments):
     fig = plt.figure(figsize=(6,4))
     fig.subplots_adjust(0.15, 0.15, 0.95, 0.9)
     p = fig.add_subplot(111)
-    p.set_title(field)
+    p.set_title('{0} (r {1:+.2f}, i {2:+.2f}, ha {3:+.2f})'.format(
+                field, shifts['r'], shifts['i'], shifts['ha']),
+                fontsize=14)
     # Load colours from the bandmerged catalogue
     d = fits.getdata(os.path.join(inputdir, field+'.fits'), 1)
     mask_use = (d['r'] < 19.0) & (d['errBits'] == 0) & (d['pStar'] > 0.2)
