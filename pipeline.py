@@ -67,7 +67,7 @@ Pipeline starts here
 #bandmerging.bandmerge(cluster)  # produces 'bandmerged/nnnn.fits'
 
 # Compute the magnitude offsets between all runs; necessary for re-calibration
-offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
+#offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
 
 # Find the set of zeropoint shifts which minimize the offsets obtained above
 calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
