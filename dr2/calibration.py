@@ -360,14 +360,14 @@ class Calibration(object):
             # when a few areas with poor anchor coverage were spotted
             EXTRA_ANCHORS = ascii.read(os.path.join(PACKAGEDIR,
                                                     'lib',
-                                                    'anchor-extra.txt')['field']
+                                                    'anchor-extra.txt'))['field']
             IS_EXTRA_ANCHOR = np.array([myfield in EXTRA_ANCHORS 
                                         for myfield in IPHASQC.field('id')])
             # Make sure the following runs are no anchors
             # cf. e-mail Janet to Geert, 13 Aug 2013
             ANCHOR_BLACKLIST = ascii.read(os.path.join(PACKAGEDIR,
                                                        'lib',
-                                                       'anchor-blacklist.txt')['field']
+                                                       'anchor-blacklist.txt'))['field']
             IS_BLACKLIST = np.array([myfield in ANCHOR_BLACKLIST 
                                      for myfield in IPHASQC.field('id')])
 
