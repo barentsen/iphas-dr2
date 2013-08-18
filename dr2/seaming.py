@@ -56,7 +56,8 @@ class SeamingException(Exception):
 class SeamMachine(object):
     """Adds the primaryID column to a field's bandmerged catalogue.
 
-    Usage:
+    Usage
+    -----
        SeamMachine.run()
     """
 
@@ -185,7 +186,13 @@ class SeamMachine(object):
         return status
 
     def overlaps(self):
-        """Returns the list of fields which overlap."""
+        """Returns the list of fields which overlap.
+
+        Returns
+        -------
+        fields : array
+            List of field identifiers which are within `constants.FIELD_MAXDIST`
+        """
         dist = util.sphere_dist(self.ra, self.dec, IPHASQC['ra'], IPHASQC['dec'])
         idx = (constants.IPHASQC_COND_RELEASE
                & (dist < constants.FIELD_MAXDIST)
@@ -193,13 +200,20 @@ class SeamMachine(object):
         return IPHASQC['id'][idx]
 
     def filename(self, fieldid):
-        """Returns the path of the bandmerged catalogue for a given field."""
+        """Returns the path to the calibrated/bandmerged catalogue of a field.
+
+        Parameters
+        ----------
+        fieldid : str
+            e.g. '0001_aug2003'
+        """
         return os.path.join(constants.DESTINATION,
                             'bandmerged-calibrated',
                             '{0}.fits'.format(fieldid))
 
     def crossmatch_command(self):
-        """Return the stilts command to crossmatch overlapping fields."""
+        """Return the stilts command to crossmatch overlapping fields.
+        """
         # Operations to perform on all tables
         icmd = """keepcols "sourceID fieldID ra dec nBands errBits seeing \
                              rAxis rMJD r rErr i iErr ha haErr" """
@@ -228,7 +242,8 @@ class SeamMachine(object):
         return stilts_cmd
 
     def crossmatch(self):
-        """Carry out the crossmatching of overlapping fields."""
+        """Carry out the crossmatching of overlapping fields.
+        """
         cmd = self.crossmatch_command()
         self.log_debug('Overlaps: {0}'.format(self.overlaps))
         self.log_debug(cmd)
@@ -240,22 +255,31 @@ class SeamMachine(object):
         return status
 
     def cache_get(self, sourceID):
+        """Cache keeps track of sourceID's which have been dealt with."""
         return CACHE[self.strip][sourceID]
 
     def cache_set(self, sourceID, primaryID):
         CACHE[self.strip][sourceID] = primaryID
 
     def get_primaryID(self):
-        """Returns the tuple (sourceID, primaryID, partnerinfo).
+        """Identifies and ranks duplicate detections.
 
+        Returns
+        -------
+        matchdata : tuple (sourceID, matchinfo)
+
+        Notes
+        -----
         The ranking criteria are
-          1. prefer filter coverage (3 > 2 > 1);
-          2. prefer least severe error flags;
-          3. prefer best seeing amongst the filters
-             (but tolerate up to 20% of the best value);
-          4. prefer smallest distance from optical axis.
+          1. source w/ best filter coverage wins (3 > 2 > 1); 
+             if no winner, then
+          2. source w/ smallest 'errBits' error flag wins; 
+             if no winner, then
+          3. source w/ best seeing wins (if seeing better by >20%);
+             if no winner, then
+          4. source closest to the optical axis wins.
 
-        The function is optimised for speed at the expense of readability.
+        This function is optimised for speed at the expense of readability :-(
         """
 
         # Open the file with the sources crossmatched across fields
@@ -482,7 +506,10 @@ def seam_one(strip,
 def seam(clusterview, lon1=25, lon2=215):
     """Add primaryID and partnerID columns to all bandmerged catalogues.
 
-    Warning: cluster nodes must have ~5 GB memory each to avoid swapping at l < 100
+    Notes
+    -----
+    This function requires up to ~5 GB memory for tiles at glon < 100,
+    because the seaming class keeps a cache.
     """
     strips = np.arange(lon1, lon2+0.1, constants.STRIPWIDTH, dtype='int')
     np.random.shuffle(strips)
@@ -509,9 +536,10 @@ def cleanup_one():
         os.remove(i)
 """
 
-###################
-# MAIN EXECUTION
-###################
+
+##############################
+# MAIN EXECUTION FOR DEBUGGING
+##############################
 
 if __name__ == "__main__":
     log.setLevel('DEBUG')
