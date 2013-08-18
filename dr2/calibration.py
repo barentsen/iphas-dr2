@@ -560,7 +560,7 @@ class CalibrationApplicator(object):
             if cond_run.sum() > 0:
                 shifts[band] = self.calib[band]['shift'][cond_run][0]
             else:
-                log.warning('No shift for %s' % filename)
+                log.warning('No shift for %s' % fieldid)
                 shifts[band] = 0.0
 
         log.debug("Shifts for {0}: {1}".format(fieldid, shifts))
