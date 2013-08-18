@@ -280,7 +280,67 @@ class Calibration(object):
             # Because the H-alpha calibration is tied to the r-band,
             # we require fields to be "stable" to be an anchor in H-alpha.
             # "Stable" is defined as the fieldpair not showing great shifts.
-            anchors = IS_STABLE[IPHASQC_COND_RELEASE]
+
+            # Eyeballing has revealed that the H-alpha shifts should be 
+            # equal to the r-band shift for these fields:
+            KEEP_FIXED = ['0151_nov2005', '0151o_nov2005',
+                          '0207_jul2012', '0207o_jul2012',
+                          '0296_nov2006b',
+                          '0818_nov2003', '0818o_nov2003',
+                          '0922o_oct2004',
+                          '0943_sep2010', '0943o_sep2010',
+                          '0978_sep2012', '0978o_sep2010'.
+                          '0983_oct2005b', '0983o_oct2005b',
+                          '0985_oct2005b', '0985o_oct2005b',
+                          '1000_dec2003', '1000o_dec2003',
+                          '1037_dec2003', '1037o_dec2003',
+                          '1054_dec2003', '1054o_dec2003',
+                          '1065_oct2004', '1065o_oct2004',
+                          '1069_nov2006c', '1069o_nov2006c',
+                          '1071_nov2012', '1071o_nov2012',
+                          '1076_oct2012', '1076o_oct2012',
+                          '1084_oct2004', '1084o_oct2004',
+                          '1116_dec2004', 
+                          '1232_nov2012', '1232o_nov2012',
+                          '1262_nov2003b', '1262o_nov2003b',
+                          '1285_nov2006c',
+                          '1370_oct2004', '1370o_oct2004',
+                          '1371_oct2004', '1371o_oct2004',
+                          '1374_oct2004', '1374o_oct2004',
+                          '1375_oct2004', '1375o_oct2004',
+                          '1381_oct2010', '1381o_oct2010',
+                          '1383_oct2010', '1383o_oct2010',
+                          '1384_oct2004', '1384o_oct2004',
+                          '1387_oct2004', '1387o_oct2004',
+                          '1388_oct2004', '1388o_oct2004',
+                          '1397_nov2012', '1397o_nov2012',
+                          '1423_nov2006b', '1423o_nov2006b',
+                          '1432_nov2012', '1432o_nov2012',
+                          '1436_nov2006d', '1436o_nov2006d',
+                          '1685_oct2004', '1685o_oct2004',
+                          '1819_nov2012', '1819o_nov2012',
+                          '2021_nov2004', '2021o_nov2004',
+                          '2361_oct2006', '2361o_oct2006',
+                          '2529_nov2003', '2529o_nov2003',
+                          '2694_dec2005', '2694o_dec2005',
+                          '2767_dec2003', '2767o_dec2003',
+                          '2845_nov2006d', '2845o_nov2006d',
+                          '2881_dec2003', '2881o_dec2003',
+                          '2975_oct2005a', '2975o_oct2005a',
+                          '3002_dec2005', '3002o_dec2005',
+                          '3004_oct2005b', '3004o_oct2005b',
+                          '3632_nov2007', '3632o_nov2007',
+                          '3855_nov2012', '3855o_nov2012',
+                          '4016_dec2008', '4016o_dec2008',
+                          '5127_aug2004b', '5127o_aug2004b',
+                          '6476_oct2005b', '6476o_oct2005b',
+                          '6494_jun2005', '6494o_jun2005',
+                          '6616_dec2008', '6616o_dec2008',
+                          ]
+
+            IS_KEEP_FIXED = np.array([myfield in KEEP_FIXED 
+                                     for myfield in IPHASQC.field('id')])
+            anchors = (IS_STABLE | IS_KEEP_FIXED)[IPHASQC_COND_RELEASE]
             log.info('IS_STABLE: {0} fields are H-alpha anchors'.format(anchors.sum()))
             return anchors
 
