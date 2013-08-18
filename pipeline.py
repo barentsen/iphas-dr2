@@ -70,7 +70,7 @@ Pipeline starts here
 #offsets.compute_offsets(cluster)  # produces 'offsets-{r|i|ha}.csv'
 
 # Find the set of zeropoint shifts which minimize the offsets obtained above
-calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
+#calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
 
 # Apply the zeropoint shifts found above to the bandmerged catalogues
 calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'

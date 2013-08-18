@@ -535,7 +535,7 @@ class CalibrationApplicator(object):
         """Retuns the calibration shifts for a given bandmerged catalogue.
         """
         fieldid = filename.split('.fits')[0]
-        return get_field_shifts(fieldid)
+        return self.get_field_shifts(fieldid)
 
 
     def get_field_shifts(self, fieldid):
