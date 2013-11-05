@@ -300,3 +300,5 @@ iphas_oct2005b/r474916_cat.fits 3 7609_oct2005b r iphas_oct2005b/r474917_cat.fit
 iphas_oct2005b/r474923_cat.fits 3 7610_oct2005b i iphas_oct2005b/r474922_cat.fits
 uvex_oct2012/r942888_cat.fits 2 7064o_oct2012 ha uvex_oct2012/r942890_cat.fits
 uvex_oct2012/r942889_cat.fits 2 7064o_oct2012 r uvex_oct2012/r942890_cat.fits
+iphas_sep2005/r470985_cat.fits 3 5529o_sep2005 ha iphas_sep2005/r470987_cat.fits
+iphas_sep2005/r470986_cat.fits 3 5529o_sep2005 r iphas_sep2005/r470987_cat.fits

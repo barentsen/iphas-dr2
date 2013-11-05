@@ -73,7 +73,7 @@ Pipeline starts here
 #calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
 
 # Apply the zeropoint shifts found above to the bandmerged catalogues
-calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'
+#calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'
 
 # Identify duplicate detections where multiple pointings overlap ('seams');
 # this requires up to 4 GB RAM per process,

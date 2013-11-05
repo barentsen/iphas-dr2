@@ -34,9 +34,6 @@ __credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 # CONSTANTS & CONFIGURATION
 #############################
 
-# Where to write the output catalogues?
-MYDESTINATION = os.path.join(constants.DESTINATION, 'seamed')
-
 # Where to store temporary files
 TMPDIR = '/tmp'
 
@@ -83,7 +80,8 @@ class SeamMachine(object):
                                                                    strip,
                                                                    fieldid))
         # Where to store the results?
-        self.output_dir = os.path.join(MYDESTINATION, 'strip{0:.0f}'.format(strip))
+        self.output_dir = os.path.join(constants.PATH_SEAMED, 
+                                       'strip{0:.0f}'.format(strip))
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
         self.output_file = os.path.join(self.output_dir,

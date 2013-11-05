@@ -30,6 +30,7 @@ PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 CALIBDIR = os.path.join(DESTINATION, 'calibration')
 PATH_BANDMERGED = os.path.join(DESTINATION, 'bandmerged')
 PATH_BANDMERGED_CALIBRATED = os.path.join(DESTINATION, 'bandmerged-calibrated')
+PATH_SEAMED = os.path.join(constants.DESTINATION, 'seamed')
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)
