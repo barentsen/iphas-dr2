@@ -640,28 +640,43 @@ class DetectionCatalogue():
     def compute_magnitudes(self, n_pixels, flux_field, apcor_field):
         """Convert the flux counts to magnitudes.
 
-        According to the header parameters in the specified extension.
-        Be aware that APCOR and PERCORR differ on a CCD-by-CCD basis.
-        """
-        magnitudes = np.array([])
+        Loops over the CCD extensions and compute the magnitudes assuming
 
-        # Loop over the four CCD extensions and compute the magnitudes
-        # Note: APCOR differs on a CCD-by-CCD basis!
+            mag = ZP - 2.5*log10(flux/EXPTIME) - (AIRMASS-1)*EXTINCT 
+                  - APCOR - PERCORR
+
+        Be aware that APCOR and PERCORR differ on a CCD-by-CCD basis.
+        
+        For details see
+           http://apm3.ast.cam.ac.uk/~mike/iphas/README.catalogues
+        """
+        magnitudes = np.array([])  # results are stored here
+
         for ccd in EXTS:
-            # Mag = ZP - 2.5*log10(flux/exptime) - apcor - percorr
-            # See http://apm3.ast.cam.ac.uk/~mike/iphas/README.catalogues
+            # Load airmass from the header
+            airmass = self.hdr('AIRMASS', ccd)
+            if airmass is None:  # Two fields have the keyword missing :-(
+                airmass = 1.0
+
+            # Load PERCORR from the header; this is a correction based 
+            # on the median dark sky recorded in science frames 
+            # compared to the median for all the CCDs
             mypercorr = self.hdr('PERCORR', ccd)
             if mypercorr is None:  # PERCORR keyword is sometimes missing
                 mypercorr = 0.0
 
+            # Load the array of fluxes
             flux = self.fits[ccd].data.field(flux_field)
+
+            # Convert to magnitudes
             mag = (self.zeropoint
                    - 2.5 * np.log10(flux / self.exptime)
-                   - (self.hdr('AIRMASS', ccd) - 1) * self.hdr('EXTINCT', ccd)
+                   - (airmass - 1) * self.hdr('EXTINCT', ccd)
                    - self.hdr(apcor_field, ccd)
                    - mypercorr)
-            magnitudes = np.concatenate((magnitudes, mag))
 
+            # Concatenate with previous magnitudes in the for loop
+            magnitudes = np.concatenate((magnitudes, mag))
 
         return magnitudes
 
