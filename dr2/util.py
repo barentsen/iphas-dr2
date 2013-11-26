@@ -22,6 +22,7 @@ def sphere_dist(lon1, lat1, lon2, lat2):
     Haversine formula for angular distance on a sphere: more stable at poles.
 
     Inputs must be in DEGREES.
+    Result is also in DEGREES.
 
     Credit: https://github.com/astropy/astropy/pull/881
     (pull request wasn't merged at the time of writing this code,

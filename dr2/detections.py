@@ -657,9 +657,11 @@ class DetectionCatalogue():
             flux = self.fits[ccd].data.field(flux_field)
             mag = (self.zeropoint
                    - 2.5 * np.log10(flux / self.exptime)
+                   - (self.hdr('AIRMASS', ccd) - 1) * self.hdr('EXTINCT', ccd)
                    - self.hdr(apcor_field, ccd)
                    - mypercorr)
             magnitudes = np.concatenate((magnitudes, mag))
+
 
         return magnitudes
 
