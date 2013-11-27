@@ -723,6 +723,8 @@ class DetectionCatalogue():
         elif aperture == 'core':
             # Radius = rcore
             # Corresponds to Apermag2 in mercats
+            # When rcore is the default 3.5 pixels,
+            # this yields the default 2.3 arcsec diameter aperture
             n_pixels = np.pi * self.hdr('RCORE')**2
             flux_field = 'Core_flux'
             apcor_field = 'APCOR'
@@ -789,13 +791,17 @@ class DetectionCatalogue():
         if mypercorr is None:
             mypercorr = 0.0
 
-        e_5sig = (self.hdr('MAGZPT')
-                  - 2.5 * np.log10(
-                              5.0*np.sqrt(
-                                  np.sqrt(2.0)*np.pi*self.hdr('RCORE')**2.)
-                                  * self.hdr('SKYNOISE') / self.get_exptime())
-                  - self.hdr('APCOR2')
-                  - mypercorr)
+        try:
+            e_5sig = (self.hdr('MAGZPT')
+                      - 2.5 * np.log10(
+                                  5.0*np.sqrt(
+                                      np.sqrt(2.0)*np.pi*self.hdr('RCORE')**2.)
+                                      * self.hdr('SKYNOISE') / self.get_exptime())
+                      - (self.hdr('AIRMASS') - 1) * self.hdr('EXTINCT')
+                      - self.hdr('APCOR')
+                      - mypercorr)
+        except Exception:
+            e_5sig = None
 
         try:
             field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
@@ -803,10 +809,7 @@ class DetectionCatalogue():
             raise CatalogueException('could not understand OBJECT keyword: '
                                      + '"{0}"'.format(self.hdr('OBJECT')))
 
-        return ('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
-                + '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'
-                + ','.join((['%s'] * 44)) + ','
-                + '%s,%s,%s,%s,%s,%s,"%s",%s,%s,%s,%s,%s,%s,%s') % (
+        return (','.join((['%s'] * 86)) + ',"%s",%s,%s,%s,%s,%s,%s,%s') % (
                     self.cat_path,
                     self.image_path,
                     self.conf_path,
@@ -834,6 +837,8 @@ class DetectionCatalogue():
                     self.hdr('MAGZPT'),
                     self.hdr('MAGZRR'),
                     self.hdr('EXTINCT'),
+                    self.hdr('APCOR', 1), self.hdr('APCOR', 2),
+                    self.hdr('APCOR', 3), self.hdr('APCOR', 4),
                     self.hdr('PERCORR', 1), self.hdr('PERCORR', 2),
                     self.hdr('PERCORR', 3), self.hdr('PERCORR', 4),
                     self.hdr('GAIN', 1), self.hdr('GAIN', 2),
@@ -1018,6 +1023,7 @@ def index_setup(destination):
               + 'CCD1_SKYLEVEL,CCD2_SKYLEVEL,CCD3_SKYLEVEL,CCD4_SKYLEVEL,'
               + 'CCD1_SKYNOISE,CCD2_SKYNOISE,CCD3_SKYNOISE,CCD4_SKYNOISE,'
               + 'MAGZPT,MAGZRR,EXTINCT,'
+              + 'CCD1_APCOR,CCD2_APCOR,CCD3_APCOR,CCD4_APCOR,'
               + 'CCD1_PERCORR,CCD2_PERCORR,CCD3_PERCORR,CCD4_PERCORR,'
               + 'CCD1_GAIN,CCD2_GAIN,CCD3_GAIN,CCD4_GAIN,'
               + 'CCD1_STDCRMS,CCD2_STDCRMS,CCD3_STDCRMS,CCD4_STDCRMS,'
