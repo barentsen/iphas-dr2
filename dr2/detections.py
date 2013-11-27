@@ -658,6 +658,11 @@ class DetectionCatalogue():
             if airmass is None:  # Two fields have the keyword missing :-(
                 airmass = 1.0
 
+            # Load extinction
+            extinct = self.hdr('EXTINCT', ccd)
+            if extinct is None:
+                extinct = 0.0
+
             # Load PERCORR from the header; this is a correction based 
             # on the median dark sky recorded in science frames 
             # compared to the median for all the CCDs
@@ -671,7 +676,7 @@ class DetectionCatalogue():
             # Convert to magnitudes
             mag = (self.zeropoint
                    - 2.5 * np.log10(flux / self.exptime)
-                   - (airmass - 1) * self.hdr('EXTINCT', ccd)
+                   - (airmass - 1) * extinct
                    - self.hdr(apcor_field, ccd)
                    - mypercorr)
 
@@ -828,6 +833,7 @@ class DetectionCatalogue():
                     self.hdr('SKYNOISE', 3), self.hdr('SKYNOISE', 4),
                     self.hdr('MAGZPT'),
                     self.hdr('MAGZRR'),
+                    self.hdr('EXTINCT'),
                     self.hdr('PERCORR', 1), self.hdr('PERCORR', 2),
                     self.hdr('PERCORR', 3), self.hdr('PERCORR', 4),
                     self.hdr('GAIN', 1), self.hdr('GAIN', 2),
@@ -1011,7 +1017,7 @@ def index_setup(destination):
               + 'AIRMASS,RCORE,CROWDED,'
               + 'CCD1_SKYLEVEL,CCD2_SKYLEVEL,CCD3_SKYLEVEL,CCD4_SKYLEVEL,'
               + 'CCD1_SKYNOISE,CCD2_SKYNOISE,CCD3_SKYNOISE,CCD4_SKYNOISE,'
-              + 'MAGZPT,MAGZRR,'
+              + 'MAGZPT,MAGZRR,EXTINCT,'
               + 'CCD1_PERCORR,CCD2_PERCORR,CCD3_PERCORR,CCD4_PERCORR,'
               + 'CCD1_GAIN,CCD2_GAIN,CCD3_GAIN,CCD4_GAIN,'
               + 'CCD1_STDCRMS,CCD2_STDCRMS,CCD3_STDCRMS,CCD4_STDCRMS,'
