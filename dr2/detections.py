@@ -809,7 +809,9 @@ class DetectionCatalogue():
             raise CatalogueException('could not understand OBJECT keyword: '
                                      + '"{0}"'.format(self.hdr('OBJECT')))
 
-        return (','.join((['%s'] * 86)) + ',"%s",%s,%s,%s,%s,%s,%s,%s') % (
+        return (','.join((['%s'] * 93)) 
+                 + ',"%s",'
+                 + ','.join((['%s'] * 7))) % (
                     self.cat_path,
                     self.image_path,
                     self.conf_path,
@@ -1148,5 +1150,6 @@ if __name__ == '__main__':
     # Test-case
     convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
     convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
-    
+    convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
+    convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
 

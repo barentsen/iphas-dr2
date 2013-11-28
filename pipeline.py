@@ -62,10 +62,10 @@ client[:].execute('reload(concatenating)', block=True)
 Pipeline starts here
 """
 # Create an index of all single-band catalogues
-detections.create_index(cluster)  # produces 'runs.csv'
+#detections.create_index(cluster)  # produces 'runs.csv'
 
 # Enforce zp(Halpha) = zp(r) - 3.14
-detections.sanitise_zeropoints()  # produces 'zeropoint-overrides.csv'
+#detections.sanitise_zeropoints()  # produces 'zeropoint-overrides.csv'
 
 # Convert the single-band catalogues from CASU into our own catalogue format
 detections.convert_catalogues(cluster)  # produces 'detected/nnnnnnn_det.fits'

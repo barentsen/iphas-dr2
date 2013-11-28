@@ -1,7 +1,7 @@
 #!/bin/sh -f
 # Starts an IPython cluster; setup using 'qsub pipeline-cluster.pbs'
 #PBS -N pipeline                                                           
-#PBS -l nodes=120:ppn=1
+#PBS -l nodes=128:ppn=1
 #PBS -k oe                                                          
 #PBS -q cmain
 #PBS -l walltime=120:00:00
