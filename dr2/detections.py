@@ -809,7 +809,7 @@ class DetectionCatalogue():
             raise CatalogueException('could not understand OBJECT keyword: '
                                      + '"{0}"'.format(self.hdr('OBJECT')))
 
-        return (','.join((['%s'] * 93)) 
+        return (','.join((['%s'] * 94)) 
                  + ',"%s",'
                  + ','.join((['%s'] * 7))) % (
                     self.cat_path,
@@ -1147,9 +1147,10 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
 if __name__ == '__main__':
 
     log.setLevel('INFO')
-    # Test-case
-    convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-    convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
-    convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
+    # Test-cases
+    #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
+    #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
+    #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
     convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
+    index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
 
