@@ -658,7 +658,8 @@ class DetectionCatalogue():
             if airmass is None:  # Two fields have the keyword missing :-(
                 airmass = 1.0
 
-            # Load extinction
+            # Load the assumed extinction per unit airmass
+            # see http://www.ast.cam.ac.uk/~wfcsur/technical/photom/index.php
             extinct = self.hdr('EXTINCT', ccd)
             if extinct is None:
                 extinct = 0.0
