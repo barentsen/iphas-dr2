@@ -1,0 +1,590 @@
+[
+    {
+        "name": "name",
+        "type": "string",
+        "unit": "",
+        "desc": "Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form \"IPHAS2 JHHMMSS.ss+DDMMSS.s\", where \"J\" indicates the position is J2000. The \"IPHAS2\" prefix is not listed explicitly in the column."
+    },
+    {
+        "name": "ra",
+        "type": "double",
+        "unit": "degrees",
+        "desc": "J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H&alpha;-band coordinate is given."
+    },
+    {
+        "name": "dec",
+        "type": "double",
+        "unit": "degrees",
+        "desc": "J2000 Declination. See comments above."
+    },
+    {
+        "name": "sourceID",
+        "type": "string",
+        "unit": "",
+        "desc": "Unique identification number of the detection. Identical to <a href=\"#rDetectionID\">rDetectionID</a> if the source was detected in the r-band; identical to <a href=\"#iDetectionID\">iDetectionID</a> or <a href=\"#haDetectionID\">haDetectionID</a> otherwise."
+    },
+    {
+        "name": "posErr",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Astrometric fit error (RMS). Be aware that the error might be significantly larger than the RMS near CCD edges."
+    },
+    {
+        "name": "l",
+        "type": "double",
+        "unit": "degrees",
+        "desc": "Galactic longitude converted from ra/dec (IAU 1958 system)."
+    },
+    {
+        "name": "b",
+        "type": "double",
+        "unit": "degrees",
+        "desc": "Galactic latitude converted from ra/dec (IAU 1958 system)."
+    },
+    {
+        "name": "mergedClass",
+        "type": "short",
+        "unit": "",
+        "desc": "Image classification flag based on all bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). Computed using the method <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass\">described here</a>."
+    },
+    {
+        "name": "mergedClassStat",
+        "type": "float",
+        "unit": "",
+        "desc": "Merged N(0,1) stellarness-of-profile statistic. Computed using the method <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat\">described here</a>."
+    },
+    {
+        "name": "pStar",
+        "type": "float",
+        "unit": "",
+        "desc": "Probability that the source is a star (value between 0 and 1)."
+    },
+    {
+        "name": "pGalaxy",
+        "type": "float",
+        "unit": "",
+        "desc": "Probability that the source is a galaxy (value between 0 and 1)."
+    },
+    {
+        "name": "pNoise",
+        "type": "float",
+        "unit": "",
+        "desc": "Probability that the source is noise (value between 0 and 1)."
+    },
+    {
+        "name": "pSaturated",
+        "type": "float",
+        "unit": "",
+        "desc": "Probability that the source is saturated (value between 0 and 1)."
+    },
+    {
+        "name": "rmi",
+        "type": "float",
+        "unit": "mag",
+        "desc": "(r' - i') colour."
+    },
+    {
+        "name": "rmha",
+        "type": "float",
+        "unit": "mag",
+        "desc": "(r' - H&alpha;) colour."
+    },
+    {
+        "name": "r",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Default r-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "rErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty for r. Does not include systematic errors."
+    },
+    {
+        "name": "rPeakMag",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative r-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+    },
+    {
+        "name": "rPeakMagErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in rPeakMag. Does not include systematics."
+    },
+    {
+        "name": "rAperMag1",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative r-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "rAperMag1err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in rAperMag1. Does not include systematics."
+    },
+    {
+        "name": "rAperMag3",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative r-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "rAperMag3err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in rAperMag3. Does not include systematics."
+    },
+    {
+        "name": "rGauSig",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "RMS of axes of ellipse fit in r."
+    },
+    {
+        "name": "rEll",
+        "type": "float",
+        "unit": "",
+        "desc": "Ellipticity in the r-band."
+    },
+    {
+        "name": "rPA",
+        "type": "float",
+        "unit": "degrees",
+        "desc": "Position angle in the r-band."
+    },
+    {
+        "name": "rClass",
+        "type": "short",
+        "unit": "",
+        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+    },
+    {
+        "name": "rClassStat",
+        "type": "float",
+        "unit": "",
+        "desc": "N(0,1) stellarness-of-profile statistic."
+    },
+    {
+        "name": "rErrBits",
+        "type": "short",
+        "unit": "",
+        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+    },
+    {
+        "name": "rMJD",
+        "type": "double",
+        "unit": "days",
+        "desc": "Modified Julian Date at the start of the r-band exposure."
+    },
+    {
+        "name": "rSeeing",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Average FWHM in the r-band exposure."
+    },
+    {
+        "name": "rDetectionID",
+        "type": "string",
+        "unit": "",
+        "desc": "Unique identifier of the r-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
+    },
+    {
+        "name": "rX",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD."
+    },
+    {
+        "name": "rY",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD."
+    },
+    {
+        "name": "i",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Default i-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "iErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty for i. Does not include systematic errors."
+    },
+    {
+        "name": "iPeakMag",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative i-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+    },
+    {
+        "name": "iPeakMagErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in iPeakMag. Does not include systematics."
+    },
+    {
+        "name": "iAperMag1",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative i-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "iAperMag1err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in iAperMag1. Does not include systematics."
+    },
+    {
+        "name": "iAperMag3",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative i-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "iAperMag3err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in iAperMag3. Does not include systematics."
+    },
+    {
+        "name": "iGauSig",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "RMS of axes of ellipse fit."
+    },
+    {
+        "name": "iEll",
+        "type": "float",
+        "unit": "",
+        "desc": "Ellipticity."
+    },
+    {
+        "name": "iPA",
+        "type": "float",
+        "unit": "degrees",
+        "desc": "Position angle."
+    },
+    {
+        "name": "iClass",
+        "type": "short",
+        "unit": "",
+        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+    },
+    {
+        "name": "iClassStat",
+        "type": "float",
+        "unit": "",
+        "desc": "N(0,1) stellarness-of-profile statistic."
+    },
+    {
+        "name": "iErrBits",
+        "type": "short",
+        "unit": "",
+        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+    },
+    {
+        "name": "iMJD",
+        "type": "double",
+        "unit": "days",
+        "desc": "Modified Julian Date at the start of the single-band exposure."
+    },
+    {
+        "name": "iSeeing",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Average FWHM in the single-band exposure."
+    },
+    {
+        "name": "iDetectionID",
+        "type": "string",
+        "unit": "",
+        "desc": "Unique identifier of the r-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
+    },
+    {
+        "name": "iX",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+    },
+    {
+        "name": "iY",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+    },
+    {
+        "name": "iXi",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Position offset of the i-band detection in RA."
+    },
+    {
+        "name": "iEta",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Position offset of the i-band detection in DEC."
+    },
+    {
+        "name": "ha",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Default H-alpha magnitude using a 2.3 arcsec aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "haErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty for ha. Does not include systematic errors."
+    },
+    {
+        "name": "haPeakMag",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative H-alpha magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+    },
+    {
+        "name": "haPeakMagErr",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in haPeakMag. Does not include systematics."
+    },
+    {
+        "name": "haAperMag1",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative H-alpha magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "haAperMag1err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in haAperMag1. Does not include systematics."
+    },
+    {
+        "name": "haAperMag3",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Alternative H-alpha magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+    },
+    {
+        "name": "haAperMag3err",
+        "type": "float",
+        "unit": "mag",
+        "desc": "Uncertainty in haAperMag3. Does not include systematics."
+    },
+    {
+        "name": "haGauSig",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "RMS of axes of ellipse fit."
+    },
+    {
+        "name": "haEll",
+        "type": "float",
+        "unit": "",
+        "desc": "Ellipticity"
+    },
+    {
+        "name": "haPA",
+        "type": "float",
+        "unit": "degrees",
+        "desc": "Position angle."
+    },
+    {
+        "name": "haClass",
+        "type": "short",
+        "unit": "",
+        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+    },
+    {
+        "name": "haClassStat",
+        "type": "float",
+        "unit": "",
+        "desc": "N(0,1) stellarness-of-profile statistic."
+    },
+    {
+        "name": "haErrBits",
+        "type": "short",
+        "unit": "",
+        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+    },
+    {
+        "name": "haMJD",
+        "type": "double",
+        "unit": "days",
+        "desc": "Modified Julian Date at the start of the single-band exposure."
+    },
+    {
+        "name": "haSeeing",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Average FWHM in the single-band exposure."
+    },
+    {
+        "name": "haDetectionID",
+        "type": "string",
+        "unit": "",
+        "desc": "Unique identifier of the r-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
+    },
+    {
+        "name": "haX",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+    },
+    {
+        "name": "haY",
+        "type": "float",
+        "unit": "pixels",
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+    },
+    {
+        "name": "haXi",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Position offset of the H-alpha detection in RA."
+    },
+    {
+        "name": "haEta",
+        "type": "float",
+        "unit": "arcsec",
+        "desc": "Position offset of the H-alpha detection in DEC."
+    },
+    {
+        "name": "brightNeighb",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if a very bright star is nearby (i.e. <a href=\"#errBits\">errBits</a> &ge; 1). This indicates that the source might be spurious, or the photometry unreliable."
+    },
+    {
+        "name": "deblend",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if the source was blended with a nearby neighbour due to crowding (i.e. <a href=\"#errBits\">errBits</a> &ge; 2). Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (e.g. colours should not be trusted)."
+    },
+    {
+        "name": "saturated",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if the source is saturated (i.e. peak pixel > 55000 counts) in one or more bands (i.e. <a href=\"#errBits\">errBits</a> &ge; 8). The photometry of saturated stars is affected by systematic errors."
+    },
+    {
+        "name": "errBits",
+        "type": "short",
+        "unit": "",
+        "desc": "Maximum value of (<a href=\"#rErrBits\">rErrBits</a>, <a href=\"#iErrBits\">iErrBits</a>, <a href=\"#haErrBits\">haErrBits</a>)."
+    },
+    {
+        "name": "nBands",
+        "type": "short",
+        "unit": "",
+        "desc": "Number of bands in which the source is detected (equals 1, 2 or 3)."
+    },
+    {
+        "name": "reliable",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if \"<a href=\"#nBands\">nBands</a>&thinsp;==&thinsp;3 &amp; <a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#errBits\">errBits</a>&thinsp;&le;&thinsp;1\"."
+    },
+    {
+        "name": "fieldID",
+        "type": "string",
+        "unit": "",
+        "desc": "Unique and readable identifier of the field/month combination (e.g. 0001o_aug2003)."
+    },
+    {
+        "name": "fieldGrade",
+        "type": "string",
+        "unit": "",
+        "desc": "Quality identifier of the field. One of A, B, C, D."
+    },
+    {
+        "name": "night",
+        "type": "integer",
+        "unit": "",
+        "desc": "Night of the observation (YYYYMMDD). Refers to the start of the night."
+    },
+    {
+        "name": "seeing",
+        "type": "float",
+        "unit": "",
+        "desc": "Maximum value of (<a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, <a href=\"#haSeeing\">haSeeing</a>)."
+    },
+    {
+        "name": "ccd",
+        "type": "short",
+        "unit": "",
+        "desc": "CCD-chip number on the Wide Field Camera (WFC) of the Isaac Newton Telescope (INT). 1, 2, 3 or 4."
+    },
+    {
+        "name": "nObs",
+        "type": "short",
+        "unit": "",
+        "desc": "Number of epochs at which the source was observed by the survey."
+    },
+    {
+        "name": "sourceID2",
+        "type": "string",
+        "unit": "",
+        "desc": "sourceID of the same object in the partner exposure (if obtained within 30 minutes of the primary detection)."
+    },
+    {
+        "name": "fieldID2",
+        "type": "string",
+        "unit": "",
+        "desc": "fieldID of the partner detection (e.g. 0001o_aug2003)."
+    },
+    {
+        "name": "r2",
+        "type": "float",
+        "unit": "",
+        "desc": "Default r-band magnitude in the partner field."
+    },
+    {
+        "name": "rErr2",
+        "type": "float",
+        "unit": "",
+        "desc": "Uncertainty for r2."
+    },
+    {
+        "name": "rErr2",
+        "type": "float",
+        "unit": "",
+        "desc": "Uncertainty for r2."
+    },
+    {
+        "name": "i2",
+        "type": "float",
+        "unit": "",
+        "desc": "Default i-band magnitude in the partner field."
+    },
+    {
+        "name": "iErr2",
+        "type": "float",
+        "unit": "",
+        "desc": "Uncertainty for i2."
+    },
+    {
+        "name": "ha2",
+        "type": "float",
+        "unit": "",
+        "desc": "Default H-alpha magnitude in the partner field."
+    },
+    {
+        "name": "haErr2",
+        "type": "float",
+        "unit": "",
+        "desc": "Uncertainty for ha2."
+    },
+    {
+        "name": "errBits2",
+        "type": "integer",
+        "unit": "",
+        "desc": "Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)."
+    }
+]
