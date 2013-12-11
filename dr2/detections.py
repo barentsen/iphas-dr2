@@ -158,10 +158,10 @@ class DetectionCatalogue():
                 raise CatalogueException('Not an IPHAS run, OBJECT = %s' %
                                          self.hdr('OBJECT'))
 
-            # The filter must be one of Halpha/r/i
-            if not self.hdr('WFFBAND') in ['Halpha', 'r', 'i']:
-                raise CatalogueException('Unexpected filter, WFFBAND = %s' %
-                                         self.hdr('WFFBAND'))
+        # The filter must be one of Halpha/r/i
+        if not self.hdr('WFFBAND') in ['Halpha', 'r', 'i']:
+            raise CatalogueException('Unexpected filter, WFFBAND = %s' %
+                                     self.hdr('WFFBAND'))
 
         for ccd in EXTS:
             # Early versions of CASU catalogues chave multiple columns 'Blank'
@@ -1185,5 +1185,5 @@ if __name__ == '__main__':
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
-    print index_one(constants.RAWDATADIR+'/iphas_dec2007/r597437_cat.fits')
+    print index_one(constants.RAWDATADIR+'/run13/r918607_cat.fits')
 
