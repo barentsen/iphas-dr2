@@ -602,7 +602,7 @@ class CalibrationApplicator(object):
 ##
 
 def apply_calibration(clusterview):
-    """Applies the photometric re-calibration to all bandmerged field catalogues."""
+    """Applies the re-calibration to all bandmerged field catalogues."""
     filenames = os.listdir(constants.PATH_BANDMERGED)
     results = clusterview.imap(calibrate_one, filenames)
 
@@ -615,13 +615,15 @@ def apply_calibration(clusterview):
     log.info('Application of calibration finished')
 
 def calibrate_one(filename):
-    """Applies the photometric re-calibration to a single bandmerged field catalogue."""
-    with log.log_to_file(os.path.join(constants.LOGDIR, 'apply_calibration.log')):
+    """Applies the re-calibration to a single bandmerged field catalogue."""
+    with log.log_to_file(os.path.join(constants.LOGDIR,
+                                      'apply_calibration.log')):
         try:
             ca = CalibrationApplicator()
             ca.run(filename)
         except Exception, e:
-            log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' % (filename, e))
+            log.error('%s: *UNEXPECTED EXCEPTION*: calibrate_one: %s' 
+                      % (filename, e))
         return filename
 
 

@@ -63,11 +63,13 @@ EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
 WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
 WCSFIXES = ascii.read(WCSFIXES_PATH)
 
-# Table detaling zeropoint overrides; used to enforce zp(r)-zp(Halpha)=3.14
-ZEROPOINT_OVERRIDES_PATH = os.path.join(constants.PACKAGEDIR,
+# Table detailing the pre-calibration zeropoints;
+# the table differs from the original zeropoint values in the FITS headers
+# by enforcing zp(r)-zp(Halpha)=3.14
+ZEROPOINTS_TABLE_PATH = os.path.join(constants.PACKAGEDIR,
                                         'lib',
-                                        'zeropoint-overrides.csv')
-ZEROPOINT_OVERRIDES = ascii.read(ZEROPOINT_OVERRIDES_PATH)
+                                        'zeropoints-precalibration.csv')
+ZEROPOINTS_TABLE = ascii.read(ZEROPOINTS_TABLE_PATH)
 
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}
@@ -92,11 +94,18 @@ class CatalogueException(Exception):
 class DetectionCatalogue():
     """
     Reads in a detection catalogue in the format produced by the Cambridge
-    Astronomical Survey Unit (CASU) and transforms it into a UKIDSS-style
-    catalogues with user-friendly coordinates, magnitudes and flags.
+    Astronomical Survey Unit's (CASU) imcore tool, and transforms it into a 
+    UKIDSS-style catalogues with user-friendly columns.
+
+    Parameters
+    ----------
+    path : str
+        Location of the CASU-style FITS catalogue.
+    only_accept_iphas : bool, optional
+        Raise a `CatalogueException` if the catalogue is not an IPHAS exposure.
     """
 
-    def __init__(self, path):
+    def __init__(self, path, only_accept_iphas=True):
         """ Constructor """
         self.path = path
         self.directory = '/'.join(path.split('/')[:-1])
@@ -106,7 +115,7 @@ class DetectionCatalogue():
         except IOError, e:
             raise CatalogueException('IOError: %s' % e)
 
-        self.check_header()  # Raises CatalogueException for dodgy catalogues
+        self.check_header(only_accept_iphas)  # Raises CatalogueException for dodgy catalogues
         self.fix_wcs()  # Fix the WCS parameters where necessary
 
         # Total number of detected objects across all CCDs
@@ -123,23 +132,29 @@ class DetectionCatalogue():
         """Return the value of the header keyword from extension `ext`."""
         return self.fits[ext].header.get(field)
 
-    def check_header(self):
+    def check_header(self, only_accept_iphas):
         """
         Checks the pipeline catalogue for known problems; fixes if possible.
 
         If the catalogue is not suitable for the IPHAS data release because
         of a known problem, a CatalogueException is raised.
-        """
-        # The OBJECT keyword must start with the word "intphas" or "iphas"
-        if not (self.hdr('OBJECT').startswith('intphas')
-                or self.hdr('OBJECT').startswith('iphas')):
-            raise CatalogueException('Not an IPHAS run, OBJECT = %s' %
-                                     self.hdr('OBJECT'))
 
-        # The filter must be one of Halpha/r/i
-        if not self.hdr('WFFBAND') in ['Halpha', 'r', 'i']:
-            raise CatalogueException('Unexpected filter, WFFBAND = %s' %
-                                     self.hdr('WFFBAND'))
+        Parameters
+        ----------
+        only_accept_iphas : bool
+            Raise a `CatalogueException` if the file is not an IPHAS exposure.
+        """
+        if only_accept_iphas:
+            # The OBJECT keyword must start with the word "intphas" or "iphas"
+            if not (self.hdr('OBJECT').startswith('intphas')
+                    or self.hdr('OBJECT').startswith('iphas')):
+                raise CatalogueException('Not an IPHAS run, OBJECT = %s' %
+                                         self.hdr('OBJECT'))
+
+            # The filter must be one of Halpha/r/i
+            if not self.hdr('WFFBAND') in ['Halpha', 'r', 'i']:
+                raise CatalogueException('Unexpected filter, WFFBAND = %s' %
+                                         self.hdr('WFFBAND'))
 
         for ccd in EXTS:
             # Early versions of CASU catalogues chave multiple columns 'Blank'
@@ -336,12 +351,12 @@ class DetectionCatalogue():
         """Return the magnitude zeropoint.
 
         Returns the nightly zeropoint from the 'MAGZPT' value recorded in the
-        header, unless an override appears in the ZEROPOINT_OVERRIDES table.
+        header, unless an override appears in the ZEROPOINTS_TABLE table.
         """
-        if self.hdr('RUN') in ZEROPOINT_OVERRIDES['run']:
-            idx_run = np.argwhere(ZEROPOINT_OVERRIDES['run']
+        if self.hdr('RUN') in ZEROPOINTS_TABLE['run']:
+            idx_run = np.argwhere(ZEROPOINTS_TABLE['run']
                                   == self.hdr('RUN'))[0][0]
-            zp = ZEROPOINT_OVERRIDES[idx_run]['zp']
+            zp = ZEROPOINTS_TABLE[idx_run]['zp']
         else:
             zp = self.hdr('MAGZPT')
         return zp
@@ -1051,8 +1066,7 @@ def index_one(path):
     """Returns the CSV summary line."""
     with log.log_to_file(os.path.join(constants.LOGDIR, 'index.log')):
         import socket
-        pid = socket.gethostname()+'/'+str(os.getpid())+': '+str(path)
-        log.info(pid+': '+path)
+        log.info(util.get_pid()+': '+path)
         csv_row_string = None
         try:
             cat = DetectionCatalogue(path)
@@ -1088,7 +1102,7 @@ def sanitise_zeropoints():
                                  'runs.csv')
     runs = ascii.read(filename_runs)
 
-    out = file(ZEROPOINT_OVERRIDES_PATH, 'w')
+    out = file(ZEROPOINTS_TABLE_PATH, 'w')
     out.write('run,zp\n')
 
     # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
