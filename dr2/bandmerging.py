@@ -69,8 +69,7 @@ class BandMerge():
                   'runha': self.get_catalogue_path(self.run_ha),
                   'fieldgrade': self.fieldgrade,
                   'fieldid': self.fieldid,
-                  'ocmd': os.path.join(constants.PACKAGEDIR,
-                                       'lib',
+                  'ocmd': os.path.join(constants.LIBDIR,
                                        'stilts-band-merging.cmd'),
                   'output': self.output}
 

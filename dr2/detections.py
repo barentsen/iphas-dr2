@@ -50,7 +50,7 @@ MYDESTINATION = os.path.join(constants.DESTINATION, 'detected')
 util.setup_dir(MYDESTINATION)
 
 # Yale Bright Star Catalogue (Vizier V50), filtered for IPHAS area and V < 4.5
-BSC_PATH = os.path.join(constants.PACKAGEDIR, 'lib', 'BrightStarCat-iphas.fits')
+BSC_PATH = os.path.join(constants.LIBDIR, 'BrightStarCat-iphas.fits')
 BSC = fits.getdata(BSC_PATH, 1)
 BRIGHT_RA = BSC['_RAJ2000']  # Read coordinates and brightness into memory
 BRIGHT_DEC = BSC['_DEJ2000']
@@ -66,10 +66,12 @@ WCSFIXES = ascii.read(WCSFIXES_PATH)
 # Table detailing the pre-calibration zeropoints;
 # the table differs from the original zeropoint values in the FITS headers
 # by enforcing zp(r)-zp(Halpha)=3.14
-ZEROPOINTS_TABLE_PATH = os.path.join(constants.PACKAGEDIR,
-                                        'lib',
-                                        'zeropoints-precalibration.csv')
-ZEROPOINTS_TABLE = ascii.read(ZEROPOINTS_TABLE_PATH)
+ZEROPOINTS_TABLE_PATH = os.path.join(constants.DESTINATION,
+                                     'zeropoints-precalibration.csv')
+try:
+    ZEROPOINTS_TABLE = ascii.read(ZEROPOINTS_TABLE_PATH)
+except IOError:
+    log.warning("Zeropoints table does not exist yet.")
 
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}

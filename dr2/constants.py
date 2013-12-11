@@ -26,6 +26,7 @@ if not os.path.exists(LOGDIR):
 
 
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
+LIBDIR = os.path.join(PACKAGEDIR, 'lib')
 
 CALIBDIR = os.path.join(DESTINATION, 'calibration')
 PATH_BANDMERGED = os.path.join(DESTINATION, 'bandmerged')
@@ -38,7 +39,7 @@ IPHASQC_COND_RELEASE = (IPHASQC['is_best'] & (IPHASQC['qflag'] != 'D'))
 
 # How to execute stilts?
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
-                                os.path.join(PACKAGEDIR, 'lib', 'stilts.jar'))
+                                os.path.join(LIBDIR, 'stilts.jar'))
 
 # Fields within this radius will be considered to overlap
 FIELD_MAXDIST = 0.8  # degrees
