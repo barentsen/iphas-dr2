@@ -1014,9 +1014,18 @@ class DetectionCatalogue():
 
 
 def list_catalogues(directory):
-    """Returns a list of all pipeline-produced image detection tables.
+    """List all CASU object detection catalogues in a given directory.
 
-    directory -- path to the directory containing CASU's pipelined data.
+    Parameters
+    ----------
+    directory : str
+        Path to the directory containing CASU's pipelined data.
+        This directory will be searched recursively.
+
+    Returns
+    -------
+    catalogues : list
+        List of all files in ``directory`` that have suffix '_cat.fits'.
     """
     log.info('Searching for catalogues in %s' % directory)
     catalogues = []
