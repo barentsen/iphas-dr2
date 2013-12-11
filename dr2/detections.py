@@ -20,6 +20,10 @@ Computing requirements: ~48h CPU (2012 hardware). Low on RAM.
 
 TODO
 - look up confidence value for each star in the confidence maps.
+
+Usage
+-----
+
 """
 
 from astropy.io import fits
@@ -71,7 +75,7 @@ ZEROPOINTS_TABLE_PATH = os.path.join(constants.DESTINATION,
 try:
     ZEROPOINTS_TABLE = ascii.read(ZEROPOINTS_TABLE_PATH)
 except IOError:
-    log.warning("Zeropoints table does not exist yet.")
+    log.warning("zeropoints pre-calibration table has not been created yet.")
 
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}
@@ -355,7 +359,7 @@ class DetectionCatalogue():
         Returns the nightly zeropoint from the 'MAGZPT' value recorded in the
         header, unless an override appears in the ZEROPOINTS_TABLE table.
         """
-        if self.hdr('RUN') in ZEROPOINTS_TABLE['run']:
+        if ZEROPOINTS_TABLE and (self.hdr('RUN') in ZEROPOINTS_TABLE['run']):
             idx_run = np.argwhere(ZEROPOINTS_TABLE['run']
                                   == self.hdr('RUN'))[0][0]
             zp = ZEROPOINTS_TABLE[idx_run]['zp']
