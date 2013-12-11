@@ -1085,7 +1085,7 @@ def index_one(path):
         log.info(util.get_pid()+': '+path)
         csv_row_string = None
         try:
-            cat = DetectionCatalogue(path)
+            cat = DetectionCatalogue(path, only_accept_iphas=False)
             csv_row_string = cat.get_csv_summary()
         except CatalogueException, e:
             log.warning('%s: CatalogueException: %s' % (path, e))
