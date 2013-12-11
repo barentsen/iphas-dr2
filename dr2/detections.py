@@ -1122,14 +1122,15 @@ def sanitise_zeropoints():
     out = file(ZEROPOINTS_TABLE_PATH, 'w')
     out.write('run,zp\n')
 
-    # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
+    # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.08
+    # which is what is imposed by Vega
     for row in runs:
         if row['WFFBAND'] == 'Halpha':
-            # Figure out the index of r-band runs in the same night
+            # Find the index of an r-band run in the same night
             idx_r = np.argwhere(
                         (np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.4)
                         & (runs.field('WFFBAND') == 'r'))[0][0]
-            zp = runs[idx_r]['MAGZPT'] - 3.14
+            zp = runs[idx_r]['MAGZPT'] - 3.08
             out.write('{0},{1}\n'.format(row['run'], zp))
 
     out.close()
