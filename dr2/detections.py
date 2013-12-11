@@ -829,8 +829,9 @@ class DetectionCatalogue():
         try:
             field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
         except IndexError:
-            raise CatalogueException('could not understand OBJECT keyword: '
-                                     + '"{0}"'.format(self.hdr('OBJECT')))
+            #raise CatalogueException('could not understand OBJECT keyword: '
+            #                         + '"{0}"'.format(self.hdr('OBJECT')))
+            field = ''
 
         return (','.join((['%s'] * 94)) 
                  + ',"%s",'
@@ -1183,5 +1184,6 @@ if __name__ == '__main__':
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
-    index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
+    #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
+    print index_one(constants.RAWDATADIR+'/iphas_dec2007/r597437_cat.fits')
 
