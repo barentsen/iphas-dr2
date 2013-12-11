@@ -76,6 +76,7 @@ try:
     ZEROPOINTS_TABLE = ascii.read(ZEROPOINTS_TABLE_PATH)
 except IOError:
     log.warning("zeropoints pre-calibration table has not been created yet.")
+    ZEROPOINTS_TABLE = None
 
 # Cache dict to hold the confidence maps for each filter/directory
 confmaps = {'Halpha': {}, 'r': {}, 'i': {}}
@@ -1181,6 +1182,6 @@ if __name__ == '__main__':
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
-    convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
+    #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
 
