@@ -355,18 +355,48 @@ class DetectionCatalogue():
             return t
 
     def get_zeropoint(self):
-        """Return the magnitude zeropoint.
+        """Return the magnitude zeropoint corrected for extinction.
 
-        Returns the nightly zeropoint from the 'MAGZPT' value recorded in the
-        header, unless an override appears in the ZEROPOINTS_TABLE table.
+        Returns the zeropoint for the exposure, which corresponds to the 
+        'MAGZPT' value recorded in the header (unless an override appears 
+        in the ZEROPOINTS_TABLE table), corrected for extinction.
         """
+        # Get the nightly zeropoint we want to adopt
+        # for H-alpha the zp(r)-zp(Halpha) for vega is enforced
+        # through the ZEROPOINTS_TABLE
         if ZEROPOINTS_TABLE and (self.hdr('RUN') in ZEROPOINTS_TABLE['run']):
             idx_run = np.argwhere(ZEROPOINTS_TABLE['run']
                                   == self.hdr('RUN'))[0][0]
             zp = ZEROPOINTS_TABLE[idx_run]['zp']
         else:
             zp = self.hdr('MAGZPT')
-        return zp
+
+        # Retrieve the airmass from the header
+        airmass = self.hdr('AIRMASS', ccd)
+        if airmass is None:  # Two fields have the keyword missing :-(
+            airmass = 1.0
+
+        # Load the assumed extinction per unit airmass
+        # see http://www.ast.cam.ac.uk/~wfcsur/technical/photom/index.php
+        extinct = self.hdr('EXTINCT', ccd)
+        if extinct is None:
+            extinct = 0.0
+
+        # Correct the zeropoint for the exposure's specific airmass
+        return zp - (airmass - 1) * extinct
+
+    def get_percorr(self, ccd):
+        """Returns the PERCORR value for a given ccd.
+
+        PERCORR is value in the header of each CCD. It is a magnitude
+        correction based on the median dark sky recorded in science frames 
+        compared to the median for all the CCDs.
+        """
+        mypercorr = self.hdr('PERCORR', ccd)
+        if mypercorr is None:  # PERCORR keyword is sometimes missing
+            mypercorr = 0.0
+        return mypercorr
+
 
     def column_runID(self):
         runID = np.array([self.hdr('RUN')] * self.objectcount)
@@ -675,33 +705,16 @@ class DetectionCatalogue():
         magnitudes = np.array([])  # results are stored here
 
         for ccd in EXTS:
-            # Load airmass from the header
-            airmass = self.hdr('AIRMASS', ccd)
-            if airmass is None:  # Two fields have the keyword missing :-(
-                airmass = 1.0
-
-            # Load the assumed extinction per unit airmass
-            # see http://www.ast.cam.ac.uk/~wfcsur/technical/photom/index.php
-            extinct = self.hdr('EXTINCT', ccd)
-            if extinct is None:
-                extinct = 0.0
-
-            # Load PERCORR from the header; this is a correction based 
-            # on the median dark sky recorded in science frames 
-            # compared to the median for all the CCDs
-            mypercorr = self.hdr('PERCORR', ccd)
-            if mypercorr is None:  # PERCORR keyword is sometimes missing
-                mypercorr = 0.0
-
             # Load the array of fluxes
             flux = self.fits[ccd].data.field(flux_field)
 
             # Convert to magnitudes
+            # Note that self.zeropoint is already corrected for extinction
+            # as part of the get_zeropoint() method
             mag = (self.zeropoint
                    - 2.5 * np.log10(flux / self.exptime)
-                   - (airmass - 1) * extinct
                    - self.hdr(apcor_field, ccd)
-                   - mypercorr)
+                   - self.get_percorr(ccd))
 
             # Concatenate with previous magnitudes in the for loop
             magnitudes = np.concatenate((magnitudes, mag))
@@ -809,11 +822,6 @@ class DetectionCatalogue():
                                                    for ccd in EXTS]))
         avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
 
-        # When the PERCORR keyword is missing, assume it is zero
-        mypercorr = self.hdr('PERCORR')
-        if mypercorr is None:
-            mypercorr = 0.0
-
         try:
             e_5sig = (self.hdr('MAGZPT')
                       - 2.5 * np.log10(
@@ -822,7 +830,7 @@ class DetectionCatalogue():
                                       * self.hdr('SKYNOISE') / self.get_exptime())
                       - (self.hdr('AIRMASS') - 1) * self.hdr('EXTINCT')
                       - self.hdr('APCOR')
-                      - mypercorr)
+                      - self.get_percorr(1))
         except Exception:
             e_5sig = None
 
@@ -865,8 +873,8 @@ class DetectionCatalogue():
                     self.hdr('EXTINCT'),
                     self.hdr('APCOR', 1), self.hdr('APCOR', 2),
                     self.hdr('APCOR', 3), self.hdr('APCOR', 4),
-                    self.hdr('PERCORR', 1), self.hdr('PERCORR', 2),
-                    self.hdr('PERCORR', 3), self.hdr('PERCORR', 4),
+                    self.get_percorr(1), self.get_percorr(2),
+                    self.get_percorr(3), self.get_percorr(4),
                     self.hdr('GAIN', 1), self.hdr('GAIN', 2),
                     self.hdr('GAIN', 3), self.hdr('GAIN', 4),
                     self.hdr('STDCRMS', 1), self.hdr('STDCRMS', 2),
@@ -1006,7 +1014,9 @@ class DetectionCatalogue():
             hdu_table.header['SEEING%d' % ext] = self.hdr('SEEING', ext)
             hdu_table.header['ELLIP%d' % ext] = self.hdr('ELLIPTIC', ext)
             hdu_table.header['SKY%d' % ext] = self.hdr('SKYLEVEL', ext)
+            hdu_table.header['PERCORR%d' % ext] = self.get_percorr(ext)
         hdu_table.header['EXPTUSED'] = self.exptime
+        hdu_table.header['ZPINIT'] = self.zeropoint
         hdu_table.header['CATALOG'] = self.cat_path
         hdu_table.header['IMAGE'] = self.image_path
         hdu_table.header['CONFMAP'] = self.conf_path
