@@ -372,13 +372,13 @@ class DetectionCatalogue():
             zp = self.hdr('MAGZPT')
 
         # Retrieve the airmass from the header
-        airmass = self.hdr('AIRMASS', ccd)
+        airmass = self.hdr('AIRMASS')
         if airmass is None:  # Two fields have the keyword missing :-(
             airmass = 1.0
 
         # Load the assumed extinction per unit airmass
         # see http://www.ast.cam.ac.uk/~wfcsur/technical/photom/index.php
-        extinct = self.hdr('EXTINCT', ccd)
+        extinct = self.hdr('EXTINCT')
         if extinct is None:
             extinct = 0.0
 
