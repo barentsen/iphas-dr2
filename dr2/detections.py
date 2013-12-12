@@ -823,14 +823,13 @@ class DetectionCatalogue():
         avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
 
         try:
-            e_5sig = (self.hdr('MAGZPT')
+            e_5sig = (self.zeropoint
                       - 2.5 * np.log10(
                                   5.0*np.sqrt(
                                       np.sqrt(2.0)*np.pi*self.hdr('RCORE')**2.)
-                                      * self.hdr('SKYNOISE') / self.get_exptime())
-                      - (self.hdr('AIRMASS') - 1) * self.hdr('EXTINCT')
-                      - self.hdr('APCOR')
-                      - self.get_percorr(1))
+                                      * self.hdr('SKYNOISE') / self.exptime)
+                      - self.hdr('APCOR', 4)
+                      - self.get_percorr(4))
         except Exception:
             e_5sig = None
 
@@ -843,7 +842,7 @@ class DetectionCatalogue():
 
         return (','.join((['%s'] * 94)) 
                  + ',"%s",'
-                 + ','.join((['%s'] * 7))) % (
+                 + ','.join((['%s'] * 9))) % (
                     self.cat_path,
                     self.image_path,
                     self.conf_path,
@@ -911,7 +910,9 @@ class DetectionCatalogue():
                     self.hdr('EXPTIME'),
                     self.hdr('WFFPOS'),
                     self.hdr('WFFBAND'),
-                    self.hdr('WFFID')
+                    self.hdr('WFFID'),
+                    self.zeropoint,
+                    self.exptime
                 )
 
     def concat(self, name):
@@ -1085,7 +1086,8 @@ def index_setup(destination):
               + 'CCD4_CD1_1,CCD4_CD1_2,CCD4_CD2_1,CCD4_CD2_2,'
               + 'CCD4_PV2_1,CCD4_PV2_2,CCD4_PV2_3,'
               + 'CCDSPEED,OBSERVER,'
-              + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID\n')
+              + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID,'
+              + 'zeropoint_precalib,exptime_precalib\n')
     return out
 
 
