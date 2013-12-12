@@ -1006,7 +1006,7 @@ class DetectionCatalogue():
             hdu_table.header['SEEING%d' % ext] = self.hdr('SEEING', ext)
             hdu_table.header['ELLIP%d' % ext] = self.hdr('ELLIPTIC', ext)
             hdu_table.header['SKY%d' % ext] = self.hdr('SKYLEVEL', ext)
-        hdu_table.header['EXPTUSED'] = self.get_exptime()
+        hdu_table.header['EXPTUSED'] = self.exptime
         hdu_table.header['CATALOG'] = self.cat_path
         hdu_table.header['IMAGE'] = self.image_path
         hdu_table.header['CONFMAP'] = self.conf_path
@@ -1130,7 +1130,7 @@ def sanitise_zeropoints():
             idx_r = np.argwhere(
                         (np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.4)
                         & (runs.field('WFFBAND') == 'r'))[0][0]
-            zp = runs[idx_r]['MAGZPT'] - 3.08
+            zp = float(runs[idx_r]['MAGZPT']) - 3.08
             out.write('{0},{1}\n'.format(row['run'], zp))
 
     out.close()
@@ -1186,5 +1186,6 @@ if __name__ == '__main__':
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
-    print index_one(constants.RAWDATADIR+'/run13/r918607_cat.fits')
+    #print index_one(constants.RAWDATADIR+'/run13/r918607_cat.fits')
+    sanitise_zeropoints()
 
