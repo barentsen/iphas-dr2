@@ -68,25 +68,25 @@ Pipeline starts here
 #detections.sanitise_zeropoints()  # produces 'zeropoints-precalibration.csv'
 
 # Convert the single-band catalogues from CASU into our own catalogue format
-detections.convert_catalogues(cluster)  # produces 'detected/nnnnnnn_det.fits'
+#detections.convert_catalogues(cluster)  # produces 'detected/nnnnnnn_det.fits'
 
 # Bandmerge all runs obtained at the same epoch and pointing
-bandmerging.bandmerge(cluster)  # produces 'bandmerged/nnnn.fits'
+#bandmerging.bandmerge(cluster)  # produces 'bandmerged/nnnn.fits'
 
 # Compute the magnitude offsets between all runs, which is a necessary
 # input to the re-calibration step. Executing this on too many cores has been 
 # found to result in # "[Errno 105] No buffer space available", 
 # so we run it on cluster_highmem defined earlier.
-offsets.compute_offsets(cluster_highmem)  # produces 'offsets-{r|i|ha}.csv'
+#offsets.compute_offsets(cluster_highmem)  # produces 'offsets-{r|i|ha}.csv'
 
 # Find the set of zeropoint shifts which minimize the offsets obtained above
-calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
+#calibration.calibrate()  # produces 'calibration/calibration-{r|i|ha}.csv'
 
 # Apply the zeropoint shifts found above to the bandmerged catalogues
 #calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'
 
 # Identify duplicate detections where multiple pointings overlap ('seams');
-#seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
+seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
 
 # Finally, concatenate the individual pointings into a single catalogue 
-#concatenating.concatenate(cluster_highmem)
+concatenating.concatenate(cluster_highmem)
