@@ -28,6 +28,7 @@ Usage
 
 from astropy.io import fits
 from astropy.io import ascii
+from astropy.table import Table
 from astropy import wcs
 from astropy import log
 import numpy as np
@@ -42,7 +43,7 @@ __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Geert Barentsen', 'Hywel Farnhill',
                'Janet Drew', 'Robert Greimel',
-               'Mike Irwin', 'Cambridge Astronomical Surveys Unit']
+               'Cambridge Astronomical Surveys Unit']
 
 
 ################################
@@ -815,13 +816,9 @@ class DetectionCatalogue():
                               array=dec)  # Double precision!
         return (col_ra, col_dec)
 
-    def get_csv_summary(self):
-        """ Returns a CSV-formatted summary line """
-        # Average seeing and ellipticity across CCDs
-        avg_seeing = (constants.PXSCALE * np.mean([self.hdr('SEEING', ccd)
-                                                   for ccd in EXTS]))
-        avg_ellipt = np.mean([self.hdr('ELLIPTIC', i) for i in EXTS])
-
+    def get_metadata(self):
+        """ Returns a dictionary of exposure meta data."""
+        # 5-sigma depth
         try:
             e_5sig = (self.zeropoint
                       - 2.5 * np.log10(
@@ -833,6 +830,7 @@ class DetectionCatalogue():
         except Exception:
             e_5sig = None
 
+        # Name of the field
         try:
             field = self.hdr('OBJECT').split('_')[1].split(' ')[0]
         except IndexError:
@@ -840,80 +838,113 @@ class DetectionCatalogue():
             #                         + '"{0}"'.format(self.hdr('OBJECT')))
             field = ''
 
-        return (','.join((['%s'] * 94)) 
-                 + ',"%s",'
-                 + ','.join((['%s'] * 9))) % (
-                    self.cat_path,
-                    self.image_path,
-                    self.conf_path,
-                    self.hdr('RUN'),
-                    self.hdr('OBJECT'),
-                    self.hdr('RA'),
-                    self.hdr('DEC'),
-                    field,
-                    avg_seeing,
-                    constants.PXSCALE * self.hdr('SEEING', 1),
-                    constants.PXSCALE * self.hdr('SEEING', 2),
-                    constants.PXSCALE * self.hdr('SEEING', 3),
-                    constants.PXSCALE * self.hdr('SEEING', 4),
-                    avg_ellipt,
-                    self.hdr('ELLIPTIC', 1), self.hdr('ELLIPTIC', 2),
-                    self.hdr('ELLIPTIC', 3), self.hdr('ELLIPTIC', 4),
-                    e_5sig,
-                    self.hdr('AIRMASS'),
-                    self.hdr('RCORE'),
-                    self.hdr('CROWDED'),
-                    self.hdr('SKYLEVEL', 1), self.hdr('SKYLEVEL', 2),
-                    self.hdr('SKYLEVEL', 3), self.hdr('SKYLEVEL', 4),
-                    self.hdr('SKYNOISE', 1), self.hdr('SKYNOISE', 2),
-                    self.hdr('SKYNOISE', 3), self.hdr('SKYNOISE', 4),
-                    self.hdr('MAGZPT'),
-                    self.hdr('MAGZRR'),
-                    self.hdr('EXTINCT'),
-                    self.hdr('APCOR', 1), self.hdr('APCOR', 2),
-                    self.hdr('APCOR', 3), self.hdr('APCOR', 4),
-                    self.get_percorr(1), self.get_percorr(2),
-                    self.get_percorr(3), self.get_percorr(4),
-                    self.hdr('GAIN', 1), self.hdr('GAIN', 2),
-                    self.hdr('GAIN', 3), self.hdr('GAIN', 4),
-                    self.hdr('STDCRMS', 1), self.hdr('STDCRMS', 2),
-                    self.hdr('STDCRMS', 3), self.hdr('STDCRMS', 4),
-                    self.hdr('CRPIX1', 1), self.hdr('CRPIX2', 1),
-                    self.hdr('CRVAL1', 1), self.hdr('CRVAL2', 1),
-                    self.hdr('CD1_1', 1), self.hdr('CD1_2', 1),
-                    self.hdr('CD2_1', 1), self.hdr('CD2_2', 1),
-                    self.hdr('PV2_1', 1), self.hdr('PV2_2', 1),
-                    self.hdr('PV2_3', 1),
-                    self.hdr('CRPIX1', 2), self.hdr('CRPIX2', 2),
-                    self.hdr('CRVAL1', 2), self.hdr('CRVAL2', 2),
-                    self.hdr('CD1_1', 2), self.hdr('CD1_2', 2),
-                    self.hdr('CD2_1', 2), self.hdr('CD2_2', 2),
-                    self.hdr('PV2_1', 2), self.hdr('PV2_2', 2),
-                    self.hdr('PV2_3', 2),
-                    self.hdr('CRPIX1', 3), self.hdr('CRPIX2', 3),
-                    self.hdr('CRVAL1', 3), self.hdr('CRVAL2', 3),
-                    self.hdr('CD1_1', 3), self.hdr('CD1_2', 3),
-                    self.hdr('CD2_1', 3), self.hdr('CD2_2', 3),
-                    self.hdr('PV2_1', 3), self.hdr('PV2_2', 3),
-                    self.hdr('PV2_3', 3),
-                    self.hdr('CRPIX1', 4), self.hdr('CRPIX2', 4),
-                    self.hdr('CRVAL1', 4), self.hdr('CRVAL2', 4),
-                    self.hdr('CD1_1', 4), self.hdr('CD1_2', 4),
-                    self.hdr('CD2_1', 4), self.hdr('CD2_2', 4),
-                    self.hdr('PV2_1', 4), self.hdr('PV2_2', 4),
-                    self.hdr('PV2_3', 4),
-                    self.hdr('CCDSPEED'),
-                    self.hdr('OBSERVER'),
-                    self.hdr('DAZSTART'),
-                    self.hdr('DATE-OBS')+' '+self.hdr('UTSTART'),
-                    self.hdr('MJD-OBS'),
-                    self.hdr('EXPTIME'),
-                    self.hdr('WFFPOS'),
-                    self.hdr('WFFBAND'),
-                    self.hdr('WFFID'),
-                    self.zeropoint,
-                    self.exptime
-                )
+        meta = {'catalogue': self.cat_path,
+                'image': self.image_path,
+                'conf': self.conf_path,
+                'run': self.hdr('RUN'),
+                'object': self.hdr('OBJECT'),
+                'ra': self.hdr('RA'),
+                'dec': self.hdr('DEC'),
+                'field': field,
+                'SEEING': (constants.PXSCALE * np.mean([self.hdr('SEEING', ccd)
+                                                        for ccd in EXTS])),
+                'CCD1_SEEING': constants.PXSCALE * self.hdr('SEEING', 1),
+                'CCD2_SEEING': constants.PXSCALE * self.hdr('SEEING', 2),
+                'CCD3_SEEING': constants.PXSCALE * self.hdr('SEEING', 3),
+                'CCD4_SEEING': constants.PXSCALE * self.hdr('SEEING', 4),
+                'ELLIPTIC': np.mean([self.hdr('ELLIPTIC', i) for i in EXTS]),
+                'CCD1_ELLIPTIC': self.hdr('ELLIPTIC', 1),
+                'CCD2_ELLIPTIC': self.hdr('ELLIPTIC', 2),
+                'CCD3_ELLIPTIC': self.hdr('ELLIPTIC', 3),
+                'CCD4_ELLIPTIC': self.hdr('ELLIPTIC', 4),
+                '5sig': e_5sig,
+                'AIRMASS': self.hdr('AIRMASS'),
+                'RCORE': self.hdr('RCORE'),
+                'CROWDED': self.hdr('CROWDED'),
+                'CCD1_SKYLEVEL': self.hdr('SKYLEVEL', 1),
+                'CCD2_SKYLEVEL': self.hdr('SKYLEVEL', 2),
+                'CCD3_SKYLEVEL': self.hdr('SKYLEVEL', 3),
+                'CCD4_SKYLEVEL': self.hdr('SKYLEVEL', 4),
+                'CCD1_SKYNOISE': self.hdr('SKYNOISE', 1),
+                'CCD2_SKYNOISE': self.hdr('SKYNOISE', 2),
+                'CCD3_SKYNOISE': self.hdr('SKYNOISE', 3),
+                'CCD4_SKYNOISE': self.hdr('SKYNOISE', 4),
+                'MAGZPT': self.hdr('MAGZPT'),
+                'MAGZRR': self.hdr('MAGZRR'),
+                'EXTINCT': self.hdr('EXTINCT'),
+                'CCD1_APCOR': self.hdr('APCOR', 1),
+                'CCD2_APCOR': self.hdr('APCOR', 2),
+                'CCD3_APCOR': self.hdr('APCOR', 3),
+                'CCD4_APCOR': self.hdr('APCOR', 4),
+                'CCD1_PERCORR': self.get_percorr(1),
+                'CCD2_PERCORR': self.get_percorr(2),
+                'CCD3_PERCORR': self.get_percorr(3),
+                'CCD4_PERCORR': self.get_percorr(4),
+                'CCD1_GAIN': self.hdr('GAIN', 1),
+                'CCD2_GAIN': self.hdr('GAIN', 2),
+                'CCD3_GAIN': self.hdr('GAIN', 3),
+                'CCD4_GAIN': self.hdr('GAIN', 4),
+                'CCD1_STDCRMS': self.hdr('STDCRMS', 1),
+                'CCD2_STDCRMS': self.hdr('STDCRMS', 2),
+                'CCD3_STDCRMS': self.hdr('STDCRMS', 3),
+                'CCD4_STDCRMS': self.hdr('STDCRMS', 4),
+                'CCD1_CRPIX1': self.hdr('CRPIX1', 1),
+                'CCD1_CRPIX2': self.hdr('CRPIX2', 1),
+                'CCD1_CRVAL1': self.hdr('CRVAL1', 1),
+                'CCD1_CRVAL2': self.hdr('CRVAL2', 1),
+                'CCD1_CD1_1': self.hdr('CD1_1', 1),
+                'CCD1_CD1_2': self.hdr('CD1_2', 1),
+                'CCD1_CD2_1': self.hdr('CD2_1', 1),
+                'CCD1_CD2_2': self.hdr('CD2_2', 1),
+                'CCD1_PV2_1': self.hdr('PV2_1', 1),
+                'CCD1_PV2_2': self.hdr('PV2_2', 1),
+                'CCD1_PV2_3': self.hdr('PV2_3', 1),
+                'CCD2_CRPIX1': self.hdr('CRPIX1', 2),
+                'CCD2_CRPIX2': self.hdr('CRPIX2', 2),
+                'CCD2_CRVAL1': self.hdr('CRVAL1', 2),
+                'CCD2_CRVAL2': self.hdr('CRVAL2', 2),
+                'CCD2_CD1_1': self.hdr('CD1_1', 2),
+                'CCD2_CD1_2': self.hdr('CD1_2', 2),
+                'CCD2_CD2_1': self.hdr('CD2_1', 2),
+                'CCD2_CD2_2': self.hdr('CD2_2', 2),
+                'CCD2_PV2_1': self.hdr('PV2_1', 2),
+                'CCD2_PV2_2': self.hdr('PV2_2', 2),
+                'CCD2_PV2_3': self.hdr('PV2_3', 2),
+                'CCD3_CRPIX1': self.hdr('CRPIX1', 3),
+                'CCD3_CRPIX2': self.hdr('CRPIX2', 3),
+                'CCD3_CRVAL1': self.hdr('CRVAL1', 3),
+                'CCD3_CRVAL2': self.hdr('CRVAL2', 3),
+                'CCD3_CD1_1': self.hdr('CD1_1', 3),
+                'CCD3_CD1_2': self.hdr('CD1_2', 3),
+                'CCD3_CD2_1': self.hdr('CD2_1', 3),
+                'CCD3_CD2_2': self.hdr('CD2_2', 3),
+                'CCD3_PV2_1': self.hdr('PV2_1', 3),
+                'CCD3_PV2_2': self.hdr('PV2_2', 3),
+                'CCD3_PV2_3': self.hdr('PV2_3', 3),
+                'CCD4_CRPIX1': self.hdr('CRPIX1', 4),
+                'CCD4_CRPIX2': self.hdr('CRPIX2', 4),
+                'CCD4_CRVAL1': self.hdr('CRVAL1', 4),
+                'CCD4_CRVAL2': self.hdr('CRVAL2', 4),
+                'CCD4_CD1_1': self.hdr('CD1_1', 4),
+                'CCD4_CD1_2': self.hdr('CD1_2', 4),
+                'CCD4_CD2_1': self.hdr('CD2_1', 4),
+                'CCD4_CD2_2': self.hdr('CD2_2', 4),
+                'CCD4_PV2_1': self.hdr('PV2_1', 4),
+                'CCD4_PV2_2': self.hdr('PV2_2', 4),
+                'CCD4_PV2_3': self.hdr('PV2_3', 4),
+                'CCDSPEED': self.hdr('CCDSPEED'),
+                'OBSERVER': self.hdr('OBSERVER'),
+                'DAZSTART': self.hdr('DAZSTART'),
+                'TIME': self.hdr('DATE-OBS')+' '+self.hdr('UTSTART'),
+                'MJD-OBS': self.hdr('MJD-OBS'),
+                'EXPTIME': self.hdr('EXPTIME'),
+                'WFFPOS': self.hdr('WFFPOS'),
+                'WFFBAND': self.hdr('WFFBAND'),
+                'WFFID': self.hdr('WFFID'),
+                'zeropoint_precalib': self.zeropoint,
+                'exptime_precalib': self.exptime
+        }
+        return meta
 
     def concat(self, name):
         """Returns the concatenated array of a column across all ccds"""
@@ -1058,71 +1089,38 @@ def list_catalogues(directory):
     return catalogues
 
 
-def index_setup(destination):
-    """Sets up the CSV text file object."""
-    out = open(destination, 'w')
-    out.write('catalogue,image,conf,run,object,ra,dec,field,'
-              + 'SEEING,CCD1_SEEING,CCD2_SEEING,CCD3_SEEING,CCD4_SEEING,'
-              + 'ELLIPTIC,CCD1_ELLIPTIC,CCD2_ELLIPTIC,CCD3_ELLIPTIC,CCD4_ELLIPTIC,'
-              + '5sig,'
-              + 'AIRMASS,RCORE,CROWDED,'
-              + 'CCD1_SKYLEVEL,CCD2_SKYLEVEL,CCD3_SKYLEVEL,CCD4_SKYLEVEL,'
-              + 'CCD1_SKYNOISE,CCD2_SKYNOISE,CCD3_SKYNOISE,CCD4_SKYNOISE,'
-              + 'MAGZPT,MAGZRR,EXTINCT,'
-              + 'CCD1_APCOR,CCD2_APCOR,CCD3_APCOR,CCD4_APCOR,'
-              + 'CCD1_PERCORR,CCD2_PERCORR,CCD3_PERCORR,CCD4_PERCORR,'
-              + 'CCD1_GAIN,CCD2_GAIN,CCD3_GAIN,CCD4_GAIN,'
-              + 'CCD1_STDCRMS,CCD2_STDCRMS,CCD3_STDCRMS,CCD4_STDCRMS,'
-              + 'CCD1_CRPIX1,CCD1_CRPIX2,CCD1_CRVAL1,CCD1_CRVAL2,'
-              + 'CCD1_CD1_1,CCD1_CD1_2,CCD1_CD2_1,CCD1_CD2_2,'
-              + 'CCD1_PV2_1,CCD1_PV2_2,CCD1_PV2_3,'
-              + 'CCD2_CRPIX1,CCD2_CRPIX2,CCD2_CRVAL1,CCD2_CRVAL2,'
-              + 'CCD2_CD1_1,CCD2_CD1_2,CCD2_CD2_1,CCD2_CD2_2,'
-              + 'CCD2_PV2_1,CCD2_PV2_2,CCD2_PV2_3,'
-              + 'CCD3_CRPIX1,CCD3_CRPIX2,CCD3_CRVAL1,CCD3_CRVAL2,'
-              + 'CCD3_CD1_1,CCD3_CD1_2,CCD3_CD2_1,CCD3_CD2_2,'
-              + 'CCD3_PV2_1,CCD3_PV2_2,CCD3_PV2_3,'
-              + 'CCD4_CRPIX1,CCD4_CRPIX2,CCD4_CRVAL1,CCD4_CRVAL2,'
-              + 'CCD4_CD1_1,CCD4_CD1_2,CCD4_CD2_1,CCD4_CD2_2,'
-              + 'CCD4_PV2_1,CCD4_PV2_2,CCD4_PV2_3,'
-              + 'CCDSPEED,OBSERVER,'
-              + 'DAZSTART,TIME,MJD-OBS,EXPTIME,WFFPOS,WFFBAND,WFFID,'
-              + 'zeropoint_precalib,exptime_precalib\n')
-    return out
-
-
-def index_one(path):
+def get_metadata(path):
     """Returns the CSV summary line."""
     with log.log_to_file(os.path.join(constants.LOGDIR, 'index.log')):
         import socket
         log.info(util.get_pid()+': '+path)
-        csv_row_string = None
+        metadata = None
         try:
             cat = DetectionCatalogue(path, only_accept_iphas=False)
-            csv_row_string = cat.get_csv_summary()
+            metadata = cat.get_metadata()
+            for keyword in metadata:
+                if metadata[keyword] == None:
+                    metadata[keyword] = np.nan
         except CatalogueException, e:
             log.warning('%s: CatalogueException: %s' % (path, e))
             return None
         except Exception, e:
             log.error('%s: *UNEXPECTED EXCEPTION*: %s' % (path, e))
             return None
-        return csv_row_string
+        return metadata
 
 
-def create_index(clusterview,
-                 target=os.path.join(constants.DESTINATION, 'runs.csv'),
-                 data=constants.RAWDATADIR):
+def save_metadata(clusterview,
+                  target=os.path.join(constants.DESTINATION, 'metadata.fits'),
+                  data=constants.RAWDATADIR):
     """Produces a CSV file detailing the properties of all runs."""
-    out = index_setup(target)
     catalogues = list_catalogues(data)
+    results = clusterview.map(get_metadata, catalogues)
+    t = Table(results.get())
+    res = results.get()
+    
+    t.write(target, format='fits')
 
-    # Index each pipeline catalogue
-    results = clusterview.imap(index_one, catalogues)  # returns an iterator
-    for r in results:
-        if r is None:
-            continue
-        out.write(r+'\n')
-    out.close()
 
 
 def sanitise_zeropoints():
@@ -1199,5 +1197,6 @@ if __name__ == '__main__':
     #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #print index_one(constants.RAWDATADIR+'/run13/r918607_cat.fits')
-    sanitise_zeropoints()
+    #sanitise_zeropoints()
+    save_metadata()
 
