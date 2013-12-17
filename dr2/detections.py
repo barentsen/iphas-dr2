@@ -18,14 +18,16 @@ provides a table of all available IPHAS exposures.
 
 Computing requirements: ~48h CPU (2012 hardware). Low on RAM.
 
-TODO
+Possible improvements
+---------------------
 - look up confidence value for each star in the confidence maps.
 
 Usage
 -----
-
+detections.save_metadata()
+detections.sanitise_zeropoints()
+detections.save_detections()
 """
-
 from astropy.io import fits
 from astropy.io import ascii
 from astropy.table import Table
@@ -114,7 +116,12 @@ class DetectionCatalogue():
     """
 
     def __init__(self, path, only_accept_iphas=True):
-        """ Constructor """
+        """Open and sanitise the detection catalogue.
+
+        As part of the constructor, the validity of the header is checked and
+        repaired if necessary, including the WCS astrometric solution,
+        the zeropoint and the exposure time.
+        """
         self.path = path
         self.directory = '/'.join(path.split('/')[:-1])
         self.filename = path.split('/')[-1]
@@ -123,18 +130,19 @@ class DetectionCatalogue():
         except IOError, e:
             raise CatalogueException('IOError: %s' % e)
 
-        self.check_header(only_accept_iphas)  # Raises CatalogueException for dodgy catalogues
-        self.fix_wcs()  # Fix the WCS parameters where necessary
+        # Check and fix the header; a CatalogueException is raised
+        # in case of non-resolvable header problems
+        self.check_header(only_accept_iphas)
+        self.fix_wcs()  # IPHAS WCS solutions have foibles!
 
-        # Total number of detected objects across all CCDs
+        # Finally, store a few fixed values as properties
+        # because they are frequently needed and expensive to compute
         self.objectcount = np.sum([self.fits[ccd].data.size for ccd in EXTS])
-
-        self.cat_path = self.strip_basedir(path)
-        self.image_path = self.get_image_path()
-        self.conf_path = self.get_conf_path()
-
-        self.exptime = self.get_exptime()
-        self.zeropoint = self.get_zeropoint()
+        self.cat_path = self.strip_basedir(path)  # Where is the catalogue?
+        self.image_path = self.get_image_path()  # Where is the image?
+        self.conf_path = self.get_conf_path()  # Where is the confidence map?
+        self.exptime = self.get_exptime()  # Assumed exposure time
+        self.zeropoint = self.get_zeropoint()  # Assumed zeropoint
 
     def hdr(self, field, ext=1):
         """Return the value of the header keyword from extension `ext`."""
@@ -1113,13 +1121,53 @@ def get_metadata(path):
 def save_metadata(clusterview,
                   target=os.path.join(constants.DESTINATION, 'metadata.fits'),
                   data=constants.RAWDATADIR):
-    """Produces a CSV file detailing the properties of all runs."""
+    """Produces a table detailing the properties of all runs.
+
+    Parameters
+    ----------
+    clusterview : IPython.parallel.client.view.View (or similar)
+        Cluster view object to carry out the processing.
+    """
+    # Get the metadata for all catalogues in parallel on the cluster
     catalogues = list_catalogues(data)
     results = clusterview.map(get_metadata, catalogues)
-    t = Table(results.get())
-    res = results.get()
-    
-    t.write(target, format='fits')
+
+    # Avoid passing empty rows (i.e. row is None) to the output table
+    rows = []
+    for row in results.get():
+        if row is not None:
+            rows.append(row)
+
+    names = ('catalogue', 'image', 'conf', 'run', 'object', 'ra', 'dec',
+             'field', 'SEEING', 'CCD1_SEEING', 'CCD2_SEEING',
+             'CCD3_SEEING', 'CCD4_SEEING', 'ELLIPTIC', 'CCD1_ELLIPTIC',
+             'CCD2_ELLIPTIC', 'CCD3_ELLIPTIC', 'CCD4_ELLIPTIC',
+             '5sig', 'AIRMASS', 'RCORE', 'CROWDED',
+             'CCD1_SKYLEVEL', 'CCD2_SKYLEVEL', 'CCD3_SKYLEVEL',
+             'CCD4_SKYLEVEL', 'CCD1_SKYNOISE', 'CCD2_SKYNOISE',
+             'CCD3_SKYNOISE', 'CCD4_SKYNOISE', 'MAGZPT', 'MAGZRR', 'EXTINCT',
+             'CCD1_APCOR', 'CCD2_APCOR', 'CCD3_APCOR', 'CCD4_APCOR',
+             'CCD1_PERCORR', 'CCD2_PERCORR', 'CCD3_PERCORR', 'CCD4_PERCORR',
+             'CCD1_GAIN', 'CCD2_GAIN', 'CCD3_GAIN', 'CCD4_GAIN',
+             'CCD1_STDCRMS', 'CCD2_STDCRMS', 'CCD3_STDCRMS', 'CCD4_STDCRMS',
+             'CCD1_CRPIX1', 'CCD1_CRPIX2', 'CCD1_CRVAL1', 'CCD1_CRVAL2',
+             'CCD1_CD1_1', 'CCD1_CD1_2', 'CCD1_CD2_1', 'CCD1_CD2_2', 
+             'CCD1_PV2_1', 'CCD1_PV2_2', 'CCD1_PV2_3',
+             'CCD2_CRPIX1', 'CCD2_CRPIX2', 'CCD2_CRVAL1', 'CCD2_CRVAL2',
+             'CCD2_CD1_1', 'CCD2_CD1_2', 'CCD2_CD2_1', 'CCD2_CD2_2',
+             'CCD2_PV2_1', 'CCD2_PV2_2', 'CCD2_PV2_3', 'CCD3_CRPIX1',
+             'CCD3_CRPIX2', 'CCD3_CRVAL1', 'CCD3_CRVAL2', 'CCD3_CD1_1',
+             'CCD3_CD1_2', 'CCD3_CD2_1', 'CCD3_CD2_2', 'CCD3_PV2_1', 
+             'CCD3_PV2_2', 'CCD3_PV2_3', 'CCD4_CRPIX1', 'CCD4_CRPIX2',
+             'CCD4_CRVAL1', 'CCD4_CRVAL2', 'CCD4_CD1_1', 'CCD4_CD1_2',
+             'CCD4_CD2_1', 'CCD4_CD2_2', 'CCD4_PV2_1', 'CCD4_PV2_2',
+             'CCD4_PV2_3', 'CCDSPEED', 'OBSERVER', 'DAZSTART',
+             'TIME', 'MJD-OBS', 'EXPTIME', 'WFFPOS', 'WFFBAND', 'WFFID',
+             'zeropoint_precalib', 'exptime_precalib')
+
+    # Finally, create and write the output table
+    t = Table(rows, names=names)   
+    t.write(target, format='fits', overwrite=True)
 
 
 

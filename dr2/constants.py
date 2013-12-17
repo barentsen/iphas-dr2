@@ -41,6 +41,9 @@ IPHASQC_COND_RELEASE = (IPHASQC['is_best'] & (IPHASQC['qflag'] != 'D'))
 STILTS = 'nice java -Xmx2000M -XX:+UseConcMarkSweepGC -jar {0}'.format(
                                 os.path.join(LIBDIR, 'stilts.jar'))
 
+# How to execute funpack?
+FUNPACK = '/home/gb/bin/cfitsio3310/bin/funpack'
+
 # Fields within this radius will be considered to overlap
 FIELD_MAXDIST = 0.8  # degrees
 
