@@ -59,6 +59,9 @@ PXSCALE = 0.333  # arcsec/pix
 # Filter names
 BANDS = ['r', 'i', 'ha']
 
+# Which extensions to expect in the fits catalogues?
+EXTENSIONS = [1, 2, 3, 4]
+
 # Which are the possible filenames of the confidence maps?
 CONF_NAMES = {'Halpha': ['Ha_conf.fits', 'Ha_conf.fit',
                          'Halpha_conf.fit',
