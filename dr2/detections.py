@@ -1132,7 +1132,7 @@ def save_metadata(clusterview,
         Cluster view object to carry out the processing.
     """
     # Get the metadata for all catalogues in parallel on the cluster
-    catalogues = list_catalogues(data)[0:50]
+    catalogues = list_catalogues(data)
     results = clusterview.map(get_metadata, catalogues)
 
     # Avoid passing empty rows (i.e. row is None) to the output table
