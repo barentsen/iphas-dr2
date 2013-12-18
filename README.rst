@@ -5,7 +5,7 @@ IPHAS Data Release 2
 Python package and scripts used to produce the IPHAS Data Release 2 (DR2) source catalogue.
 
 :authors: Geert Barentsen; Hywel Farnhill
-:dependencies: astropy, numpy, scipy, IPython.
+:dependencies: astropy (0.2.3), numpy, scipy, IPython.
 
 Contents
 --------
