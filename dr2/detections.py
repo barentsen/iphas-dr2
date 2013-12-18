@@ -1132,17 +1132,17 @@ def save_metadata(clusterview,
         Cluster view object to carry out the processing.
     """
     # Get the metadata for all catalogues in parallel on the cluster
-    catalogues = list_catalogues(data)
+    catalogues = list_catalogues(data)[0:50]
     results = clusterview.map(get_metadata, catalogues)
 
     # Avoid passing empty rows (i.e. row is None) to the output table
     rows = []
     for row in results.get():
         if row is not None:
-            rows.append(row.values())
-    
+            rows.append(row)
+    #import pdb; pdb.set_trace()
     # Finally, create and write the output table
-    t = Table(np.array(rows), names=row.keys())   
+    t = Table(rows, names=row.keys())   
     t.write(target, format='fits', overwrite=True)
 
 
