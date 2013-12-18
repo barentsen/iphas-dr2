@@ -70,6 +70,7 @@ CALDB = CalibrationDatabase()
 
 
 class SurveyImage(object):
+    """Class used to write a single IPHAS CCD image with up-to-date keywords."""
 
     def __init__(self, run, ccd):
         self.run = run
@@ -79,7 +80,9 @@ class SurveyImage(object):
         self.fits_orig = fits.open(self.path_orig, do_not_scale_image_data=True)
         # Sort out the new FITS image and header
         self.hdu = fits.PrimaryHDU(self.fits_orig[self.ccd].data)
-        self.configure_header()
+        self.set_header()
+        self.fix_wcs()
+        self.add_comments()
 
     @property
     def output_filename(self):
@@ -88,21 +91,32 @@ class SurveyImage(object):
 
     @property
     def exptime(self):
+        """Returns the exposure time as used in DR2.
+
+        This can differ slightly from the original exposure time recorded in
+        the raw data, because the DR2 pipeline accounts for known foibles
+        in the in exposure time recording.
+        """
         return METADATA[self.run]['exptime_precalib']
 
     @property
     def zeropoint(self):
+        """Returns the image's zeropoint ZP such that `mag = ZP - 2.5*log(flux)`
+        """
+        # What is the calibration shift applied in DR2?
         try:
             shift = CALDB.shifts[self.run]
         except KeyError:
             shift = 0.0
+        # The zeropoint in the metadata file is corrected for extinction
+        # but not re-calibrated and not corrected for PERCORR
         return METADATA[self.run]['zeropoint_precalib'] - self.percorr + shift
 
     @property
     def percorr(self):
         return METADATA[self.run]['CCD{0}_PERCORR'.format(self.ccd)]
 
-    def configure_header(self):
+    def set_header(self):
         # Copy keywords from the original HDU[0]
         for kw in ['RUN', 'OBSERVAT', 'OBSERVER', 'OBJECT',
                    'LATITUDE', 'LONGITUD', 'HEIGHT', 'SLATEL',
@@ -161,19 +175,6 @@ class SurveyImage(object):
         self.hdu.header.comments['PV2_2'] = 'Coefficient for r**2 term'
         self.hdu.header.comments['PV2_3'] = 'Coefficient for r**3 term'
 
-        # Is an updated (fixed) WCS available?
-        if self.run in WCSFIXES['RUN']:
-            for ccd in constants.EXTENSIONS:
-                idx = ((WCSFIXES['RUN'] == self.run)
-                       & (WCSFIXES['CCD'] == self.ccd))
-                if idx.sum() > 0:
-                    log.info("WCS fixed: {0}[{1}].".format(self.run, self.ccd))
-                    idx_fix = idx.nonzero()[0][-1]
-                    for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
-                               'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
-                        self.hdu.header[kw] = WCSFIXES[kw][idx_fix]
-
-        
         # Fix zeropoint
         self.hdu.header['ORIGZPT'] = self.fits_orig[self.ccd].header['MAGZPT']
         self.hdu.header.comments['ORIGZPT'] = 'Original nightly zeropoint'
@@ -185,13 +186,29 @@ class SurveyImage(object):
         self.hdu.header['EXPTIME'] = self.exptime
         self.hdu.header.comments['EXPTIME'] = '[sec] Exposure time assumed by DR2 pipeline'
 
+    def fix_wcs(self):
+        # Is an updated (fixed) WCS available?
+        if self.run in WCSFIXES['RUN']:
+            for ccd in constants.EXTENSIONS:
+                idx = ((WCSFIXES['RUN'] == self.run)
+                       & (WCSFIXES['CCD'] == self.ccd))
+                if idx.sum() > 0:
+                    log.info("WCS fixed: {0}[{1}].".format(self.run, self.ccd))
+                    idx_fix = idx.nonzero()[0][-1]
+                    for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
+                               'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
+                        self.hdu.header[kw] = WCSFIXES[kw][idx_fix]
+        
+
+    def add_comments(self):
         # Add history
         for line in str(self.fits_orig[self.ccd].header['HISTORY']).split('\n'):
             self.hdu.header['HISTORY'] = line
         self.hdu.header['HISTORY'] = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
         self.hdu.header['HISTORY'] = '    Headers updated by Geert Barentsen as part of DR2.'
         self.hdu.header['HISTORY'] = '    This included changes to MAGZPT, EXPTIME and the WCS.'
-        
+
+        # Set calibration comments
         self.hdu.header['COMMENT'] = 'Calibration info'
         self.hdu.header['COMMENT'] = '================'
         self.hdu.header['COMMENT'] = 'The MAGZPT keyword in this header has been corrected for atmospheric'
@@ -207,7 +224,7 @@ class SurveyImage(object):
         #hdu.writeto(target, clobber=True)
         self.hdu.writeto(target, clobber=True)
 
-    def summary(self):
+    def get_metdata(self):
         d = {'filename': self.output_filename,
              'exptime': self.exptime,
              'zeropoint': self.zeropoint,
@@ -229,7 +246,7 @@ def prepare_one(run):
     for ccd in constants.EXTENSIONS:
         img = SurveyImage(run, ccd)
         img.save()
-        result.append(img.summary())
+        result.append(img.get_metdata())
     return result
 
 def prepare_images():
