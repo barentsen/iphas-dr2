@@ -6,16 +6,15 @@ This script will edit all images in the data release to ensure they have
 the correct astrometric solution (WCS) and calibration information (zeropoint)
 in the header.
 
-TODO
-----
-- Compress with gzip rather than rice, for wide adoption?
-
 """
 from __future__ import division, print_function, unicode_literals
 from astropy.io import fits
 from astropy.io import ascii
 from astropy import log
+from astropy import wcs
+from astropy import table
 import numpy as np
+import itertools
 import datetime
 import os
 import util
@@ -31,8 +30,7 @@ __credits__ = ['Geert Barentsen']
 ####################
 
 # Where the write output images?
-MYDESTINATION = os.path.join(constants.DESTINATION, 'images')
-util.setup_dir(MYDESTINATION)
+IMAGE_DESTINATION = os.path.join(constants.DESTINATION, 'images')
 
 # Table containing slight updates to WCS astrometric parameters
 WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
@@ -46,14 +44,9 @@ METADATA = dict(zip(MD['run'], MD))
 # CLASSES
 ###########
 
-"""
-class RunDatabase(object):
-    def __init__(self):
-        table = ascii.read(os.path.join(constants.DESTINATION, 'runs.csv'))
-        self.runs = dict(zip(table['run'], table))
-"""
 
 class CalibrationDatabase(object):
+    """Class to hold the calibration shifts."""
     def __init__(self):
         r = ascii.read(os.path.join(constants.DESTINATION, 'calibration', 
                                     'calibration-r.csv'))
@@ -78,6 +71,13 @@ class SurveyImage(object):
         # Open the image
         self.path_orig = constants.RAWDATADIR + METADATA[run]['image']
         self.fits_orig = fits.open(self.path_orig, do_not_scale_image_data=True)
+
+        # Is the run a DR2-recalibrated run?
+        if self.run in CALDB.shifts:
+            self.calibrated = True
+        else:
+            self.calibrated = False
+
         # Sort out the new FITS image and header
         self.hdu = fits.PrimaryHDU(self.fits_orig[self.ccd].data)
         self.set_header()
@@ -87,7 +87,7 @@ class SurveyImage(object):
     @property
     def output_filename(self):
         """Filename of the output?"""
-        return '{0}_{1}.fits'.format(self.run, self.ccd)
+        return '{0}_{1}.fits.gz'.format(self.run, self.ccd).encode('ascii')
 
     @property
     def exptime(self):
@@ -120,23 +120,26 @@ class SurveyImage(object):
         # Copy keywords from the original HDU[0]
         for kw in ['RUN', 'OBSERVAT', 'OBSERVER', 'OBJECT',
                    'LATITUDE', 'LONGITUD', 'HEIGHT', 'SLATEL',
-                   'TELESCOP', 'RA', 'DEC',
-                   'MJD-OBS', 'JD', 'AZIMUTH', 'ZD', 'PLATESCA', 'TELFOCUS',
-                   'ROTTRACK', 'ROTSKYPA', 'PARANGLE', 'DOMEAZ', 'AIRMASS',
+                   'TELESCOP',
+                   'MJD-OBS', 'JD', 'PLATESCA', 'TELFOCUS',
+                   'AIRMASS', 'DATE-OBS', 'UTSTART',
                    'TEMPTUBE', 'INSTRUME', 'WFFPOS', 'WFFBAND', 'WFFID',
-                   'SECPPIX', 'UTSTART', 'DATE-OBS', 'DETECTOR', 'CCDSPEED',
+                   'SECPPIX', 'DETECTOR', 'CCDSPEED',
                    'CCDXBIN', 'CCDYBIN', 'CCDSUM', 'CCDTEMP', 'NWINDOWS']:
             self.hdu.header[kw] = self.fits_orig[0].header[kw]
             self.hdu.header.comments[kw] = self.fits_orig[0].header.comments[kw]
 
         # Copy keywords from the original image extension
         for kw in ['BSCALE', 'BZERO', 'CCDNAME', 'CCDXPIXE', 'CCDYPIXE', 
-                   'AMPNAME', 'GAIN', 'READNOIS', 'ZEROCOR', 'LINCOR', 
-                   'FLATCOR', 'SEEING', 'WCSPASS', 'NUMBRMS', 'STDCRMS',
+                   'AMPNAME', 'GAIN', 'READNOIS', 
+                   'NUMBRMS', 'STDCRMS',
                    'PERCORR', 'EXTINCT']:
             self.hdu.header[kw] = self.fits_orig[self.ccd].header[kw]
             self.hdu.header.comments[kw] = self.fits_orig[self.ccd].header.comments[kw]
 
+        # Make it a proper ISO stamp
+        self.hdu.header['DATE-OBS'] = self.fits_orig[0].header['DATE-OBS']+'T'+self.fits_orig[0].header['UTSTART']
+        
         # Fix WCS - see fix_wcs() in detections.py!
         # Enforce the pipeline's defaults
         self.hdu.header['RADESYSa'] = 'ICRS'
@@ -177,30 +180,33 @@ class SurveyImage(object):
 
         # Fix zeropoint
         self.hdu.header['ORIGZPT'] = self.fits_orig[self.ccd].header['MAGZPT']
-        self.hdu.header.comments['ORIGZPT'] = 'Original nightly zeropoint'
+        self.hdu.header.comments['ORIGZPT'] = 'Original nightly zeropoint; uncorrected for extinction/clouds'
         
         self.hdu.header['MAGZPT'] = self.zeropoint
-        self.hdu.header.comments['MAGZPT'] = 'Re-calibrated DR2 zeropoint'
+        if self.calibrated:
+            self.hdu.header.comments['MAGZPT'] = 'Re-calibrated DR2 zeropoint'
+        else:
+            self.hdu.header.comments['MAGZPT'] = 'ORIGZPT corrected for exinction and PERCORR'
 
         # Fix exposure time -- it might have changed in detections.py
         self.hdu.header['EXPTIME'] = self.exptime
-        self.hdu.header.comments['EXPTIME'] = '[sec] Exposure time assumed by DR2 pipeline'
+        self.hdu.header.comments['EXPTIME'] = '[sec] Exposure time assumed by the pipeline'
 
     def fix_wcs(self):
         # Is an updated (fixed) WCS available?
-        if self.run in WCSFIXES['RUN']:
-            for ccd in constants.EXTENSIONS:
-                idx = ((WCSFIXES['RUN'] == self.run)
-                       & (WCSFIXES['CCD'] == self.ccd))
-                if idx.sum() > 0:
-                    log.info("WCS fixed: {0}[{1}].".format(self.run, self.ccd))
-                    idx_fix = idx.nonzero()[0][-1]
-                    for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
-                               'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
-                        self.hdu.header[kw] = WCSFIXES[kw][idx_fix]
+        if self.run in WCSFIXES['RUN']:         
+            idx = ((WCSFIXES['RUN'] == self.run)
+                   & (WCSFIXES['CCD'] == self.ccd))
+            if idx.sum() > 0:
+                log.info("WCS fixed: {0}[{1}].".format(self.run, self.ccd))
+                idx_fix = idx.nonzero()[0][-1]
+                for kw in ['CRVAL1', 'CRVAL2', 'CRPIX1', 'CRPIX2',
+                           'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
+                    self.hdu.header[kw] = WCSFIXES[kw][idx_fix]
         
 
     def add_comments(self):
+        """Populate the HISTORY and COMMENT keywords of the FITS file."""
         # Add history
         for line in str(self.fits_orig[self.ccd].header['HISTORY']).split('\n'):
             self.hdu.header['HISTORY'] = line
@@ -211,54 +217,102 @@ class SurveyImage(object):
         # Set calibration comments
         self.hdu.header['COMMENT'] = 'Calibration info'
         self.hdu.header['COMMENT'] = '================'
-        self.hdu.header['COMMENT'] = 'The MAGZPT keyword in this header has been corrected for atmospheric'
-        self.hdu.header['COMMENT'] = 'extinction and gain (PERCORR) and has been re-calibrated as part of DR2.'
-        self.hdu.header['COMMENT'] = ''
-        self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes relative to Vega, use:'
-        self.hdu.header['COMMENT'] = '    mag(Vega) = MAGZPT - 2.5*log(pixel value / EXPTIME)'
 
-    def save(self, directory=MYDESTINATION):
+        if self.calibrated:
+            self.hdu.header['COMMENT'] = 'The MAGZPT keyword in this header has been corrected for atmospheric'
+            self.hdu.header['COMMENT'] = 'extinction and gain (PERCORR) and has been re-calibrated as part of DR2.'
+            self.hdu.header['COMMENT'] = ''
+            self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes relative to Vega, use:'
+            self.hdu.header['COMMENT'] = '    mag(Vega) = MAGZPT - 2.5*log(pixel value / EXPTIME)'
+        else:
+            self.hdu.header['COMMENT'] = 'Warning: this data is not part of DR2 and has not been re-calibrated.'
+            self.hdu.header['COMMENT'] = 'It was likely excluded from DR2 for a serious quality problem.'
+            self.hdu.header['COMMENT'] = 'Use at your own risk.'
+
+    def save(self):
+        """Save the ccd image to a new file."""
+        directory = os.path.join(IMAGE_DESTINATION,
+                                 str(self.hdu.header['WFFBAND']).lower())
         target = os.path.join(directory, self.output_filename)
-        #prihdu = fits.PrimaryHDU()
-        #hdu = fits.HDUList( [prihdu, self.fits[self.ccd]] )
-        #hdu.writeto(target, clobber=True)
         self.hdu.writeto(target, clobber=True)
 
-    def get_metdata(self):
-        d = {'filename': self.output_filename,
-             'exptime': self.exptime,
-             'zeropoint': self.zeropoint,
-             }
-        return d
+    def get_metadata(self):
+        """Returns the CCD's metadata as a dictionary."""
+        # Find center and corner coordinates (ra/dec in decimal degrees)
+        mywcs = wcs.WCS(self.hdu.header)
+        ra, dec = mywcs.all_pix2world([[1024, 2048]], 1)[0]
+        corners = mywcs.all_pix2world([[1,1], [1,4096], [2048,4096], [2048,1]], 1)
+        ra1, ra2 = np.min(corners[:,0]), np.max(corners[:,0])
+        dec1, dec2 = np.min(corners[:,1]), np.max(corners[:,1])
+        
+        if self.calibrated:
+            in_dr2 = "true".encode('ascii')
+        else:
+            in_dr2 = "false".encode('ascii')
+
+        meta = {'filename': self.output_filename,
+                'band': str(self.hdu.header['WFFBAND']).lower(),
+                'dr2': in_dr2,
+                'run': self.run,
+                'ccd': self.ccd,
+                'field': METADATA[self.run]['field'],
+                'ra': ra,
+                'dec': dec,
+                'ra1': ra1,
+                'ra2': ra2,
+                'dec1': dec1,
+                'dec2': dec2,
+                'zeropoint': self.zeropoint,
+                'exptime': self.exptime,
+                'time': str(self.hdu.header['DATE-OBS']).encode('ascii'),
+                }
+        return meta
 
 
 ###########
 # FUNCTIONS
 ###########
 
-def verify_images():
-    """Run through all images produced to verify headers."""
-    pass
-
-
 def prepare_one(run):
-    result = []
-    for ccd in constants.EXTENSIONS:
-        img = SurveyImage(run, ccd)
-        img.save()
-        result.append(img.get_metdata())
-    return result
+    with log.log_to_file(os.path.join(constants.LOGDIR, 'images.log')):
+        result = []
+        for ccd in constants.EXTENSIONS:
+            try:
+                img = SurveyImage(run, ccd)
+                img.save()
+                result.append(img.get_metadata())
+                img.fits_orig.close()  # avoid memory leak
+            except Exception, e:
+                log.error(str(run)+': '+util.get_pid()+': '+str(e))
+        return result
 
-def prepare_images():
-    print(prepare_one(358844))
+def prepare_images(clusterview):
+    metadata = []
+    for band in ['halpha', 'r', 'i']:
+        log.info('Starting with band {0}'.format(band))
+        # Make sure the output directory exists
+        util.setup_dir(os.path.join(IMAGE_DESTINATION, band))
+        # Retrieve the list of runs
+        if band == 'halpha':
+            idx_band = 'ha'
+        else:
+            idx_band = band
+        # [constants.IPHASQC_COND_RELEASE]
+        runs = constants.IPHASQC['run_'+idx_band]
+        # Prepare each run
+        result = clusterview.map(prepare_one, runs[-100:-90], block=True)
+        metadata.extend(result)
+
+    # Write the metadata to a table
+    mycolumns = ('filename', 'band', 'dr2', 'run', 'ccd', 'field', 'ra', 'dec', 
+                 'ra1', 'ra2', 'dec1', 'dec2', 'zeropoint', 'exptime', 'time')
+    rows = list(itertools.chain.from_iterable(metadata)) # flatten list
+    t = table.Table(rows, names=mycolumns)
+    table_filename=os.path.join(IMAGE_DESTINATION, 'iphas-images.fits')
+    t.write(table_filename, format='fits', overwrite=True)
 
 
-def write_image_table():
-    """Produces a table containing the information of images (ccd per ccd).
 
-    filename,ra,dec,zeropoint,percor,exptime,ra1,dec1,ra2,dec2
-    """
-    pass
 
 
 ##############################
@@ -266,5 +320,14 @@ def write_image_table():
 ##############################
 
 if __name__ == '__main__':
-    #write_postcalibration_zeropoints()
-    prepare_images()
+    from IPython.parallel import client
+    client = client.client.Client()
+    with client[:].sync_imports():
+        from dr2.images import SurveyImage
+        from dr2 import constants
+        from dr2 import util
+        from astropy import log
+        from astropy.io import fits
+        import os
+    prepare_images(client[:])
+
