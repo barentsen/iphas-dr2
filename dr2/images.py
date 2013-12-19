@@ -84,14 +84,14 @@ class SurveyImage(object):
         self.fix_wcs()
         self.add_comments()
 
-    def orig_header(keyword, extension=0):
+    def orig_header(self, keyword, extension=0):
         """Returns a keyword value from the original header."""
         try:
             return self.fits_orig[extension].header[keyword]
         except KeyError:
             return ""
 
-    def orig_comments(keyword, extension=0):
+    def orig_comments(self, keyword, extension=0):
         """Returns keyword comments from the original header."""
         try:
             return self.fits_orig[extension].header.comments[keyword]
@@ -194,7 +194,7 @@ class SurveyImage(object):
 
         # Fix zeropoint
         self.hdu.header['ORIGZPT'] = self.orig_header('MAGZPT', self.ccd)
-        self.hdu.header.comments['ORIGZPT'] = 'Original nightly zeropoint; uncorrected for extinction/clouds'
+        self.hdu.header.comments['ORIGZPT'] = 'Original nightly ZP; uncorrected for extinction/clouds'
         
         self.hdu.header['MAGZPT'] = self.zeropoint
         if self.calibrated:
@@ -337,6 +337,7 @@ def prepare_images(clusterview):
 ##############################
 
 if __name__ == '__main__':
+    """
     from IPython.parallel import client
     client = client.client.Client()
     with client[:].sync_imports():
@@ -347,4 +348,5 @@ if __name__ == '__main__':
         from astropy.io import fits
         import os
     prepare_images(client[:])
-
+    """
+    prepare_one(571408)
