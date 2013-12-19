@@ -279,7 +279,7 @@ def prepare_one(run):
         for ccd in constants.EXTENSIONS:
             try:
                 img = SurveyImage(run, ccd)
-                img.save()
+                #img.save()
                 result.append(img.get_metadata())
                 img.fits_orig.close()  # avoid memory leak
             except Exception, e:
@@ -300,12 +300,15 @@ def prepare_images(clusterview):
         # [constants.IPHASQC_COND_RELEASE]
         runs = constants.IPHASQC['run_'+idx_band]
         # Prepare each run
-        result = clusterview.map(prepare_one, runs[-100:-90], block=True)
+        result = clusterview.map(prepare_one, runs[100:101], block=True)
         metadata.extend(result)
 
     # Write the metadata to a table
-    mycolumns = ('filename', 'band', 'dr2', 'run', 'ccd', 'field', 'ra', 'dec', 
-                 'ra1', 'ra2', 'dec1', 'dec2', 'zeropoint', 'exptime', 'time')
+    mycolumns = (str('filename'), str('band'), str('dr2'), str('run'),
+                 str('ccd'), str('field'), str('ra'), str('dec'), 
+                 str('ra1'), str('ra2'), str('dec1'), str('dec2'),
+                 str('zeropoint'), str('exptime'),
+                 str('time'))
     rows = list(itertools.chain.from_iterable(metadata)) # flatten list
     t = table.Table(rows, names=mycolumns)
     table_filename=os.path.join(IMAGE_DESTINATION, 'iphas-images.fits')
