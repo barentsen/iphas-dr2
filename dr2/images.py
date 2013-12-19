@@ -84,6 +84,20 @@ class SurveyImage(object):
         self.fix_wcs()
         self.add_comments()
 
+    def orig_header(keyword, extension=0):
+        """Returns a keyword value from the original header."""
+        try:
+            return self.fits_orig[extension].header[keyword]
+        except KeyError:
+            return ""
+
+    def orig_comments(keyword, extension=0):
+        """Returns keyword comments from the original header."""
+        try:
+            return self.fits_orig[extension].header.comments[keyword]
+        except KeyError:
+            return ""
+
     @property
     def output_filename(self):
         """Filename of the output?"""
@@ -126,16 +140,16 @@ class SurveyImage(object):
                    'TEMPTUBE', 'INSTRUME', 'WFFPOS', 'WFFBAND', 'WFFID',
                    'SECPPIX', 'DETECTOR', 'CCDSPEED',
                    'CCDXBIN', 'CCDYBIN', 'CCDSUM', 'CCDTEMP', 'NWINDOWS']:
-            self.hdu.header[kw] = self.fits_orig[0].header[kw]
-            self.hdu.header.comments[kw] = self.fits_orig[0].header.comments[kw]
+            self.hdu.header[kw] = self.orig_header(kw)
+            self.hdu.header.comments[kw] = self.orig_comments(kw)
 
         # Copy keywords from the original image extension
         for kw in ['BSCALE', 'BZERO', 'CCDNAME', 'CCDXPIXE', 'CCDYPIXE', 
                    'AMPNAME', 'GAIN', 'READNOIS', 
                    'NUMBRMS', 'STDCRMS',
                    'PERCORR', 'EXTINCT']:
-            self.hdu.header[kw] = self.fits_orig[self.ccd].header[kw]
-            self.hdu.header.comments[kw] = self.fits_orig[self.ccd].header.comments[kw]
+            self.hdu.header[kw] = self.orig_header(kw, self.ccd)
+            self.hdu.header.comments[kw] = self.orig_comments(kw, self.ccd)
 
         # Make it a proper ISO stamp
         self.hdu.header['DATE-OBS'] = self.fits_orig[0].header['DATE-OBS']+'T'+self.fits_orig[0].header['UTSTART']
@@ -179,7 +193,7 @@ class SurveyImage(object):
         self.hdu.header.comments['PV2_3'] = 'Coefficient for r**3 term'
 
         # Fix zeropoint
-        self.hdu.header['ORIGZPT'] = self.fits_orig[self.ccd].header['MAGZPT']
+        self.hdu.header['ORIGZPT'] = self.orig_header('MAGZPT', self.ccd)
         self.hdu.header.comments['ORIGZPT'] = 'Original nightly zeropoint; uncorrected for extinction/clouds'
         
         self.hdu.header['MAGZPT'] = self.zeropoint
