@@ -409,6 +409,8 @@ class DetectionCatalogue():
 
 
     def column_runID(self):
+        """Returns the FITS column with the runID for each star.
+        (which is of course identical for all stars from the same exposure)"""
         runID = np.array([self.hdr('RUN')] * self.objectcount)
         return fits.Column(name='runID', format='J', unit='Number', array=runID)
 
@@ -856,6 +858,7 @@ class DetectionCatalogue():
                ('ra', self.hdr('RA')),
                ('dec', self.hdr('DEC')),
                ('field', field),
+               ('n_objects', self.objectcount),
                ('SEEING', (constants.PXSCALE * np.mean([self.hdr('SEEING', ccd)
                                                         for ccd in EXTS]))),
                ('CCD1_SEEING', constants.PXSCALE * self.hdr('SEEING', 1)),

@@ -45,13 +45,13 @@
         "name": "mergedClass",
         "type": "short",
         "unit": "",
-        "desc": "Image classification flag based on all bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). Computed using the method <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass\">described here</a>."
+        "desc": "Image classification flag based on all bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass\">UKIDSS scheme</a>."
     },
     {
         "name": "mergedClassStat",
         "type": "float",
         "unit": "",
-        "desc": "Merged N(0,1) stellarness-of-profile statistic. Computed using the method <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat\">described here</a>."
+        "desc": "Merged N(0,1) stellarness-of-profile statistic. Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat\">UKIDSS scheme</a>."
     },
     {
         "name": "pStar",
@@ -471,7 +471,7 @@
         "name": "saturated",
         "type": "boolean",
         "unit": "",
-        "desc": "True if the source is saturated (i.e. peak pixel > 55000 counts) in one or more bands (i.e. <a href=\"#errBits\">errBits</a> &ge; 8). The photometry of saturated stars is affected by systematic errors."
+        "desc": "True if the source is saturated (i.e. peak pixel &gt; 55000 counts) in one or more bands (i.e. <a href=\"#errBits\">errBits</a> &ge; 8). The photometry of saturated stars is affected by systematic errors."
     },
     {
         "name": "errBits",
@@ -512,7 +512,7 @@
     {
         "name": "seeing",
         "type": "float",
-        "unit": "",
+        "unit": "arcsec",
         "desc": "Maximum value of (<a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, <a href=\"#haSeeing\">haSeeing</a>)."
     },
     {
@@ -542,43 +542,43 @@
     {
         "name": "r2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Default r-band magnitude in the partner field."
     },
     {
         "name": "rErr2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Uncertainty for r2."
     },
     {
         "name": "rErr2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Uncertainty for r2."
     },
     {
         "name": "i2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Default i-band magnitude in the partner field."
     },
     {
         "name": "iErr2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Uncertainty for i2."
     },
     {
         "name": "ha2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Default H-alpha magnitude in the partner field."
     },
     {
         "name": "haErr2",
         "type": "float",
-        "unit": "",
+        "unit": "mag",
         "desc": "Uncertainty for ha2."
     },
     {

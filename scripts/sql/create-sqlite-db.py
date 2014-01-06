@@ -9,8 +9,13 @@ import glob
 import numpy as np
 from astropy import log
 
-DATADIR = '/car-data/gb/iphas-dr2-rc4/concatenated/full'
-DESTINATION = '/car-data/gb/iphas-dr2-rc4'
+#DATADIR = '/car-data/gb/iphas-dr2-rc5/concatenated/full'
+#DESTINATION = '/car-data/gb/iphas-dr2-rc5'
+#TMPSTORE = '/car-data/gb/tmp'
+DESTINATION = '/home/gb/tmp/iphas-dr2-rc5'
+DATADIR = DESTINATION+'/concatenated/full'
+TMPSTORE = '/home/gb/tmp'
+
 
 class SurveyDB(object):
 
@@ -56,7 +61,7 @@ class SurveyDB(object):
     def create_indexes(self):
         log.info('Indexing (ra,dec)')
         self.cursor.execute("PRAGMA temp_store=FILE")
-        self.cursor.execute("PRAGMA temp_store_directoryi='/car-data/gb/tmp'")
+        self.cursor.execute("PRAGMA temp_store_directory='{0}'".format(TMPSTORE))
         self.cursor.execute("PRAGMA cache_size = '2000000'")
         self.cursor.execute('CREATE INDEX iphas_ra_dec_idx ON iphas(ra, dec)')
         self.cursor.execute('CREATE INDEX iphas_l_b_idx ON iphas(l, b)')
@@ -117,20 +122,16 @@ def create_iphas_full():
             'fieldID2', 'r2', 'rErr2', 'i2', 'iErr2', 'ha2', 'haErr2',
             'errBits2']
     db = SurveyDB(os.path.join(DESTINATION, 'iphas-dr2-full.db'))
-    db.optimise_inserts()
-    """
-    db.create_table('iphas', cols)
-    for filename in np.sort(glob.glob(os.path.join(DATADIR, '*.fits.gz'))):
-        db.insert_fits(filename, cols)
-    db.commit()
-    """
+    #db.optimise_inserts()
+    #db.create_table('iphas', cols)
+    #for filename in np.sort(glob.glob(os.path.join(DATADIR, '*.fits.gz'))):
+    #    db.insert_fits(filename, cols)
+    #db.commit()
     db.create_indexes()
     db.commit()
-    
+
 
 if __name__ == '__main__':
     #create_iphas_light()
     create_iphas_full()
 
-#data = np.asarray(fits.getdata(mycatalogue, 1))
-#data = fits.getdata(mycatalogue, 1).__array__()
