@@ -660,12 +660,12 @@ class DetectionCatalogue():
         http://surveys.roe.ac.uk/wsa/www/gloss_j.html#gpssource_jerrbits
 
         bit  decimal
-        1    2^0 = 1       Bright neighbour.
-        2    2^1 = 2       Deblended.
-        4    2^3 = 8       Saturated.
-        7    2^6 = 64      Vignetted.
-        8    2^7 = 128     Truncated.
-        16   2^15 = 32768  Bad pixels.
+        0    2^0 = 1       Bright neighbour.
+        1    2^1 = 2       Deblended.
+        3    2^3 = 8       Saturated.
+        6    2^6 = 64      Vignetted.
+        7    2^7 = 128     Truncated.
+        15   2^15 = 32768  Bad pixels.
         """
         # Note: booleans in FITS are stored as ord('F') / ord('T')
         errBits = (1 * (col_brightNeighb.array > ord('F'))

@@ -552,12 +552,6 @@
         "desc": "Uncertainty for r2."
     },
     {
-        "name": "rErr2",
-        "type": "float",
-        "unit": "mag",
-        "desc": "Uncertainty for r2."
-    },
-    {
         "name": "i2",
         "type": "float",
         "unit": "mag",
