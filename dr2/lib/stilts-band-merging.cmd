@@ -181,8 +181,7 @@ addcol errBits -desc "Bitmask indicating bright neighbour (1), source blending (
 addcol nBands -desc "Number of bands in which the source is detected." "toShort(sum(array(NULL_r?0:1,NULL_i?0:1,NULL_ha?0:1)))"
 
 # Reliable
-addcol reliable -desc "True if the source is detected in all three bands with SNR better than 5-sigma and errBits <= 1." "nBands == 3 & rErr<0.198 & iErr<0.198 & haErr<0.198 & errBits <= 1"
-
+addcol reliable -desc "True if the source is detected in all three bands with SNR better than 10-sigma, errBits <= 2, and the AperMag1 magnitudes are consistent with the default magnitudes." "errBits <= 2 & nBands == 3 & r>13 & i>12 & ha>12.5 & rErr<0.1 & iErr<0.1 & haErr<0.1 & (abs(r-rAperMag1) < 3*hypot(rErr,rAperMag1Err)+0.03) & (abs(i-iAperMag1) < 3*hypot(iErr,iAperMag1Err)+0.03) & (abs(ha-haAperMag1) < 3*hypot(haErr,haAperMag1Err)+0.03)"
 
 # night
 colmeta -name night night_1
