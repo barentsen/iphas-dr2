@@ -3,7 +3,7 @@
         "name": "name",
         "type": "string",
         "unit": "",
-        "desc": "Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form \"IPHAS2 JHHMMSS.ss+DDMMSS.s\", where \"J\" indicates the position is J2000. The \"IPHAS2\" prefix is not listed explicitly in the column."
+        "desc": "Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form \"IPHAS2 JHHMMSS.ss+DDMMSS.s\", where \"J\" indicates the position is J2000. The \"IPHAS2\" prefix is not included in the column."
     },
     {
         "name": "ra",
@@ -33,13 +33,13 @@
         "name": "l",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic longitude converted from ra/dec (IAU 1958 system)."
+        "desc": "Galactic longitude $\\ell$ converted from ra/dec (IAU 1958 system)."
     },
     {
         "name": "b",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic latitude converted from ra/dec (IAU 1958 system)."
+        "desc": "Galactic latitude $b$ converted from ra/dec (IAU 1958 system)."
     },
     {
         "name": "mergedClass",
@@ -81,13 +81,13 @@
         "name": "rmi",
         "type": "float",
         "unit": "mag",
-        "desc": "(r' - i') colour."
+        "desc": "($r$ - $i$) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#i\">i</a>. Included in the catalogue for convenience only. To obtain the uncertainty, take the root of the sum of the squares of columns <a href=\"#rErr\">rErr</a> and <a href=\"#iErr\">iErr</a>."
     },
     {
         "name": "rmha",
         "type": "float",
         "unit": "mag",
-        "desc": "(r' - H&alpha;) colour."
+        "desc": "($r$ - H&alpha;) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#ha\">ha</a>. See comments above."
     },
     {
         "name": "r",
@@ -183,7 +183,7 @@
         "name": "rSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average FWHM in the r-band exposure."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
     },
     {
         "name": "rDetectionID",
@@ -297,7 +297,7 @@
         "name": "iSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average FWHM in the single-band exposure."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
     },
     {
         "name": "iDetectionID",
@@ -321,13 +321,13 @@
         "name": "iXi",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the i-band detection in RA."
+        "desc": "Position offset of the i-band detection relative to the <a href=\"#ra\">ra</a> column. The original i-band coordinates can be obtained by computing (ra+iXi/3600, dec+iEta/3600)."
     },
     {
         "name": "iEta",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the i-band detection in DEC."
+        "desc": "Position offset of the i-band detection relative to the <a href=\"#dec\">dec</a> column. See comments above."
     },
     {
         "name": "ha",
@@ -423,7 +423,7 @@
         "name": "haSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average FWHM in the single-band exposure."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
     },
     {
         "name": "haDetectionID",
@@ -447,13 +447,13 @@
         "name": "haXi",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the H-alpha detection in RA."
+        "desc": "Position offset of the H-alpha detection relative to the <a href=\"#ra\">ra</a> column. The original Ha-band coordinates can be obtained by computing (ra+haXi/3600, dec+haEta/3600)."
     },
     {
         "name": "haEta",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the H-alpha detection in DEC."
+        "desc": "Position offset of the H-alpha relative to the <a href=\"#dec\">ra</a> column. See comments above."
     },
     {
         "name": "brightNeighb",
@@ -507,7 +507,7 @@
         "name": "night",
         "type": "integer",
         "unit": "",
-        "desc": "Night of the observation (YYYYMMDD). Refers to the start of the night."
+        "desc": "Night of the observation (YYYYMMDD). Refers to the UT date at the start of the night."
     },
     {
         "name": "seeing",

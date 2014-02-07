@@ -90,7 +90,21 @@ class Concatenator(object):
         return fieldlist
 
     def run(self):
-        """Performs the concatenation of the strip."""
+        """Performs the concatenation of the strip.
+
+        This step will only keep stars with low errbits: 
+            (errBits < 64)
+        and not uber-saturated:
+            (r > 12.5 & ha > 12 & i > 11.5)
+        and reasonable errors: 
+            (rErr < 0.198 || iErr < 0.198 || haErr < 0.198)
+        and not noise-like:
+            (pStar > 0.2 || pGalaxy > 0.2)
+        and not saturated in all bands:
+            (NULL_rErrBits || NULL_iErrBits || NULL_haErrBits || ((rErrbits & iErrBits & haErrBits & 8) == 0))
+        and being the primary detection:
+            sourceID == primaryID
+        """
         if self.part == 'a':
             cond_latitude = "b < 0"
         else:
@@ -130,8 +144,10 @@ class Concatenator(object):
                              setparam AUTHOR "Geert Barentsen, Hywel Farnhill, Janet Drew"; \
                              setparam VERSION \""""+version+""""; \
                              select "(errBits < 64) \
+                                      & (r > 12.5 & ha > 12 & i > 11.5) \
                                       & (rErr < 0.198 || iErr < 0.198 || haErr < 0.198) \
                                       & (pStar > 0.2 || pGalaxy > 0.2) \
+                                      & (NULL_rErrBits || NULL_iErrBits || NULL_haErrBits || ((rErrbits & iErrBits & haErrBits & 8) == 0))
                                       & l >= """+str(self.lon1)+""" \
                                       & l < """+str(self.lon2)+""" \
                                       & """+str(cond_latitude)+""" \

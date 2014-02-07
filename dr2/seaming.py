@@ -463,9 +463,6 @@ def seam_one(strip,
         n_fields = cond_strip.sum()  # How many fields are in our strip?
         n_processed = 0
 
-        # Testcase in strip 215:
-        #cond_strip = (IPHASQC['id'] == '4035_oct2009') | (IPHASQC['id'] == '4035o_oct2009')
-
         # Seam fields; do the best-seeing fields first!
         for idx in np.argsort(IPHASQC['seeing_max']):
             if cond_strip[idx]:
