@@ -575,7 +575,7 @@ class DetectionCatalogue():
             # Flag bright neighbours if within 10 arcmin
             if BRIGHT_VMAG[i] < 4:  # Brighter than 4th magnitude
                 flags[d < 10/60.] = True
-            else:
+            else: # Other stars in BSC; V < ~7
                 flags[d < 5/60.] = True
 
         return fits.Column(name='brightNeighb', format='L', unit='Boolean',
@@ -1103,7 +1103,18 @@ def list_catalogues(directory):
 
 
 def get_metadata(path):
-    """Returns the CSV summary line."""
+    """Returns a dictionary with the metadata for a FITS detection table.
+
+    Parameters
+    ----------
+    path : str
+        Path to the FITS detection table.
+
+    Returns
+    -------
+    metadata : dict
+        The set of keyword-value pairs describing the detection table.
+    """
     with log.log_to_file(os.path.join(constants.LOGDIR, 'index.log')):
         import socket
         log.info(util.get_pid()+': '+path)
@@ -1111,7 +1122,8 @@ def get_metadata(path):
         try:
             cat = DetectionCatalogue(path, only_accept_iphas=False)
             metadata = cat.get_metadata()
-            # Replace "None" values to NaNs to enable FITS to store numbers
+            # Replace "None" values to NaNs 
+            # to enable FITS to treat numeric columns correctly
             for keyword in metadata:
                 if metadata[keyword] == None:
                     metadata[keyword] = np.nan
@@ -1151,7 +1163,11 @@ def save_metadata(clusterview,
 
 
 def sanitise_zeropoints():
-    """Writes a CSV file containing zeropoint overrides."""
+    """Writes a CSV file containing zeropoint overrides.
+
+    The file produced is used to enforce a fixed offset between the r- and Ha-
+    band zeropoints at the time of creating the augmented catalogues.
+    """
     filename_runs = os.path.join(constants.DESTINATION,
                                  'runs.csv')
     runs = ascii.read(filename_runs)
@@ -1159,7 +1175,7 @@ def sanitise_zeropoints():
     out = file(ZEROPOINTS_TABLE_PATH, 'w')
     out.write('run,zp\n')
 
-    # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.08
+    # Override each H-alpha zeropoint by enforcing zp(r) - zp(Halpha) = 3.14
     # which is what is imposed by Vega
     for row in runs:
         if row['WFFBAND'] == 'Halpha':
@@ -1167,7 +1183,7 @@ def sanitise_zeropoints():
             idx_r = np.argwhere(
                         (np.abs(row['MJD-OBS'] - runs.field('MJD-OBS')) < 0.4)
                         & (runs.field('WFFBAND') == 'r'))[0][0]
-            zp = float(runs[idx_r]['MAGZPT']) - 3.08
+            zp = float(runs[idx_r]['MAGZPT']) - 3.14
             out.write('{0},{1}\n'.format(row['run'], zp))
 
     out.close()
