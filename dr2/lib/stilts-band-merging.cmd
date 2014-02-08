@@ -167,7 +167,7 @@ addcol brightNeighb  -desc "True if a very bright star is nearby."  "(NULL_rBrig
 
 addcol deblend  -desc "True if the source was blended with a nearby neighbour."  "(NULL_rDeblend ? false : rDeblend) || (NULL_iDeblend ? false : iDeblend) || (NULL_haDeblend ? false : haDeblend)"
 
-addcol saturated  -desc "True if saturated in one or more bands."  "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated) || r>13 || i>12 || ha>12.5"
+addcol saturated  -desc "True if saturated in one or more bands."  "(NULL_rSaturated ? false : rSaturated) || (NULL_iSaturated ? false : iSaturated) || (NULL_haSaturated ? false : haSaturated) || r<13 || i<12 || ha<12.5"
 
 addcol vignetted  -desc "True if in part of focal plane where image quality is poor."  "(NULL_rVignetted ? false : rVignetted) || (NULL_iVignetted ? false : iVignetted) || (NULL_haVignetted ? false : haVignetted)"
 

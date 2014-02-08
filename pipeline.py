@@ -46,7 +46,7 @@ with client[:].sync_imports():
     from dr2 import bandmerging
     from dr2 import seaming
     from dr2 import concatenating
-    from dr2 import images
+    #from dr2 import images
 
 # While in development, reload every module by default
 # This is to make sure that the latest version gets used
@@ -58,7 +58,7 @@ client[:].execute('reload(calibration)', block=True)
 client[:].execute('reload(bandmerging)', block=True)
 client[:].execute('reload(seaming)', block=True)
 client[:].execute('reload(concatenating)', block=True)
-client[:].execute('reload(images)', block=True)
+#client[:].execute('reload(images)', block=True)
 
 """
 Pipeline starts here
@@ -88,10 +88,10 @@ Pipeline starts here
 #calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'
 
 # Identify duplicate detections where multiple pointings overlap ('seams');
-#seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
+seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
 
 # Finally, concatenate the individual pointings into a single catalogue 
-#concatenating.concatenate(cluster_highmem)
+concatenating.concatenate(cluster_highmem)
 
 # Prepare images for release
-images.prepare_images(cluster)
+#images.prepare_images(cluster)
