@@ -156,7 +156,7 @@ class SurveyImage(object):
         
         # Fix WCS - see fix_wcs() in detections.py!
         # Enforce the pipeline's defaults
-        self.hdu.header['RADESYSa'] = 'ICRS'
+        self.hdu.header['RADESYS'] = 'ICRS'
         self.hdu.header['EQUINOX'] = 2000.0
         self.hdu.header['CTYPE1'] = 'RA---ZPN'
         self.hdu.header['CTYPE2'] = 'DEC--ZPN'
