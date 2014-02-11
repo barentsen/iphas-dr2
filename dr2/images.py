@@ -114,8 +114,11 @@ class SurveyImage(object):
         return METADATA[self.run]['exptime_precalib']
 
     @property
-    def zeropoint(self):
-        """Returns the image's zeropoint ZP such that `mag = ZP - 2.5*log(flux)`
+    def photzp(self):
+        """Returns the zeropoint such that MAG=-2.5*log(pixel value)+PHOTZP
+
+        Following the definition of PHOTZP defined in the 
+        "ESO External Data Products Standard"
         """
         # What is the calibration shift applied in DR2?
         try:
@@ -123,8 +126,14 @@ class SurveyImage(object):
         except KeyError:
             shift = 0.0
         # The zeropoint in the metadata file is corrected for extinction
-        # but not re-calibrated and not corrected for PERCORR
-        return METADATA[self.run]['zeropoint_precalib'] - self.percorr + shift
+        # but not re-calibrated and not corrected for PERCORR.
+        # In accordance with the ESO standard, photzp absorbs the scaling
+        # with exposure time.
+        photzp = (METADATA[self.run]['zeropoint_precalib'] 
+                  - self.percorr 
+                  + shift
+                  - 2.5*np.log10(self.exptime))
+        return photzp
 
     @property
     def percorr(self):
@@ -193,18 +202,27 @@ class SurveyImage(object):
         self.hdu.header.comments['PV2_3'] = 'Coefficient for r**3 term'
 
         # Fix zeropoint
-        self.hdu.header['ORIGZPT'] = self.orig_header('MAGZPT', self.ccd)
-        self.hdu.header.comments['ORIGZPT'] = 'Original nightly ZP; uncorrected for extinction/clouds'
+        self.hdu.header['MAGZPT'] = self.orig_header('MAGZPT', self.ccd)
+        self.hdu.header.comments['MAGZPT'] = 'Original nightly ZP; uncorrected for extinction/clouds/exptime'
         
-        self.hdu.header['MAGZPT'] = self.zeropoint
+        self.hdu.header['PHOTZP'] = self.photzp
         if self.calibrated:
-            self.hdu.header.comments['MAGZPT'] = 'Re-calibrated DR2 zeropoint'
+            self.hdu.header.comments['PHOTZP'] = 'Photometric zeropoint MAG=-2.5*log(data)+PHOTZP'
         else:
-            self.hdu.header.comments['MAGZPT'] = 'ORIGZPT corrected for exinction and PERCORR'
+            self.hdu.header.comments['PHOTZP'] = 'MAGZPT corrected for exinction and PERCORR'
 
         # Fix exposure time -- it might have changed in detections.py
         self.hdu.header['EXPTIME'] = self.exptime
         self.hdu.header.comments['EXPTIME'] = '[sec] Exposure time assumed by the pipeline'
+
+        # Add keywords according to the "ESO External Data Products standard"
+        self.hdu.header['PHOTZPER'] = '0.03'
+        self.hdu.header.comments['PHOTZPER'] = 'Default 1-sigma PHOTZP uncertainty in IPHAS DR2'
+        self.hdu.header['PHOTSYS'] = 'Vega'
+        self.hdu.header.comments['PHOTSYS'] = 'Photometric system'
+        self.hdu.header['FLUXCAL'] = 'ABSOLUTE'
+        self.hdu.header.comments['FLUXCAL'] = 'Certifies the validity of PHOTZP'
+
 
     def fix_wcs(self):
         # Is an updated (fixed) WCS available?
@@ -226,19 +244,19 @@ class SurveyImage(object):
             self.hdu.header['HISTORY'] = line
         self.hdu.header['HISTORY'] = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
         self.hdu.header['HISTORY'] = '    Headers updated by Geert Barentsen as part of DR2.'
-        self.hdu.header['HISTORY'] = '    This included changes to MAGZPT, EXPTIME and the WCS.'
+        self.hdu.header['HISTORY'] = '    This included changes to PHOTZP, EXPTIME and the WCS.'
 
         # Set calibration comments
         self.hdu.header['COMMENT'] = 'Calibration info'
         self.hdu.header['COMMENT'] = '================'
 
         if self.calibrated:
-            self.hdu.header['COMMENT'] = 'The MAGZPT keyword in this header has been corrected for atmospheric'
-            self.hdu.header['COMMENT'] = 'extinction and gain (PERCORR) and has been re-calibrated as part of DR2.'
-            self.hdu.header['COMMENT'] = ''
-            self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes relative to Vega, use:'
-            self.hdu.header['COMMENT'] = '    mag(Vega) = MAGZPT - 2.5*log(pixel value / EXPTIME)'
-        else:
+            self.hdu.header['COMMENT'] = 'The PHOTZP keyword in this header includes all the required'
+            self.hdu.header['COMMENT'] = 'corrections for atmospheric extinction, gain variations (PERCORR),'
+            self.hdu.header['COMMENT'] = 'exposure time (EXPTIME), and the DR2 re-calibration shifts.'
+            self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes relative to Vega, simply use:'
+            self.hdu.header['COMMENT'] = '    mag(Vega) = -2.5*log10(pixel value) + PHOTZP'
+        else:  # Uncalibrated image
             self.hdu.header['COMMENT'] = 'Warning: this data is not part of DR2 and has not been re-calibrated.'
             self.hdu.header['COMMENT'] = 'It was likely excluded from DR2 for a serious quality problem.'
             self.hdu.header['COMMENT'] = 'Use at your own risk.'
@@ -276,7 +294,7 @@ class SurveyImage(object):
                 'ra2': ra2,
                 'dec1': dec1,
                 'dec2': dec2,
-                'zeropoint': self.zeropoint,
+                'photzp': self.photzp,
                 'exptime': self.exptime,
                 'time': str(self.hdu.header['DATE-OBS']).encode('ascii'),
                 }
@@ -321,7 +339,7 @@ def prepare_images(clusterview):
     mycolumns = (str('filename'), str('band'), str('dr2'), str('run'),
                  str('ccd'), str('field'), str('ra'), str('dec'), 
                  str('ra1'), str('ra2'), str('dec1'), str('dec2'),
-                 str('zeropoint'), str('exptime'),
+                 str('photzp'), str('exptime'),
                  str('time'))
     rows = list(itertools.chain.from_iterable(metadata)) # flatten list
     t = table.Table(rows, names=mycolumns)
