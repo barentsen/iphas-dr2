@@ -350,12 +350,9 @@ def prepare_images(clusterview):
     t.write(table_filename, format='fits', overwrite=True)
 
 
-
-
-
-##############################
-# MAIN EXECUTION FOR DEBUGGING
-##############################
+################################
+# MAIN EXECUTION (FOR DEBUGGING)
+################################
 
 if __name__ == '__main__':
     """

@@ -532,9 +532,9 @@ def cleanup_one():
 """
 
 
-##############################
-# MAIN EXECUTION FOR DEBUGGING
-##############################
+################################
+# MAIN EXECUTION (FOR DEBUGGING)
+################################
 
 if __name__ == "__main__":
     log.setLevel('DEBUG')

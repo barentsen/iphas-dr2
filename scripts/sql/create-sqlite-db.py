@@ -1,5 +1,5 @@
 """
-Create and query SQLite files from survey data
+Creates an SQLite database from the collection of IPHAS FITS catalogue.
 
 """
 from astropy.io import fits
@@ -10,9 +10,6 @@ import numpy as np
 from astropy import log
 from dr2 import constants
 
-# Where are the FITS-formatted catalogues?
-CATALOGUE_PATH = os.path.join(constants.DESTINATION, 'concatenated')
-TMPSTORE = '/home/gb/tmp'  # Where can we store temporary data?
 
 class SurveyDB(object):
 
@@ -32,11 +29,6 @@ class SurveyDB(object):
 
     def __del__(self):
         self.connection.close()
-
-    def query(self, sql):
-        #self.cursor.execute(sql)
-        #astropy.table.Table(np.array(self.cursor.fetchall())).write('test.fits')
-        pass
 
     def commit(self):
         self.connection.commit()
@@ -58,7 +50,7 @@ class SurveyDB(object):
     def create_indexes(self):
         log.info('Indexing (ra,dec)')
         self.cursor.execute("PRAGMA temp_store=FILE")
-        self.cursor.execute("PRAGMA temp_store_directory='{0}'".format(TMPSTORE))
+        self.cursor.execute("PRAGMA temp_store_directory='{0}'".format(constants.TMPDIR))
         self.cursor.execute("PRAGMA cache_size = '2000000'")
         self.cursor.execute('CREATE INDEX iphas_ra_dec_idx ON iphas(ra, dec)')
         self.cursor.execute('CREATE INDEX iphas_l_b_idx ON iphas(l, b)')
@@ -86,13 +78,16 @@ def create_iphas_light():
     db = SurveyDB('iphas-dr2-light.db')
     db.optimise_inserts()
     db.create_table('iphas', cols)
-    for filename in np.sort(glob.glob(os.path.join(CATALOGUE_PATH, 'light', '*-light.fits.gz'))):
+    for filename in np.sort(glob.glob(os.path.join(constants.PATH_CONCATENATED, 'light', '*-light.fits'))):
         db.insert_fits(filename, cols)
     db.create_indexes()
     db.commit()
 
 def create_iphas_full():
-    """Running cost: about 10 hours?"""
+    """Creates iphas-dr2-full.db
+
+    Running cost: about 10 hours?
+    """
     cols = ['name', 'ra', 'dec',
             'sourceID', 'posErr', 'l', 'b',
             'mergedClass', 'mergedClassStat', 
@@ -121,7 +116,8 @@ def create_iphas_full():
     db = SurveyDB(os.path.join(constants.DESTINATION, 'iphas-dr2-full.db'))
     db.optimise_inserts()
     db.create_table('iphas', cols)
-    for filename in np.sort(glob.glob(os.path.join(CATALOGUE_PATH, 'full-unzipped', '*.fits'))):
+    files_to_insert = glob.glob(os.path.join(constants.PATH_CONCATENATED, 'full', '*.fits'))
+    for filename in np.sort(files_to_insert):
         db.insert_fits(filename, cols)
     db.commit()
     db.create_indexes()

@@ -5,26 +5,31 @@ import os
 from astropy.io import fits
 
 DEBUGMODE = False
+
+# What is the data release version name?
 VERSION = 'iphas-dr2-rc6'
+# Where are the CASU pipeline-produced images and detection tables?
+RAWDATADIR = '/car-data/gb/iphas'
+# Where to write the output data products?
+DESTINATION = '/car-data/gb/'+VERSION
+# Where can we write a large amount of temporary files?
+TMPDIR = '/home/gb/tmp'
 
-RAWDATADIR = '/car-data/gb/iphas'  # Where are the pipeline-reduced catalogues?
-DESTINATION = '/car-data/gb/'+VERSION  # Where to write output catalogues?
-
+# Use a different configuration for development machines:
 HOSTNAME = os.uname()[1]
-if HOSTNAME == 'uhppc11.herts.ac.uk':  # testing machine
+if HOSTNAME == 'uhppc11.herts.ac.uk':
     DEBUGMODE = True
     RAWDATADIR = '/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = '/home/gb/tmp/'+VERSION
-if HOSTNAME == 'gvm':  # testing machine
+if HOSTNAME == 'gvm':
     DEBUGMODE = True
     RAWDATADIR = '/media/uh/run/media/gb/0133d764-0bfe-4007-a9cc-a7b1f61c4d1d/iphas'
     DESTINATION = '/home/gb/tmp/'+VERSION
 
-LOGDIR = os.path.join(DESTINATION, 'log')  # Where to store logs?
-# Make sure destination and logging dir exist
-if not os.path.exists(LOGDIR):
-    os.makedirs(LOGDIR)
-
+# Where to store processing logs?
+LOGDIR = os.path.join(DESTINATION, 'log')
+# Make sure the destination and logging dir exist
+util.setup_dir(LOGDIR)
 
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 LIBDIR = os.path.join(PACKAGEDIR, 'lib')

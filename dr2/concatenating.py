@@ -271,9 +271,9 @@ def merge_light_catalogue():
     return status
 
 
-###################
-# MAIN EXECUTION
-###################
+################################
+# MAIN EXECUTION (FOR DEBUGGING)
+################################
 
 if __name__ == "__main__":
     log.setLevel('DEBUG')

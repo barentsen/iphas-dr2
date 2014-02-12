@@ -147,9 +147,9 @@ def bandmerge(clusterview):
 
 
 
-###################
-# MAIN EXECUTION
-###################
+#######################################
+# MAIN EXECUTION (FOR DEVELOPMENT USE)
+#######################################
 
 if __name__ == '__main__':
     if constants.DEBUGMODE:
