@@ -8,14 +8,11 @@ import os
 import glob
 import numpy as np
 from astropy import log
+from dr2 import constants
 
-#DATADIR = '/car-data/gb/iphas-dr2-rc5/concatenated/full'
-#DESTINATION = '/car-data/gb/iphas-dr2-rc5'
-#TMPSTORE = '/car-data/gb/tmp'
-DESTINATION = '/home/gb/tmp/iphas-dr2-rc5'
-DATADIR = DESTINATION+'/concatenated/full'
-TMPSTORE = '/home/gb/tmp'
-
+# Where are the FITS-formatted catalogues?
+CATALOGUE_PATH = os.path.join(constants.DESTINATION, 'concatenated')
+TMPSTORE = '/home/gb/tmp'  # Where can we store temporary data?
 
 class SurveyDB(object):
 
@@ -89,7 +86,7 @@ def create_iphas_light():
     db = SurveyDB('iphas-dr2-light.db')
     db.optimise_inserts()
     db.create_table('iphas', cols)
-    for filename in np.sort(glob.glob('/home/gb/tmp/iphas-dr2-rc3/concatenated/light/*-light.fits.gz')):
+    for filename in np.sort(glob.glob(os.path.join(CATALOGUE_PATH, 'light', '*-light.fits.gz'))):
         db.insert_fits(filename, cols)
     db.create_indexes()
     db.commit()
@@ -121,12 +118,12 @@ def create_iphas_full():
             'night', 'seeing', 'ccd', 'nObs', 'sourceID2',
             'fieldID2', 'r2', 'rErr2', 'i2', 'iErr2', 'ha2', 'haErr2',
             'errBits2']
-    db = SurveyDB(os.path.join(DESTINATION, 'iphas-dr2-full.db'))
-    #db.optimise_inserts()
-    #db.create_table('iphas', cols)
-    #for filename in np.sort(glob.glob(os.path.join(DATADIR, '*.fits.gz'))):
-    #    db.insert_fits(filename, cols)
-    #db.commit()
+    db = SurveyDB(os.path.join(constants.DESTINATION, 'iphas-dr2-full.db'))
+    db.optimise_inserts()
+    db.create_table('iphas', cols)
+    for filename in np.sort(glob.glob(os.path.join(CATALOGUE_PATH, 'full-unzipped', '*.fits'))):
+        db.insert_fits(filename, cols)
+    db.commit()
     db.create_indexes()
     db.commit()
 

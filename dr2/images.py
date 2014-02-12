@@ -3,9 +3,11 @@
 """Prepare IPHAS images for data release.
 
 This script will edit all images in the data release to ensure they have
-the correct astrometric solution (WCS) and calibration information (zeropoint)
+the correct astrometric solution (WCS) and calibration information (PHOTZP)
 in the header.
 
+We adopt the conventions from the "ESO External Data Products Standard"
+where possible (cf. http://www.eso.org/sci/observing/phase3/p3edpstd.pdf )
 """
 from __future__ import division, print_function, unicode_literals
 from astropy.io import fits
