@@ -95,7 +95,7 @@ class Concatenator(object):
         This step will only keep stars with low errbits: 
             (errBits < 64)
         and not uber-saturated:
-            (r > 12.5 & ha > 12 & i > 11.5)
+            ! (r<12.5 & i<11.5 & ha<12)
         and reasonable errors: 
             (rErr < 0.198 || iErr < 0.198 || haErr < 0.198)
         and not noise-like:
@@ -144,7 +144,7 @@ class Concatenator(object):
                              setparam AUTHOR "Geert Barentsen, Hywel Farnhill, Janet Drew"; \
                              setparam VERSION \""""+version+""""; \
                              select "(errBits < 64) \
-                                      & (r > 12.5 & ha > 12 & i > 11.5) \
+                                      & ! (r<12.5 & i<11.5 & ha<12) \
                                       & (rErr < 0.198 || iErr < 0.198 || haErr < 0.198) \
                                       & (pStar > 0.2 || pGalaxy > 0.2) \
                                       & (NULL_rErrBits || NULL_iErrBits || NULL_haErrBits || ((rErrbits & iErrBits & haErrBits & 8) == 0))
