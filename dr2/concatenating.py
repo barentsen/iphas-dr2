@@ -65,17 +65,23 @@ class Concatenator(object):
         """Returns the name of this partial catalogue, e.g. '215b'"""
         return '{0:03.0f}{1}'.format(self.lon1, self.part)
 
-    def get_output_filename(self):
+    def get_output_filename(self, gzip=False):
         """Returns the full path of the output file."""
         if self.mode == 'light':
             suffix = '-light'
         else:
             suffix = ''
 
-        return os.path.join(self.destination,
-                            'iphas-dr2-{0}{1}.fits'.format(
+        destination = self.destination
+        extension = 'fits'
+        if gzip:
+            destination += '-gzip'
+            extension += '.gz'
+        return os.path.join(destination,
+                            'iphas-dr2-{0}{1}.{2}'.format(
                                                     self.get_partname(),
-                                                    suffix))
+                                                    suffix,
+                                                    extension))
 
     def get_fieldlist(self):
         # Which are our fields?
@@ -135,6 +141,7 @@ class Concatenator(object):
             instring += 'in={0} '.format(path)
 
         output_filename = self.get_output_filename()
+        output_filename_gzip = self.get_output_filename(gzip=True)
         log.info('Writing data to {0}'.format(output_filename))
 
         version = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
@@ -194,7 +201,7 @@ class Concatenator(object):
         log.info('concat: '+str(status))
 
         # zip
-        mycmd = 'gzip {0}'.format(output_filename)
+        mycmd = 'gzip --stdout {0} > {1}'.format(output_filename, output_filename_gzip)
         log.debug(mycmd)
         status = os.system(mycmd)
         log.info('gzip: '+str(status))
@@ -269,3 +276,4 @@ def merge_light_catalogue():
 
 if __name__ == "__main__":
     log.setLevel('DEBUG')
+    concatenate_one(215)
