@@ -268,7 +268,7 @@ class SurveyImage(object):
         directory = os.path.join(IMAGE_DESTINATION,
                                  str(self.hdu.header['WFFBAND']).lower())
         target = os.path.join(directory, self.output_filename)
-        self.hdu.writeto(target, clobber=True)
+        self.hdu.writeto(target, clobber=True, checksum=True)
 
     def get_metadata(self):
         """Returns the CCD's metadata as a dictionary."""
