@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Concatenates the seamed and bandmerged fields into the final catalogue".
+"""Concatenates the seamed and bandmerged fields into the final catalogue.
 
 This script takes the output from the seaming script and concatenates the
 results into the final source catalogue products, which contains one entry
@@ -30,6 +30,7 @@ __credits__ = ['Geert Barentsen', 'Hywel Farnhill', 'Janet Drew']
 ###########
 
 class Concatenator(object):
+    """Concatenates field-based data into a partial catalogue."""
 
     def __init__(self, strip, part='a', mode='full'):
         assert(part in ['a', 'b'])
@@ -60,6 +61,10 @@ class Concatenator(object):
         self.lon2 = strip + constants.STRIPWIDTH
         self.fieldlist = self.get_fieldlist()
 
+    def get_partname(self):
+        """Returns the name of this partial catalogue, e.g. '215b'"""
+        return '{0:03.0f}{1}'.format(self.lon1, self.part)
+
     def get_output_filename(self):
         """Returns the full path of the output file."""
         if self.mode == 'light':
@@ -68,9 +73,8 @@ class Concatenator(object):
             suffix = ''
 
         return os.path.join(self.destination,
-                            'iphas-dr2-{0:03.0f}{1}{2}.fits'.format(
-                                                    self.lon1,
-                                                    self.part,
+                            'iphas-dr2-{0}{1}.fits'.format(
+                                                    self.get_partname(),
                                                     suffix))
 
     def get_fieldlist(self):
@@ -139,7 +143,7 @@ class Concatenator(object):
         param = {'stilts': constants.STILTS,
                  'in': instring,
                  'icmd': """'clearparams *; \
-                             setparam NAME "IPHAS DR2 Source Catalogue"; \
+                             setparam NAME "IPHAS DR2 Source Catalogue (part """+self.get_partname()+""")"; \
                              setparam ORIGIN "www.iphas.org"; \
                              setparam AUTHOR "Geert Barentsen, Hywel Farnhill, Janet Drew"; \
                              setparam VERSION \""""+version+""""; \
@@ -167,6 +171,18 @@ class Concatenator(object):
                              replacecol rErrBits "toShort(rErrBits)";
                              replacecol iErrBits "toShort(iErrBits)";
                              replacecol haErrBits "toShort(haErrBits)";
+                             colmeta -desc "Human-readable IPHAS field number and observing run (e.g. 0001o_aug2003)." fieldID;
+                             colmeta -desc "Internal quality control score of the field. One of A, B, C or D." fieldGrade;
+                             colmeta -desc "Number of repeat observations of this source in the survey." nObs;
+                             colmeta -desc "SourceID of the object in the partner exposure (if obtained within 10 minutes of the primary detection)." sourceID2;
+                             colmeta -desc "FieldID of the partner detection (e.g. 0001o_aug2003)." fieldID2;
+                             colmeta -desc "r-band magnitude in the partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)." r2;
+                             colmeta -desc "Uncertainty for r2." rErr2;
+                             colmeta -desc "i-band magnitude in the partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)." i2;
+                             colmeta -desc "Uncertainty for i2." iErr2;
+                             colmeta -desc "H-alpha magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)." ha2;
+                             colmeta -desc "Uncertainty for ha2." haErr2;
+                             colmeta -desc "Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)." errBits2;
                              {0}
                              '""".format(extracmd),
                  'out': output_filename}
