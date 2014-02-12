@@ -495,13 +495,13 @@
         "name": "fieldID",
         "type": "string",
         "unit": "",
-        "desc": "Unique and readable identifier of the field/month combination (e.g. 0001o_aug2003)."
+        "desc": "Human-readable IPHAS field number and observing run (e.g. 0001o_aug2003)."
     },
     {
         "name": "fieldGrade",
         "type": "string",
         "unit": "",
-        "desc": "Quality identifier of the field. One of A, B, C, D."
+        "desc": "Internal quality control score of the field. One of A, B, C or D."
     },
     {
         "name": "night",
@@ -525,25 +525,25 @@
         "name": "nObs",
         "type": "short",
         "unit": "",
-        "desc": "Number of epochs at which the source was observed by the survey."
+        "desc": "Number of repeat observations of this source in the survey."
     },
     {
         "name": "sourceID2",
         "type": "string",
         "unit": "",
-        "desc": "sourceID of the same object in the partner exposure (if obtained within 30 minutes of the primary detection)."
+        "desc": "SourceID of the object in the partner exposure (if obtained within 10 minutes of the primary detection)."
     },
     {
         "name": "fieldID2",
         "type": "string",
         "unit": "",
-        "desc": "fieldID of the partner detection (e.g. 0001o_aug2003)."
+        "desc": "FieldID of the partner detection (e.g. 0001o_aug2003)."
     },
     {
         "name": "r2",
         "type": "float",
         "unit": "mag",
-        "desc": "Default r-band magnitude in the partner field."
+        "desc": "r-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
     },
     {
         "name": "rErr2",
@@ -555,7 +555,7 @@
         "name": "i2",
         "type": "float",
         "unit": "mag",
-        "desc": "Default i-band magnitude in the partner field."
+        "desc": "i-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
     },
     {
         "name": "iErr2",
@@ -567,7 +567,7 @@
         "name": "ha2",
         "type": "float",
         "unit": "mag",
-        "desc": "Default H-alpha magnitude in the partner field."
+        "desc": "H-alpha magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
     },
     {
         "name": "haErr2",
