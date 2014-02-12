@@ -28,8 +28,10 @@ if HOSTNAME == 'gvm':
 
 # Where to store processing logs?
 LOGDIR = os.path.join(DESTINATION, 'log')
-# Make sure the destination and logging dir exist
-util.setup_dir(LOGDIR)
+# Make sure destination and logging dir exist
+if not os.path.exists(LOGDIR):
+    os.makedirs(LOGDIR)
+
 
 PACKAGEDIR = os.path.dirname(os.path.abspath(__file__))
 LIBDIR = os.path.join(PACKAGEDIR, 'lib')
@@ -39,6 +41,8 @@ PATH_BANDMERGED = os.path.join(DESTINATION, 'bandmerged')
 PATH_BANDMERGED_CALIBRATED = os.path.join(DESTINATION, 'bandmerged-calibrated')
 PATH_SEAMED = os.path.join(DESTINATION, 'seamed')
 PATH_CONCATENATED = os.path.join(DESTINATION, 'concatenated')
+PATH_IMAGES = os.path.join(DESTINATION, 'images')
+
 
 # Where is the IPHAS quality control table?
 IPHASQC = fits.getdata('/home/gb/dev/iphas-qc/qcdata/iphas-qc.fits', 1)

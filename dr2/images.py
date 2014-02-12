@@ -19,6 +19,7 @@ import numpy as np
 import itertools
 import datetime
 import os
+
 import util
 import constants
 
@@ -31,9 +32,6 @@ __credits__ = ['Geert Barentsen']
 # CONSTANTS & CONFIG
 ####################
 
-# Where the write output images?
-IMAGE_DESTINATION = os.path.join(constants.DESTINATION, 'images')
-
 # Table containing slight updates to WCS astrometric parameters
 WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
 WCSFIXES = ascii.read(WCSFIXES_PATH)
@@ -45,7 +43,6 @@ METADATA = dict(zip(MD['run'], MD))
 ###########
 # CLASSES
 ###########
-
 
 class CalibrationDatabase(object):
     """Class to hold the calibration shifts."""
@@ -61,8 +58,6 @@ class CalibrationDatabase(object):
                                np.concatenate((r['shift'], i['shift'], ha['shift']))
                           ))
 
-CALDB = CalibrationDatabase()
-
 
 class SurveyImage(object):
     """Class used to write a single IPHAS CCD image with up-to-date keywords."""
@@ -75,7 +70,8 @@ class SurveyImage(object):
         self.fits_orig = fits.open(self.path_orig, do_not_scale_image_data=True)
 
         # Is the run a DR2-recalibrated run?
-        if self.run in CALDB.shifts:
+        mycaldb = get_caldb()
+        if self.run in mycaldb.shifts:
             self.calibrated = True
         else:
             self.calibrated = False
@@ -123,8 +119,9 @@ class SurveyImage(object):
         "ESO External Data Products Standard"
         """
         # What is the calibration shift applied in DR2?
+        mycaldb = get_caldb()
         try:
-            shift = CALDB.shifts[self.run]
+            shift = mycaldb.shifts[self.run]
         except KeyError:
             shift = 0.0
         # The zeropoint in the metadata file is corrected for extinction
@@ -245,8 +242,8 @@ class SurveyImage(object):
         for line in str(self.fits_orig[self.ccd].header['HISTORY']).split('\n'):
             self.hdu.header['HISTORY'] = line
         self.hdu.header['HISTORY'] = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
-        self.hdu.header['HISTORY'] = '    Headers updated by Geert Barentsen as part of DR2.'
-        self.hdu.header['HISTORY'] = '    This included changes to PHOTZP, EXPTIME and the WCS.'
+        self.hdu.header['HISTORY'] = 'Headers updated by Geert Barentsen as part of DR2.'
+        self.hdu.header['HISTORY'] = 'This included changes to PHOTZP, EXPTIME and the WCS.'
 
         # Set calibration comments
         self.hdu.header['COMMENT'] = 'Calibration info'
@@ -254,8 +251,8 @@ class SurveyImage(object):
 
         if self.calibrated:
             self.hdu.header['COMMENT'] = 'The PHOTZP keyword in this header includes all the required'
-            self.hdu.header['COMMENT'] = 'corrections for atmospheric extinction, gain variations (PERCORR),'
-            self.hdu.header['COMMENT'] = 'exposure time (EXPTIME), and the DR2 re-calibration shifts.'
+            self.hdu.header['COMMENT'] = 'corrections for atmospheric extinction, gain variations,'
+            self.hdu.header['COMMENT'] = 'exposure time, and the DR2 re-calibration shifts.'
             self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes relative to Vega, simply use:'
             self.hdu.header['COMMENT'] = '    mag(Vega) = -2.5*log10(pixel value) + PHOTZP'
         else:  # Uncalibrated image
@@ -265,7 +262,7 @@ class SurveyImage(object):
 
     def save(self):
         """Save the ccd image to a new file."""
-        directory = os.path.join(IMAGE_DESTINATION,
+        directory = os.path.join(constants.PATH_IMAGES,
                                  str(self.hdu.header['WFFBAND']).lower())
         target = os.path.join(directory, self.output_filename)
         # checksum=True will add the CHECKSUM and DATASUM keywords
@@ -308,6 +305,16 @@ class SurveyImage(object):
 # FUNCTIONS
 ###########
 
+def get_caldb():
+    """Returns the calibration information."""
+    # Keep the CALDB stored as a global variable (= optimisation)
+    global CALDB
+    try:
+        return CALDB
+    except NameError:
+        CALDB = CalibrationDatabase()
+        return CALDB
+
 def prepare_one(run):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'images.log')):
         result = []
@@ -326,7 +333,7 @@ def prepare_images(clusterview):
     for band in ['halpha', 'r', 'i']:
         log.info('Starting with band {0}'.format(band))
         # Make sure the output directory exists
-        util.setup_dir(os.path.join(IMAGE_DESTINATION, band))
+        util.setup_dir(os.path.join(constants.PATH_IMAGES, band))
         # Retrieve the list of runs
         if band == 'halpha':
             idx_band = 'ha'
@@ -346,7 +353,7 @@ def prepare_images(clusterview):
                  str('time'))
     rows = list(itertools.chain.from_iterable(metadata)) # flatten list
     t = table.Table(rows, names=mycolumns)
-    table_filename=os.path.join(IMAGE_DESTINATION, 'iphas-images.fits')
+    table_filename=os.path.join(constants.PATH_IMAGES, 'iphas-images.fits')
     t.write(table_filename, format='fits', overwrite=True)
 
 
@@ -367,4 +374,5 @@ if __name__ == '__main__':
         import os
     prepare_images(client[:])
     """
+    util.setup_dir(os.path.join(constants.PATH_IMAGES, 'halpha'))
     prepare_one(571408)
