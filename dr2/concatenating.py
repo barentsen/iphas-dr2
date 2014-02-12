@@ -53,6 +53,7 @@ class Concatenator(object):
         else:
             self.destination = os.path.join(self.destination, 'full')
         util.setup_dir(self.destination)
+        util.setup_dir(self.destination+'-compressed')
 
         log.info('Reading data from {0}'.format(self.datapath))
 
@@ -75,7 +76,7 @@ class Concatenator(object):
         destination = self.destination
         extension = 'fits'
         if gzip:
-            destination += '-gzip'
+            destination += '-compressed'
             extension += '.gz'
         return os.path.join(destination,
                             'iphas-dr2-{0}{1}.{2}'.format(
