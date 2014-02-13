@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--#include virtual="../inc/head.html" -->
+    <title>IPHAS: DR2</title>
+  </head>
+  <body>
+    <!--#include virtual="../inc/navbar.html" -->
+    <div class="container">
+
+<!-- Content starts here -->
+
+  <div class="row">
+    <div class="span3 sidebar">
+        <ul class="nav nav-list" data-spy="affix" data-offset-top="124">
+          <!--<li class="nav-header">IPHAS DR2</li>-->
+          <li><a href="#description"><i class="icon-chevron-right"></i> Description</a></li>
+          <li><a href="#download"><i class="icon-chevron-right"></i> Download</a></li>  
+          <li><a href="#columns"><i class="icon-chevron-right"></i> Column definitions</a></li>
+          <li><a href="#source"><i class="icon-chevron-right"></i> Source code</a></li>
+        </ul>
+      </div>
+
+      <div class="span9">
+
+      <div class="page-header">
+        <h1>
+          IPHAS Data Release 2 (DR2)
+          <sup style="color:#aa0000; font-weight:bold;">preview</sup>
+        </h1>
+      </div>
+
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4>Warning</h4>
+        The catalogues linked on this page are likely to be the final product,
+        to be made public when the accompanying paper is accepted,
+        but minor changes remain possible.
+        If you encounter a problem, please do report it to geert@barentsen.be.
+        <br /><b>Last update: {{ last_update }}</b>
+      </div>
+
+
+      <section id="description">
+        <div class="page-header">
+          <h2>Description</h2>
+        </div>
+      
+        <h3>Source catalogue</h3>
+
+        <p>
+          IPHAS DR2 consists of a source catalogue which provides r', i' and 
+          H&alpha;-band photometry for 159 million unique objects, observed 
+          across the Northern Galactic Plane between 2003 and 2012.
+        </p> 
+
+        <p>
+          The source catalogue is described in an accompanying paper 
+          (Barentsen et al. 2014). 
+          In brief, the catalogue has been constructed by cross-matching 
+          the detections from the individual bands using a maximum matching 
+          distance of 1 arcsec. All objects which have been detected 
+          at SNR&thinsp;&ge;&thinsp;5 in at least one band are included. 
+          We have also carried out a photometric re-calibration to bring the 
+          magnitudes to a uniform calibration, by exploiting the overlaps 
+          between exposures as well as the 
+          <a href='http://www.aavso.org/apass'>APASS survey</a> for reference.
+        </p> 
+
+        <p>
+          Most objects have been observed multiple times during the survey, 
+          but the DR2 source catalogue includes only the <i>best</i> detection 
+          of each object. A catalogue of all other detections is planned 
+          for a future data release.
+        </p>
+
+        <h3>The "light" and "full" version</h3>
+
+        <p>
+          The DR2 source catalogue is made available in two flavours: 
+          "light" and "full". The light version has a size of about 8 GB 
+          (10 columns) and contains only the basic information on each source, 
+          namely:
+        </p>
+        <ul>
+          <li>equatorial coordinates (columns <a href="#ra-light">ra</a>, <a href="#dec-light">dec</a>);</li>
+          <li>r', i' and H-alpha magnitudes measured using the default 2.3 arcsec diameter aperture (columns <a href="#r-light">r</a>, <a href="#i-light">i</a>, <a href="#ha-light">ha</a>, <a href="#rErr-light">rErr</a>, <a href="#iErr-light">iErr</a>, <a href="#haErr-light">haErr</a>);</li>
+          <li>a morphological classification flag (<a href="#mergedClass-light">mergedClass</a>);</li>
+          <li>error flags warning for e.g. source blending and saturation (<a href="#errBits-light">errBits</a>).</li>
+        </ul>
+         
+        <p>
+          The "full" version has a size of about 50 GB (97 columns), and adds:
+        </p>
+        <ul>
+          <li>magnitudes at a second epoch in the same night, if available;</li>
+          <li>magnitudes measured using different aperture sizes;</li>
+          <li>detailed morphological parameters;</li>
+          <li>information on the exposure (date, seeing, run number);</li>
+          <li>object positions measured in the CCD reference frame (pixel x/y).</li>
+      
+        </ul>
+
+        <p>
+          This page contains a <a href="#columns">column definitions</a> 
+          section with more details.
+        </p>    
+
+      </section>
+
+      <section id="download">
+        <div class="page-header">
+          <h2>Download</h2>
+        </div>
+
+        <p>
+          The IPHAS DR2 source catalogue is distributed as a series of 
+          binary FITS tables, each covering a 5x5&thinsp;deg<sup>2</sup> area.
+          There is a light (10 columns; 8 GB) 
+          and a full version (97 columns; 50 GB). 
+          At present the catalogue cannot be queried online, 
+          but we are working to make this possible.
+        </p>
+
+        <p>
+          You may download all the files of the light catalogue (8&thinsp;GB) 
+          to a local directory using the following
+          <a href="http://www.gnu.org/software/wget/">wget</a> command:
+        </p>
+        
+        <pre>wget -c -r -np -nH --cut-dirs=3 --accept=fits.gz http://stri-cluster.herts.ac.uk/~gb/iphas-dr2-catalogue/light-compressed/</pre>
+
+        <p>
+          To obtain the full catalogue (<b>50&thinsp;GB</b>), use this command:
+        </p>
+        
+        <pre>wget -c -r -np -nH --cut-dirs=3 --accept=fits.gz http://stri-cluster.herts.ac.uk/~gb/iphas-dr2-catalogue/full-compressed/</pre>
+        
+        <br />
+        
+        <p>
+          You may also download individual 5x5&thinsp;deg<sup>2</sup> tiles using the links in the table below:
+        </p>
+
+        <table class="table table-condensed iphas-download">
+          <thead>
+            <tr>
+              <td>Gal. Lon.</td>
+              <td>Gal. Lat.</td>
+              <td>
+                Light version (10 columns)
+              </td>
+              <td>
+                Full version (97 columns)
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+
+          {% for lon in range(25, 220, 5) %}
+            <tr>
+              <td rowspan="2">
+                {{ lon }}&deg;&thinsp;&le;&thinsp;<i>l</i>&thinsp;&lt;&thinsp;{{ lon+5 }}&deg;
+              </td>
+              <td>
+                <i>b</i>&thinsp;&lt;&thinsp;0&deg;
+              </td>
+              <td>
+                <a href="http://{{ host+dir_light }}/iphas-dr2-{{ '%03d'|format(lon) }}a-light.fits.gz">
+                  iphas-dr2-{{ '%03d'|format(lon) }}a-light.fits.gz
+                </a> (<small>{{ get_filesize(host, dir_light+'/iphas-dr2-'+'%03d'|format(lon)+'a-light.fits.gz') }}</small>)
+              </td>
+              <td>
+                <a href="http://{{ host+dir_full }}/iphas-dr2-{{ '%03d'|format(lon) }}a.fits.gz">
+                  iphas-dr2-{{ '%03d'|format(lon) }}a.fits.gz
+                </a> (<small>{{ get_filesize(host, dir_full+'/iphas-dr2-'+'%03d'|format(lon)+'a.fits.gz') }}</small>)
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <i>b</i>&thinsp;&ge;&thinsp;0&deg;
+              </td>
+              <td>
+                <a href="http://{{ host+dir_light }}/iphas-dr2-{{ '%03d'|format(lon) }}b-light.fits.gz">
+                  iphas-dr2-{{ '%03d'|format(lon) }}b-light.fits.gz
+                </a> (<small>{{ get_filesize(host, dir_light+'/iphas-dr2-'+'%03d'|format(lon)+'b-light.fits.gz') }}</small>)
+              </td>
+              <td>
+                <a href="http://{{ host+dir_full }}/iphas-dr2-{{ '%03d'|format(lon) }}b.fits.gz">
+                  iphas-dr2-{{ '%03d'|format(lon) }}b.fits.gz
+                </a> (<small>{{ get_filesize(host, dir_full+'/iphas-dr2-'+'%03d'|format(lon)+'b.fits.gz') }}</small>)
+              </td>
+            </tr>
+          {% endfor %}
+  
+          </tbody>
+        </table>
+      </section>
+      
+
+      <section id="columns">
+        <div class="page-header">
+          <h2>Column definitions</h2>
+        </div>
+
+        <h3>Light version</h3>
+        <table class="table table-striped iphas-columns">
+          <thead>
+            <tr><th>Column</th><th>Type</th><th>Unit</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+          {% for col in columns %}
+            {% if col.name in ['name', 'ra', 'dec', 'r', 'rErr', 'i', 'iErr', 'ha', 'haErr', 'mergedClass', 'errBits'] %}
+            <tr id="{{ col.name }}-light">
+              <td>{{ col.name }}</td>
+              <td>{{ col.type }}</td>
+              <td>{{ col.unit }}</td>
+              <td>{{ col.desc }}</td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <h3>Full version</h3>
+        <table class="table table-striped iphas-columns">
+          <thead>
+            <tr><th>Column</th><th>Type</th><th>Unit</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+          {% for col in columns %}
+            <tr id="{{ col.name }}">
+              <td>{{ col.name }}</td>
+              <td>{{ col.type }}</td>
+              <td>{{ col.unit }}</td>
+              <td>{{ col.desc }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      </section>
+
+      <section id="source">
+        <div class="page-header">
+          <h2>Source code</h2>
+        </div>
+        <p>
+          The source catalogue was generated from the single-band detection tables 
+          using a Python package called "iphas-dr2", which is available on 
+          GitHub:
+        </p>
+        <p>
+          <a href="https://www.github.com/barentsen/iphas-dr2">https://www.github.com/barentsen/iphas-dr2</a>
+        </p>
+      </section>
+
+
+{#
+      <section id="previous">
+        <div class="page-header">
+          <h2>Older releases</h2>
+        </div>
+    
+    <h3>IPHAS Initial Data Release (IDR)</h3>
+    <p>The link below is the entry page for accessing catalogued point
+    source photometry from survey observations obtained between 2003
+    and the beginning of 2006.</p>
+    <ul>
+    <li><a href="http://idr.iphas.org/">Initial Data Release (IDR)</a></li>
+    </ul>
+    <h3>Other Useful Links</h3>
+    <ul>
+      <li><a href="http://www.ast.cam.ac.uk/ING/Astronomy/instruments/wfc/index.html">INT/WFC instrument documentation pages</a></li>
+      <li><a href="http://apm3.ast.cam.ac.uk/cgi-bin/wfs/dqc.cgi">CASU dqc interface for querying image data</a></li>
+    </ul>
+    <p>Non-consortium members can get a taste of IPHAS imaging data by
+    going to the CASU dqc interface. This can be searched by specifying just a
+    position and a search box size (other constraints can be selected
+    but are not essential). On launching a query, a new window will
+    open showing if there are imaging data available for the position specified. If there are, visitors to the page can reselect box size and request image cut-outs, which will be displayed in a further window. It is also possible to download the reduced images from this site.</p>
+  </section>
+#}
+
+</div><!-- span9 -->
+</div>
+
+<!-- Content ends here -->
+
+    </div><!-- /container -->
+    
+    <!--#include virtual="../inc/footer.html" -->
+  </body>
+</html>
