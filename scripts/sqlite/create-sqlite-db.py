@@ -15,7 +15,7 @@ class SurveyDB(object):
 
     def __init__(self, filename):
         # sqlite doesn't know how to handle certain numpy types unless told
-        sqlite3.register_adapter(np.int8, int)
+        sqlite3.register_adapter(np.int8, bool)
         sqlite3.register_adapter(np.int16, int)
         sqlite3.register_adapter(np.int32, int)
         sqlite3.register_adapter(np.float32, float)
@@ -48,11 +48,12 @@ class SurveyDB(object):
         self.cursor.execute("CREATE TABLE IF NOT EXISTS {0} {1}".format(name, coldef))
 
     def create_indexes(self):
-        log.info('Indexing (ra,dec)')
         self.cursor.execute("PRAGMA temp_store=FILE")
         self.cursor.execute("PRAGMA temp_store_directory='{0}'".format(constants.TMPDIR))
         self.cursor.execute("PRAGMA cache_size = '2000000'")
+        log.info('Now indexing (ra, dec)')
         self.cursor.execute('CREATE INDEX iphas_ra_dec_idx ON iphas(ra, dec)')
+        log.info('Now indexing (l, b)')
         self.cursor.execute('CREATE INDEX iphas_l_b_idx ON iphas(l, b)')
 
     def insert_ndarray(self, data, columns):
@@ -64,9 +65,15 @@ class SurveyDB(object):
     def insert_fits(self, filename, columns):
         log.info('Ingesting {0}'.format(filename))
         # Using .__array__() is important for speed
+        data = fits.getdata(filename, 1).__array__()
+        # Correct boolean columns for the silly way in which FITS stores bools
+        for field in ['brightNeighb', 'deblend', 'saturated', 'reliable']:
+            data[field][data[field] == ord('T')] = 1
+            data[field][data[field] == ord('F')] = 0
+        # Insert
         self.cursor.executemany('INSERT INTO iphas VALUES (' 
                                 + ','.join(['?']*len(columns)) + ')',
-                                fits.getdata(filename, 1).__array__())
+                                data)
 
 
 
@@ -113,10 +120,12 @@ def create_iphas_full():
             'night', 'seeing', 'ccd', 'nObs', 'sourceID2',
             'fieldID2', 'r2', 'rErr2', 'i2', 'iErr2', 'ha2', 'haErr2',
             'errBits2']
+    #db = SurveyDB('/home/gb/tmp/test.db')
     db = SurveyDB(os.path.join(constants.DESTINATION, 'iphas-dr2-full.db'))
     db.optimise_inserts()
     db.create_table('iphas', cols)
     files_to_insert = glob.glob(os.path.join(constants.PATH_CONCATENATED, 'full', '*.fits'))
+    #files_to_insert = glob.glob(os.path.join(constants.PATH_CONCATENATED, 'full', '*215b.fits'))
     for filename in np.sort(files_to_insert):
         db.insert_fits(filename, cols)
     db.commit()
