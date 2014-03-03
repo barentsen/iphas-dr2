@@ -88,7 +88,7 @@ Pipeline starts here
 #calibration.apply_calibration(cluster) # produces 'bandmerged-calibrated/nnnn.fits'
 
 # Identify duplicate detections where multiple pointings overlap ('seams');
-seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
+#seaming.seam(cluster_highmem)  # produces 'seamed/nnnn.fits'
 
 # Finally, concatenate the individual pointings into a single catalogue 
 concatenating.concatenate(cluster_highmem)

@@ -173,6 +173,9 @@ class Concatenator(object):
                                             replaceAll(degreesToDms(dec, 1),
                                                        \\":\\", \\"\\")
                                             )"; \
+                             addcol -before fieldID -desc "True if (reliable & pStar > 0.9 & ! deblend & ! brightNeighb)" \
+                                    veryReliable \
+                                    "reliable & pStar > 0.9 & ! deblend & ! brightNeighb"; \
                              replacecol -utype S15 fieldID "fieldID"; \
                              replacecol -utype S1 fieldGrade "toString(fieldGrade)"; \
                              replacecol errBits "toShort(errBits)";
