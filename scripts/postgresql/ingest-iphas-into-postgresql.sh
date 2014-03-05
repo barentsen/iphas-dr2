@@ -4,13 +4,13 @@
 # Author: Geert Barentsen
 
 # Configuration
-DATAPATH="/home/gb/tmp/iphas-dr2-rc6/concatenated/full"
+DATAPATH="/home/gb/iphas-dr2/full-compressed"  # Path to catalogue FITS tables
 TABLENAME="iphas2"
-DBNAME="gb"
-DBPORT=5433
+DBNAME="iphas"
+DBPORT=5432
 DBUSER="gb"
 PSQL="psql $DBNAME --port $DBPORT --user $DBUSER "
-STILTS="stilts"
+STILTS="java -jar ../../dr2/lib/stilts.jar"
 
 # Delete the previous version of the table
 $PSQL -c "DROP TABLE IF EXISTS $TABLENAME;"
@@ -117,19 +117,26 @@ errBits2 integer \
 );"
 
 # Insert all catalogue tables, one by one
-for FILE in `find $DATAPATH -name "*21*.fits*" | sort`; do
+for FILE in `find $DATAPATH -name "*.fits*" | sort`; do
     echo "Now ingesting $FILE"
-    # Stilts has a feature to write to a database as well, but it appears to be slower.
+    # Pipe the FITS tables as CSV into a pg COPY instruction
     ionice -c3 nice -n19 $STILTS tcat in=$FILE ofmt=csv \
         | $PSQL -c "COPY $TABLENAME FROM STDIN WITH CSV HEADER"
 done
 
 # Create indices
 echo "Creating iphas2_ra_idx"
-$PSQL -c "CREATE INDEX iphas2_ra_idx ON iphas2(ra)"
+$PSQL -c "CREATE INDEX iphas2_ra_idx ON iphas2(ra);"
 echo "Creating iphas2_dec_idx"
-$PSQL -c "CREATE INDEX iphas2_dec_idx ON iphas2(dec)"
+$PSQL -c "CREATE INDEX iphas2_dec_idx ON iphas2(dec);"
 echo "Creating iphas2_l_idx"
-$PSQL -c "CREATE INDEX iphas2_l_idx ON iphas2(l)"
+$PSQL -c "CREATE INDEX iphas2_l_idx ON iphas2(l);"
 echo "Creating iphas2_b_idx"
-$PSQL -c "CREATE INDEX iphas2_b_idx ON iphas2(b)"
+$PSQL -c "CREATE INDEX iphas2_b_idx ON iphas2(b);"
+echo "Creating iphas2_reliable_idx"
+$PSQL -c "CREATE INDEX iphas2_reliable_idx ON iphas2(reliable);"
+
+# Analyze
+echo "Analyzing"
+$PSQL -c "ANALYZE iphas2;"
+
