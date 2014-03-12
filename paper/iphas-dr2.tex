@@ -5,7 +5,9 @@
 %\usepackage{lscape}
 \usepackage{float}
 \usepackage{booktabs}
-\usepackage{aas_macros}
+%\usepackage{aas_macros}
+
+\graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
 \def\ha{\mbox{H$\rm \alpha$}}
 \def\arcsec{$''$}
@@ -18,19 +20,28 @@ of the INT Photometric H$\alpha$ Survey
 of the Northern Galactic Plane (IPHAS DR2)}
 		
 \author[G. Barentsen
-et. al]{G. Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
-H. J. Farnhill$^{1}$,
-J. E. Drew$^{1}$,
-M. J. Irwin$^{4}$, \newauthor
-E. A. Gonz$\acute{\rm{a}}$lez-Solares$^{4}$,
-R. Greimel$^{2}$,
-B. Mizalski$^{3}$,
-C. Ruhland$^{1}$, \newauthor plus many friends.
+et. al]{Geert Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
+H. J. Farnhill$^1$,
+J. E. Drew$^1$,
+E. A. Gonz$\acute{\rm{a}}$lez-Solares$^2$, \newauthor
+M. J. Irwin$^2$,
+S. E. Sale$^3$,
+R. Greimel$^4$,
+P. Groot$^5$,
+J. Lewis$^2$,
+A. Mampaso$^6$, \newauthor
+B. Mizalski$^{99}$,
+C. Ruhland$^1$,
+plus many contributors.
 \newauthor\\
-$^{1}$Centre for Astrophysics Research, STRI, University of Hertfordshire, College Lane Campus, Hatfield AL10 9AB\\
-$^{2}$Institute for Geophysics, Astrophysics and Meteorology, Institute of Physics, Karl-Franzens-Universit$\ddot{a}$t Graz, Universit$\ddot{a}$tsplatz 5, 8010 Graz, Austria\\
-$^{3}$Building, Institute, Street Address, City, Code, Country\\
-$^{4}$Institute of Astronomy, Madingley Road, Cambridge CB3 0HA}
+$^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
+$^{2}$Institute of Astronomy, Cambridge University, Madingley Road, Cambridge, CB3 OHA, U.K.\\
+$^{3}$Rudolf Peierls Centre for Theoretical Physics, Keble Road, Oxford, OX1 3NP, U.K.\\
+$^{4}$IGAM, Institute of Physics, University of Graz, Universit\"atsplatz 5, Graz, Austria.\\
+$^{5}$Afdeling Sterrenkunde, Radboud Universiteit Nijmegen, Faculteit NWI, Postbus 9010, 6500 GL Nijmegen, The Netherlands.\\
+$^{6}$Instituto de Astrof\'isica de Canarias, 38200 La Laguna, Tenerife, Spain.\\
+$^{99}$Please add your current affiliation.\\
+}
 
 \begin{document}
 \date{Current draft typeset \today}
@@ -43,14 +54,14 @@ $^{4}$Institute of Astronomy, Madingley Road, Cambridge CB3 0HA}
 \begin{abstract} % BACKGROUND, OBJECTIVE, METHODS, RESULTS, CONCLUSIONS
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
-is a 1800 deg$^2$ imaging survey
+is a 1800 square degrees imaging survey
 covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-meter Isaac Newton Telescope (INT).
 This data release presents the first 
 uniformly-calibrated source catalogue
-to have been extracted from the survey,
+to have been extracted from the images,
 providing single-epoch photometry
 for 219 million unique sources
 across 92\% of the survey.
@@ -63,19 +74,20 @@ and quality control procedures,
 describe and test the new uniform photometric calibration,
 and detail the construction of the source catalogue
 and its quality warning flags.
-We find that the new calibration is accurate to
-$\sigma=0.03$ mag.
+We find that the new calibration
+and the photometric repeatability are accurate to
+$\sigma=0.03$~mag.
 Finally, we demonstrate the ability of the 
 catalogue's unique
 $r$-$i$/$r$-\ha\ colour-colour diagram to
 (i) characterise stellar populations and extinction regimes
 towards different Galactic sightlines
-and (ii) select reliable candidate \ha-emission line objects.
+and (ii) select candidate \ha-emission line objects.
 The catalogue which accompanies this paper
 provides the much-needed visible-light counterpart
 to several infrared surveys of the Galactic Plane,
-including many poorly-studied star-forming regions and ``bubbles'',
-and provides images for some of the most
+including many poorly-studied star-forming regions and ``bubbles''.
+It also provides images for some of the most
 crowded regions to be faced by Gaia.
 \end{abstract}
 
@@ -1738,8 +1750,8 @@ have disappeared.
 The mean source density as a function of Galactic longitude
 is shown in Figure~\ref{fig:density} (thick blue line).
 The densities were computed by counting the 
-number of sources in $1^\circ$-wide longitude bins
-across which covered the entire latitude range $-5^\circ<b<+5^\circ$.
+number of sources in $1^\circ$-wide longitude bins,
+each covering the entire latitude range $-5^\circ<b<+5^\circ$.
 Unsurprisingly, we find the average source densities to increase
 towards the Galactic centre.
 For example, the average source density near $l\simeq 30^\circ$
@@ -1748,13 +1760,14 @@ which is five times more than the density
 found near $l\simeq 180^\circ$.
 
 In addition to the global trend, 
-there are significant variations in the source density on smaller scales.
+there are significant variations
+in the source density on smaller scales.
 For example,  we find a significant drop near the constellations 
 of Cygnus ($l\simeq 80$) and Aquila ($l\simeq 40$),
 which are regions known to be affected
 by high levels of foreground extinction.
-Dark clouds are visible towards these constellation by eye,
-and they are often referred to as ``the Great Rift''.
+In fact dark clouds are visible towards these constellation by eye,
+and they have often been referred to as ``the Great Rift''.
 
 We warn however that the densities reported here 
 have not been corrected for survey completeness
@@ -1766,10 +1779,9 @@ In a forthcoming paper,
 we aim to calibrate the IPHAS-based source densities
 by injecting artificial stars into the IPHAS images
 and measuring their recovery rate (Farnhill et al., in preparation).
-Indeed IPHAS has the potential to offer
+IPHAS has the potential to offer
 calibrated, two-dimensional stellar density maps
-which can be used to constrain detailed models of our Galaxy,
-but it is beyond the scope of the present work.
+which can be used to constrain detailed models of our Galaxy.
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{./plots/density/density.pdf} 
@@ -1792,21 +1804,20 @@ These are sources for which the \emph{deblend} flag is {\sc false},
 i.e. sources for which the CASU pipeline did not have to apply 
 a deblending procedure to separate the flux
 originating from two or more overlapping objects.
-We find a strong correlation between the source density
-and the fraction of sources affected by source blending.
-For example, only NN\% of the sources are blended
-at $l>90^\circ$, whereas NN\% are blended at $l<90^\circ$.
+We find that the fraction of sources affected by blending problems
+is strongly correlated with the local source density.
+For example, only 11\% of the sources are blended
+at $l>90^\circ$, whereas 24\% are blended at $l<90^\circ$.
 
 As we explained earlier, blended sources must be used with caution.
-Firstly, the deblending-procedure crucially depends
-on the local PSF being measured accurately. 
-Secondly, blended sources may are likely candidates to have fallen victim
+In particular, we warn that blended sources
+are likely candidates to have fallen victim
 to source confusion during the band-merging procedure.
 In future work we hope to investigate the use of
 more advanced PSF-fitting routines
 in which sources are measured simultaneously across all bands,
-perhaps guided by an external list of sources provided
-by near-infrared surveys or Gaia data.
+perhaps guided by an external catalogue such as the one
+that is to be provided by Gaia.
 
 \section{Demonstration}
 \label{sec:demonstration}
@@ -2215,11 +2226,38 @@ HJF is in receipt of an STFC postgraduate studentship.
 \bibliography{dr2}
 
 \appendix
-\input{app_columns.tex}
+\onecolumn
+\section{Catalogue format}
+\label{app:columns}
+
+\small
+\begin{longtable}{lllp{10cm}}
+\caption{\label{tab:columns} 
+Definition of columns in the IPHAS DR2 source catalogue.
+} \\
+\hline
+Column & Type & Unit & Description \\
+\hline
+\endfirsthead
+
+\multicolumn{3}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued}} \\
+\hline
+Column & Type & Unit & Description \\
+\hline
+\endhead
+
+\hline \hline
+\endlastfoot
+\input{tables/columns.tex}
+\end{longtable}
+\normalsize
+\twocolumn
+
 
 \section{Candidate emission-line objects towards Sh 2-82}
 \label{app:emitters}
-\begin{table*}
+\begin{table}
     \begin{tabular}{lccc}
     \toprule
     Name & $r$ & $i$ & \ha  \\
@@ -2234,7 +2272,7 @@ IPHAS2 J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
     \end{tabular}
     \caption{Candidate \ha-emitters towards Sh 2-82.}
     \label{tbl:emitters}
-\end{table*}
+\end{table}
 
 \label{lastpage}
 
