@@ -489,7 +489,13 @@
         "name": "reliable",
         "type": "boolean",
         "unit": "",
-        "desc": "True if \"<a href=\"#nBands\">nBands</a>&thinsp;==&thinsp;3 &amp; <a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.198 &amp; <a href=\"#errBits\">errBits</a>&thinsp;&le;&thinsp;1\"."
+        "desc": "True if: <a href=\"#errBits\">errBits</a>&thinsp;&le;&thinsp;2 &amp; <a href=\"#nBands\">nBands</a>&thinsp;==&thinsp;3 &amp; r&thinsp;&gt;&thinsp;13 &amp; i&thinsp;&gt;&thinsp;12 &amp; ha&thinsp;&gt;&thinsp;12.5 &amp; <a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.1 &amp; (abs(r-rAperMag1)&thinsp;&lt;&thinsp;3*hypot(rErr,rAperMag1Err)+0.03) &amp; (abs(i-iAperMag1)&thinsp;&lt;&thinsp;3*hypot(iErr,iAperMag1Err)+0.03) &amp; (abs(ha-haAperMag1)&thinsp;&lt;&thinsp;3*hypot(haErr,haAperMag1Err)+0.03)."
+    },
+    {
+        "name": "veryReliable",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if: <a href=\"#reliable\">reliable</a> &amp; <a href=\"#pStar\">pStar</a>&thinsp;&gt;&thinsp;0.9 &amp; <a href=\"#errBits\">errBits</a>&thinsp;=&thinsp;0."
     },
     {
         "name": "fieldID",
