@@ -6,10 +6,10 @@ This repository contains the source code that was used to uniformly calibrate
 and compile the source catalogue for the Second Data Release of the
 INT/WFC Photometric H-Alpha Survey of the Northern Galactic Plane (IPHAS DR2).
 
-The principal task of this code is to take the detection tables provided by the source
-detection and measurement pipeline of the Cambridge Astronomical Survey Unit (CASU),
-and transform them into a globally calibrated source catalogue which details the best
-measurement of each unique source.
+The principal task of this code is to take the raw set of IPHAS source detection tables,
+which are kindly provided by the Cambridge Astronomical Survey Unit (CASU),
+and transform them into a globally calibrated source catalogue, which details the best
+measurement of each unique source in a user-friendly format.
 
 More information about the project can be found at www.iphas.org
 
