@@ -24,22 +24,21 @@ et. al]{Geert Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
 H. J. Farnhill$^1$,
 J. E. Drew$^1$,
 E. A. Gonz$\acute{\rm{a}}$lez-Solares$^2$, \newauthor
+R. Greimel$^3$,
 M. J. Irwin$^2$,
-S. E. Sale$^3$,
-R. Greimel$^4$,
-P. Groot$^5$,
-J. Lewis$^2$,
-A. Mampaso$^6$, \newauthor
 B. Mizalski$^{99}$,
 C. Ruhland$^1$,
+P. Groot$^4$,
+A. Mampaso$^5$, \newauthor
+S. E. Sale$^6$,
 plus many contributors.
 \newauthor\\
 $^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
 $^{2}$Institute of Astronomy, Cambridge University, Madingley Road, Cambridge, CB3 OHA, U.K.\\
-$^{3}$Rudolf Peierls Centre for Theoretical Physics, Keble Road, Oxford, OX1 3NP, U.K.\\
-$^{4}$IGAM, Institute of Physics, University of Graz, Universit\"atsplatz 5, Graz, Austria.\\
-$^{5}$Afdeling Sterrenkunde, Radboud Universiteit Nijmegen, Faculteit NWI, Postbus 9010, 6500 GL Nijmegen, The Netherlands.\\
-$^{6}$Instituto de Astrof\'isica de Canarias, 38200 La Laguna, Tenerife, Spain.\\
+$^{3}$IGAM, Institute of Physics, University of Graz, Universit\"atsplatz 5, Graz, Austria.\\
+$^{4}$Afdeling Sterrenkunde, Radboud Universiteit Nijmegen, Faculteit NWI, Postbus 9010, 6500 GL Nijmegen, The Netherlands.\\
+$^{5}$Instituto de Astrof\'isica de Canarias, 38200 La Laguna, Tenerife, Spain.\\
+$^{6}$Rudolf Peierls Centre for Theoretical Physics, Keble Road, Oxford, OX1 3NP, U.K.\\
 $^{99}$Please add your current affiliation.\\
 }
 
@@ -654,13 +653,13 @@ which is the flux obtained by folding
 Vega's SED with the filter throughput curve 
 corrected for atmosphere and detector quantum efficiency
 \citep[using the method explained by][]{Drew2005}.
-This is 3.08 magnitudes less than the flux captured 
+This is 3.14 magnitudes less than the flux captured 
 by the much broader $r$ band
 which includes the \ha\ band.
 Hence to assure zero colour relative to the broadbands,
 we set the default zeropoint for the narrowband to be:
 \begin{equation}
-\textsc{magzpt}_{H\alpha} = \textsc{magzpt}_r - 3.08.
+\textsc{magzpt}_{H\alpha} = \textsc{magzpt}_r - 3.14.
 \label{eqn:zpha}
 \end{equation}
 
@@ -2280,18 +2279,21 @@ by the Isaac Newton Group
 in the Spanish Observatorio del Roque de los Muchachos
 of the Instituto de Astrofisica de Canarias.
 All data were processed 
-by the Cambridge Astronomical Survey Unit,
+by the Cambridge Astronomical Survey Unit
 at the Institute of Astronomy in Cambridge.
 
 Preparation of the catalogue was eased greatly
 by a number of software packages,
-including the Python modules
-AstroPy \citep{Astropy},
-APLpy, NumPy and SciPy,
-the PostgreSQL database software,
+including the PostgreSQL database software,
 the TOPCAT and STILTS packages \citep{Taylor2005,Taylor2006},
-and the Montage software maintained by NASA/IPAC.
-We also made use of the SIMBAD, Vizier and Aladin \citep{Aladin}
+and the Python modules
+AstroPy \citep{Astropy},
+NumPy/SciPy \citep{Numpy},
+Matplotlib \citep{Matplotlib},
+IPython \citep{IPython},
+and APLpy.
+We also made use of the Montage software maintained by NASA/IPAC,
+and the SIMBAD, Vizier and Aladin \citep{Aladin} services
 operated at CDS, Strasbourg, France.
 
 This research made extensive use of
