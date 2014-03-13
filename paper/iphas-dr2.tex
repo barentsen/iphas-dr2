@@ -2021,18 +2021,19 @@ that accompanies this data release (Sale et al., in preparation).
 
 \subsection{Identifying \ha\ emission-line objects}
 
-A primary motivation for carrying
-out the survey 
-was to enable the discovery of 
-new emission-line objects across the Galactic Plane.
+A primary motivation for carrying out the survey 
+was to enable the discovery 
+of new emission-line objects
+across the Galactic Plane.
 \ha\ in emission is a well-known tracer
 for stars in the short-lived pre- or
 post-main sequence stages of their evolution,
-and hence IPHAS aims to allow larger, deeper
-and more statistically robust samples of such rare objects
-to be established.
+and hence IPHAS allows larger, deeper
+and more statistically robust samples
+of such rare objects to be established.
 The survey-wide identification and analysis 
-of such stars is beyond the scope of the present work,
+of emission-line objects is beyond the scope
+of the present work,
 but in this section we demonstrate how the
 catalogue may be used for this purpose.
 
@@ -2061,8 +2062,9 @@ the $\sim$10th magnitude star HD\,231616
 % Georgelin1973 claims B0III, others claim B0V
 with spectral type B0V/III
 \citep{Georgelin1973,Mayer1973,Hunter1990}.
-The ionising star has been placed at a likely distance of 1.5-1.7 kpc
-based on the photometric parallax
+The ionising star has been placed 
+at a likely distance of 1.5-1.7 kpc
+based on its photometric parallax
 \citep{Mayer1973,Lahulla1985,Hunter1990}.
 
 Figure~\ref{fig:mosaic_iphas} shows a 20-by-15 arcmin
@@ -2070,16 +2072,22 @@ colour mosaic centred on Sh 2-82,
 composed of our \ha\ (red channel),
 $r$ (green channel),
 and $i$ (blue channel) images.
-The ionising star can be seen as the bright object
-near the centre of the H{\sc ii} region,
+The ionising star can be seen as the brightest object
+in the centre of the H{\sc ii} region,
 which is surrounded by a faint reflection nebula
 and several dark cloud filaments.
 For comparison, Figure~\ref{fig:mosaic_spitzer} shows
-a mosaic of the identical region 
-as seen by the Spitzer Space Telescope
-in the mid-infrared. The Spitzer image
-reveals a bubble-shaped structure of warm dust
-which surrounds the entire H{\sc ii} region.
+a mosaic of the same region 
+as seen in the mid-infrared by the Spitzer Space Telescope
+The infrared image reveals a bubble-shaped structure
+of warm dust which surrounds the entire H{\sc ii} region,
+and is thought to contain a wealth of infrared-bright
+young stellar objects \citep{Yu2012}.
+Many of these young objects 
+appear in Fig.~\ref{fig:mosaic_spitzer}
+as red- and pink-coloured objects,
+located predominantly in the north-western part
+of the bubble-shaped structure.
 
 \begin{figure*}
     \begin{minipage}[b]{0.8\linewidth}
@@ -2101,23 +2109,26 @@ and dark cloud filaments.}
 \end{figure*}
 
 Figure~\ref{fig:emitters} presents
-the IPHAS colour-colour diagram for the region covered by the
-mosaic images.
-Gray circles show all objects in the region
+the IPHAS colour-colour diagram for 
+the 20-by-15 arcmin region shown in the mosaics.
+Gray circles show all objects
 which are brighter than $r<20$
 and have been flagged as \emph{reliable}
 in our catalogue.
 The diagram also shows the unreddened main sequence (solid line)
 and the expected position of unredded main-sequence stars
-with \ha\ in emission at a strength of EW=$-10{\rm \AA}$ (dashed line),
+with \ha\ in emission
+at a strength of EW=$-10{\rm \AA}$ (dashed line),
 taken from the colour simulations due to \citet{Barentsen2011a}.
 Six stars are found to lie confidently above the 
-dashed line at the level of $3\sigma$ 
-(i.e. the distance between the dashed line is larger than
-three times the uncertainty on the $r$-\ha\ colour).
+dashed line at the level of $3\sigma$,
+that is, the distance between the objects and the dashed line
+is larger than three times the uncertainty on the $r$-\ha\ colour.
 These reliable candidate \ha-emitters
 are marked by red triangles in the colour-colour diagram
-and their photometry is detailed in Appendix~\ref{app:emitters}.
+and their photometry is detailed in Table~\ref{tbl:emitters}.
+The spatial distribution of the six candidate emission-line objects
+is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas}).
 
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{./plots/sh2-82-ccd.pdf}
@@ -2136,66 +2147,70 @@ and their photometry is detailed in Appendix~\ref{app:emitters}.
     \label{fig:emitters}
 \end{figure}
 
-The spatial distribution of our six candidate emission-line objects
-is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas}).
-They are likely to be genuine young stars for two reasons.
-Firstly, two of our candidates have recently been identified as likely
-candidate Young Stellar Objects (YSO)
+\begin{table}
+\footnotesize
+\resizebox{0.45\textwidth}{!}{
+    \begin{tabular}{lccc}
+    \toprule
+    Name [IPHAS2 ...] & $r$ & $i$ & \ha  \\
+    \midrule
+J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
+J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
+J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
+J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
+J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
+J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
+    \bottomrule
+    \end{tabular}}
+    \caption{Candidate \ha-emitters towards Sh 2-82.}
+    \label{tbl:emitters}
+\end{table}
+
+In previous work, we have shown how the majority of
+\ha-emitters seen towards an H{\sc ii} region
+are likely to be Classical T Tauri Stars (CTTS),
+which are young objects which show \ha\ in emission
+due to the presence of hot, infalling gas
+which is accreting onto the star
+from a circumstellar disk \cite{Barentsen2011a}.
+This is likely to be the case in this demonstration
+as well. Two of our candidates have recently been identified
+as Young Stellar Objects (YSO)
 in an investigation of the region by \cite{Yu2012}.
 In their study, the authors used 2MASS and Spitzer data
 to select likely young stars by selecting objects with
-circumstellar disks based on the infrared colour excess.
-Secondly, we find that the four remaining objects are 
-also detected in the Spitzer-based image,
-although their colours are less extreme
-than those identified as likely YSOs by \citeauthor{Yu2012}.
+an infrared colour excess, consistent with 
+the presence of a heated circumstellar disk.
+Although \citeauthor{Yu2012} did not identify
+four of our candidates as having
+an infrared excess, we note  that each of them
+is detected at S/N$>$? in the Spitzer 8.0\,\micron\ image,
+which is more likely for a circumstellar-bearing
+object than it is for a field star.
 
 Prior to IPHAS, this region was essentially unstudied
 at faint magnitudes in visible light.
 \cite{Lahulla1985} reported magnitudes for 8 stars in the optical at 
 $V < 15$. In contrast, the IPHAS catalogue offers photometry
-for NN stars in the region down to $r<20$.
-This demonstrates the ability of IPHAS to providing complimentary
-for the wealth of poorly-studied star-forming regions
+for 2197 objects in the region down to $r<20$.
+
+Sh 2-82 is one of a wealth of poorly-studied star-forming regions
 at low Galactic latitudes,
-which have been unveiled in recent years
-by the observed wealth of star-forming ``bubbles''
-at mid-infrared wave%\cite{Bica2003} was the first to identify a
-%near-infrared cluster
-%associated with this region using near-infrared 2MASS data,
-%and only recently has this cluster been confirmed
-%in a short investigation which combined 2MASS
-%and Spitzer data \cite{Yu2012}.
-%Many of the young stars identified by \citeauthor{Yu2012}
-%can be seen as pink and red stars in Fig.~\ref{fig:mosaic_spitzer}.lengths \cite[e.g.][]{Churchwell2006,Simpson2012}.
-%In fact the cluster of young stars associated with Sh 2-82
-%was only first reported by \cite{Bica2003},
-%remained unstudied until the study by \cite{Yu2012}.
-
-%Amongst the six emitters, N are detected at SNR X
-%in the Spitzer X micron band. 
-
-%This demonstrates how IPHAS is providing complimentary
-%data for some of the thousands of star-forming ``bubbles'' have been unveiled at mid-infrared wavelengths \cite[e.g.][]{Churchwell2006,Simpson2012}.
-%Optically-unveiled members of such star-forming regions
-%may help to constrain extinctions and distances towards such regions \citep{Barentsen2013}.
-%Moreover, in \cite{Barentsen2011a} we showed
-%how the history of star formation in a region,
-%and the possible triggered nature, may be discussed.
-%This is particularly true 
+which have started to become revealed
+in recent years through catalogues
+of ``bubbles'' seen
+in mid-infrared surveys \cite[e.g.][]{Churchwell2006,Simpson2012}
+and previously unknown clusters seen 
+at near-infrared wavelengths \cite[e.g.][]{Bica2003}.
+The optical data provided by IPHAS offers a handle (or lower limit)
+on the extinction and distance towards many of these regions,
+and can provide information on the optically-unveiled
+members of the region, as we demonstrated here.
 
 %TODO: annotate -10 EW text on plot?
 %TODO: mention Gaia, e.g. IPHAS for transient identification?
-
 %\subsection{Caveats and lessons learnt}
-%\cite{Bica2003} was the first to identify a
-%near-infrared cluster
-%associated with this region using near-infrared 2MASS data,
-%and only recently has this cluster been confirmed
-%in a short investigation which combined 2MASS
-%and Spitzer data \cite{Yu2012}.
-%Many of the young stars identified by \citeauthor{Yu2012}
-%can be seen as pink and red stars in Fig.~\ref{fig:mosaic_spitzer}.
+%\subsection{Comparison with Gaia}?
 
 \section{Conclusions and future work}
 \label{sec:conclusions}
@@ -2210,32 +2225,31 @@ were applied, described and tested the new global photometric calibration,
 and detailed the construction of the user-friendly source catalogue.
 
 The observations included in this release
-were found to achieve a median seeing of 1.1 arcsec
+achieved a median seeing of 1.1 arcsec
 and a $5\sigma-$depth of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$, \ha$=20.3\pm 0.3$.
 The global calibration and photometric repeatability
-is accurate at the level of $\sigma=0.03$ mag,
+was found to be accurate at the level of $\sigma=0.03$ mag,
 providing a significant improvement over the 
 previous data release.
 The source catalogue provides the best-available
 single-epoch astrometry and photometry
 for 219~million unique sources.
 
-The data-taking strategy developed for IPHAS
-have since been reapplied to carry out a companion INT/WFC survey called UVEX
-in U/$g$/$r$ \citep{Groot2009},
-and also southern counterpart to IPHAS and UVEX 
-is being carried out in $u$/$g$/$r$/$i$/\ha\ 
-called VPHAS+ (Drew et al, in press).
-We hope to re-use the experience gained by this data release
-to create similar releases for these companion surveys.
-
 In future work, we aim to draw upon the PanSTARRS photometric
 survey to further improve the accuracy of our global calibration.
-We will also aim to correct the photometry for the
-radial field distortions.
-%We may also produce a catalogue which details all detections.
+We will also aim to correct the IPHAS photometry for the
+radial field distortions,
+and aim to produce a catalogue
+which details all the secondary detections
+to aid time-domain studies.
 
-%TODO: mention Gaia?
+The data-taking strategy developed for IPHAS
+have since been reapplied to carry out a companion INT/WFC survey called UVEX
+in U/$g$/$r$/He {\sc i} \citep{Groot2009}
+and a southern companion survey in $u$/$g$/$r$/$i$/\ha\ 
+called VPHAS+ \citep{Drew2014}.
+We intend to use the present data release
+as a template for future releases from these companion surveys.
 
 \section*{Data access and source code}
 \label{sec:dataaccess}
@@ -2338,26 +2352,6 @@ Column & Type & Unit & Description \\
 \end{longtable}
 \normalsize
 \twocolumn
-
-
-\section{Candidate emission-line objects towards Sh 2-82}
-\label{app:emitters}
-\begin{table}
-    \begin{tabular}{lccc}
-    \toprule
-    Name & $r$ & $i$ & \ha  \\
-    \midrule
-IPHAS2 J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
-IPHAS2 J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
-IPHAS2 J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
-IPHAS2 J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
-IPHAS2 J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
-IPHAS2 J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
-    \bottomrule
-    \end{tabular}
-    \caption{Candidate \ha-emitters towards Sh 2-82.}
-    \label{tbl:emitters}
-\end{table}
 
 \label{lastpage}
 
