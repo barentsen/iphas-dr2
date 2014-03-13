@@ -1,0 +1,98 @@
+name & string &  & Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form "IPHAS2 JHHMMSS.ss+DDMMSS.s", where "J" indicates the position is J2000. The "IPHAS2" prefix is not included in the column. \\
+ra & double & degrees & J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H$\alpha$-band coordinate is given. \\
+dec & double & degrees & J2000 Declination. See comments above. \\
+sourceID & string &  & Unique identification number of the detection. Identical to rDetectionID if the source was detected in the r-band; identical to iDetectionID or haDetectionID otherwise. \\
+posErr & float & arcsec & Astrometric fit error (RMS). Be aware that the error might be significantly larger than the RMS near CCD edges. \\
+l & double & degrees & Galactic longitude $\ell$ converted from ra/dec (IAU 1958 system). \\
+b & double & degrees & Galactic latitude $b$ converted from ra/dec (IAU 1958 system). \\
+mergedClass & short &  & Image classification flag based on all bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). Computed using the UKIDSS scheme. \\
+mergedClassStat & float &  & Merged N(0,1) stellarness-of-profile statistic. Computed using the UKIDSS scheme. \\
+pStar & float &  & Probability that the source is a star (value between 0 and 1). \\
+pGalaxy & float &  & Probability that the source is a galaxy (value between 0 and 1). \\
+pNoise & float &  & Probability that the source is noise (value between 0 and 1). \\
+pSaturated & float &  & Probability that the source is saturated (value between 0 and 1). \\
+rmi & float & mag & ($r$ - $i$) colour, formed by subtracting columns r and i. Included in the catalogue for convenience only. To obtain the uncertainty, take the root of the sum of the squares of columns rErr and iErr. \\
+rmha & float & mag & ($r$ - H$\alpha$) colour, formed by subtracting columns r and ha. See comments above. \\
+r & float & mag & Default r-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system. \\
+rErr & float & mag & Uncertainty for r. Does not include systematic errors. \\
+rPeakMag & float & mag & Alternative r-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system. \\
+rPeakMagErr & float & mag & Uncertainty in rPeakMag. Does not include systematics. \\
+rAperMag1 & float & mag & Alternative r-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system. \\
+rAperMag1err & float & mag & Uncertainty in rAperMag1. Does not include systematics. \\
+rAperMag3 & float & mag & Alternative r-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system. \\
+rAperMag3err & float & mag & Uncertainty in rAperMag3. Does not include systematics. \\
+rGauSig & float & pixels & RMS of axes of ellipse fit in r. \\
+rEll & float &  & Ellipticity in the r-band. \\
+rPA & float & degrees & Position angle in the r-band. \\
+rClass & short &  & Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). \\
+rClassStat & float &  & N(0,1) stellarness-of-profile statistic. \\
+rErrBits & short &  & Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8). \\
+rMJD & double & days & Modified Julian Date at the start of the r-band exposure. \\
+rSeeing & float & arcsec & Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame. \\
+rDetectionID & string &  & Unique identifier of the r-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
+rX & float & pixels & Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD. \\
+rY & float & pixels & Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD. \\
+i & float & mag & Default i-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system. \\
+iErr & float & mag & Uncertainty for i. Does not include systematic errors. \\
+iPeakMag & float & mag & Alternative i-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system. \\
+iPeakMagErr & float & mag & Uncertainty in iPeakMag. Does not include systematics. \\
+iAperMag1 & float & mag & Alternative i-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system. \\
+iAperMag1err & float & mag & Uncertainty in iAperMag1. Does not include systematics. \\
+iAperMag3 & float & mag & Alternative i-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system. \\
+iAperMag3err & float & mag & Uncertainty in iAperMag3. Does not include systematics. \\
+iGauSig & float & pixels & RMS of axes of ellipse fit. \\
+iEll & float &  & Ellipticity. \\
+iPA & float & degrees & Position angle. \\
+iClass & short &  & Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). \\
+iClassStat & float &  & N(0,1) stellarness-of-profile statistic. \\
+iErrBits & short &  & Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8). \\
+iMJD & double & days & Modified Julian Date at the start of the single-band exposure. \\
+iSeeing & float & arcsec & Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame. \\
+iDetectionID & string &  & Unique identifier of the r-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
+iX & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
+iY & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
+iXi & float & arcsec & Position offset of the i-band detection relative to the ra column. The original i-band coordinates can be obtained by computing (ra+iXi/3600, dec+iEta/3600). \\
+iEta & float & arcsec & Position offset of the i-band detection relative to the dec column. See comments above. \\
+ha & float & mag & Default H-alpha magnitude using a 2.3 arcsec aperture. Calibrated in the Vega system. \\
+haErr & float & mag & Uncertainty for ha. Does not include systematic errors. \\
+haPeakMag & float & mag & Alternative H-alpha magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system. \\
+haPeakMagErr & float & mag & Uncertainty in haPeakMag. Does not include systematics. \\
+haAperMag1 & float & mag & Alternative H-alpha magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system. \\
+haAperMag1err & float & mag & Uncertainty in haAperMag1. Does not include systematics. \\
+haAperMag3 & float & mag & Alternative H-alpha magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system. \\
+haAperMag3err & float & mag & Uncertainty in haAperMag3. Does not include systematics. \\
+haGauSig & float & pixels & RMS of axes of ellipse fit. \\
+haEll & float &  & Ellipticity \\
+haPA & float & degrees & Position angle. \\
+haClass & short &  & Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). \\
+haClassStat & float &  & N(0,1) stellarness-of-profile statistic. \\
+haErrBits & short &  & Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8). \\
+haMJD & double & days & Modified Julian Date at the start of the single-band exposure. \\
+haSeeing & float & arcsec & Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame. \\
+haDetectionID & string &  & Unique identifier of the r-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
+haX & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
+haY & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
+haXi & float & arcsec & Position offset of the H-alpha detection relative to the ra column. The original Ha-band coordinates can be obtained by computing (ra+haXi/3600, dec+haEta/3600). \\
+haEta & float & arcsec & Position offset of the H-alpha relative to the ra column. See comments above. \\
+brightNeighb & boolean &  & True if a very bright star is nearby (i.e. errBits $\geq$ 1). This indicates that the source might be spurious, or the photometry unreliable. \\
+deblend & boolean &  & True if the source was blended with a nearby neighbour due to crowding (i.e. errBits $\geq$ 2). Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (e.g. colours should not be trusted). \\
+saturated & boolean &  & True if the source is saturated (i.e. peak pixel $>$ 55000 counts) in one or more bands (i.e. errBits $\geq$ 8). The photometry of saturated stars is affected by systematic errors. \\
+errBits & short &  & Maximum value of (rErrBits, iErrBits, haErrBits). \\
+nBands & short &  & Number of bands in which the source is detected (equals 1, 2 or 3). \\
+reliable & boolean &  & True if: errBits\,$\leq$\,2 \& nBands\,==\,3 \& r\,$>$\,13 \& i\,$>$\,12 \& ha\,$>$\,12.5 \& rErr\,$<$\,0.1 \& iErr\,$<$\,0.1 \& haErr\,$<$\,0.1 \& (abs(r-rAperMag1)\,$<$\,3*hypot(rErr,rAperMag1Err)+0.03) \& (abs(i-iAperMag1)\,$<$\,3*hypot(iErr,iAperMag1Err)+0.03) \& (abs(ha-haAperMag1)\,$<$\,3*hypot(haErr,haAperMag1Err)+0.03). \\
+veryReliable & boolean &  & True if: reliable \& pStar\,$>$\,0.9 \& errBits\,=\,0. \\
+fieldID & string &  & Human-readable IPHAS field number and observing run (e.g. 0001o\_aug2003). \\
+fieldGrade & string &  & Internal quality control score of the field. One of A, B, C or D. \\
+night & integer &  & Night of the observation (YYYYMMDD). Refers to the UT date at the start of the night. \\
+seeing & float & arcsec & Maximum value of (rSeeing, iSeeing, haSeeing). \\
+ccd & short &  & CCD-chip number on the Wide Field Camera (WFC) of the Isaac Newton Telescope (INT). 1, 2, 3 or 4. \\
+nObs & short &  & Number of repeat observations of this source in the survey. \\
+sourceID2 & string &  & SourceID of the object in the partner exposure (if obtained within 10 minutes of the primary detection). \\
+fieldID2 & string &  & FieldID of the partner detection (e.g. 0001o\_aug2003). \\
+r2 & float & mag & r-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available). \\
+rErr2 & float & mag & Uncertainty for r2. \\
+i2 & float & mag & i-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available). \\
+iErr2 & float & mag & Uncertainty for i2. \\
+ha2 & float & mag & H-alpha magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available). \\
+haErr2 & float & mag & Uncertainty for ha2. \\
+errBits2 & integer &  & Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768). \\

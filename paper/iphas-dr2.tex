@@ -7,6 +7,8 @@
 \usepackage{booktabs}
 \usepackage{aas_macros}
 
+\graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
+
 \def\ha{\mbox{H$\rm \alpha$}}
 \def\arcsec{$''$}
 \def\arcmin{$'$}
@@ -18,19 +20,28 @@ of the INT Photometric H$\alpha$ Survey
 of the Northern Galactic Plane (IPHAS DR2)}
 		
 \author[G. Barentsen
-et. al]{G. Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
-H. J. Farnhill$^{1}$,
-J. E. Drew$^{1}$,
-M. J. Irwin$^{4}$, \newauthor
-E. A. Gonz$\acute{\rm{a}}$lez-Solares$^{4}$,
-R. Greimel$^{2}$,
-B. Mizalski$^{3}$,
-C. Ruhland$^{1}$, \newauthor plus many friends.
+et. al]{Geert Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
+H. J. Farnhill$^1$,
+J. E. Drew$^1$,
+E. A. Gonz$\acute{\rm{a}}$lez-Solares$^2$, \newauthor
+M. J. Irwin$^2$,
+S. E. Sale$^3$,
+R. Greimel$^4$,
+P. Groot$^5$,
+J. Lewis$^2$,
+A. Mampaso$^6$, \newauthor
+B. Mizalski$^{99}$,
+C. Ruhland$^1$,
+plus many contributors.
 \newauthor\\
-$^{1}$Centre for Astrophysics Research, STRI, University of Hertfordshire, College Lane Campus, Hatfield AL10 9AB\\
-$^{2}$Institute for Geophysics, Astrophysics and Meteorology, Institute of Physics, Karl-Franzens-Universit$\ddot{a}$t Graz, Universit$\ddot{a}$tsplatz 5, 8010 Graz, Austria\\
-$^{3}$Building, Institute, Street Address, City, Code, Country\\
-$^{4}$Institute of Astronomy, Madingley Road, Cambridge CB3 0HA}
+$^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
+$^{2}$Institute of Astronomy, Cambridge University, Madingley Road, Cambridge, CB3 OHA, U.K.\\
+$^{3}$Rudolf Peierls Centre for Theoretical Physics, Keble Road, Oxford, OX1 3NP, U.K.\\
+$^{4}$IGAM, Institute of Physics, University of Graz, Universit\"atsplatz 5, Graz, Austria.\\
+$^{5}$Afdeling Sterrenkunde, Radboud Universiteit Nijmegen, Faculteit NWI, Postbus 9010, 6500 GL Nijmegen, The Netherlands.\\
+$^{6}$Instituto de Astrof\'isica de Canarias, 38200 La Laguna, Tenerife, Spain.\\
+$^{99}$Please add your current affiliation.\\
+}
 
 \begin{document}
 \date{Current draft typeset \today}
@@ -43,14 +54,14 @@ $^{4}$Institute of Astronomy, Madingley Road, Cambridge CB3 0HA}
 \begin{abstract} % BACKGROUND, OBJECTIVE, METHODS, RESULTS, CONCLUSIONS
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
-is a 1800 deg$^2$ imaging survey
+is a 1800 square degrees imaging survey
 covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-meter Isaac Newton Telescope (INT).
 This data release presents the first 
 uniformly-calibrated source catalogue
-to have been extracted from the survey,
+to have been extracted from the images,
 providing single-epoch photometry
 for 219 million unique sources
 across 92\% of the survey.
@@ -63,19 +74,20 @@ and quality control procedures,
 describe and test the new uniform photometric calibration,
 and detail the construction of the source catalogue
 and its quality warning flags.
-We find that the new calibration is accurate to
-$\sigma=0.03$ mag.
+We find that the new calibration
+and the photometric repeatability are accurate to
+$\sigma=0.03$~mag.
 Finally, we demonstrate the ability of the 
 catalogue's unique
 $r$-$i$/$r$-\ha\ colour-colour diagram to
 (i) characterise stellar populations and extinction regimes
 towards different Galactic sightlines
-and (ii) select reliable candidate \ha-emission line objects.
+and (ii) select candidate \ha-emission line objects.
 The catalogue which accompanies this paper
 provides the much-needed visible-light counterpart
 to several infrared surveys of the Galactic Plane,
-including many poorly-studied star-forming regions and ``bubbles'',
-and provides images for some of the most
+including many poorly-studied star-forming regions and ``bubbles''.
+It also provides images for some of the most
 crowded regions to be faced by Gaia.
 \end{abstract}
 
@@ -1446,7 +1458,7 @@ will introduce a proportionally larger systematic error
 in a faint object.
 Most scientific applications will require a set of
 quality criteria to be enforced for the purpose
-of removing faint and low-quality objects.
+of removing such faint and low-quality objects.
 
 The choice of quality criteria is often a complicated
 trade-off between completeness on one hand
@@ -1630,19 +1642,19 @@ may be adapted to be more tolerant.
 For example, by raising the allowed photometric uncertainties
 from 0.1 mag to 0.2 mag one can retrieve 42 million candidate sources.
 
-\subsection{Photometric uncertainties}
+\subsection{Photometric uncertainties and repeatability}
 
 Figure~\ref{fig:uncertainties} shows the mean photometric
-uncertainties as a function of magnitude for each band.
-We find that the uncertainties typically
-reach 0.1 mag near 20.5 in $r$ 
+uncertainty as a function of magnitude for each band.
+We find that the uncertainty typically
+reaches 0.1 mag near 20.5 in $r$ 
 and 19.5 in $i$/\ha when the default 2.3\arcsec\ aperture is used.
 At this point we note that the average colour
-of objects in the survey is
+across all sources in the catalogue is
 $1.06\pm0.12$ for ($r$-$i$) and $0.44\pm0.03$ for ($r$-\ha).
 The better depth of $r$ is hence compensated
 by the fact that stars tend to have 
-brighter magnitudes in $i$ and \ha.
+brighter magnitudes in both $i$ and \ha.
 
 \begin{figure}
     \includegraphics[width=0.5\textwidth]{./plots/errors/uncertainties.pdf} 
@@ -1690,29 +1702,36 @@ the effects of source blending and background subtraction
 appear to dominate from $\sim$20th magnitude onwards.
 
 \begin{figure*}
-    \vspace{1cm}
-    \includegraphics[width=0.5\textwidth]{./plots/pairmag/pairmag.pdf} 
-    \caption{Photometric repeatability illustrated by plotting
-             the mean residuals between all the primary and secondary detections
-             in the catalogue as a function of magnitude.
-             The best photometric repeatability is reached at $r=14$
-             with $\sigma_{r-r2}~=~0.041$~mag.
-             Note that bright stars at $r<13$ and $i<12$ 
-             show increasing uncertainties due to saturation effects.}
-    \label{fig:pairmag}
-    \vspace{1cm}
-    \includegraphics[width=0.5\textwidth]{./plots/pairmag/pairmag-reliable.pdf} 
-    \caption{Same as Figure~\ref{fig:pairmag},
-    except that only the subset of sources
-    flagged as \emph{veryReliable} are now included.
-    We find that applying the quality criteria
-    has improved the photometric repeatability significantly.
-    The best repeatability is again reached at $r=14$
-    but has reduced to $\sigma=0.028$ mag.
-    The quality criteria have also been successful
-    at removing objects with large systematics at the bright
-    and faint ends.}
-    \label{fig:pairmag_reliable}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{./plots/pairmag/pairmag.pdf}
+\label{fig:pairmag}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{./plots/pairmag/pairmag-reliable.pdf}
+\label{fig:pairmag_reliable}
+\end{minipage}
+\caption{Photometric repeatability as a function of magnitude
+         for both all sources in the catalogue (left panel)
+         and for the \emph{veryReliable} sources alone (right panel).
+         The values shown are the mean residuals
+         between the primary and the secondary detections,
+         while the errorbars show the standard deviations.
+         Left panel: 
+         the best photometric repeatability is reached at $r=14$
+         with $\sigma_{r-r2}~=~0.041$~mag.
+         Bright stars at $r<13$ and $i<12$ 
+         show increasing uncertainties due to saturation effects.
+         Right panel: we find that applying the quality criteria
+         has improved the photometric repeatability significantly.
+         The best repeatability is again reached at $r=14$
+         but has reduced to $\sigma=0.028$ mag.
+         The quality criteria have also been successful
+         at removing objects with large systematics at the bright
+         and faint ends.
+    }
 \end{figure*}
 
 In Figure~\ref{fig:pairmag_reliable} we show 
@@ -1732,14 +1751,14 @@ global photometric calibration (cf. \S\ref{sec:calibration}).
 Moreover, the large systematics at the bright and faint end
 have disappeared.
 
-\subsection{Source densities and blending problems}
+\subsection{Source densities and blending}
 \label{sec:densities}
 
 The mean source density as a function of Galactic longitude
 is shown in Figure~\ref{fig:density} (thick blue line).
 The densities were computed by counting the 
-number of sources in $1^\circ$-wide longitude bins
-across which covered the entire latitude range $-5^\circ<b<+5^\circ$.
+number of sources in $1^\circ$-wide longitude bins,
+each covering the entire latitude range $-5^\circ<b<+5^\circ$.
 Unsurprisingly, we find the average source densities to increase
 towards the Galactic centre.
 For example, the average source density near $l\simeq 30^\circ$
@@ -1748,13 +1767,14 @@ which is five times more than the density
 found near $l\simeq 180^\circ$.
 
 In addition to the global trend, 
-there are significant variations in the source density on smaller scales.
+there are significant variations
+in the source density on smaller scales.
 For example,  we find a significant drop near the constellations 
 of Cygnus ($l\simeq 80$) and Aquila ($l\simeq 40$),
 which are regions known to be affected
 by high levels of foreground extinction.
-Dark clouds are visible towards these constellation by eye,
-and they are often referred to as ``the Great Rift''.
+In fact dark clouds are visible towards these constellation by eye,
+and they have often been referred to as ``the Great Rift''.
 
 We warn however that the densities reported here 
 have not been corrected for survey completeness
@@ -1766,10 +1786,9 @@ In a forthcoming paper,
 we aim to calibrate the IPHAS-based source densities
 by injecting artificial stars into the IPHAS images
 and measuring their recovery rate (Farnhill et al., in preparation).
-Indeed IPHAS has the potential to offer
+IPHAS has the potential to offer
 calibrated, two-dimensional stellar density maps
-which can be used to constrain detailed models of our Galaxy,
-but it is beyond the scope of the present work.
+which can be used to constrain detailed models of our Galaxy.
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{./plots/density/density.pdf} 
@@ -1792,21 +1811,20 @@ These are sources for which the \emph{deblend} flag is {\sc false},
 i.e. sources for which the CASU pipeline did not have to apply 
 a deblending procedure to separate the flux
 originating from two or more overlapping objects.
-We find a strong correlation between the source density
-and the fraction of sources affected by source blending.
-For example, only NN\% of the sources are blended
-at $l>90^\circ$, whereas NN\% are blended at $l<90^\circ$.
+We find that the fraction of sources affected by blending problems
+is strongly correlated with the local source density.
+For example, only 11\% of the sources are blended
+at $l>90^\circ$, whereas 24\% are blended at $l<90^\circ$.
 
 As we explained earlier, blended sources must be used with caution.
-Firstly, the deblending-procedure crucially depends
-on the local PSF being measured accurately. 
-Secondly, blended sources may are likely candidates to have fallen victim
+In particular, we warn that blended sources
+are likely candidates to have fallen victim
 to source confusion during the band-merging procedure.
 In future work we hope to investigate the use of
 more advanced PSF-fitting routines
 in which sources are measured simultaneously across all bands,
-perhaps guided by an external list of sources provided
-by near-infrared surveys or Gaia data.
+perhaps guided by an external catalogue such as the one
+that is to be provided by Gaia.
 
 \section{Demonstration}
 \label{sec:demonstration}
@@ -1825,65 +1843,130 @@ has been shown to provide simultaneous constraints
 on intrinsic stellar colour and interstellar extinction \citep{Drew2008}. 
 That is, the main sequence in the $r$-$i$/$r$-\ha\ diagram
 runs in a direction that is different from the reddening vector,
-because the $r$-\ha\ colour tends to act as a coarse proxy for spectral type
+because the $r$-\ha\ colour tends to act
+as a coarse proxy for spectral type
 and is less sensitive to reddening than $r$-$i$.
 As a result, the distribution of a stellar population
 in the IPHAS colour-colour diagram
 can offer a handle on the properties and extinction regime
 along a line of sight.
 
-This is demonstrated in Figures \ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
+This is demonstrated 
+in Figures \ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
 where we present three sets of IPHAS colour/magnitude diagrams
 towards three distinct sightlines
-located at Galactic longitudes $180^\circ$, $45^\circ$ and $30^\circ$,
-respectively.
-Each figure contains all the sources which are flagged as \emph{veryReliable}
+located at Galactic longitudes 
+$180^\circ$, $45^\circ$ and $30^\circ$, respectively.
+Each figure contains all the sources
+which are flagged as \emph{veryReliable}
 and are located in a region of one square degree 
 centred on the coordinates indicated in the diagram
 (i.e. within a radius of $0.564^\circ$ from the indicated sightline).
 For clarity, we have imposed the additional criterion
-for photometric uncertainties to be smaller than 0.05 mag in each band
-(corresponding to a magnitude limit near $\sim$19th magnitude, effectively).
+that the photometric uncertainties
+must be smaller than 0.05 mag in each band
+(corresponding to a magnitude limit near $\sim$19th magnitude).
 
 Each of the diagrams reveals a well-defined locus,
 which demonstrates the health of the catalogue and the global calibration
 for investigating stellar populations across wide areas.
 We have annotated the colour-colour diagrams
-by showing the position of the unreddened main sequence (thin solid line),
-the unreddened giant branch (thick solid line)
+by showing the position 
+of the unreddened main sequence (thin solid line),
+the unreddened giant branch (thick solid line),
 and the reddening track for an A0V-type star (dashed line)
--- all three are based on the \cite{Pickles1998} library of empirical spectra
-tabulated for IPHAS by \cite{Drew2005}.
+-- all three are based on the \cite{Pickles1998} library 
+of empirical spectra
+transformed into the Vega-based IPHAS system by \cite{Drew2005}.
 In the colour-magnitude diagrams we only show the reddening vector
 together with the unreddened 1~Gyr isochrone due to \cite{Bressan2012},
-which are made available for the IPHAS filter system through a
-popular on line tool hosted by the Observatory of Padova (http://stev.oapd.inaf.it/cmd).
-The isochrone and reddening vector has been placed
+which is made available for the IPHAS system through a
+popular on line tool hosted at the Observatory of Padova
+(http://stev.oapd.inaf.it/cmd).
+The isochrone and reddening vector have been placed
 at an arbitrary distance of 2~kpc.
 
-Each of the sightlines reveals a stellar population
+Each of the sightlines reveal a stellar population
 with distinct characteristics.
-Firstly, towards the Galactic anti-centre at $l=180^\circ$ (Fig.~\ref{fig:l180}) 
-we find a population dominated by lowly-reddened 
-main sequence stars and an apparent absence of reddened giants.
-%consistent with the sightline extinction of XX from Schlegel (cite). 
-In contrast, closer towards the galactic
-centre at $l=45^\circ$ (Fig.~\ref{fig:l45})
-we find a wealth of reddened objects
-which appear to be separated into a lowly
-and a highly reddened component,
-perhaps revealing two distinct parts of the Galaxy.
-Finally, in one of our earliest sightlines at $l=30^\circ$
+Firstly, towards the Galactic anti-centre 
+at $l=180^\circ$ (Fig.~\ref{fig:l180})
+we find a population dominated by lowly-reddened main sequence stars.
+This is consistent with the estimated total sightline extinction 
+of $E(B-V)=0.49$ given by \cite{Schlegel1998},
+following the correction of \cite{Schlafly2011}.
+Looking in more detail we can see
+that the stellar locus is narrower for M-type dwarfs
+than for earlier types;
+we do not observe M dwarfs experiencing 
+the strongest reddening possible for this sightline.
+This implies that extinction is still increasing 
+at distances beyond $\sim$1-2~kpc,
+where M dwarfs are too faint to be contained in the IPHAS catalogue.
+It is also clear that there are no unreddened stars
+earlier than $\sim$K0 visible,
+such stars would be saturated if within a few hundred parsecs.
+This therefore suggests 
+that there is a measurable increase in extinction locally.
+We also note a relative absence of late type giants which,
+due to the relative brevity 
+of the corresponding phase of stellar evolution,
+would only account for a small proportion of a volume limited sample.
+ 
+In contrast, 
+closer towards the galactic centre
+at $l=45^{\circ}$ (Fig.~\ref{fig:l45})
+we find a wealth of reddened objects.
+In the colour-magnitude diagram it is clear
+that the stars are split into two distinct groups,
+with one significantly redder than the other.
+The bluer group is composed of main sequence stars,
+with the slope of this group in the colour-magnitude diagram
+attributable to the significantly increasing extinction.
+Meanwhile the redder group is principally composed of red giant stars.
+As these stars are intrinsically brighter,
+at some given apparent magnitude they will be substantially further away
+than their main sequence counterparts.
+Given that, along this sight-line,
+extinction continues to increase with distance,
+the red giants we observe will be subject to more reddening
+than a main sequence star exhibiting the same apparent magnitude.
+Therefore, the clear split between the two groups arises
+due to the combination of increasing extinction
+and the distinct absolute magnitude ranges
+of main sequence and giant branch stars.
+
+Finally, in one of our earliest sightlines at $l=30^{\circ}$
 we find a very high number of extremely reddened giants
 in addition to an unreddened population
 of foreground dwarfs.
+In contrast to the sightline at $l=45^{\circ}$,
+there is no clear group of giant stars visible
+in the colour-magnitude diagram of Fig.~\ref{fig:l30},
+though the red clump stars are manifested as a slight over density
+which sits roughly 0.4~mags redder than the A0V reddening track.
+At $(l,b)=(45^{\circ}, 2^{\circ})$ the giant stars observed
+exhibit a relatively narrow range of reddenings
+as they lie beyond most or essentially all of the Galactic dust.
+At $(l,b)=(30^{\circ}, 0^{\circ})$ this is not the case:
+even at the substantial distances
+at which we can observe reddened giant stars,
+extinction is continuing to rise
+and we still find ourselves well within the Galactic dust disc.
+It is also apparent that the $(r-i)$ width of both the M dwarfs
+and early A dwarfs is greater than that in Fig.~\ref{fig:l45}.
+This is indicative of a steeper rise in reddening,
+both within several hundred parsecs (M dwarfs)
+and within a few kpc (early A dwarfs).
 
-The number density of stars in the colour-colour
-and colour-magnitude space
-can be compared against population synthesis models
-to create three-dimensional maps of the extinction
-across several kpc \citep{Sale2010,Sale2012}.
-Such an extinction map based on our catalogue
+Here we have presented only a short qualitative description
+of the information obtainable
+from IPHAS colour-colour and colour-magnitude plots.
+A more rigorous quantitative analysis of the IPHAS catalogue
+can be undertaken to estimate both
+the stellar density distribution in the Milky Way \citep{Sale2010}
+and to create detailed three-dimensional maps
+of the extinction across several kpc \citep{Sale2009,Sale2012}.
+An extinction map based on our catalogue
 is to be released in a separate paper
 that accompanies this data release (Sale et al., in preparation).
 
@@ -1892,23 +1975,31 @@ that accompanies this data release (Sale et al., in preparation).
         \includegraphics[width=0.5\textwidth]{./plots/ccd-180-3.pdf} 
         \includegraphics[width=0.5\textwidth]{./plots/cmd-180-3.pdf}
     \end{minipage}
-    \caption{Colour-colour and colour-magnitude diagram (left and right panel)
+    \caption{Colour-colour and colour-magnitude diagrams
+    (left and right panel)
     showing sources flagged as \emph{veryReliable}
     located in an area of one square degree
     centred near the Galactic anti-centre 
     at $(l,b)=(180^\circ,+3^\circ)$.
-    The colour-colour diagram shows the
-    position of the main sequence (thin solid line),
+    The diagrams are plotted as 2D-histograms
+    which show the density of objects
+    in bins of $\sim0.01\times0.01$~mag;
+    bins containing 1-10 objects are coloured red,
+    bins with 10-20 objects are orange,
+    and bins with 20-25 objects are yellow.
+    The left panel is annotated with
+    the position of the main sequence (thin solid line),
     giant stars (thick solid line)
-    and the reddening track for an A0V-type star (dashed line)
-    based on the \citet{Pickles1998} library of empirical spectra.
-    The colour-magnitude only show the reddening vector
+    and the reddening track for an A0V-type star (dashed line),
+    which are based on the \citet{Pickles1998} library
+    of observed spectra.
+    The right panel only shows the reddening vector
     along with the unreddened 1~Gyr isochrone due to \citet{Bressan2012},
-    which has been placed at an arbitrary distance of 2~kpc for reference.
+    which has been placed at an arbitrary distance of 2~kpc.
     This is one of the least reddened sightlines
-    in the survey %(Av XX, Schlegel et al. XXXX)
+    in the survey
     and hence the observed stellar population appears to be dominated 
-    by lowly reddened main sequence stars.}
+    by lowly reddened main sequence stars (see text).}
     \label{fig:l180}
     \begin{minipage}[b]{\linewidth}
         \includegraphics[width=0.5\textwidth]{./plots/ccd-45-2.pdf}
@@ -1916,16 +2007,14 @@ that accompanies this data release (Sale et al., in preparation).
     \end{minipage}
     \caption{Same as above for $(l,b)=(45^\circ,+2^\circ)$,
     which is one of the highest-density sightlines in the survey,
-    revealing a population of stars with a reddening distribution
-    that appears to be bi-model.}
+    revealing two groups of stars in colour-magnitude space.}
     \label{fig:l45}
     \begin{minipage}[b]{\linewidth}
         \includegraphics[width=0.5\textwidth]{./plots/ccd-30-0.pdf}
         \includegraphics[width=0.5\textwidth]{./plots/cmd-30-0.pdf} 
     \end{minipage}
-    \caption{Same as above for $(l,b)=(30^\circ,0^\circ)$.
-    This is one of the most reddened sightlines in the survey.
-    %(XXX, Schlegel et al XXXX).
+    \caption{Same as above for $(l,b)=(30^\circ,0^\circ)$,
+    showing one of the most reddened sightlines in the survey.
     }
     \label{fig:l30}
 \end{figure*}
@@ -2188,7 +2277,8 @@ APLpy, NumPy and SciPy,
 the PostgreSQL database software,
 the TOPCAT and STILTS packages \citep{Taylor2005,Taylor2006},
 and the Montage software maintained by NASA/IPAC.
-We also made use of the SIMBAD, Vizier and Aladin \citep{Aladin} tools operated at CDS, Strasbourg, France.
+We also made use of the SIMBAD, Vizier and Aladin \citep{Aladin}
+operated at CDS, Strasbourg, France.
 
 This research made extensive use of
 several complementary photometric surveys.
@@ -2197,7 +2287,13 @@ by the AAVSO Photometric All-Sky Survey (APASS),
 funded by the Robert Martin Ayers Sciences Fund.
 The calibration was tested against the
 Sloan Digitized Sky Survey (SDSS),
-funded by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, the Max Planck Society, and the Higher Education Funding Council for England.
+funded by the Alfred P. Sloan Foundation,
+the Participating Institutions,
+the National Science Foundation,
+the U.S. Department of Energy,
+the National Aeronautics and Space Administration,
+the Japanese Monbukagakusho, the Max Planck Society,
+and the Higher Education Funding Council for England.
 The astrometric pipeline reduction made
 significant use of the Two Micron All Sky Survey (2MASS),
 which is a joint project 
@@ -2212,14 +2308,41 @@ of the UK (STFC, ref ST/J001335/1).
 HJF is in receipt of an STFC postgraduate studentship.
 
 \bibliographystyle{mn2e}
-\bibliography{dr2}
+\bibliography{iphas-dr2}
 
 \appendix
-\input{app_columns.tex}
+\onecolumn
+\section{Catalogue format}
+\label{app:columns}
+
+\small
+\begin{longtable}{lllp{10cm}}
+\caption{\label{tab:columns} 
+Definition of columns in the IPHAS DR2 source catalogue.
+} \\
+\hline
+Column & Type & Unit & Description \\
+\hline
+\endfirsthead
+
+\multicolumn{3}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued}} \\
+\hline
+Column & Type & Unit & Description \\
+\hline
+\endhead
+
+\hline \hline
+\endlastfoot
+\input{tables/columns.tex}
+\end{longtable}
+\normalsize
+\twocolumn
+
 
 \section{Candidate emission-line objects towards Sh 2-82}
 \label{app:emitters}
-\begin{table*}
+\begin{table}
     \begin{tabular}{lccc}
     \toprule
     Name & $r$ & $i$ & \ha  \\
@@ -2234,7 +2357,7 @@ IPHAS2 J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
     \end{tabular}
     \caption{Candidate \ha-emitters towards Sh 2-82.}
     \label{tbl:emitters}
-\end{table*}
+\end{table}
 
 \label{lastpage}
 
