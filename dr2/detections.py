@@ -13,9 +13,9 @@ coordinates into celestial coordinates, and adding user-friendly warning flags
 to signal quality problems.) Whilst doing so, the script will corrects for a
 range of known issues present in the data, e.g. it will apply a custom fix
 to the World Coordinate System (WCS) where necessary.
-This module can also produce a table called 'runs.csv' which details the
-metadata of an entire directory of CASU detection tables, which is useful to
-carry out quality control.
+This module can also produce a table called 'metadata.fits' which details the
+metadata of an entire directory of CASU detection tables, which is useful for
+carrying out quality control.
 
 Usage
 -----
@@ -40,15 +40,15 @@ During the creation of IPHAS DR2, we encountered the following issues
 with the pipeline-processed data set from CASU:
 
  * In very crowded fields, the astrometric solution can be off by more than
-   0.5 arcsec towards the edges of a CCD. The problem is rare and has been
-   resolved ad-hoc using the code under scripts/tune-wcs (which details the
-   runs that have been fixed.) For a future data release, it might be worth
-   refining the astrometry on a systematic basis.
+   0.5 arcsec towards the edges of the CCDs. The problem is rare and has been
+   resolved ad-hoc using the code under ``scripts/tune-wcs``.
+   Prior to a future data release, it may be worth refining the astrometry
+   across the data set.
  * The WCS standards have evolved over the years, and the WCS in some of the
-   older data can still be inconsistent with modern conventions.
-   The ``fix_wcs()`` function in the ``dr2.detections`` must be used to fix
-   faulty WCS keywords in the data set.
- * Spurious sources frequently appear in the vignetted corners of CCDs 3 and 1,
+   older data is inconsistent with modern conventions. The function
+   ``fix_wcs()`` in this module must be used before converting pixel to world
+   coordinates.
+ * Spurious sources frequently appear in the vignetted corners of CCDs 1 and 3,
    and in general near CCD edges. It is very important to mask these out during
    catalogue generation.
  * Data from December 2003 are affected by unusual bad columns appearing in
@@ -56,7 +56,7 @@ with the pipeline-processed data set from CASU:
    confidence map. A significant number of spurious detections were found
    near these columns. Detections made near these columns in said month are
    currently flagged as containing bad pixels by the ``column_badPix()``
-   method in this module, which is a bit of a hack really.
+   method in this module, which is a bit of a hack.
  * The 'badpix' column is missing from the CASU pipeline-produced detection
    tables across the first few months of the survey (i.e. 2003), hence poor
    photometry as a result of bad pixels is ever-so-slightly more likely from
@@ -67,15 +67,16 @@ with the pipeline-processed data set from CASU:
    problem).
  * A very small number of images were found to lack the keywords EXTINCT,
    APCOR, or PERCORR, which are necessary for computing magnitudes. This module
-   will assume default values for these keywords if it is missing, rather than
-   rejecting the data.
+   will assume default values for these keywords if they are missing, rather
+   than rejecting the data.
  * Be aware that the MAGZPT keywords in the FITS headers supplied by the CASU
-   pipeline are not corrected for extinction, apcor, or percorr.
+   pipeline do not include the necessary correction for extinction, apcor,
+   or percorr.
 
 Future improvements
 -------------------
 * This module does not correct for the radial geometric distortions at present,
-  and we pay the price during re-calibration.
+  for which we pay a price during the global re-calibration.
 * It would be nice to look up the confidence value in the confidence map at the
   position of each star, and include it as an extra column in the catalogue.
 
