@@ -12,6 +12,10 @@ More information about the project can be found at www.iphas.org
 Contents
 --------
 - ``pipeline.py``: the script that steers the entire data release creation.
+- ``paper/``: the accompanying paper describing the generated catalogue.
+- ``scripts/``: various helper scripts, including:
+  + ``postgresql/``: script to ingest the DR2 catalogue into a PostgreSQL db.
+  + ``sqlite/``: script to ingest the DR2 catalogue into an SQLite db.
 - ``dr2/``: the Python package that is used by `pipeline.py` to create 
   the data release, in particular the source catalogue.
   It consists of several modules:
@@ -30,8 +34,7 @@ Contents
     into the final source catalogue.
   + ``dr2.images``: creates a release of the pipeline-processed images
     with update headers to reflect the IPHAS DR2 uniform calibration.
-- ``scripts/``: various helper scripts.
-- ``paper/``: the accompanying paper describing the data release.
+
 
 Usage
 -----
