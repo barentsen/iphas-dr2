@@ -1,32 +1,84 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Generates user-friendly single-band IPHAS detection catalogues.
+"""Generates user-friendly single-band IPHAS DR2 detection catalogues.
 
-This script reads in catalogues produces by the 'imcore' image detection tool
-of the Cambridge Astronomical Survey Unit (CASU) pipeline, and transforms
-these catalogues into a more user-friendly format which is known in the
-data release as the 'iphasDetection' table.
-
-The transformation involves converting fluxes to magnitudes, computing
-celestial coordinates and adding flags to indicate quality problems.
-
-The script also checks the header for known errors and fixes the World
-Coordinate System (WCS) where necessary.
-
-This script can also produce a table called 'runs.csv' which
-provides a table of all available IPHAS exposures.
-
-Computing requirements: ~48h CPU (2012 hardware). Low on RAM.
-
-Possible improvements
----------------------
-- look up confidence value for each star in the confidence maps.
+Summary
+-------
+This module is used to transform the detection tables that are produced
+by the ``imcore`` source detection and measurement tool of the Cambridge
+Astronomical Survey Unit (CASU). Its main purpose is to convert the columns
+in the CASU detection tables from instrumental units into more user-friendly
+astronomical units (e.g. converting fluxes into magnitudes, converting pixel
+coordinates into celestial coordinates, and adding user-friendly warning flags
+to signal quality problems.) Whilst doing so, the script will corrects for a
+range of known issues present in the data, e.g. it will apply a custom fix
+to the World Coordinate System (WCS) where necessary.
+This module can also produce a table called 'runs.csv' which details the
+metadata of an entire directory of CASU detection tables, which is useful to
+carry out quality control.
 
 Usage
 -----
-detections.save_metadata()
-detections.sanitise_zeropoints()
-detections.save_detections()
+1. To create a table called 'metadata.fits' which tabulates the header
+   information for the entire set of IPHAS detection tables, run:
+
+    ``detections.save_metadata()``
+
+2. To prepare a list of zeropoints which enforces the fixed offset between
+   the r- and Halpha-band zeropoints:
+
+    ``detections.sanitise_zeropoints()``
+
+3. To convert all CASU-produced detection tables into the user-friendly format
+   following the IPHAS DR2 column conventions, use:
+
+    ``detections.save_detections()``
+
+Caveats and lessons learnt
+--------------------------
+During the creation of IPHAS DR2, we encountered the following issues
+with the pipeline-processed data set from CASU:
+
+ * In very crowded fields, the astrometric solution can be off by more than
+   0.5 arcsec towards the edges of a CCD. The problem is rare and has been
+   resolved ad-hoc using the code under scripts/tune-wcs (which details the
+   runs that have been fixed.) For a future data release, it might be worth
+   refining the astrometry on a systematic basis.
+ * The WCS standards have evolved over the years, and the WCS in some of the
+   older data can still be inconsistent with modern conventions.
+   The ``fix_wcs()`` function in the ``dr2.detections`` must be used to fix
+   faulty WCS keywords in the data set.
+ * Spurious sources frequently appear in the vignetted corners of CCDs 3 and 1,
+   and in general near CCD edges. It is very important to mask these out during
+   catalogue generation.
+ * Data from December 2003 are affected by unusual bad columns appearing in
+   CCD 3 (x=1244-1245) and CCD 4 (x=549), which were not masked out by the
+   confidence map. A significant number of spurious detections were found
+   near these columns. Detections made near these columns in said month are
+   currently flagged as containing bad pixels by the ``column_badPix()``
+   method in this module, which is a bit of a hack really.
+ * The 'badpix' column is missing from the CASU pipeline-produced detection
+   tables across the first few months of the survey (i.e. 2003), hence poor
+   photometry as a result of bad pixels is ever-so-slightly more likely from
+   data in those months.
+ * The bandmerging script relies on the STILTS ``tmatchn multimode=group``
+   feature, which uses a "friends of friends" approach and does not guarantee
+   returning the best possible match in very crowded fields (which is a hard
+   problem).
+ * A very small number of images were found to lack the keywords EXTINCT,
+   APCOR, or PERCORR, which are necessary for computing magnitudes. This module
+   will assume default values for these keywords if it is missing, rather than
+   rejecting the data.
+ * Be aware that the MAGZPT keywords in the FITS headers supplied by the CASU
+   pipeline are not corrected for extinction, apcor, or percorr.
+
+Future improvements
+-------------------
+* This module does not correct for the radial geometric distortions at present,
+  and we pay the price during re-calibration.
+* It would be nice to look up the confidence value in the confidence map at the
+  position of each star, and include it as an extra column in the catalogue.
+
 """
 from astropy.io import fits
 from astropy.io import ascii
@@ -45,8 +97,7 @@ import util
 __author__ = 'Geert Barentsen'
 __copyright__ = 'Copyright, The Authors'
 __credits__ = ['Geert Barentsen', 'Hywel Farnhill',
-               'Janet Drew', 'Robert Greimel',
-               'Cambridge Astronomical Surveys Unit']
+               'Janet Drew', 'Robert Greimel']
 
 
 ################################
@@ -68,7 +119,8 @@ BRIGHT_VMAG = BSC['Vmag']
 EXTS = [1, 2, 3, 4]  # Corresponds to INT/WFC CCD1, CCD2, CCD3, CCD4
 
 # Table containing slight updates to WCS astrometric parameters
-WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR, 'wcs-tuning', 'wcs-fixes.csv')
+WCSFIXES_PATH = os.path.join(constants.PACKAGEDIR,
+                             'wcs-tuning', 'wcs-fixes.csv')
 WCSFIXES = ascii.read(WCSFIXES_PATH)
 
 # Table detailing the pre-calibration zeropoints;
@@ -105,7 +157,7 @@ class CatalogueException(Exception):
 class DetectionCatalogue():
     """
     Reads in a detection catalogue in the format produced by the Cambridge
-    Astronomical Survey Unit's (CASU) imcore tool, and transforms it into a 
+    Astronomical Survey Unit's (CASU) imcore tool, and transforms it into a
     UKIDSS-style catalogues with user-friendly columns.
 
     Parameters
@@ -1161,7 +1213,6 @@ def save_metadata(clusterview,
     t.write(target, format='fits', overwrite=True)
 
 
-
 def sanitise_zeropoints():
     """Writes a CSV file containing zeropoint overrides.
 
@@ -1226,20 +1277,15 @@ def convert_catalogues(clusterview, data=constants.RAWDATADIR):
     result = clusterview.map(convert_one, catalogues, block=True)
     return result
 
+
 ###################
 # MAIN EXECUTION
 ###################
 
 if __name__ == '__main__':
-
     log.setLevel('INFO')
-    # Test-cases
+    #Some test-cases:
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-    #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413548_cat.fits')
-    #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431147_cat.fits')
-    #convert_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
-    #print index_one(constants.RAWDATADIR+'/run13/r918607_cat.fits')
     #sanitise_zeropoints()
-    save_metadata()
-
+    #save_metadata()
