@@ -1,15 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Pipeline script to produce IPHAS Data Release 2 using an MPI cluster.
+"""Pipeline script used to produce IPHAS Data Release 2 on a computing cluster.
 
-This script drives the entire pipeline for converting the single-band 
-catalogues produced by the Cambridge Astronomical Surveys Unit (CASU) 
-into a band-merged and homogeneously calibrated source catalogue 
-of unique objects.
+Summary
+-------
+This script drives the entire creation of the IPHAS DR2 source catalogue.
+Its purpose is to convert the IPHAS single-band detection tables, which are
+kindly created by the Cambridge Astronomical Surveys Unit (CASU),
+into a band-merged and globally calibrated source catalogue which lists only
+the best-available measurement for each unique source.
 
-This script relies on the presence of a running computing cluster setup with 
-IPython.parallel (using the "ipcluster" tool); i.e. before running the pipeline,
-execute 'qsub scripts/pipeline-cluster.pbs'.
+Dependencies
+------------
+This script relies on the presence of a running instance of an IPython.parallel
+cluster, which can be started on a local machine using:
+    
+    ``ipcluster start``
+
+or can be started on a PBS-controlled computing cluster by submitting the job:
+
+   ``qsub scripts/pipeline-cluster.pbs``.
 """
 from IPython import parallel
 from astropy import log
@@ -46,10 +56,11 @@ with client[:].sync_imports():
     from dr2 import bandmerging
     from dr2 import seaming
     from dr2 import concatenating
-    #from dr2 import images
+    from dr2 import images
 
-# While in development, reload every module by default
-# This is to make sure that the latest version gets used
+# While in development, reload every module by default,
+# to make sure that the latest version gets used. If the pipeline were ever
+# to be used in production (never), this could be removed. 
 client[:].execute('reload(constants)', block=True)
 client[:].execute('reload(util)', block=True)
 client[:].execute('reload(detections)', block=True)
@@ -58,7 +69,7 @@ client[:].execute('reload(calibration)', block=True)
 client[:].execute('reload(bandmerging)', block=True)
 client[:].execute('reload(seaming)', block=True)
 client[:].execute('reload(concatenating)', block=True)
-#client[:].execute('reload(images)', block=True)
+client[:].execute('reload(images)', block=True)
 
 """
 Pipeline starts here
