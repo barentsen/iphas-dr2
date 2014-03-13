@@ -31,7 +31,32 @@ C. Ruhland$^1$,
 P. Groot$^4$,
 A. Mampaso$^5$, \newauthor
 S. E. Sale$^6$,
-plus many contributors.
+M. J. Barlow,
+R. L. M Corradi,
+J. J. Drake,
+J. Fabregat,
+B. T. Gaensicke,
+A. S. Hales,
+J. Irwin,
+C. Knigge,
+D. J. Lennon,
+J. R. Lewis,
+M. Mohr-Smith,
+R. A. H. Morris,
+T. Naylor,
+Q. A. Parker,
+S. Phillipps,
+R. Raddi,
+P. Rodriguez-Gil,
+L. Sabin,
+D. Steeghs,
+Y. C. Unruh,
+K. Viironen,
+J. S. Vink,
+N. A. Walton,
+N. J. Wright,
+A. A. Zijlstra,
+plus all those we forgot.
 \newauthor\\
 $^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
 $^{2}$Institute of Astronomy, Cambridge University, Madingley Road, Cambridge, CB3 OHA, U.K.\\
@@ -58,22 +83,24 @@ covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-meter Isaac Newton Telescope (INT).
-This data release presents the first 
+It is the first survey to offer comprehensive CCD photometry
+of point sources across the Galactic Plane at visible wavelengths.
+We present the first quality-controlled and
 uniformly-calibrated source catalogue
 to have been extracted from the images,
 providing single-epoch photometry
 for 219 million unique sources
-across 92\% of the survey.
-The observations were carried out between 2003 and 2012
+across 92\% of the survey area.
+The observations were carried out between 2003 and 2013
 at a median seeing of 1.1 arcsec
 to a depth of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$ and \ha$=20.3\pm 0.3$
 ($5\sigma$ limits, Vega system).
 We explain the data reduction 
 and quality control procedures,
-describe and test the new uniform photometric calibration,
+describe and test the new uniform calibration,
 and detail the construction of the source catalogue
 and its quality warning flags.
-We find that the new calibration
+We find that the calibration
 and the photometric repeatability are accurate to
 $\sigma=0.03$~mag.
 Finally, we demonstrate the ability of the 
@@ -81,12 +108,11 @@ catalogue's unique
 $r$-$i$/$r$-\ha\ colour-colour diagram to
 (i) characterise stellar populations and extinction regimes
 towards different Galactic sightlines
-and (ii) select candidate \ha-emission line objects.
+and (ii) select candidate \ha\ emission-line objects.
 The catalogue which accompanies this paper
 provides the much-needed visible-light counterpart
 to several infrared surveys of the Galactic Plane,
-including many poorly-studied star-forming regions and ``bubbles''.
-It also provides images for some of the most
+and provides images for some of the most
 crowded regions to be faced by Gaia.
 \end{abstract}
 
@@ -115,8 +141,8 @@ by a factor $\sim$1000 (7 magnitudes),
 it was envisaged that IPHAS would allow 
 the limited bright samples of Galactic emission line objects 
 available at the outset \citep[e.g.][]{Kohoutek1999}, 
-to be extended into larger, deeper, more statistically-robust samples 
-that in turn could better inform our understanding 
+to be extended into larger, deeper, more statistically-robust samples.
+This in turn could better inform our understanding 
 of the early and late stages of stellar evolution. 
 This aim has begun to be realised through a
 range of published studies including: 
@@ -129,7 +155,7 @@ along with discoveries of new and remarkable planetary nebulae
 
 Over the years it has become apparent that the legacy of IPHAS 
 will extend beyond the traditional \ha\ applications 
-of identifying emission line stars and nebulae. 
+of identifying emission-line stars and nebulae. 
 Through the provision of $r$, $i$ broadband photometry 
 alongside H$\alpha$ data,
 IPHAS has created the opportunity 
@@ -153,8 +179,7 @@ For such science applications to succeed however,
 it is vital that the imaging data is transformed 
 into a homogeneously calibrated photometric catalogue, 
 in which quality problems 
-and duplicate detections of the same source 
-are flagged. 
+and duplicate detections are flagged. 
 
 The first release of IPHAS data, 
 covering roughly half the survey footprint,
@@ -168,12 +193,11 @@ In this work we aim to
 (i) explain the data reduction 
 and quality control procedures that were applied,
 (ii) describe and test the new global photometric calibration, and 
-(iii) detail the construction and demonstrate the use 
-of the source catalogue that has been extracted 
-from the newly re-calibrated data.
+(iii) detail the construction of the source catalogue
+and demonstrate its use.
 
 In \S\ref{sec:observations} we start by recapitulating the key points
-of the survey design and strategy.
+of the survey observing strategy.
 In \S\ref{sec:reduction} we describe the data reduction
 and quality control procedures.
 In \S\ref{sec:calibration} we explain the uniform re-calibration
@@ -181,7 +205,8 @@ and test our results against the Sloan Digital Sky Survey (SDSS).
 In \S\ref{sec:catalogue} we explain how the source catalogue was compiled.
 In \S\ref{sec:discussion} we discuss the properties of the catalogue,
 and finally in \S\ref{sec:demonstration} we demonstrate
-the health of the release by demonstrating its scientific exploitation.
+the scientific exploitation of the colour/magnitude diagrams
+using the new catalogue.
 In \S\ref{sec:conclusions} we conclude and outline
 our future ambitions.
 
@@ -209,7 +234,7 @@ and longitudes $30^{\circ} < l < 215^{\circ}$.
 
 The Wide Field Camera is a mosaic of 4 CCDs 
 that captures a sky area of close to 0.29 square degrees.
-To cover the entire northern Plane with some overlap,
+To cover the entire Northern Plane with some overlap,
 the survey area was divided into 7635 telescope pointings.
 Each of these pointings is accompanied by an offset position
 at a displacement of $+$5 arcmin in declination 
@@ -218,12 +243,12 @@ to deal with inter-CCD gaps, detector imperfections,
 and to enable quality checks. 
 The basic unit of observation hence
 amounts to $2 \times 3$ exposures, 
-in which each of the 3 survey filters is exposed at 2 offset sky positions, 
+in which each of the 3 survey filters is exposed at 2 offset sky positions 
 within an elapsed time of 10 minutes.
 We shall refer to the unit of 3 exposures at the same position 
 as a \emph{field},
 and the combination of two fields at a small offset as a \emph{field pair}.
-The survey hence contains 15270 fields grouped into 7635 field pairs.
+The survey hence contains 15\,270 fields grouped into 7\,635 field pairs.
 To achieve the desired survey depth of 20th magnitude or fainter, 
 the filter exposure times were set at 120 sec (narrowband \ha), 
 30 sec ($r$) and 10 sec ($i$)
@@ -234,7 +259,7 @@ has been increased from 10~sec to 20~sec.}
 
 Data-taking began in the second half of 2003, 
 and every field had been observed at least once by the end of 2008.
-At that time only 76 percent of the field pairs 
+At that time only 76\% of the field pairs 
 satisfied our minimum quality criteria however,  
 often due to the effects of clouds, poor seeing, or technical faults
 (the quality criteria will be detailed in the next section). 
@@ -261,15 +286,14 @@ were obtained in November 2012.
         which can be seen as a honeycomb-style pattern
         of dark gray lines across the survey area.
         Regions with incomplete data are apparent as white gaps (no data) 
-        or as the lightest shade of gray
-        (denoting that only the offset position is missing).}
+        or in light gray (denoting that only the offset position is missing).}
         \label{fig:footprint}
 \end{figure*}
 
 Figure~\ref{fig:footprint} shows the footprint 
 of the quality-approved observations included in this work. 
 The fields which remain missing 
--- covering 7 percent of the survey area --
+-- covering 8\% of the survey area --
 are predominantly located towards the Galactic anti-center 
 at $l > 120^o$.
 Fields at these longitudes can only be accessed from La Palma 
@@ -280,8 +304,7 @@ To enable the survey to be brought to completion,
 a decision was made recently to limit repeats in this area 
 to individual fields requiring replacement,
 i.e. fresh observations in all 3 filters may only be obtained 
-at one of the two offset positions, 
-if the data for the partner offset has already passed quality control.  
+at one of the two offset positions.  
 The catalogue is structured such that it is clear 
 where a contemporaneous observation of both halves of a field pair
 is not available.
@@ -311,10 +334,10 @@ In brief, the pipeline takes care of bias subtraction,
 linearity correction, flat-fielding,
 gain correction and de-fringing.
 
-The reduced images are then stored in a multi-extension FITS file 
+The reduced images are then stored in multi-extension FITS files
 with a primary header describing the characteristics
 (position, filter, exposure time, etc.) 
-and four compressed image extensions 
+and four image extensions 
 corresponding to each of the four CCDs.
 Source detection and characterisation is then carried out 
 using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
@@ -331,8 +354,8 @@ which is then interpolated to obtain an estimate
 of the background level at each pixel.
 These sky levels are subtracted from the aperture photometry and
 -- when required --
-a deblending routine is applied which also attempts to remove
-the contamination from any other nearby sources.
+a deblending routine is applied which attempts to remove
+the contamination from any nearby sources.
 Whilst this approach works very well 
 across the vast majority of the survey area,
 the Galactic Plane unavoidably contains crowded regions 
@@ -340,8 +363,8 @@ with large numbers of overlapping sources
 or rapidly spatially-varying nebulosity,
 in which case aperture photometry must always be interpreted 
 with caution.
-In \S\ref{sec:catalogue} we will explain that overlapping
-sources to which the deblending routine was applied 
+In \S\ref{sec:catalogue} we will explain that objects
+which suffer from this problem 
 are flagged in the catalogue using the \emph{deblend} warning flag.
 
 Finally, an astrometric solution is determined
@@ -362,11 +385,11 @@ At the time of preparing DR2,
 the CASU pipeline had processed
 74\,195 IPHAS exposures 
 in which a total of 1.9~billion \emph{candidate sources} were detected 
-at the sensitive default detection level of 1.25\,$\sigma$
--- unavoidably including spurious detections, artefacts and
-duplicate detections 
-(in \S\ref{sec:catalogue} we will explain
-how these have been removed or flagged).
+at the sensitive default detection level of 1.25\,$\sigma$.
+This unavoidably includes spurious detections, artefacts and
+duplicate detections,
+in \S\ref{sec:catalogue} we will explain
+how these have been removed or flagged in the final catalogue.
 The pipelined data set -- comprising 2.5~terabyte of FITS files --
 was then transferred to the University of Hertfordshire
 for the purpose of transforming the raw
@@ -374,7 +397,7 @@ detection tables into a reliable source catalogue which is
 (i) quality-controlled,
 (ii) homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
-It is these post-processing steps which are explained below.
+It is these post-processing steps which are explained next.
 
 
 \subsection{Quality control}
@@ -384,14 +407,14 @@ Observing time for IPHAS was obtained
 on a semester-by-semester basis
 through the traditional time allocation committees 
 of the Isaac Newton Group of telescopes,
-which are competitive and invariably over-subscribed.
+which are invariably over-subscribed.
 For this reason, we attempted to utilise 
 \emph{all} the nights allocated to IPHAS,
 even those which were partially or entirely non-photometric
 or otherwise affected by technical problems 
 (e.g. electronic noise or telescope tracking problems).
 Any unsuitable data that was taken as a result
-of this strategy was subsequently flagged and rejected
+of this strategy has subsequently been flagged and removed
 using a series of seven quality criteria,
 which ensure a reliable and homogeneous level of quality
 across the data release:
@@ -427,26 +450,27 @@ Such data were typically obtained during poor weather or full moon.
 Most observations fared significantly better than these limits.
 Figure~\ref{fig:depth} presents the distribution of limiting magnitudes
 for all quality-approved fields,
-which shows a mean depth of 
+showing a mean depth of 
 $21.2\pm0.5$ ($r$), $20.0\pm0.3$ ($i$) and $20.3\pm0.3$ (\ha).
-We found that the depth achieved depended 
+The depth achieved depended 
 most strongly on the presence of the moon,
-which was above the horizon during 62 percent 
-of our observations and explains the wide and bi-modal shape
+which was above the horizon during 62\% 
+of the observations and explains the wide and bi-modal shape
 of the $r$-band limiting magnitude distribution 
 (top panel in Fig.~\ref{fig:depth}).
 In contrast, the depth attained in $i$ and \ha\ 
 is less sensitive to moonlight
-and the distribution of their depths
-is hence more narrow
-(middle and bottom panel in Fig.~\ref{fig:depth}).
+and their magnitude limit distributions
+are hence more narrow
+(middle and bottom panels in Fig.~\ref{fig:depth}).
 
-Our minimum limiting magnitude criteria
-have led us to exclude 9\% of the pipelined data.
-We note that much of the excluded data may nevertheless be useful
+The minimum depth criterion
+has led us to exclude 9\% of the pipelined data,
+which were often obtained under cloudy conditions.
+We note that some of the excluded data may nevertheless be useful
 for e.g. time-domain studies of bright stars.
-The detection tables for any such discarded data are made
-available through our website (www.iphas.org)
+The detection tables of the discarded data are made
+available through our website for this reason (www.iphas.org),
 but are ignored in what follows.
 
 (2) \emph{Ellipticity.} 
@@ -460,7 +484,7 @@ but it is slightly non-zero in any real telescope data
 due to optical distortions and tracking errors.
 The mean ellipticity across a field in the IPHAS data set 
 is $0.09\pm0.04$.
-There have been sporadic episodes with higher ellipticities however
+There have been sporadic episodes with higher ellipticities
 due to mechanical glitches in the telescope tracking system.
 For this reason, we rejected exposures in which the mean ellipticity
 across the detector exceeded $e > 0.3$,
@@ -483,13 +507,13 @@ and 10\% is better than 0.8~arcsec.
 To improve the area covered by this data release,
 we have decided to include the small fraction of data
 that was obtained under seeing up to 2.5 arcsec,
-so that only 1 per cent of the pipelined exposures
-had to be excluded.
+so that only 1\%of the pipelined exposures
+had to be excluded due to poor seeing.
 In \S\ref{sec:catalogue} we will explain
-that the catalogue is structured
-such that the information on the seeing is included,
-and that the photometry listed
-is based on the exposures with the best-available seeing.
+that the photometry listed in the catalogue
+is predominantly based on the images with the
+best-available seeing, and that the seeing estimate
+is included as a column in the catalogue.
 
 \begin{figure}
     \begin{minipage}[b]{\linewidth}
