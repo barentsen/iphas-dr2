@@ -2,16 +2,21 @@
 IPHAS Data Release 2
 ====================
 
-This repository contains the source code that was used to produce the
-source catalogue and the accompanying paper for the Second Data Release 
-of the INT/WFC Photometric H-Alpha Survey of the Northern Galactic Plane
-(IPHAS DR2).
+This repository contains the source code that was used to uniformly calibrate
+and compile the source catalogue for the Second Data Release of the
+INT/WFC Photometric H-Alpha Survey of the Northern Galactic Plane (IPHAS DR2).
+
+The principal task of this code is to take the raw set of IPHAS source detection tables,
+which are kindly provided by the Cambridge Astronomical Survey Unit (CASU),
+and transform them into a globally calibrated source catalogue, which details the best
+measurement of each unique source in a user-friendly format.
 
 More information about the project can be found at www.iphas.org
 
 Contents
 --------
-- ``pipeline.py``: the script that steers the entire data release creation.
+- ``pipeline.py``: the master script used to create the data release.
+- ``paper/``: the accompanying paper describing the generated catalogue.
 - ``dr2/``: the Python package that is used by `pipeline.py` to create 
   the data release, in particular the source catalogue.
   It consists of several modules:
@@ -30,15 +35,17 @@ Contents
     into the final source catalogue.
   + ``dr2.images``: creates a release of the pipeline-processed images
     with update headers to reflect the IPHAS DR2 uniform calibration.
-- ``scripts/``: various helper scripts.
-- ``paper/``: the accompanying paper describing the data release.
+- ``scripts/``: various helper scripts, including:
+
+  + ``postgresql/``: script to ingest the DR2 catalogue into a PostgreSQL db.
+  + ``sqlite/``: script to ingest the DR2 catalogue into an SQLite db.
 
 Usage
 -----
 The script ``pipeline.py`` in the root directory contains all instructions
-that are necessary to produce the IPHAS DR2 source catalogue.
-It uses the IPython.Parallel package and several modules from our ``dr2``
-package to generate the data release in parallel on an HPC cluster.
+necessary to produce the IPHAS DR2 source catalogue.
+It depends on the IPython.Parallel package and several modules from the included ``dr2``
+package to generate the data release in parallel on a computing cluster.
 
 Dependencies
 ------------
