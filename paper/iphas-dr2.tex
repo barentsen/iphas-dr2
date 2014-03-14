@@ -2,7 +2,6 @@
 \usepackage{amssymb,amsmath}
 \usepackage[pdftex]{graphicx}
 \usepackage{longtable} 
-%\usepackage{lscape}
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{aas_macros}
@@ -31,32 +30,32 @@ C. Ruhland$^1$,
 P. Groot$^4$,
 A. Mampaso$^5$, \newauthor
 S. E. Sale$^6$,
-M. J. Barlow,
-R. L. M Corradi,
-J. J. Drake,
-J. Fabregat,
-B. T. Gaensicke,
-A. S. Hales,
-J. Irwin,
-C. Knigge,
-D. J. Lennon,
-J. R. Lewis,
-M. Mohr-Smith,
-R. A. H. Morris,
-T. Naylor,
-Q. A. Parker,
-S. Phillipps,
-R. Raddi,
-P. Rodriguez-Gil,
-L. Sabin,
-D. Steeghs,
-Y. C. Unruh,
-K. Viironen,
-J. S. Vink,
-N. A. Walton,
-N. J. Wright,
-A. A. Zijlstra,
-plus all those we forgot.
+M. J. Barlow$^{99}$,
+R. L. M Corradi$^{99}$,
+J. J. Drake$^{99}$,
+J. Fabregat$^{99}$, \newauthor
+B. T. Gaensicke$^{99}$,
+A. S. Hales$^{99}$,
+J. Irwin$^{99}$,
+C. Knigge$^{99}$,
+D. J. Lennon$^{99}$, \newauthor
+J. R. Lewis$^{99}$,
+M. Mohr-Smith$^{99}$,
+R. A. H. Morris$^{99}$,
+T. Naylor$^{99}$,
+Q. A. Parker$^{99}$, \newauthor
+S. Phillipps$^{99}$,
+R. Raddi$^{99}$,
+P. Rodriguez-Gil$^{99}$,
+L. Sabin$^{99}$,
+D. Steeghs$^{99}$, \newauthor
+Y. C. Unruh$^{99}$,
+K. Viironen$^{99}$,
+J. S. Vink$^{99}$,
+N. A. Walton$^{99}$,
+N. J. Wright$^{99}$, \newauthor
+A. A. Zijlstra$^{99}$,
+plus those I forgot (sorry).
 \newauthor\\
 $^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
 $^{2}$Institute of Astronomy, Cambridge University, Madingley Road, Cambridge, CB3 OHA, U.K.\\
@@ -78,13 +77,11 @@ $^{99}$Please add your current affiliation.\\
 \begin{abstract} % BACKGROUND, OBJECTIVE, METHODS, RESULTS, CONCLUSIONS
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
-is a 1800 square degrees imaging survey
+is a 1800 deg$^2$ imaging survey
 covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
-on the 2.5-meter Isaac Newton Telescope (INT).
-It is the first survey to offer comprehensive CCD photometry
-of point sources across the Galactic Plane at visible wavelengths.
+on the 2.5-meter Isaac Newton Telescope (INT) in La Palma.
 We present the first quality-controlled and
 uniformly-calibrated source catalogue
 to have been extracted from the images,
@@ -93,26 +90,29 @@ for 219 million unique sources
 across 92\% of the survey area.
 The observations were carried out between 2003 and 2013
 at a median seeing of 1.1 arcsec
-to a depth of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$ and \ha$=20.3\pm 0.3$
+and to a depth of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$ and \ha$=20.3\pm 0.3$
 ($5\sigma$ limits, Vega system).
 We explain the data reduction 
 and quality control procedures,
 describe and test the new uniform calibration,
-and detail the construction of the source catalogue
-and its quality warning flags.
+and detail the construction of the 97-column source catalogue.
 We find that the calibration
 and the photometric repeatability are accurate to
-$\sigma=0.03$~mag.
+0.03~mag (rms),
+and provide a series of recommended quality criteria
+which can be used to select the most reliable data
+from the catalogue.
 Finally, we demonstrate the ability of the 
 catalogue's unique
-$r$-$i$/$r$-\ha\ colour-colour diagram to
+$(r-i)$/($r-\ha)$ colour-colour diagram to
 (i) characterise stellar populations and extinction regimes
-towards different Galactic sightlines
+towards different Galactic sight-lines
 and (ii) select candidate \ha\ emission-line objects.
-The catalogue which accompanies this paper
-provides the much-needed visible-light counterpart
-to several infrared surveys of the Galactic Plane,
-and provides images for some of the most
+IPHAS is the first survey to offer comprehensive CCD photometry
+of point sources across the Galactic Plane at visible wavelengths,
+providing the much-needed counterpart
+to several existing near- and mid-infrared surveys,
+and providing images for some of the most
 crowded regions to be faced by Gaia.
 \end{abstract}
 
@@ -161,8 +161,8 @@ alongside H$\alpha$ data,
 IPHAS has created the opportunity 
 to study Galactic Plane populations 
 in a new way.
-For example, the survey’s unique $r-H\alpha$ colour, 
-when combined with $r-i$,
+For example, the survey’s unique $(r-\ha)$ colour, 
+when combined with $(r-i)$,
 has been shown to provide simultaneous constraints 
 on intrinsic stellar colour and interstellar extinction \citep{Drew2008}. 
 This has opened the door 
@@ -203,12 +203,13 @@ and quality control procedures.
 In \S\ref{sec:calibration} we explain the uniform re-calibration
 and test our results against the Sloan Digital Sky Survey (SDSS).
 In \S\ref{sec:catalogue} we explain how the source catalogue was compiled.
-In \S\ref{sec:discussion} we discuss the properties of the catalogue,
-and finally in \S\ref{sec:demonstration} we demonstrate
-the scientific exploitation of the colour/magnitude diagrams
-using the new catalogue.
-In \S\ref{sec:conclusions} we conclude and outline
-our future ambitions.
+In \S\ref{sec:discussion} we discuss the properties of the catalogue
+and in \S\ref{sec:demonstration} we demonstrate
+the scientific exploitation of the colour/magnitude diagrams.
+Finally, in \S\ref{sec:dataaccess} we discuss access
+to the data and source code,
+and in \S\ref{sec:conclusions} we conclude and outline
+our future ambition
 
 
 \section{Observations}
@@ -281,12 +282,12 @@ were obtained in November 2012.
         The IPHAS strategy is to observe each field twice
         with a small offset,
         and hence the vast majority of the area 
-        is covered twice (dominant gray colour).
+        is covered twice (dominant grey colour).
         There are small overlaps between all the neighbouring fields
         which can be seen as a honeycomb-style pattern
-        of dark gray lines across the survey area.
+        of dark grey lines across the survey area.
         Regions with incomplete data are apparent as white gaps (no data) 
-        or in light gray (denoting that only the offset position is missing).}
+        or in light grey (denoting that only the offset position is missing).}
         \label{fig:footprint}
 \end{figure*}
 
@@ -294,7 +295,7 @@ Figure~\ref{fig:footprint} shows the footprint
 of the quality-approved observations included in this work. 
 The fields which remain missing 
 -- covering 8\% of the survey area --
-are predominantly located towards the Galactic anti-center 
+are predominantly located towards the Galactic anti-centre 
 at $l > 120^o$.
 Fields at these longitudes can only be accessed from La Palma 
 in the months of November-December,
@@ -368,7 +369,7 @@ which suffer from this problem
 are flagged in the catalogue using the \emph{deblend} warning flag.
 
 Finally, an astrometric solution is determined
-based on the 2MASS point source catalog \citep{Skrutskie2006},
+based on the 2MASS point source catalogue \citep{Skrutskie2006},
 which itself is calibrated 
 in the International Celestial Reference System (ICRS).
 A provisional photometric calibration is also provided 
@@ -714,7 +715,7 @@ from revisiting regions in their footprint to
 carry out a so-called \emph{ubercalibration} procedure,
 in which multiple measurements of stars at different epochs
 are used to fit the calibration parameters
-\citep[e.g.][]{Padmanabhan2008,Schlafly2012}.
+\citep[e.g.][]{Ivezic2007,Padmanabhan2008,Schlafly2012}.
 
 Unfortunately these schemes cannot be applied
 directly to IPHAS
@@ -771,10 +772,11 @@ onto a uniform scale.
 Since 2009,
 APASS has been using two 20\,cm-astrographs
 to survey the entire sky down to $\sim$17th magnitude
-in five filters which include Sloan $r$ and $i$.
+in five filters which include Sloan $r$ and $i$ \citep{Henden2012}.
 The most recent catalogue available 
 at the time of preparing this work was APASS DR7,
-which provides data across $\sim$half of the IPHAS footprint
+which provides a good coverage across $\sim$half
+of the IPHAS footprint.
 The overlap regions are shown in Fig.~\ref{fig:apass_r}.
 The photometric accuracy of APASS is currently estimated 
 to be at the level of 3\% (Henden, private communication),
@@ -818,11 +820,11 @@ The transformations include a large fixed offset,
 but this is simply due to the fact that 
 APASS magnitudes are given in the AB system
 and IPHAS uses magnitudes relative to Vega.
-Separate transformations were derived for sightlines 
+Separate transformations were derived for sight-lines 
 with varying extinction properties to investigate the robustness
 of the transformations with respect to different reddening regimes.
 The variations at these different
-sightlines were found to be insignificant.
+sight-lines were found to be insignificant.
 This is not surprising because heavily reddened objects 
 are naturally scarce at $r<16$.
 
@@ -904,7 +906,7 @@ convergence, which was essentially reached after the first iteration.
                         \bottomrule
                 \end{tabular}
         \caption{Mean magnitude offsets for objects
-                 crossmatched between IPHAS and APASS/SDSS
+                 cross-matched between IPHAS and APASS/SDSS
                  before the uniform re-calibration.
                  Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
                  to the APASS/SDSS magnitudes to bring them into the
@@ -1033,7 +1035,7 @@ that a field's \ha\ and $r$-band exposures
 were taken at essentially the same time, 
 separated only by the $\sim$30\,sec read-out time required by the WFC.
 We have hence corrected the \ha\ zeropoints 
-by re-using the zeropoint adjustements that were derived for the $r$ band
+by re-using the zeropoint adjustments that were derived for the $r$ band
 in the earlier steps.
 An exception was made for 3\,101 fields
 for which our quality-control routines revealed
@@ -1078,7 +1080,7 @@ than both the IPHAS and APASS filters.
 
 These global transformations were deemed adequate
 for the purpose of validating our uniform calibration in a statistical sense.
-Separate equations were derived towards different sightlines
+Separate equations were derived towards different sight-lines
 to investigate the effects of varying reddening regimes.
 The colour term was found 
 to show some variation towards lowly reddened areas,
@@ -1271,7 +1273,7 @@ and we do not recommend its use.
 which partially overlap with a nearby neighbour.
 Although the pipeline applies a deblending procedure
 to such objects, the procedure is currently applied separately
-in each band and hence the $r$-$i$ and $r$-\ha\ colours
+in each band and hence the $(r-i)$ and $(r-\ha)$ colours
 may be inaccurate if the deblending proceeded differently in each band.
 \item The \emph{brightNeighb} column is used to flag sources which are located
 within 5 arcmin from an object brighter than $V=7$ 
@@ -1421,7 +1423,7 @@ we have decided to enforce three basic criteria
 which must be met for a candidate source
 to be included in the catalogue:
 \begin{enumerate}
-\item the source must have been detected at SNR$>5$ in at least
+\item the source must have been detected at S/N$>5$ in at least
 one of the bands, i.e. it is required that at least one of
 \emph{rErr}, \emph{iErr} or \emph{haErr} is smaller
 than 0.2 mag;
@@ -1487,7 +1489,7 @@ in Tables~\ref{tab:reliable} and \ref{tab:veryreliable}.
 Firstly, Table~\ref{tab:reliable} details
 a set of minimum quality criteria
 which should benefit most applications
-which require reliable $r-i$ and $r-$\ha\ colours
+which require reliable $(r-i)$ and $(r-\ha)$ colours
 without removing more than 80\%
 of the sources brighter than $r < 19$.
 The listed criteria are designed to 
@@ -1517,7 +1519,7 @@ and makes their selection easy.
   rErr\,$<$\,0.1 {\sc and} iErr\,$<$\,0.1 {\sc and} haErr\,$<$\,0.1 &
   109 million (50\%) &
   Require the photon noise to be less than 
-  0.1 mag in all bands (i.e. SNR$>$10).
+  0.1 mag in all bands (i.e. S/N$>$10).
   This implicitly requires a detection in all three bands.  \\
   $r>13$ {\sc and} $i>12$ {\sc and} \ha\,$>12.5$ {\sc and not} \emph{saturated} &
   158 million (72\%) &
@@ -1668,7 +1670,7 @@ reaches 0.1~mag near 20.5 in $r$
 and 19.5 in $i$/\ha\ for the default 2.3\arcsec\ aperture.
 At this point we note that the average colour
 across all sources in the catalogue is
-$1.06\pm0.12$ for $r$-$i$ and $0.44\pm0.03$ for $r$-\ha.
+$1.06\pm0.12$ for $(r-i)$ and $0.44\pm0.03$ for $(r-\ha)$.
 The better depth of $r$ is hence compensated
 by the fact that stars tend to have 
 brighter magnitudes in both $i$ and \ha.
@@ -1680,7 +1682,7 @@ brighter magnitudes in both $i$ and \ha.
              Data points shown are the average values of
              columns \emph{rErr}, \emph{iErr} and \emph{haErr}
              in the catalogue, 
-             and the errorbars show the standard deviations.
+             and the error-bars show the standard deviations.
              The dashed and solid lines indicate 
              the 10$\sigma$ and 5$\sigma$ limits, respectively.
              These uncertainties are based only on the (Poissonian)
@@ -1712,7 +1714,7 @@ At the faint end we find residuals which
 show significantly more scatter than would be expected
 from photon noise alone;
 the effects of source blending and background subtraction
-appear to dominate from $\sim$20th magnitude onwards.
+appear to dominate from $\sim$20th magnitude onward.
 
 \begin{figure*}
 \begin{minipage}[b]{0.45\linewidth}
@@ -1731,7 +1733,7 @@ appear to dominate from $\sim$20th magnitude onwards.
          and for the \emph{veryReliable} sources alone (right panel).
          The values shown are the mean residuals
          between the primary and the secondary detections,
-         while the errorbars show the standard deviations.
+         while the error-bars show the standard deviations.
          Left panel: 
          the best photometric repeatability is reached at $r=14$
          with $\sigma_{r-r2}~=~0.041$~mag.
@@ -1843,22 +1845,22 @@ that is to be provided by Gaia.
 \label{sec:demonstration}
 
 We conclude this paper by demonstrating how the unique
-$r$-$i$/$r$-\ha\ colour-colour diagram offered by this catalogue
+$(r-i)$/$(r-\ha)$ colour-colour diagram offered by this catalogue
 can readily be used to
-(i) characterise the extinction regime at different sightlines, and
+(i) characterise the extinction regime at different sight-lines, and
 (ii) identify \ha\ emission-line objects.
 
 \subsection{Colour-colour and colour-magnitude diagrams}
 
-The survey's unique $r$-\ha\ colour,
-when combined with $r$-$i$,
+The survey's unique $(r-\ha)$ colour,
+when combined with $(r-i)$,
 has been shown to provide simultaneous constraints 
 on intrinsic stellar colour and interstellar extinction \citep{Drew2008}. 
-Put differently, the main sequence in the $r$-$i$/$r$-\ha\ diagram
+Put differently, the main sequence in the $(r-i)$/$(r-\ha)$ diagram
 runs in a direction that is different from the reddening vector,
 because the $r$-\ha\ colour tends to act
 as a coarse proxy for spectral type
-and is less sensitive to reddening than $r$-$i$.
+and is less sensitive to reddening than $(r-i)$.
 As a result, the distribution of a stellar population
 in the IPHAS colour-colour diagram
 can offer a handle on the properties of the population
@@ -1867,14 +1869,14 @@ and the extinction along a line of sight.
 This is demonstrated 
 in Figures \ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
 where we present three sets of IPHAS colour/magnitude diagrams
-towards three distinct sightlines
+towards three distinct sight-lines
 located at Galactic longitudes 
 $180^\circ$, $45^\circ$ and $30^\circ$, respectively.
 Each figure contains all the sources
 which are flagged as \emph{veryReliable}
 and are located in a region of one square degree 
 centred on the coordinates indicated in the diagram
-(i.e. within a radius of $0.564^\circ$ from the indicated sightline).
+(i.e. within a radius of $0.564^\circ$ from the indicated sight-line).
 For clarity, we have imposed the additional criterion
 that the photometric uncertainties
 must be smaller than 0.05 mag in each band,
@@ -1899,19 +1901,19 @@ on line tool hosted at the Observatory of Padova
 The isochrone and reddening vector have been placed
 at an arbitrary distance of 2~kpc.
 
-Each of the sightlines reveal a stellar population
+Each of the sight-lines reveal a stellar population
 with distinct characteristics.
 Firstly, towards the Galactic anti-centre 
 at $l=180^\circ$ (Fig.~\ref{fig:l180})
 we find a population dominated by lowly-reddened main sequence stars.
-This is consistent with the estimated total sightline extinction 
+This is consistent with the estimated total sight-line extinction 
 of $E(B-V)=0.49$ given by \cite{Schlegel1998},
 following the correction of \cite{Schlafly2011}.
 Looking in more detail we can see
 that the stellar locus is narrower for M-type dwarfs
 than for earlier types;
 we do not observe M dwarfs experiencing 
-the strongest reddening possible for this sightline.
+the strongest reddening possible for this sight-line.
 This implies that extinction is still increasing 
 at distances beyond $\sim$1-2~kpc,
 where M dwarfs are too faint to be contained in the IPHAS catalogue.
@@ -1948,11 +1950,11 @@ due to the combination of increasing extinction
 and the distinct absolute magnitude ranges
 of main sequence and giant branch stars.
 
-Finally, in one of our earliest sightlines at $l=30^{\circ}$,
+Finally, in one of our earliest sight-lines at $l=30^{\circ}$,
 we find a very high number of extremely reddened giants
 in addition to an unreddened population
 of foreground dwarfs.
-In contrast to the sightline at $l=45^{\circ}$,
+In contrast to the sight-line at $l=45^{\circ}$,
 there is no clear group of giant stars visible
 in the colour-magnitude diagram of Fig.~\ref{fig:l30},
 though the red clump stars are manifested as a slight over density
@@ -2009,7 +2011,7 @@ that accompanies this data release (Sale et al., in preparation).
     The right panel only shows the reddening vector
     along with the unreddened 1~Gyr isochrone due to \citet{Bressan2012},
     which has been placed at an arbitrary distance of 2~kpc.
-    This is one of the least reddened sightlines
+    This is one of the least reddened sight-lines
     in the survey
     and hence the observed stellar population appears to be dominated 
     by lowly reddened main sequence stars (see text).}
@@ -2019,7 +2021,7 @@ that accompanies this data release (Sale et al., in preparation).
         \includegraphics[width=0.5\textwidth]{./plots/cmd-45-2.pdf}
     \end{minipage}
     \caption{Same as above for $(l,b)=(45^\circ,+2^\circ)$,
-    which is one of the highest-density sightlines in the survey,
+    which is one of the highest-density sight-lines in the survey,
     revealing two groups of stars in colour-magnitude space.}
     \label{fig:l45}
     \begin{minipage}[b]{\linewidth}
@@ -2027,7 +2029,7 @@ that accompanies this data release (Sale et al., in preparation).
         \includegraphics[width=0.5\textwidth]{./plots/cmd-30-0.pdf} 
     \end{minipage}
     \caption{Same as above for $(l,b)=(30^\circ,0^\circ)$,
-    showing one of the most reddened sightlines in the survey.
+    showing one of the most reddened sight-lines in the survey.
     }
     \label{fig:l30}
 \end{figure*}
@@ -2060,7 +2062,7 @@ a sigma-clipping technique to select objects with
 large, outlying $r$-\ha\ colours.
 In contrast, the new catalogue
 allows objects to be picked out
-from the $r$-$i$/$r$-\ha\ colour-colour diagram
+from the $(r-i)$/$(r-\ha)$ colour-colour diagram
 using model-based colour criteria
 rather than a statistical procedure.
 In what follows we demonstrate this ability 
@@ -2129,7 +2131,7 @@ which are brighter than $r<20$
 and have been flagged as \emph{reliable}
 in our catalogue.
 The diagram also shows the unreddened main sequence (solid line)
-and the expected position of unredded main-sequence stars
+and the expected position of unreddened main-sequence stars
 with \ha\ in emission
 at a strength of EW=$-10{\rm \AA}$ (dashed line),
 taken from the colour simulations due to \citet{Barentsen2011a}.
@@ -2145,7 +2147,7 @@ is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas})
 
 \begin{figure}
   \includegraphics[width=0.45\textwidth]{./plots/sh2-82-ccd.pdf}
-    \caption{$r$-$i$/$r$-\ha\ diagram for the rectangular region of 
+    \caption{$(r-i)$/$(r-\ha)$ diagram for the rectangular region of 
     20-by-15 arcmin centred on the H{\sc ii} region Sh 2-82,
     which is the area shown in Figure~\ref{fig:mosaic_iphas}.    
     The diagram shows all objects in the catalogue
@@ -2201,10 +2203,7 @@ an infrared excess, we note that each of these four objects
 is detected at S/N$>$? in the Spitzer 8.0\,\micron\ image,
 which is consistent with an optically-unveiled Class II YSO.
 
-%Prior to IPHAS, this region was essentially unstudied
-%at faint magnitudes in visible light.
-%\cite{Lahulla1985} reported magnitudes for 8 stars in the optical at 
-%$V < 15$. In contrast, the IPHAS catalogue offers photometry
+%The IPHAS catalogue offers photometry
 %for 2197 objects in the region down to $r<20$.
 
 Sh 2-82 is one of a large population of poorly-studied star-forming regions
@@ -2225,17 +2224,44 @@ members of the region.
 %\subsection{Caveats and lessons learnt}
 %\subsection{Comparison with Gaia}?
 
+\section{Data access and source code}
+\label{sec:dataaccess}
+
+The catalogue is made available through the Vizier
+catalogue tool (http://vizier.u-strasbg.fr),
+where it is known as the ``IPHAS DR2 Source Catalogue''
+and where it can be queried
+(catalogue ID ??? Conesearch/TAP URL??).
+The catalogue can also be downloaded in its entirety
+from the IPHAS website (www.iphas.org) as a collection 
+of binary FITS tables which comprise 50\,GB,
+together with a script
+to ingest these tables into a PostgreSQL database.
+Finally, the website also provides access to the pipeline-processed
+imaging data, which we have updated to include
+the re-calibrated DR2 zeropoint in the image headers.
+
+In the spirit of reproducibility,
+the source code that was used to generate
+the catalogue is made available at
+https://github.com/barentsen/iphas-dr2
+
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
 A new data release for the INT/WFC Photometric \ha\ Survey
 of the Northern Galactic Plane (IPHAS) was presented.
-The new catalogue takes provides CCD photometry in visible light
-across 92\% of the survey area, which spans the entire Northern Milky Way 
-at $|b|<5^\circ$.
+It is the first survey to offer comprehensive CCD photometry
+of point sources across the Galactic Plane at visible wavelengths,
+taking in the entire Northern Milky Way at $|b|<5^\circ$.
+The new 97-column catalogue provides single-epoch photometry
+across 92\% of the survey area,
+and is the first quality-controlled and uniformly calibrated
+catalogue to have been constructed from the imaging data.
 We explained the data reduction and quality control procedures that
-were applied, described and tested the new global photometric calibration,
-and detailed the construction of the user-friendly source catalogue.
+were applied,
+described and tested the global photometric calibration,
+and detailed the construction of the source catalogue.
 
 The observations included in this release
 achieved a median seeing of 1.1 arcsec
@@ -2266,30 +2292,11 @@ and a southern companion survey in $u$/$g$/$r$/$i$/\ha\
 called VPHAS+ \citep{Drew2014}.
 We intend to use the present work
 as a template for future releases
-to be prepared for these companion surveys.
+to be prepared for these companion surveys,
+allowing new insights into the contents and structure 
+of our own backyard, the Milky Way, to be revealed. 
 
-\section*{Data access and source code}
-\label{sec:dataaccess}
-
-The catalogue is made available through the Vizier
-catalogue tool (http://vizier.u-strasbg.fr),
-where it is known as the ``IPHAS DR2 Source Catalogue''
-and where it can be queried
-(catalogue ID ??? Conesearch/TAP URL??).
-The catalogue can also be downloaded in its entirety
-from the IPHAS website (www.iphas.org) as a collection 
-of binary FITS tables which comprise 50\,GB.
-The website also provides a script
-to ingest the data into a PostgreSQL database.
-Finally, the website also provides access to the pipeline-processed
-imaging data, which we have updated to include
-the re-calibrated DR2 zeropoint in the image headers.
-
-The source code that was used to generate
-the catalogue is available at
-https://github.com/barentsen/iphas-dr2
-
-\section*{Acknowledgments}
+\section*{Acknowledgements}
 
 The IPHAS survey was carried out 
 at the Isaac Newton Telescope (INT).
