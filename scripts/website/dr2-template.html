@@ -14,7 +14,7 @@
     <div class="span3 sidebar">
         <ul class="nav nav-list" data-spy="affix" data-offset-top="124">
           <!--<li class="nav-header">IPHAS DR2</li>-->
-          <li><a href="#description"><i class="icon-chevron-right"></i> Description</a></li>
+          <li><a href="#description"><i class="icon-chevron-right"></i> Summary</a></li>
           <li><a href="#download"><i class="icon-chevron-right"></i> Download</a></li>  
           <li><a href="#columns"><i class="icon-chevron-right"></i> Column definitions</a></li>
           <li><a href="#source"><i class="icon-chevron-right"></i> Source code</a></li>
@@ -43,67 +43,52 @@
 
       <section id="description">
         <div class="page-header">
-          <h2>Description</h2>
+          <h2>Summary</h2>
         </div>
       
-        <h3>Source catalogue</h3>
-
         <p>
-          IPHAS DR2 consists of a source catalogue which provides r', i' and 
-          H&alpha;-band photometry for 159 million unique objects, observed 
-          across the Northern Galactic Plane between 2003 and 2012.
-        </p> 
-
-        <p>
-          The source catalogue is described in an accompanying paper 
-          (Barentsen et al. 2014). 
+          The IPHAS DR2 Source Catalogue provides r, i and 
+          H&alpha;-band photometry for 219 million unique sources,
+          observed across the Northern Galactic Plane between 2003 and 2013.
+          The catalogue is described in detail in 
+          an accompanying paper (Barentsen et al. 2014).
           In brief, the catalogue has been constructed by cross-matching 
           the detections from the individual bands using a maximum matching 
-          distance of 1 arcsec. All objects which have been detected 
-          at SNR&thinsp;&ge;&thinsp;5 in at least one band are included. 
-          We have also carried out a photometric re-calibration to bring the 
-          magnitudes to a uniform calibration, by exploiting the overlaps 
-          between exposures as well as the 
-          <a href='http://www.aavso.org/apass'>APASS survey</a> for reference.
+          distance of 1 arcsec. All objects which were detected 
+          at at signal-to-noise ratio of 5 or better in at least one band
+          are included. The catalogue is uniformly calibrated with
+          an accuracy of 0.03 mag (rms).
         </p> 
 
-        <p>
-          Most objects have been observed multiple times during the survey, 
-          but the DR2 source catalogue includes only the <i>best</i> detection 
-          of each object. A catalogue of all other detections is planned 
-          for a future data release.
-        </p>
-
-        <h3>The "light" and "full" version</h3>
+       <h3>Light and full version</h3>
 
         <p>
-          The DR2 source catalogue is made available in two flavours: 
-          "light" and "full". The light version has a size of about 8 GB 
-          (10 columns) and contains only the basic information on each source, 
+          The DR2 source catalogue is made available in two flavours.
+          The light version has a size of 8 GB (10 columns)
+          and contains only the basic information on each source,
           namely:
         </p>
         <ul>
           <li>equatorial coordinates (columns <a href="#ra-light">ra</a>, <a href="#dec-light">dec</a>);</li>
-          <li>r', i' and H-alpha magnitudes measured using the default 2.3 arcsec diameter aperture (columns <a href="#r-light">r</a>, <a href="#i-light">i</a>, <a href="#ha-light">ha</a>, <a href="#rErr-light">rErr</a>, <a href="#iErr-light">iErr</a>, <a href="#haErr-light">haErr</a>);</li>
+          <li>r, i and H&alpha; magnitudes measured using the default 2.3-arcsec-diameter circular aperture (columns <a href="#r-light">r</a>, <a href="#i-light">i</a>, <a href="#ha-light">ha</a>, <a href="#rErr-light">rErr</a>, <a href="#iErr-light">iErr</a>, <a href="#haErr-light">haErr</a>);</li>
           <li>a morphological classification flag (<a href="#mergedClass-light">mergedClass</a>);</li>
-          <li>error flags warning for e.g. source blending and saturation (<a href="#errBits-light">errBits</a>).</li>
+          <li>error flags warning for source blending, bright neighbours and saturation (<a href="#errBits-light">errBits</a>).</li>
         </ul>
          
         <p>
-          The "full" version has a size of about 50 GB (97 columns), and adds:
+          The full version has a size of 50 GB (97 columns) and adds:
         </p>
         <ul>
           <li>magnitudes at a second epoch in the same night, if available;</li>
           <li>magnitudes measured using different aperture sizes;</li>
           <li>detailed morphological parameters;</li>
-          <li>information on the exposure (date, seeing, run number);</li>
-          <li>object positions measured in the CCD reference frame (pixel x/y).</li>
-      
+          <li>information on the observation (date, seeing, run number);</li>
+          <li>object positions measured in the CCD reference frame (pixel x/y);</li>
+          <li>additional quality warning flags.</li>
         </ul>
 
         <p>
-          This page contains a <a href="#columns">column definitions</a> 
-          section with more details.
+          A table detailing the <a href="#columns">column definitions</a> is given below.
         </p>    
 
       </section>
@@ -114,12 +99,11 @@
         </div>
 
         <p>
-          The IPHAS DR2 source catalogue is distributed as a series of 
+          The IPHAS DR2 Source Catalogue is distributed as a series of 
           binary FITS tables, each covering a 5x5&thinsp;deg<sup>2</sup> area.
-          There is a light (10 columns; 8 GB) 
-          and a full version (97 columns; 50 GB). 
-          At present the catalogue cannot be queried online, 
-          but we are working to make this possible.
+          At present the catalogue cannot be queried online,
+          but it will likely be made available through the Vizier
+          catalogue tool soon.
         </p>
 
         <p>
@@ -131,7 +115,7 @@
         <pre>wget -c -r -np -nH --cut-dirs=3 --accept=fits.gz http://stri-cluster.herts.ac.uk/~gb/iphas-dr2-catalogue/light-compressed/</pre>
 
         <p>
-          To obtain the full catalogue (<b>50&thinsp;GB</b>), use this command:
+          And to obtain the full catalogue (50&thinsp;GB):
         </p>
         
         <pre>wget -c -r -np -nH --cut-dirs=3 --accept=fits.gz http://stri-cluster.herts.ac.uk/~gb/iphas-dr2-catalogue/full-compressed/</pre>
@@ -247,9 +231,9 @@
           <h2>Source code</h2>
         </div>
         <p>
-          The source catalogue was generated from the single-band detection tables 
-          using a Python package called "iphas-dr2", which is available on 
-          GitHub:
+          In the spirit of reproducibility,
+          the source code that was used to generate
+          the catalogue is made available on GitHub:
         </p>
         <p>
           <a href="https://www.github.com/barentsen/iphas-dr2">https://www.github.com/barentsen/iphas-dr2</a>
