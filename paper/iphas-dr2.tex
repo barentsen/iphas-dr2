@@ -5,6 +5,8 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{aas_macros}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
@@ -1735,17 +1737,20 @@ the effects of source blending and background subtraction
 appear to dominate from $\sim$20th magnitude onward.
 
 \begin{figure*}
-\begin{minipage}[b]{0.45\linewidth}
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{./plots/pairmag/pairmag.pdf}
+\caption{}
 \label{fig:pairmag}
-\end{minipage}
+\end{subfigure}
 \hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
+\begin{subfigure}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{./plots/pairmag/pairmag-reliable.pdf}
+\caption{}
 \label{fig:pairmag_reliable}
-\end{minipage}
+\end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
          for both all sources in the catalogue (left panel)
          and for the \emph{veryReliable} sources alone (right panel).
