@@ -5,6 +5,8 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{aas_macros}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
@@ -100,7 +102,7 @@ is a 1800 deg$^2$ imaging survey
 covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
-on the 2.5-meter Isaac Newton Telescope (INT) in La Palma.
+on the 2.5-metre Isaac Newton Telescope (INT) in La Palma.
 We present the first quality-controlled and
 uniformly-calibrated source catalogue
 to have been extracted from the images,
@@ -241,7 +243,7 @@ IPHAS is a 1800~sq. deg. imaging survey of the northern Galactic Plane,
 providing images and photometry in Sloan $r, i$ 
 along with narrowband H$\alpha$. 
 It is carried out using the Wide Field Camera (WFC) 
-on the 2.5-meter Isaac Newton Telescope (INT) in La Palma. 
+on the 2.5-metre Isaac Newton Telescope (INT) in La Palma. 
 It is the first digital survey to offer comprehensive CCD photometry
 of point sources in the Galactic Plane at visible wavelengths, 
 and does so down to a limiting magnitude of $\sim$20th.
@@ -889,7 +891,7 @@ convergence, which was essentially reached after the first iteration.
              procedure was applied.
              Each square represents the footprint of an IPHAS field
              which contains at least 30 stars
-             with a counterpart in the SDSS catalogue.
+             with a counterpart in the SDSS DR9 catalogue.
              The colours denote the median IPHAS-SDSS magnitude offset
              in each field,
              which was computed after applying the SDSS-to-IPHAS
@@ -1032,7 +1034,7 @@ based on
 (i) the information contained in the observing logs,
 (ii) the stability of the standard star zeropoints during the night, and
 (iii) photometricity statistics provided by the Carlsberg Meridian Telescope,
-which is located at $\sim$500\,meter from the INT.
+which is located $\sim$500\,metres from the INT.
 
 We then solved Eqn.~\ref{eqn:matrix} for the $r$ and $i$ bands
 separately using the least-squares routine 
@@ -1305,7 +1307,7 @@ In addition to the above, we also created warning flags for internal bookkeeping
 For example, we flagged detections which fell in the strongly vignetted regions of the focal plane,
 which were truncated by CCD edges,
 or which were otherwise affected by bad pixels in the detector.
-We will explain below that none of such detections 
+We will explain below that no such detections 
 have been included in the catalogue.
 An alternative detection was available in essentially all these situations
 as a result of the IPHAS field pair strategy,
@@ -1594,7 +1596,7 @@ using the column named \emph{reliable}.}
    pStar $>$ 0.9 &
    145 million (66\%) &
    % pStar > 0.89 is identical to mergedClass == -1
-   The object must appears as a perfect point source,
+   The object must appear as a perfect point source,
    as inferred from comparing its Point Spread Function (PSF)
    with the average PSF measured in the same CCD. \\
    
@@ -1735,17 +1737,20 @@ the effects of source blending and background subtraction
 appear to dominate from $\sim$20th magnitude onward.
 
 \begin{figure*}
-\begin{minipage}[b]{0.45\linewidth}
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{./plots/pairmag/pairmag.pdf}
+\caption{}
 \label{fig:pairmag}
-\end{minipage}
+\end{subfigure}
 \hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
+\begin{subfigure}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{./plots/pairmag/pairmag-reliable.pdf}
+\caption{}
 \label{fig:pairmag_reliable}
-\end{minipage}
+\end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
          for both all sources in the catalogue (left panel)
          and for the \emph{veryReliable} sources alone (right panel).
