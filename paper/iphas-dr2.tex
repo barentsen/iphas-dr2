@@ -40,19 +40,20 @@ B. T. Gaensicke$^{11}$, \newauthor
 A. S. Hales$^{12}$,
 J. Irwin$^{9}$,
 C. Knigge$^{13}$,
+T. Kupfer$^{5}$,
 D. J. Lennon$^{14}$, 
-J. R. Lewis$^{2}$,
-M. Mohr-Smith$^{1}$, \newauthor
+J. R. Lewis$^{2}$, \newauthor
+M. Mohr-Smith$^{1}$, 
 R. A. H. Morris$^{15}$,
 T. Naylor$^{16}$,
 Q. A. Parker$^{17}$, 
-S. Phillipps$^{13}$,
-R. Raddi$^{11}$, \newauthor
+S. Phillipps$^{13}$, \newauthor
+R. Raddi$^{11}$, 
 P. Rodriguez-Gil$^{6}$,
 L. Sabin$^{18}$,
 D. Steeghs$^{11}$, 
-Y. C. Unruh$^{19}$,
-K. Viironen$^{20}$, \newauthor
+Y. C. Unruh$^{19}$, \newauthor
+K. Viironen$^{20}$, 
 J. S. Vink$^{21}$, 
 N. A. Walton$^{2}$,
 N. J. Wright$^{1}$,
@@ -85,7 +86,7 @@ $^{20}$Centro de Estudios de F\'isica del Cosmos de Arag\'on, Plaza San Juan 1, 
 $^{21}$Armagh Observatory, College Hill, Armagh, Northern Ireland,
 BT61 9DG, U.K.\\
 $^{22}$Jodrell Bank Centre for Astrophysics, School of Physics \&
-Astronomy, University of Manchester, Oxford Road, Manchester M13 9PL, U.K.}
+Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 
 \begin{document}
 \date{Current draft typeset \today}
@@ -132,7 +133,7 @@ IPHAS is the first survey to offer comprehensive CCD photometry
 of point sources across the Galactic Plane at visible wavelengths,
 providing the much-needed counterpart
 to infrared surveys.
-We also provide images for some of the most
+IPHAS also provide images for some of the most
 crowded regions to be faced by Gaia.
 \end{abstract}
 
@@ -230,7 +231,6 @@ Finally, in \S\ref{sec:dataaccess} we discuss access
 to the data and source code,
 and in \S\ref{sec:conclusions} we conclude and outline
 our future ambition
-
 
 \section{Observations}
 \label{sec:observations}
@@ -1679,7 +1679,8 @@ which is often desired for spectroscopic target selection.
 It is easy to see how the quality criteria
 may be adapted to be more tolerant.
 For example, by raising the allowed photometric uncertainties
-from 0.1 mag to 0.2 mag, 42 million additional candidate sources can be added.
+from 0.1 mag to 0.2 mag,
+42 million additional candidate sources can be added.
 
 \subsection{Photometric uncertainties and repeatability}
 
@@ -2082,7 +2083,7 @@ presented by \cite{Witham2008}.
 Because no uniform calibration was available
 at the time, \citeauthor{Witham2008} employed 
 a sigma-clipping technique to select objects with
-large, outlying $r$-\ha\ colours.
+large, outlying $(r-\ha)$ colours.
 In contrast, the new catalogue
 allows objects to be picked out
 from the $(r-i)$/$(r-\ha)$ colour-colour diagram
@@ -2117,15 +2118,25 @@ which is surrounded by a faint reflection nebula
 and several dark cloud filaments.
 For comparison, Figure~\ref{fig:mosaic_spitzer} shows
 a mosaic of the same region 
-as seen in the mid-infrared by the Spitzer Space Telescope
+as seen in the mid-infrared by the Spitzer Space Telescope's
+Galactic Plane survey \citep[GLIMPSE;][]{Benjamin2003,Churchwell2009}.
 The infrared image reveals a bubble-shaped structure
-of warm dust which surrounds the entire H{\sc ii} region,
-and is thought to contain a wealth of infrared-bright
-young stellar objects \citep{Yu2012}.
+which is thought to originate from the
+mid-infrared emission of Poly-Aromatic Hydrocarbons (PAHs)
+-- i.e. warm dust --
+which is frequently observed
+at the interface between neutral regions of interstellar material
+and the ionising radiation from early-type stars \citep{Churchwell2006}.
+In this example, \cite{Yu2012}
+recently noted that the warm dust
+that surrounds Sh~2-82 
+appears to contain infrared-bright
+Young Stellar Objects (YSOs).
 Many of these young objects 
-appear as red- and pink-coloured stars in the Spitzer mosaic --
-located predominantly in the north-western part
-of the bubble-shaped structure.
+appear as red- and pink-coloured stars
+in Fig.~\ref{fig:mosaic_spitzer},
+located predominantly in the top-left part
+of the bubble.
 
 \begin{figure*}
     \begin{minipage}[b]{0.8\linewidth}
@@ -2141,8 +2152,10 @@ and dark cloud filaments.}
         \includegraphics[width=\textwidth]{./plots/mosaic/sh2-82-spitzer.pdf} 
     \end{minipage}
     \caption{Star-forming region Sh 2-82 as seen in the mid-infrared
-    by the Spitzer Space Telescope. The mosaic is composed of the 24\,\micron\ (red), 8.0\,\micron\ (green) and 4.5\,\micron\ (blue) bands.
-    The image reveals a bubble-shaped structure which surrounds the {\sc Hii} region that is seen in the IPHAS mosaic of the same region (Figure~\ref{fig:mosaic_iphas}).}
+    by the Spitzer Space Telescope's GLIMPSE survey. The mosaic is composed of the 24\,\micron\ (red), 8.0\,\micron\ (green) and 4.5\,\micron\ (blue) bands.
+    The image reveals a bubble-shaped structure which surrounds the {\sc Hii} region that is seen in the IPHAS mosaic of the same region (Figure~\ref{fig:mosaic_iphas}). 
+    This structure has previously been labelled as N115 in the 
+catalogue due to \citet{Churchwell2006}.}
     \label{fig:mosaic_spitzer}
 \end{figure*}
 
@@ -2161,7 +2174,8 @@ taken from the colour simulations due to \citet{Barentsen2011a}.
 Six stars are found to lie confidently above the 
 dashed line at the level of $3\sigma$,
 that is, the distance between the objects and the dashed line
-is larger than three times the uncertainty on the $r$-\ha\ colour.
+is larger than three times the uncertainty
+in their $(r-\ha)$ colour.
 These reliable candidate \ha-emitters
 are marked by red triangles in the colour-colour diagram
 and their photometry is detailed in Table~\ref{tbl:emitters}.
@@ -2207,45 +2221,41 @@ J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
 In previous work, we have shown that the majority of
 \ha-emitters seen towards an H{\sc ii} region
 are likely to be Classical T Tauri Stars \citep{Barentsen2011a}.
-These are young objects which show \ha\ in emission
+These are young objects
+which are thought to show \ha\ in emission
 due to the presence of hot, infalling gas
 which is accreting onto the star
 from a circumstellar disk.
 This is likely to be the case for the candidate \ha-emitters
 we discovered towards Sh 2-82 as well.
 Two of our candidates have recently been identified
-as Young Stellar Objects (YSO)
-in an initial investigation of the region by \cite{Yu2012}.
+as YSOs in the initial investigation of the region by \cite{Yu2012}.
 In their study, the authors used 2MASS and Spitzer data
 to select likely young stars by selecting objects with
 an infrared colour excess, consistent with 
 the presence of a heated circumstellar disk.
 Although \citeauthor{Yu2012} did not identify
-four of our candidates as having
-an infrared excess, we note that each of these four objects
-is detected at S/N$>$? in the Spitzer 8.0\,\micron\ image,
-which is consistent with an optically-unveiled Class II YSO.
-
-%The IPHAS catalogue offers photometry
-%for 2197 objects in the region down to $r<20$.
+the other four candidate emitters in our sample
+as having an infrared excess,
+we note that each of these four objects
+are detected in the Spitzer 8.0\,\micron\ image
+at S/N$>$5,
+which is consistent with the objects
+being optically-unveiled Class II YSOs
+with a mild infrared excess.
 
 Sh 2-82 is one of a large population of poorly-studied star-forming regions
 located at low Galactic latitudes,
 which have only recently started to become revealed
 by efforts to catalogue the wealth of ``bubbles'' detected
-by mid-infrared surveys \cite[e.g.][]{Churchwell2006,Simpson2012},
+at mid-infrared wavelengths \citep{Churchwell2006,Simpson2012},
 and by efforts to catalogue previously unknown clusters seen 
-at near-infrared wavelengths \cite[e.g.][]{Bica2003}.
-The optical data provided by IPHAS offers a handle -- or lower limit --
-on the extinction and distance towards many of these regions.
-When the extinction is sufficiently low,
-we have shown here that IPHAS can discover optically-unveiled 
-members of the region.
-
-%TODO: annotate -10 EW text on plot?
-%TODO: mention Gaia, e.g. IPHAS for transient identification?
-%\subsection{Caveats and lessons learnt}
-%\subsection{Comparison with Gaia}?
+in the near-infrared \cite[e.g.][]{Bica2003}.
+The data provided by IPHAS offers a handle
+or lower limit on the extinction and distance
+towards these regions,
+and can be used to discover optically-unveiled
+T~Tauri stars when the extinction is sufficiently low.
 
 \section{Data access and source code}
 \label{sec:dataaccess}
@@ -2254,7 +2264,7 @@ The catalogue is made available through the Vizier
 catalogue tool (http://vizier.u-strasbg.fr),
 where it is known as the ``IPHAS DR2 Source Catalogue''
 and where it can be queried
-(catalogue ID ??? Conesearch/TAP URL??).
+(catalogue ID TBD; Conesearch/TAP URL TBD?).
 The catalogue can also be downloaded in its entirety
 from the IPHAS website (www.iphas.org) as a collection 
 of binary FITS tables which comprise 50\,GB,
@@ -2305,11 +2315,14 @@ and selecting emission-line objects.
 
 In future work, we intend to draw upon the PanSTARRS photometric
 survey to further improve the accuracy of our global calibration.
-We will also aim to correct the IPHAS photometry for the
+We also aim to correct the IPHAS photometry for the
 radial field distortions,
-and plan to produce a catalogue 
+plan to produce a catalogue 
 which details all the secondary detections
-to aid time-domain studies.
+to aid time-domain studies,
+and are investigating the use of photometry
+derived from PSF-fitting across the survey.
+%TODO: mention Gaia, e.g. IPHAS for transient identification?
 
 The data-taking strategy developed for IPHAS
 has since been reapplied to carry out a companion INT/WFC survey called UVEX
@@ -2332,6 +2345,8 @@ The INT is operated on the island of La Palma
 by the Isaac Newton Group
 in the Spanish Observatorio del Roque de los Muchachos
 of the Instituto de Astrofisica de Canarias.
+We are deeply indebted to the ING staff and students
+for their ongoing support of the INT.
 All data were processed 
 by the Cambridge Astronomical Survey Unit
 at the Institute of Astronomy in Cambridge.
@@ -2371,6 +2386,10 @@ of the University of Massachusetts
 and the Infrared Processing and Analysis Center/
 California Institute of Technology,
 funded by NASA and the NSF.
+This work includes observations made
+with the Spitzer Space Telescope,
+which is operated by the Jet Propulsion Laboratory,
+California Institute of Technology under a contract with NASA. 
 
 GB and JED acknowledge the support of a grant
 from the Science \& Technology Facilities Council
