@@ -458,7 +458,7 @@ across the data release:
              across all quality-approved survey fields
              for $r$ (top), $i$ (middle) and \ha\ (bottom).
              Fields with a limiting magnitude brighter than
-             20th ($r$) or 19th (\ha/$i$) were rejected
+             20th ($r$) or 19th (\ha, $i$) were rejected
              from the data release.
              The $r$-band depth is most sensitive 
              to the presence of the moon above the horizon, 
@@ -525,7 +525,7 @@ in particular at early longitudes,
 e.g. 92\% of the fields at $l<120^\circ$ are better than 1.7~arcsec.
 Figure~\ref{fig:seeing} presents the distribution
 of the mean seeing for all the quality-approved fields.
-We find a median value of 1.1~arcsec in $r$/\ha\
+We find a median value of 1.1~arcsec in $r$, \ha\
 and 1.0~arcsec in $i$.
 In the $r$-band, 90\% of the data is better than 1.5~arcsec
 and 10\% is better than 0.8~arcsec.
@@ -1337,7 +1337,7 @@ We used the \textsc{tmatchn} function
 of the \textsc{stilts} software for this purpose,
 which allows rows from multiple tables to be matched \citep{Taylor2006}.
 The result of the procedure is a band-merged catalogue
-in which each row corresponds to a group of linked $r$/$i$/\ha\ detections
+in which each row corresponds to a group of linked $r$, $i$, and \ha\ detections
 which satisfy a maximum matching distance criterion in a pair-wise sense.
 Sources for which no counterpart was identified
 are retained in the catalogue as single-band detections.
@@ -1354,7 +1354,7 @@ with large centroiding errors,
 and would occasionally fail near CCD corners,
 where the astrometric solution can 
 show systematic errors which exceed 0.5~arcsec.
-The position offsets between the $r$ and $i$/\ha\ detections
+The position offsets between the $r$ and $i$, \ha\ detections
 have been included in the catalogue 
 and can hence be tightened by the user if necessary
 (columns \emph{iXi}, \emph{iEta}, \emph{haXi}, \emph{haEta}).
@@ -2286,6 +2286,9 @@ the source code that was used to generate
 the catalogue is made available at
 https://github.com/barentsen/iphas-dr2
 
+Instructions for acknowledging IPHAS can be found on our website.
+
+
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
@@ -2362,6 +2365,9 @@ for their ongoing support of the INT.
 All data were processed 
 by the Cambridge Astronomical Survey Unit
 at the Institute of Astronomy in Cambridge.
+The catalogue presented in this work was assembled
+at the Centre for Astrophysics Research, University of Hertfordshire, supported by a grant from the Science \& Technology Facilities Council
+of the UK (STFC, ref ST/J001335/1).
 
 Preparation of the catalogue was eased greatly
 by a number of software packages,
@@ -2403,9 +2409,7 @@ with the Spitzer Space Telescope,
 which is operated by the Jet Propulsion Laboratory,
 California Institute of Technology under a contract with NASA. 
 
-GB and JED acknowledge the support of a grant
-from the Science \& Technology Facilities Council
-of the UK (STFC, ref ST/J001335/1).
+GB and JED acknowledge the support of the STFC grant ST/J001335/1.
 HJF is in receipt of an STFC postgraduate studentship.
 
 \label{lastpage}

@@ -8,43 +8,43 @@ from .. import constants
 
 
 # Numpy dtype for a row in the IPHAS DR2 full source catalogue
-mydtype = [('name', 'S19'), ('ra', '>f8'), ('dec', '>f8'), ('sourceID', 'S14'), 
-           ('posErr', '>f4'), ('l', '>f8'), ('b', '>f8'), 
-           ('mergedClass', '>i2'), ('mergedClassStat', '>f4'), ('pStar', '>f4'), 
-           ('pGalaxy', '>f4'), ('pNoise', '>f4'), ('pSaturated', '>f4'), 
-           ('rmi', '>f4'), ('rmha', '>f4'), 
-           ('r', '>f4'), ('rErr', '>f4'), 
-           ('rPeakMag', '>f4'), ('rPeakMagErr', '>f4'), 
-           ('rAperMag1', '>f4'), ('rAperMag1Err', '>f4'), 
-           ('rAperMag3', '>f4'), ('rAperMag3Err', '>f4'), 
-           ('rGauSig', '>f4'), ('rEll', '>f4'), ('rPA', '>f4'), 
-           ('rClass', '>i2'), ('rClassStat', '>f4'), 
-           ('rErrBits', '>i2'), ('rMJD', '>f8'), ('rSeeing', '>f4'), 
-           ('rDetectionID', 'S15'), ('rX', '>f4'), ('rY', '>f4'), 
-           ('i', '>f4'), ('iErr', '>f4'), 
-           ('iPeakMag', '>f4'), ('iPeakMagErr', '>f4'), 
-           ('iAperMag1', '>f4'), ('iAperMag1Err', '>f4'), 
-           ('iAperMag3', '>f4'), ('iAperMag3Err', '>f4'), 
-           ('iGauSig', '>f4'), ('iEll', '>f4'), ('iPA', '>f4'), 
-           ('iClass', '>i2'), ('iClassStat', '>f4'), 
-           ('iErrBits', '>i2'), ('iMJD', '>f8'), ('iSeeing', '>f4'), 
-           ('iDetectionID', 'S15'), ('iX', '>f4'), ('iY', '>f4'), 
-           ('iXi', '>f4'), ('iEta', '>f4'), 
-           ('ha', '>f4'), ('haErr', '>f4'), 
-           ('haPeakMag', '>f4'), ('haPeakMagErr', '>f4'), 
-           ('haAperMag1', '>f4'), ('haAperMag1Err', '>f4'), 
-           ('haAperMag3', '>f4'), ('haAperMag3Err', '>f4'), 
-           ('haGauSig', '>f4'), ('haEll', '>f4'), ('haPA', '>f4'), 
-           ('haClass', '>i2'), ('haClassStat', '>f4'), 
-           ('haErrBits', '>i2'), ('haMJD', '>f8'), ('haSeeing', '>f4'), 
-           ('haDetectionID', 'S15'), ('haX', '>f4'), ('haY', '>f4'), 
-           ('haXi', '>f4'), ('haEta', '>f4'), 
-           ('brightNeighb', 'i1'), ('deblend', 'i1'), ('saturated', 'i1'), 
-           ('errBits', '>i2'), ('nBands', '>i2'), ('reliable', 'i1'), 
-           ('fieldID', 'S14'), ('fieldGrade', 'S3'), ('night', '>i4'), 
-           ('seeing', '>f4'), ('ccd', '>i2'), ('nObs', '>i2'), 
-           ('sourceID2', 'S15'), ('fieldID2', 'S15'), 
-           ('r2', '>f4'), ('rErr2', '>f4'), ('i2', '>f4'), ('iErr2', '>f4'), 
+mydtype = [('name', 'S19'), ('ra', '>f8'), ('dec', '>f8'), ('sourceID', 'S14'),
+           ('posErr', '>f4'), ('l', '>f8'), ('b', '>f8'),
+           ('mergedClass', '>i2'), ('mergedClassStat', '>f4'), ('pStar', '>f4'),
+           ('pGalaxy', '>f4'), ('pNoise', '>f4'), ('pSaturated', '>f4'),
+           ('rmi', '>f4'), ('rmha', '>f4'),
+           ('r', '>f4'), ('rErr', '>f4'),
+           ('rPeakMag', '>f4'), ('rPeakMagErr', '>f4'),
+           ('rAperMag1', '>f4'), ('rAperMag1Err', '>f4'),
+           ('rAperMag3', '>f4'), ('rAperMag3Err', '>f4'),
+           ('rGauSig', '>f4'), ('rEll', '>f4'), ('rPA', '>f4'),
+           ('rClass', '>i2'), ('rClassStat', '>f4'),
+           ('rErrBits', '>i2'), ('rMJD', '>f8'), ('rSeeing', '>f4'),
+           ('rDetectionID', 'S15'), ('rX', '>f4'), ('rY', '>f4'),
+           ('i', '>f4'), ('iErr', '>f4'),
+           ('iPeakMag', '>f4'), ('iPeakMagErr', '>f4'),
+           ('iAperMag1', '>f4'), ('iAperMag1Err', '>f4'),
+           ('iAperMag3', '>f4'), ('iAperMag3Err', '>f4'),
+           ('iGauSig', '>f4'), ('iEll', '>f4'), ('iPA', '>f4'),
+           ('iClass', '>i2'), ('iClassStat', '>f4'),
+           ('iErrBits', '>i2'), ('iMJD', '>f8'), ('iSeeing', '>f4'),
+           ('iDetectionID', 'S15'), ('iX', '>f4'), ('iY', '>f4'),
+           ('iXi', '>f4'), ('iEta', '>f4'),
+           ('ha', '>f4'), ('haErr', '>f4'),
+           ('haPeakMag', '>f4'), ('haPeakMagErr', '>f4'),
+           ('haAperMag1', '>f4'), ('haAperMag1Err', '>f4'),
+           ('haAperMag3', '>f4'), ('haAperMag3Err', '>f4'),
+           ('haGauSig', '>f4'), ('haEll', '>f4'), ('haPA', '>f4'),
+           ('haClass', '>i2'), ('haClassStat', '>f4'),
+           ('haErrBits', '>i2'), ('haMJD', '>f8'), ('haSeeing', '>f4'),
+           ('haDetectionID', 'S15'), ('haX', '>f4'), ('haY', '>f4'),
+           ('haXi', '>f4'), ('haEta', '>f4'),
+           ('brightNeighb', 'i1'), ('deblend', 'i1'), ('saturated', 'i1'),
+           ('errBits', '>i2'), ('nBands', '>i2'), ('reliable', 'i1'),
+           ('fieldID', 'S14'), ('fieldGrade', 'S3'), ('night', '>i4'),
+           ('seeing', '>f4'), ('ccd', '>i2'), ('nObs', '>i2'),
+           ('sourceID2', 'S15'), ('fieldID2', 'S15'),
+           ('r2', '>f4'), ('rErr2', '>f4'), ('i2', '>f4'), ('iErr2', '>f4'),
            ('ha2', '>f4'), ('haErr2', '>f4'), ('errBits2', '>i4')]
 
 
@@ -61,20 +61,47 @@ class SourceCatalogueDB(object):
         """Returns numpy ndarray."""
         return np.fromiter(self.cursor.execute(sql), mydtype)
 
-    def conesearch(self, ra, dec, radius=60.0):
+    def conesearch(self, ra, dec, radius=60.0, condition=''):
         """
-        Radius in arcsec
+        Parameters
+        ----------
+        radius : float [arcsec]
         """
-        sr_degrees = radius/3600.
-        sql = """
-                SELECT * FROM iphas 
-                WHERE ra BETWEEN %s-%s AND %s+%s 
-                AND dec BETWEEN %s-%s AND %s+%s;
-        """ % (ra, sr_degrees*1.1*math.cos(math.radians(dec)), ra, sr_degrees*1.1*math.cos(math.radians(dec)),
-               dec, sr_degrees, dec, sr_degrees,)
+        sr_degrees = radius/3600.  # Search radius [degrees]
+        sr_degrees_ra = sr_degrees * 1.1 * math.cos(math.radians(dec))
+
+        # Build the query
+        sql = ('SELECT * FROM iphas '
+              'WHERE ra BETWEEN {ra1} AND {ra2} '
+              'AND dec BETWEEN {dec1} AND {dec2} '
+              '{condition}').format(
+                ra1=ra - sr_degrees_ra, ra2=ra + sr_degrees_ra,
+                dec1=dec - sr_degrees, dec2=dec + sr_degrees,
+                condition=condition)
         log.info(sql)
         result = self.query(sql)
         sep = util.sphere_dist(ra, dec, result['ra'], result['dec'])
+        return result[sep < sr_degrees]
+
+    def conesearch_gal(self, l, b, radius=60.0, condition=''):
+        """
+        Parameters
+        ----------
+        radius : float [arcsec]
+        """
+        sr_degrees = radius / 3600.  # Search radius [degrees]
+        
+        # Build the query
+        sql = ('SELECT * FROM iphas '
+              'WHERE l BETWEEN {l1} AND {l2} '
+              'AND b BETWEEN {b1} AND {b2} '
+              '{condition}').format(
+                l1=l - sr_degrees, l2=l + sr_degrees,
+                b1=b - sr_degrees, b2=b + sr_degrees,
+                condition=condition)
+        log.info(sql)
+        result = self.query(sql)
+        sep = util.sphere_dist(l, b, result['l'], result['b'])
         return result[sep < sr_degrees]
 
     def boxsearch(self, lon1, lon2, lat1, lat2, cond=''):
@@ -92,4 +119,4 @@ class SourceCatalogueDB(object):
 if __name__ == '__main__':
     #r = conesearch(ra, dec)
     #r = box(29.1, 30.1, -0.1, 0.1)
-    r = plotboxes()
+    pass

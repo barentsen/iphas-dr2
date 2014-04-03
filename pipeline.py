@@ -6,12 +6,12 @@ Summary
 -------
 This script drives the entire creation of the IPHAS DR2 source catalogue.
 Its purpose is to convert the IPHAS single-band detection tables, which are
-kindly created by the Cambridge Astronomical Surveys Unit (CASU),
+kindly provided by the Cambridge Astronomical Surveys Unit (CASU),
 into a band-merged and globally calibrated source catalogue which lists only
 the best-available measurement for each unique source.
 
-Dependencies
-------------
+Usage
+-----
 This script relies on the presence of a running instance of an IPython.parallel
 cluster, which can be started on a local machine using:
     
@@ -20,6 +20,12 @@ cluster, which can be started on a local machine using:
 or can be started on a PBS-controlled computing cluster by submitting the job:
 
    ``qsub scripts/pipeline-cluster.pbs``.
+
+Once an IPython.parallel cluster is running, you can simply run
+
+   ``python pipeline.py``
+
+...and the entire data release will be created within a few thousand CPU hours.
 """
 from IPython import parallel
 from astropy import log

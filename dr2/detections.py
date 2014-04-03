@@ -4,15 +4,16 @@
 
 Summary
 -------
-This module is used to transform the detection tables that are produced
-by the ``imcore`` source detection and measurement tool of the Cambridge
-Astronomical Survey Unit (CASU). Its main purpose is to convert the columns
-in the CASU detection tables from instrumental units into more user-friendly
-astronomical units (e.g. converting fluxes into magnitudes, converting pixel
-coordinates into celestial coordinates, and adding user-friendly warning flags
-to signal quality problems.) Whilst doing so, the script will corrects for a
-range of known issues present in the data, e.g. it will apply a custom fix
-to the World Coordinate System (WCS) where necessary.
+This module is used to transform the IPHAS detection tables that are kindly
+provided by the ``imcore`` source detection and measurement tool of the
+Cambridge Astronomical Survey Unit (CASU). Its main purpose is to convert the
+columns in the CASU detection tables from instrumental units into more
+user-friendly astronomical units (e.g. converting fluxes into magnitudes,
+converting pixel coordinates into celestial coordinates, and adding
+user-friendly warning flags to signal quality problems.) Whilst doing so,
+the script will corrects for a range of known issues present in the data,
+e.g. it will apply a custom fix to the World Coordinate System (WCS) where
+necessary.
 This module can also produce a table called 'metadata.fits' which details the
 metadata of an entire directory of CASU detection tables, which is useful for
 carrying out quality control.
