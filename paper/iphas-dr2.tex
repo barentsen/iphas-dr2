@@ -125,6 +125,7 @@ describe and test the new uniform calibration,
 and detail the construction of the new 97-column source catalogue.
 We show that the global calibration is accurate to
 0.03~mag (rms) by validating against SDSS,
+% RR: better Sloan Digital Sky Survey (SDSS)?
 and provide a series of recommended quality criteria
 which can be used to select the most reliable data
 from the catalogue.
@@ -154,6 +155,7 @@ this large-scale programme of observation
 -- spanning almost a decade 
 and using more than 300 nights 
 at the Isaac Newton Telescope (INT) in La Palma -- 
+% RR: The INT acronym is defined before
 was to provide the digital update 
 to the photographic northern H$\alpha$ surveys 
 of the mid-20th century. 
@@ -162,8 +164,8 @@ with respect to these previous surveys
 by a factor $\sim$1000 (7 magnitudes), 
 it was envisaged that IPHAS would allow 
 the limited bright samples of Galactic emission line objects 
-available at the outset \citep[e.g.][]{Kohoutek1999}, 
-to be extended into larger, deeper, more statistically-robust samples.
+available at the outset \citep[e.g.][]{Kohoutek1999} 
+to be extended into larger, deeper, and more statistically-robust samples.
 This in turn could better inform our understanding 
 of the early and late stages of stellar evolution.
 Since the publication of the IPHAS Initial Data Release \citep[IDR;][]{Gonzalez-Solares2008},
@@ -243,26 +245,26 @@ The detailed properties of the IPHAS observing programme
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
 To set the stage for this release, we briefly remind of some key points.
-IPHAS is a 1800~sq. deg. imaging survey of the northern Galactic Plane, 
+IPHAS is a 1800~deg$^{2}$. imaging survey of the northern Galactic Plane, 
 providing images and photometry in Sloan $r, i$ 
 along with narrowband H$\alpha$. 
-It is carried out using the Wide Field Camera (WFC) 
-on the 2.5-metre Isaac Newton Telescope (INT) in La Palma. 
+It is carried out using the WFC 
+on the 2.5-metre INT in La Palma. 
 It is the first digital survey to offer comprehensive CCD photometry
 of point sources in the Galactic Plane at visible wavelengths, 
 and does so down to a limiting magnitude of $\sim$20th.
-The IPHAS footprint on the northern sky spans a box 
+The IPHAS footprint spans a box 
 of roughly 180 by 10 degrees, 
 taking in the entire northern Galactic Plane 
 at latitudes $-5^{\circ} < b < +5^{\circ}$ 
 and longitudes $30^{\circ} < l < 215^{\circ}$.
 
-The Wide Field Camera is a mosaic of 4 CCDs 
-that captures a sky area of close to 0.29 square degrees.
+The WFC is a mosaic of 4 CCDs 
+that captures a sky area of close to 0.29~deg$^{2}$.
 To cover the entire Northern Plane with some overlap,
 the survey area was divided into 7635 telescope pointings.
 Each of these pointings is accompanied by an offset position
-at a displacement of $+$5 arcmin in declination 
+displaced by $+$5 arcmin in declination 
 and $+$5 arcmin in right ascension,
 to deal with inter-CCD gaps, detector imperfections,
 and to enable quality checks. 
@@ -315,7 +317,7 @@ were obtained in November 2012.
         \label{fig:footprint}
 \end{figure*}
 
-Figure~\ref{fig:footprint} shows the footprint 
+Fig.~\ref{fig:footprint} shows the footprint % Should replace all Figure with Fig., according to the MNRAS style I think
 of the quality-approved observations included in this work. 
 The fields which remain missing 
 -- covering 8\% of the survey area --
@@ -367,13 +369,14 @@ corresponding to each of the four CCDs.
 Source detection and characterisation is then carried out 
 using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
 The flux of each source is measured using both
-the peak pixel height (i.e. a square 0.33$\times$0.33\arcsec\ aperture)
+the peak pixel height (i.e. a square 0.33$\arcsec\times$0.33\arcsec\ aperture)
+% not sure if you need the \arcsec I added, but it would look nicer to me.
 as well as a series of circular apertures of increasing diameter 
 (1.2\arcsec, 2.3\arcsec, 3.3\arcsec, 4.6\arcsec\ and 6.6\arcsec).
 
 The local background levels are estimated 
 by computing the sigma-clipped median
-flux in a grid of 64$\times$64 pixels (21$\times$21\arcsec)
+flux in a grid of 64$\times$64 pixels (21\arcsec$\times$21\arcsec)
 across the image,
 which is then interpolated to obtain an estimate 
 of the background level at each pixel.
@@ -393,7 +396,7 @@ which suffer from this problem
 are flagged in the catalogue using the \emph{deblend} warning flag.
 
 Finally, an astrometric solution is determined
-based on the 2MASS point source catalogue \citep{Skrutskie2006},
+based on the Two-Micron All Sky Survey (2MASS) point source catalogue \citep{Skrutskie2006},
 which itself is calibrated 
 in the International Celestial Reference System (ICRS).
 A provisional photometric calibration is also provided 
@@ -532,7 +535,7 @@ and 10\% is better than 0.8~arcsec.
 To improve the area covered by this data release,
 we have decided to include the small fraction of data
 that was obtained under seeing up to 2.5 arcsec,
-so that only 1\%of the pipelined exposures
+so that only 1\% of the pipelined exposures
 had to be excluded due to poor seeing.
 In \S\ref{sec:catalogue} we will explain
 that the photometry listed in the catalogue
@@ -677,7 +680,7 @@ All these quantities correspond to header keywords in the
 multi-extension FITS files produced by the CASU pipeline.
 
 The zeropoint was determined such that the resulting magnitude system
-is in the WFC system that uses the SED of Vega 
+is in the WFC system that uses the Spectral Energy Distribution (SED) of Vega 
 as the zero colour reference object. 
 Colour equations were used to transform between the IPHAS passbands 
 and the Johnson-Cousins system 
@@ -722,8 +725,9 @@ in the timing of exposures).
 Such variations need to be corrected for 
 during a global re-calibration procedure.
 Notable past examples include the global re-calibration 
-of the Two Micron All Sky Survey \citep[2MASS;][]{Nikolaev2000},
-the Sloan Digital Sky Survey \citep[SDSS;][]{Padmanabhan2008}
+of the Two Micron All Sky Survey \citep[][]{Nikolaev2000},
+the Sloan Digital Sky Survey \citep[][]{Padmanabhan2008}
+% Define both 2MASS and SDSS before in the text
 and the Panoramic Survey Telescope 
 And Rapid Response System survey \citep[Pan-STARRS;][]{Schlafly2012},
 which all achieved photometry 
@@ -919,6 +923,16 @@ convergence, which was essentially reached after the first iteration.
 \end{figure*}
 
 \begin{table}
+% The caption of tables should be on top and not at the bottom
+        \caption{Mean magnitude offsets for objects
+                 cross-matched between IPHAS and APASS/SDSS
+                 before the uniform re-calibration.
+                 Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
+                 to the APASS/SDSS magnitudes to bring them into the
+                 Vega-based IPHAS system prior to computing
+                 the offsets.)
+                 }
+        \label{tbl:offsets_before}
         \begin{center}
                 \begin{tabular}{lcc}
                         \toprule
@@ -930,16 +944,10 @@ convergence, which was essentially reached after the first iteration.
                         $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
                         \bottomrule
                 \end{tabular}
-        \caption{Mean magnitude offsets for objects
-                 cross-matched between IPHAS and APASS/SDSS
-                 before the uniform re-calibration.
-                 Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
-                 to the APASS/SDSS magnitudes to bring them into the
-                 Vega-based IPHAS system prior to computing
-                 the offsets.)
-                 }
-        \label{tbl:offsets_before}
-
+        \caption{Same as Table~\ref{tbl:offsets_before}
+                 but computed after the uniform re-calibration
+                 was carried out.}
+        \label{tbl:offsets_after}
                 \begin{tabular}{lcc}
                         \toprule
                          {\bf After re-calibration} & Mean & $\sigma$ \\
@@ -950,10 +958,7 @@ convergence, which was essentially reached after the first iteration.
                         $i$ (IPHAS - SDSS) & -0.002 & 0.032 \\
                         \bottomrule
                 \end{tabular}
-        \caption{Same as Table~\ref{tbl:offsets_before}
-                 but computed after the uniform re-calibration
-                 was carried out.}
-        \label{tbl:offsets_after}
+
         \end{center}
 \end{table}
 
@@ -961,7 +966,7 @@ convergence, which was essentially reached after the first iteration.
 
 At the time of writing, the APASS catalogue did not provide 
 sufficient coverage for 7359 of the fields in our data release.
-Fortunately, these fields are pre-dominantly located 
+Fortunately, these fields are predominantly located 
 in the early part of the Galactic Plane (Fig.~\ref{fig:apass_r}),
 which were typically observed during the summer months
 when photometric conditions are more prevalent at the telescope.
@@ -1415,7 +1420,7 @@ in the catalogue for convenience
 Such a secondary detection is available for 66\% of the sources brighter than $r<20$
 due to the IPHAS field pair strategy.
 In addition, the complete set of detection tables -- one for each exposure -- 
-is made accessibly on our website to allow other uses of the data.
+is made accessible on our website to allow other uses of the data.
 A user-friendly catalogue of secondary detections 
 has not been compiled at present 
 but may be part of a future data release.
@@ -1538,8 +1543,15 @@ named \emph{reliable} which flags these objects
 and makes their selection easy.
 
 \begin{table*}
-\vspace{2cm}
 
+\vspace{2cm}
+\caption{Recommended minimum quality criteria 
+for selecting objects with reliable colours 
+from the IPHAS DR2 source catalogue. 
+86~million entries in the catalogue (39\%)
+satisfy all the criteria listed in this table.
+For convenience, these have been flagged in the catalogue
+using the column named \emph{reliable}.
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
@@ -1582,17 +1594,16 @@ and makes their selection easy.
   86 million (39\%) & \\
   \hline
 \end{tabular}
-\caption{Recommended minimum quality criteria 
-for selecting objects with reliable colours 
-from the IPHAS DR2 source catalogue. 
-86~million entries in the catalogue (39\%)
-satisfy all the criteria listed in this table.
-For convenience, these have been flagged in the catalogue
-using the column named \emph{reliable}.}
+}
 \label{tab:reliable}
 
 \vspace{2cm}
-
+\caption{Additional quality criteria which are recommended
+for applications which require very reliable colours
+at the expense of completeness. 
+For convenience, the sources which satisfy the criteria listed
+in this table have been flagged in the catalogue
+using the column named \emph{veryReliable}.
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
@@ -1625,12 +1636,7 @@ using the column named \emph{reliable}.}
   59 million (27\%) & \\
   \hline
 \end{tabular}
-\caption{Additional quality criteria which are recommended
-for applications which require very reliable colours
-at the expense of completeness. 
-For convenience, the sources which satisfy the criteria listed
-in this table have been flagged in the catalogue
-using the column named \emph{veryReliable}.}
+}
 \label{tab:veryreliable}
 
 \vspace{2cm}
@@ -1818,6 +1824,7 @@ there are significant variations
 in the source density on smaller scales.
 For example,  we find a significant drop near the constellations 
 of Cygnus ($l\simeq 80$) and Aquila ($l\simeq 40$),
+% what's the low surface density seen at ~90 deg?
 which are regions known to be affected
 by high levels of foreground extinction.
 Dark clouds are readily visible towards these constellation by eye,
@@ -1890,7 +1897,7 @@ has been shown to provide simultaneous constraints
 on intrinsic stellar colour and interstellar extinction \citep{Drew2008}. 
 Put differently, the main sequence in the $(r-\ha,\ r-i)$ diagram
 runs in a direction that is different from the reddening vector,
-because the $r$-\ha\ colour tends to act
+because the ($r-\ha$) colour tends to act
 as a coarse proxy for spectral type
 and is less sensitive to reddening than $(r-i)$.
 As a result, the distribution of a stellar population
@@ -2129,7 +2136,7 @@ a mosaic of the same region
 as seen in the mid-infrared by the Spitzer Space Telescope \citep[GLIMPSE survey;][]{Benjamin2003,Churchwell2009}.
 The infrared image reveals a bubble-shaped structure
 which is thought to originate from the
-mid-infrared emission of Poly-Aromatic Hydrocarbons (PAHs)
+mid-infrared emission of Polycyclic Aromatic Hydrocarbons (PAHs)
 -- i.e. warm dust --
 which is frequently observed
 at the interface between neutral regions of interstellar material
@@ -2207,6 +2214,8 @@ is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas})
 \end{figure}
 
 \begin{table}
+    \caption{Candidate \ha-emitters towards Sh 2-82.}
+    \label{tbl:emitters}
 \footnotesize
 \resizebox{0.45\textwidth}{!}{
     \begin{tabular}{lccc}
@@ -2221,8 +2230,6 @@ J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
 J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
     \bottomrule
     \end{tabular}}
-    \caption{Candidate \ha-emitters towards Sh 2-82.}
-    \label{tbl:emitters}
 \end{table}
 
 In previous work, we have shown that the majority of
@@ -2248,7 +2255,8 @@ we note that each of these four objects
 are detected in the Spitzer 8.0\,\micron\ image
 at S/N$>$5,
 which is consistent with the objects
-being optically-unveiled Class II YSOs
+being optically-unveiled, or Class II, YSOs
+% add e reference for the YSO classification?
 with a mild infrared excess.
 
 Sh 2-82 is one of a large population of poorly-studied star-forming regions
