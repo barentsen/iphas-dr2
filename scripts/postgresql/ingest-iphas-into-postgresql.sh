@@ -4,10 +4,10 @@
 # Author: Geert Barentsen
 
 # Configuration
-DATAPATH="/home/gb/iphas-dr2/full-compressed"  # Path to catalogue FITS tables
+DATAPATH="/home/gb/tmp/iphas-dr2-rc6/concatenated/full"  # Path to catalogue FITS tables
 TABLENAME="iphas2"
-DBNAME="iphas"
-DBPORT=5432
+DBNAME="gb"
+DBPORT=5433
 DBUSER="gb"
 PSQL="psql $DBNAME --port $DBPORT --user $DBUSER "
 STILTS="java -jar ../../dr2/lib/stilts.jar"
@@ -99,6 +99,7 @@ saturated boolean, \
 errBits smallint, \
 nBands smallint, \
 reliable boolean, \
+veryReliable boolean, \
 fieldID text, \
 fieldGrade text, \
 night integer, \
