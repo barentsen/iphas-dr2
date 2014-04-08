@@ -103,7 +103,7 @@ Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 \begin{abstract} % BACKGROUND, OBJECTIVE, METHODS, RESULTS, CONCLUSIONS
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
-is a 1800 deg$^2$ imaging survey
+is a 1800~deg$^2$ imaging survey
 covering the entire northern Milky Way at $|b| < 5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
@@ -124,8 +124,7 @@ and quality control procedures,
 describe and test the new uniform calibration,
 and detail the construction of the new 97-column source catalogue.
 We show that the global calibration is accurate to
-0.03~mag (rms) by validating against SDSS,
-% RR: better Sloan Digital Sky Survey (SDSS)?
+0.03~mag (rms) by validating against the Sloan Digital Sky Survey (SDSS),
 and provide a series of recommended quality criteria
 which can be used to select the most reliable data
 from the catalogue.
@@ -154,8 +153,7 @@ The original motivation for undertaking
 this large-scale programme of observation
 -- spanning almost a decade 
 and using more than 300 nights 
-at the Isaac Newton Telescope (INT) in La Palma -- 
-% RR: The INT acronym is defined before
+at the INT in La Palma --
 was to provide the digital update 
 to the photographic northern H$\alpha$ surveys 
 of the mid-20th century. 
@@ -164,7 +162,7 @@ with respect to these previous surveys
 by a factor $\sim$1000 (7 magnitudes), 
 it was envisaged that IPHAS would allow 
 the limited bright samples of Galactic emission line objects 
-available at the outset \citep[e.g.][]{Kohoutek1999} 
+available at the outset \citep[e.g.][]{Kohoutek1999}
 to be extended into larger, deeper, and more statistically-robust samples.
 This in turn could better inform our understanding 
 of the early and late stages of stellar evolution.
@@ -245,7 +243,7 @@ The detailed properties of the IPHAS observing programme
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
 To set the stage for this release, we briefly remind of some key points.
-IPHAS is a 1800~deg$^{2}$. imaging survey of the northern Galactic Plane, 
+IPHAS is a 1800~deg$^2$. imaging survey of the northern Galactic Plane, 
 providing images and photometry in Sloan $r, i$ 
 along with narrowband H$\alpha$. 
 It is carried out using the WFC 
@@ -260,7 +258,7 @@ at latitudes $-5^{\circ} < b < +5^{\circ}$
 and longitudes $30^{\circ} < l < 215^{\circ}$.
 
 The WFC is a mosaic of 4 CCDs 
-that captures a sky area of close to 0.29~deg$^{2}$.
+that captures a sky area of close to 0.29~deg$^2$.
 To cover the entire Northern Plane with some overlap,
 the survey area was divided into 7635 telescope pointings.
 Each of these pointings is accompanied by an offset position
@@ -317,7 +315,7 @@ were obtained in November 2012.
         \label{fig:footprint}
 \end{figure*}
 
-Fig.~\ref{fig:footprint} shows the footprint % Should replace all Figure with Fig., according to the MNRAS style I think
+Fig.~\ref{fig:footprint} shows the footprin
 of the quality-approved observations included in this work. 
 The fields which remain missing 
 -- covering 8\% of the survey area --
@@ -370,7 +368,6 @@ Source detection and characterisation is then carried out
 using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
 The flux of each source is measured using both
 the peak pixel height (i.e. a square 0.33$\arcsec\times$0.33\arcsec\ aperture)
-% not sure if you need the \arcsec I added, but it would look nicer to me.
 as well as a series of circular apertures of increasing diameter 
 (1.2\arcsec, 2.3\arcsec, 3.3\arcsec, 4.6\arcsec\ and 6.6\arcsec).
 
@@ -476,7 +473,7 @@ was worse than 20th magnitude in the $r$-band
 or worse than 19th in $i$ or \ha. 
 Such data were typically obtained during poor weather or full moon.
 Most observations fared significantly better than these limits.
-Figure~\ref{fig:depth} presents the distribution of limiting magnitudes
+Fig.~\ref{fig:depth} presents the distribution of limiting magnitudes
 for all quality-approved fields,
 showing a mean depth of 
 $21.2\pm0.5$ ($r$), $20.0\pm0.3$ ($i$) and $20.3\pm0.3$ (\ha).
@@ -526,7 +523,7 @@ at seeing better than 1.7~arcsec.
 This target is currently attained across 86\% of the footprint,
 in particular at early longitudes,
 e.g. 92\% of the fields at $l<120^\circ$ are better than 1.7~arcsec.
-Figure~\ref{fig:seeing} presents the distribution
+Fig.~\ref{fig:seeing} presents the distribution
 of the mean seeing for all the quality-approved fields.
 We find a median value of 1.1~arcsec in $r$, \ha\
 and 1.0~arcsec in $i$.
@@ -725,9 +722,8 @@ in the timing of exposures).
 Such variations need to be corrected for 
 during a global re-calibration procedure.
 Notable past examples include the global re-calibration 
-of the Two Micron All Sky Survey \citep[][]{Nikolaev2000},
-the Sloan Digital Sky Survey \citep[][]{Padmanabhan2008}
-% Define both 2MASS and SDSS before in the text
+of 2MASS \citep[][]{Nikolaev2000},
+SDSS \citep[][]{Padmanabhan2008}
 and the Panoramic Survey Telescope 
 And Rapid Response System survey \citep[Pan-STARRS;][]{Schlafly2012},
 which all achieved photometry 
@@ -799,7 +795,7 @@ AAVSO Photometric All-Sky Survey
 to bring the vast majority of the survey 
 onto a uniform scale.
 Since 2009,
-APASS has been using two 20\,cm-astrographs
+APASS has been using two 20~cm-astrographs
 to survey the entire sky down to $\sim$17th magnitude
 in five filters which include Sloan $r$ and $i$ \citep{Henden2012}.
 The most recent catalogue available 
@@ -913,12 +909,12 @@ convergence, which was essentially reached after the first iteration.
 	\vspace{2cm}
     \includegraphics[width=\textwidth]{plots/calibration/APASS-IPHAS-DR2_ishift.pdf} 
     \includegraphics[width=\textwidth]{plots/calibration/colourbar_apass_i.pdf} 
-    \caption{Same as Figure~\ref{fig:apass_r} for the $i$-band.}
+    \caption{Same as Fig.~\ref{fig:apass_r} for the $i$-band.}
         \label{fig:apass_i}
     \vspace{1cm}
     \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_ishift.pdf}
     \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_i.pdf} 
-    \caption{Same as Figure~\ref{fig:sdss_i} for the $i$-band.}
+    \caption{Same as Fig.~\ref{fig:sdss_i} for the $i$-band.}
     \label{fig:sdss_i}
 \end{figure*}
 
@@ -1044,7 +1040,7 @@ based on
 (i) the information contained in the observing logs,
 (ii) the stability of the standard star zeropoints during the night, and
 (iii) photometricity statistics provided by the Carlsberg Meridian Telescope,
-which is located $\sim$500\,metres from the INT.
+which is located $\sim$500~m from the INT.
 
 We then solved Eqn.~\ref{eqn:matrix} for the $r$ and $i$ bands
 separately using the least-squares routine 
@@ -1063,7 +1059,7 @@ that the corrections required for $r$ and \ha\ are identical
 because the IPHAS data-taking pattern ensured 
 that a field's \ha\ and $r$-band exposures
 were taken at essentially the same time, 
-separated only by the $\sim$30\,sec read-out time required by the WFC.
+separated only by the $\sim$30~s read-out time required by the WFC.
 We have hence corrected the \ha\ zeropoints 
 by re-using the zeropoint adjustments that were derived for the $r$ band
 in the earlier steps.
@@ -1551,7 +1547,7 @@ from the IPHAS DR2 source catalogue.
 86~million entries in the catalogue (39\%)
 satisfy all the criteria listed in this table.
 For convenience, these have been flagged in the catalogue
-using the column named \emph{reliable}.
+using the column named \emph{reliable}.}
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
@@ -1594,7 +1590,6 @@ using the column named \emph{reliable}.
   86 million (39\%) & \\
   \hline
 \end{tabular}
-}
 \label{tab:reliable}
 
 \vspace{2cm}
@@ -1603,7 +1598,7 @@ for applications which require very reliable colours
 at the expense of completeness. 
 For convenience, the sources which satisfy the criteria listed
 in this table have been flagged in the catalogue
-using the column named \emph{veryReliable}.
+using the column named \emph{veryReliable}.}
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
@@ -1636,7 +1631,7 @@ using the column named \emph{veryReliable}.
   59 million (27\%) & \\
   \hline
 \end{tabular}
-}
+
 \label{tab:veryreliable}
 
 \vspace{2cm}
@@ -1656,7 +1651,7 @@ and are hereafter referred to as ``very reliable''.
 Again, the catalogue contains a boolean column
 named \emph{veryReliable} which flags these objects.
 
-Figure~\ref{fig:magdist} compares the $r$-band magnitude
+Fig.~\ref{fig:magdist} compares the $r$-band magnitude
 distribution for objects with and without the 
 \emph{reliable} and \emph{veryReliable} criteria applied. 
 We find that 81\% of the sources 
@@ -1698,7 +1693,7 @@ from 0.1 mag to 0.2 mag,
 
 \subsection{Photometric uncertainties and repeatability}
 
-Figure~\ref{fig:uncertainties} shows the mean photometric
+Fig.~\ref{fig:uncertainties} shows the mean photometric
 uncertainty as a function of magnitude in each band.
 We find that the uncertainty typically
 reaches 0.1~mag near 20.5 in $r$ 
@@ -1733,7 +1728,7 @@ are not included.
 To appraise the extent to which our photometry is affected
 by such systematics, we can exploit the
 secondary measurements which are present in the catalogue.
-Figure~\ref{fig:pairmag} shows the mean residuals between
+Fig.~\ref{fig:pairmag} shows the mean residuals between
 the primary and secondary magnitudes
 -- i.e. the average difference between catalogue columns \emph{r}-\emph{r2},
 \emph{i}-\emph{i2}, \emph{ha}-\emph{ha2} -- as a function of magnitude.
@@ -1787,7 +1782,7 @@ appear to dominate from $\sim$20th magnitude onward.
     }
 \end{figure*}
 
-In Figure~\ref{fig:pairmag_reliable} we show 
+In Fig.~\ref{fig:pairmag_reliable} we show 
 a similar comparison of the primary and secondary detections,
 but this time we have only included sources which are flagged
 as \emph{veryReliable} in the catalogue
@@ -1808,7 +1803,7 @@ disappear.
 \label{sec:densities}
 
 The mean source density as a function of Galactic longitude
-is shown in Figure~\ref{fig:density} (thick blue line).
+is shown in Fig.~\ref{fig:density} (thick blue line).
 The densities were computed by counting the 
 number of sources in $1^\circ$-wide longitude bins,
 each covering the entire latitude range $-5^\circ<b<+5^\circ$.
@@ -1823,12 +1818,12 @@ In addition to the global trend,
 there are significant variations
 in the source density on smaller scales.
 For example,  we find a significant drop near the constellations 
-of Cygnus ($l\simeq 80$) and Aquila ($l\simeq 40$),
-% what's the low surface density seen at ~90 deg?
+of Aquila ($l\simeq40$) and Cygnus ($l\simeq80$ and $l\simeq90$),
 which are regions known to be affected
 by high levels of foreground extinction.
-Dark clouds are readily visible towards these constellation by eye,
-and they have often been referred to as ``the Great Rift''.
+In fact dark clouds are readily visible in the night sky
+towards these constellations,
+and they are often referred to as the `the Great Rift' \citep[e.g.][]{BokBok}.
 
 We warn that the relative densities reported here 
 have not been corrected for survey completeness
@@ -1859,7 +1854,7 @@ which can be used to constrain detailed models of our Galaxy.
     \label{fig:density}
 \end{figure*}
 
-In Figure~\ref{fig:density} we also shows the density
+In Fig.~\ref{fig:density} we also shows the density
 of non-blended sources (thin red line).
 These are sources for which the \emph{deblend} flag is {\sc false},
 i.e. sources for which the CASU pipeline did not have to apply 
@@ -1906,7 +1901,7 @@ can offer a handle on the properties of the population
 and the extinction along a line of sight.
 
 This is demonstrated 
-in Figures \ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
+in Fig.~\ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
 where we present three sets of IPHAS colour/magnitude diagrams
 towards three distinct sight-lines
 located at Galactic longitudes 
@@ -2122,7 +2117,7 @@ at a likely distance of 1.5-1.7 kpc
 based on its photometric parallax
 \citep{Mayer1973,Lahulla1985,Hunter1990}.
 
-Figure~\ref{fig:mosaic_iphas} shows a 20-by-15 arcmin
+Fig.~\ref{fig:mosaic_iphas} shows a 20-by-15 arcmin
 colour mosaic centred on Sh 2-82,
 composed of our \ha\ (red channel),
 $r$ (green channel),
@@ -2131,7 +2126,7 @@ The ionising star can be seen as the bright object
 in the centre of the H{\sc ii} region,
 which is surrounded by a faint reflection nebula
 and several dark cloud filaments.
-For comparison, Figure~\ref{fig:mosaic_spitzer} shows
+For comparison, Fig.~\ref{fig:mosaic_spitzer} shows
 a mosaic of the same region 
 as seen in the mid-infrared by the Spitzer Space Telescope \citep[GLIMPSE survey;][]{Benjamin2003,Churchwell2009}.
 The infrared image reveals a bubble-shaped structure
@@ -2159,21 +2154,21 @@ of the bubble.
 \caption{IPHAS-based mosaic of H{\sc ii} region Sh 2-82,
 composed of \ha\ (red channel), $r$ (green channel) and $i$ (blue channel). Yellow triangles show the position of candidate \ha-emitters
 which have been selected from the colour-colour diagram
-in Figure~\ref{fig:emitters}. Note that the H{\sc ii} region is surrounded by a faint blue/green reflection nebula
+in Fig.~\ref{fig:emitters}. Note that the H{\sc ii} region is surrounded by a faint blue/green reflection nebula
 and dark cloud filaments.}
 \label{fig:mosaic_iphas}
     \begin{minipage}[b]{0.8\linewidth}
         \includegraphics[width=\textwidth]{./plots/mosaic/sh2-82-spitzer.pdf} 
     \end{minipage}
     \caption{Star-forming region Sh 2-82 as seen in the mid-infrared
-    by the Spitzer Space Telescope's GLIMPSE survey. The mosaic is composed of the 24\,\micron\ (red), 8.0\,\micron\ (green) and 4.5\,\micron\ (blue) bands.
-    The image reveals a bubble-shaped structure which surrounds the {\sc Hii} region that is seen in the IPHAS mosaic of the same region (Figure~\ref{fig:mosaic_iphas}). 
+    by the Spitzer Space Telescope's GLIMPSE survey. The mosaic is composed of the 24~\micron\ (red), 8.0~\micron\ (green) and 4.5~\micron\ (blue) bands.
+    The image reveals a bubble-shaped structure which surrounds the {\sc Hii} region that is seen in the IPHAS mosaic of the same region (Fig.~\ref{fig:mosaic_iphas}). 
     This structure has previously been labelled as N115 in the 
 catalogue due to \citet{Churchwell2006}.}
     \label{fig:mosaic_spitzer}
 \end{figure*}
 
-Figure~\ref{fig:emitters} presents
+Fig.~\ref{fig:emitters} presents
 the IPHAS colour-colour diagram for 
 the 20-by-15 arcmin region shown in the mosaics.
 Gray circles show all objects
@@ -2200,13 +2195,13 @@ is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas})
   \includegraphics[width=0.45\textwidth]{./plots/sh2-82-ccd.pdf}
     \caption{$(r-\ha,\ r-i)$ diagram for the rectangular region of 
     20-by-15 arcmin centred on the H{\sc ii} region Sh 2-82,
-    which is the area shown in Figure~\ref{fig:mosaic_iphas}.    
+    which is the area shown in Fig.~\ref{fig:mosaic_iphas}.    
     The diagram shows all objects in the catalogue
     which have been flagged as \emph{reliable} and are brighter
     than $r<20$ (grey circles).
     The unreddened main sequence is indicated by a solid line,
     while the main sequence for stars with an \ha\ emission line
-    strength of $-10\,\rm{\AA}$ EW is indicated by a dashed line,
+    strength of $-10~\rm{\AA}$ EW is indicated by a dashed line,
     following the colour simulations due to \citet{Barentsen2011a}.
     Red triangles indicate objects which have been identified as
     as highly likely \ha-emitters (see text).}
@@ -2252,12 +2247,11 @@ Although \citeauthor{Yu2012} did not identify
 the other four candidate emitters in our sample
 as having an infrared excess,
 we note that each of these four objects
-are detected in the Spitzer 8.0\,\micron\ image
+are detected in the Spitzer 8.0~\micron\ image
 at S/N$>$5,
 which is consistent with the objects
-being optically-unveiled, or Class II, YSOs
-% add e reference for the YSO classification?
-with a mild infrared excess.
+being optically-unveiled stars with a circumstellar disk,
+i.e. they are likely Class II YSOs with a mild infrared excess.
 
 Sh 2-82 is one of a large population of poorly-studied star-forming regions
 located at low Galactic latitudes,
@@ -2281,7 +2275,7 @@ where it can be queried
 (Conesearch/TAP URL TBD).
 The catalogue can also be downloaded in its entirety
 from the IPHAS website (www.iphas.org) as a collection 
-of binary FITS tables which comprise 50\,GB,
+of binary FITS tables which comprise 50~GB,
 together with a script
 to ingest these tables into a PostgreSQL database.
 Finally, the website also provides access to the pipeline-processed
