@@ -201,7 +201,7 @@ alongside $r, i$ magnitudes
 provides coarse spectral information for huge samples of stars 
 which are otherwise too faint or numerous 
 to be targeted by spectroscopic surveys.
-For such science applications to succeed however, 
+For such science applications to succeed, however, 
 it is vital that the imaging data are transformed 
 into a homogeneously calibrated photometric catalogue, 
 in which quality problems 
@@ -250,7 +250,7 @@ It is carried out using the WFC
 on the 2.5-metre INT in La Palma. 
 It is the first digital survey to offer comprehensive CCD photometry
 of point sources in the Galactic Plane at visible wavelengths, 
-and does so down to a limiting magnitude of $\sim$20th.
+and does so down to a limiting magnitude of $\sim$20.
 The IPHAS footprint spans a box 
 of roughly 180 by 10 degrees, 
 taking in the entire northern Galactic Plane 
@@ -311,7 +311,10 @@ were obtained in November 2012.
         which can be seen as a honeycomb-style pattern
         of dark grey lines across the survey area.
         Regions with incomplete data are apparent as white gaps (no data) 
-        or in light grey (denoting that only the offset position is missing).}
+        or in light grey (denoting that only the offset position is missing).
+        The dark vertical strip near $l \sim$125\deg
+        is an uninteresting consequence of the tiling pattern,
+        which overlaps in the middle of the survey area by design.}
         \label{fig:footprint}
 \end{figure*}
 
@@ -352,7 +355,7 @@ we have been able to benefit from the existing WFS pipeline.
 A detailed description of the processing steps 
 is found in \citet{Irwin2001}.
 Its application to IPHAS has previously been described
-by \citet{Drew2005} and \citet{Gonzalez-Solares2008}
+by \citet{Drew2005} and \citet{Gonzalez-Solares2008},
 and much of the source code is available 
 on line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}. 
 In brief, the pipeline takes care of bias subtraction,
@@ -438,7 +441,7 @@ For this reason, we attempted to utilise
 even those which were partially or entirely non-photometric
 or otherwise affected by technical problems 
 (e.g. electronic noise or telescope tracking problems).
-Any unsuitable data that was taken as a result
+Any unsuitable data that were taken as a result
 of this strategy has subsequently been flagged and removed
 using a series of seven quality criteria,
 which ensure a reliable and homogeneous level of quality
@@ -483,8 +486,8 @@ which was above the horizon during 62\%
 of the observations and explains the wide and bi-modal shape
 of the $r$-band limiting magnitude distribution 
 (top panel in Fig.~\ref{fig:depth}).
-In contrast, the depth attained in $i$ and \ha\ 
-is less sensitive to moonlight
+In contrast, the depths attained in $i$ and \ha\ 
+are less sensitive to moonlight,
 and their magnitude limit distributions
 are hence more narrow
 (middle and bottom panels in Fig.~\ref{fig:depth}).
@@ -527,7 +530,7 @@ Fig.~\ref{fig:seeing} presents the distribution
 of the mean seeing for all the quality-approved fields.
 We find a median value of 1.1~arcsec in $r$, \ha\
 and 1.0~arcsec in $i$.
-In the $r$-band, 90\% of the data is better than 1.5~arcsec
+In the $r$-band, 90\% of the data is better than 1.5~arcsec,
 and 10\% is better than 0.8~arcsec.
 To improve the area covered by this data release,
 we have decided to include the small fraction of data
@@ -607,7 +610,7 @@ of three consecutive images of the same field
 (\ha, $r$, $i$)
 were considered for inclusion in the release. 
 This ensures that the three bands for a given field
-are observed at the $\sim$same time --  
+are observed at roughly the same time --  
 essentially always within an elapsed time of 5 minutes.
 An exception was made for 9 fields where the three exposures 
 could not be obtained within the same night
@@ -658,7 +661,7 @@ relate to a magnitude $m$ as:
 \begin{equation}
 \begin{split}
    m  = & \textsc{magzpt} - 2.5 \log_{10}( DN / \textsc{exptime} ) \\
- &  - \textsc{extinct}\cdot(\textsc{airmass}-1) - \textsc{apcor} - \textsc{percorr}
+ &  - \textsc{extinct}\cdot(\textsc{airmass}-1) - \textsc{apcor} - \textsc{percorr},
 \label{eqn:mag}
 \end{split}
 \end{equation}
@@ -691,7 +694,7 @@ standard star photometry is not available in the literature
 for the H$\alpha$ passband
 and hence there is no formally recognised flux scale 
 for the narrowband.
-We can specify here however 
+We can specify here, however, 
 that the integrated in-band energy flux for Vega 
 in the IPHAS \ha\ filter 
 is $1.52 \times 10^{-7}$ ergs\,cm$^{-2}$\,s$^{-1}$ 
@@ -759,7 +762,7 @@ of observing standards at a very high frequency
 prohibitively expensive
 -- in part because standard fields 
 are very scarce within the Galactic Plane.
-Secondly, the aim of IPHAS is to obtain magnitudes at a single epoch
+Secondly, the aim of IPHAS is to obtain magnitudes at a single epoch,
 and hence stars are not normally observed at more than one epoch,
 unless they happen to fall within a narrow overlap region 
 between two neighbouring fields.
@@ -812,7 +815,7 @@ The overlap regions are shown in Fig.~\ref{fig:apass_r}.
 The photometric accuracy of APASS is currently estimated 
 to be at the level of 3\% (Henden, private communication),
 which is significantly better 
-than the provisional calibration of IPHAS
+than the provisional calibration of IPHAS,
 for which we estimate the $1\sigma$-uncertainty to be $\sim$10\%.
 APASS achieves its uniform accuracy 
 by measuring each star at least two times in photometric conditions
@@ -1013,13 +1016,13 @@ $j$ an overlapping exposure,
 $N$ the number of exposures,
 $a_i$ the ZP to solve for 
 and $a_j$ the ZP of an overlapping field ($\Delta\mathrm{ZP}_{ij}=a_i-a_j$). 
-$w_{ij}$ are weights set to the uncertainty in $\Delta_{ij}$
+$w_{ij}$ are weights set to the inverse square of the uncertainty in $\Delta_{ij}$
 and $\theta_{ij}$ is an overlap function 
 equal to either 1 if exposures $i$ and $j$ overlap or 0 otherwise. 
 Solving for $a_i$ is equivalent to solving $\partial
-S/\partial a_i=0$ which gives the matrix equation:
+S/\partial a_i=0$, which gives the matrix equation:
 \begin{equation}
-   \sum_{j=1}^N A_{ij} a_j = b_j
+   \sum_{j=1}^N A_{ij} a_j = b_j,
    \label{eqn:matrix}
 \end{equation}
 where 
@@ -1299,13 +1302,13 @@ for which the peak pixel height exceeds 55000 counts,
 which is typically the case for stars brighter than 12-13th magnitude.
 Although the pipeline attempts to extrapolate the brightness of
 saturated stars based on the shape of the PSF,
-such extrapolation is prone to error
+such extrapolation is prone to error,
 and we do not recommend its use.
 \item The \emph{deblend} column is used to flag sources 
 which partially overlap with a nearby neighbour.
 Although the pipeline applies a deblending procedure
 to such objects, the procedure is currently applied separately
-in each band and hence the $(r-i)$ and $(r-\ha)$ colours
+in each band, and hence the $(r-i)$ and $(r-\ha)$ colours
 may be inaccurate if the deblending proceeded differently in each band.
 \item The \emph{brightNeighb} column is used to flag sources which are located
 within 5 arcmin from an object brighter than $V=7$ 
@@ -1378,7 +1381,7 @@ We do warn that source blending and confusion is unavoidable
 for faint objects in the most crowded regions of the Galactic Plane;
 in \S\ref{sec:discussion} we will show
 that 19\% of the sources in our catalogue
-are flagged as blended objects (column \emph{deblend})
+are flagged as blended objects (column \emph{deblend}),
 and their band-merged data should be treated with care
 because they may have fallen victim to source confusion
 during the band-merging step.
@@ -1958,7 +1961,7 @@ This implies that extinction is still increasing
 at distances beyond $\sim$1-2~kpc,
 where M dwarfs are too faint to be contained in the IPHAS catalogue.
 It is also clear that there are no unreddened stars
-earlier than $\sim$K0 visible,
+earlier than $\sim$K0 visible;
 such stars would be saturated if within a few hundred parsecs.
 This therefore suggests 
 that there is a measurable increase in extinction locally.
@@ -1969,9 +1972,9 @@ would only account for a small proportion of a volume limited sample.
  
 In contrast, 
 closer towards the galactic centre
-at $l=45^{\circ}$ (Fig.~\ref{fig:l45})
+at $l=45^{\circ}$ (Fig.~\ref{fig:l45}),
 we find a wealth of reddened objects.
-In the colour-magnitude diagram it is clear
+In the colour-magnitude diagram, it is clear
 that the stars are split into two distinct groups,
 with one significantly redder than the other.
 The bluer group is composed of main sequence stars,
