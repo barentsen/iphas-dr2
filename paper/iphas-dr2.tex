@@ -202,7 +202,7 @@ provides coarse spectral information for huge samples of stars
 which are otherwise too faint or numerous 
 to be targeted by spectroscopic surveys.
 For such science applications to succeed however, 
-it is vital that the imaging data is transformed 
+it is vital that the imaging data are transformed 
 into a homogeneously calibrated photometric catalogue, 
 in which quality problems 
 and duplicate detections are flagged. 
@@ -242,7 +242,7 @@ our future ambition
 The detailed properties of the IPHAS observing programme 
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
-To set the stage for this release, we briefly remind of some key points.
+To set the stage for this release, we briefly recall some key points.
 IPHAS is a 1800~deg$^2$. imaging survey of the northern Galactic Plane, 
 providing images and photometry in Sloan $r, i$ 
 along with narrowband H$\alpha$. 
@@ -400,7 +400,7 @@ A provisional photometric calibration is also provided
 based on the average zeropoint
 determined from a set of standard stars observed in the same night.
 Sources are classified morphologically
--- stellar, galaxy or noise --
+-- stellar, extended or noise --
 based on the curve-of-growth determined
 from measuring the source intensity in a series of growing apertures.
 Finally, the resulting source detection tables are also stored 
@@ -737,7 +737,13 @@ allowing zeropoint variations to be tracked
 over very short timescales \citep{Nikolaev2000}.
 Alternatively, the SDSS and PanSTARRS surveys could benefit
 from revisiting regions in their footprint to 
-carry out a so-called \emph{ubercalibration} procedure,
+carry out a so-called \emph{ubercalibration}
+\footnote{The term ubercalibration refers to the name of the code
+first used to re-calibrate SDSS photometry using repeat observations,
+and is a term that has since been adopted by other surveys.
+The name is an anglicised version of the German word \"uberkalibration,
+which was reportedly chosen because authors Doug Finkbeiner and David Schlegel
+have German-sounding names (Finkbeiner 2010).} procedure,
 in which multiple measurements of stars at different epochs
 are used to fit the calibration parameters
 \citep[e.g.][]{Ivezic2007,Padmanabhan2008,Schlafly2012}.
