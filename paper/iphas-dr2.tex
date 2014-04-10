@@ -1759,21 +1759,21 @@ appear to dominate from $\sim$20th magnitude onward.
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=\textwidth]{./plots/pairmag/pairmag.pdf}
+\includegraphics[width=\textwidth]{figures/repeatability/pairmag.pdf}
 \caption{}
 \label{fig:pairmag}
 \end{subfigure}
 \hspace{0.5cm}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=\textwidth]{./plots/pairmag/pairmag-reliable.pdf}
+\includegraphics[width=\textwidth]{figures/repeatability/pairmag-reliable.pdf}
 \caption{}
 \label{fig:pairmag_reliable}
 \end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
          for both all sources in the catalogue (left panel)
          and for the \emph{veryReliable} sources alone (right panel).
-         The values shown are the mean residuals
+         The values shown are the mean absolute residuals
          between the primary and the secondary detections,
          while the error-bars show the standard deviations.
          Left panel: 
@@ -1808,62 +1808,68 @@ global photometric calibration (cf. \S\ref{sec:calibration}).
 Moreover, the large systematics at the bright and faint end
 disappear.
 
-\subsection{Source densities and blending}
+\subsection{Source counts and blending}
 \label{sec:densities}
 
-The mean source density as a function of Galactic longitude
-is shown in Fig.~\ref{fig:density} (thick blue line).
-The densities were computed by counting the 
-number of sources in $1^\circ$-wide longitude bins,
-each covering the entire latitude range $-5^\circ<b<+5^\circ$.
-Unsurprisingly, we find the average source densities to increase
-towards the Galactic centre.
+The number of sources in our catalogue,
+counted in 1-by-10~deg$^2$ strips,
+is shown in Fig.~\ref{fig:sourcecount}
+as a function of Galactic longitude (thick blue line).	
+Unsurprisingly, we find the number of sources
+to increase towards the Galactic centre.
 For example, the average source density near $l\simeq 30^\circ$
-is roughly 30\,000 objects per square degree,
+is roughly 300\,000 objects per square degree,
 which is five times more than the density
 found near $l\simeq 180^\circ$.
 
-In addition to the global trend, 
-there are significant variations
-in the source density on smaller scales.
-For example,  we find a significant drop near the constellations 
+In addition to the global trend,
+variations are also apparent on smaller scales.
+For example, we find a significant drop near the constellations 
 of Aquila ($l\simeq40$) and Cygnus ($l\simeq80$ and $l\simeq90$),
 which are regions known to be affected
-by high levels of foreground extinction.
-In fact dark clouds are readily visible in the night sky
-towards these constellations,
-and they are often referred to as the `the Great Rift' \citep[e.g.][]{BokBok}.
+by high levels of foreground extinction
+\citep[known as `the Great Rift', e.g.][]{BokBok}.
 
-We warn that the relative densities reported here 
+We warn that the source counts reported here 
 have not been corrected for survey completeness
-or differences in the observing conditions across the survey fields.
+or variations in the depth of different survey fields.
 For example, the dip in the density near $l\simeq140^\circ$
 is an artificial feature caused by gaps
 in the footprint coverage (seen in Fig.~\ref{fig:footprint}).
 In a forthcoming paper,
 we will calibrate the IPHAS-based source densities
-by injecting artificial stars into the IPHAS images
-and measuring their recovery rate (Farnhill et al., in preparation).
-IPHAS has the potential to offer
-calibrated, two-dimensional stellar density maps
-which can be used to constrain detailed models of our Galaxy.
+by injecting artificial stars into the images
+and measuring their recovery rates
+(Farnhill et al., in preparation).
+Such calibrated density maps may be used 
+to constrain detailed models of our Galaxy.
 
 \begin{figure*}
-    \includegraphics[width=\textwidth]{./plots/density/density.pdf} 
-    \caption{Mean number density of sources in the catalogue 
-    as a function of Galactic longitude, 
-    with and without blended sources included. 
-    The densities shown were computed by counting the sources 
-    at each longitude between $-5^\circ<b<+5^\circ$ (upper blue line).
-    We also show the densities based on only counting those sources 
+    \includegraphics[width=\textwidth]{figures/sourcecount/sourcecount.pdf} 
+    \caption{Number of entries in the IPHAS DR2 source catalogue
+    as a function of Galactic longitude.
+    The upper blue line shows the number of sources
+    counted in 1\deg-wide longitude bins.
+    The lower red line uses the same binning
+    but includes only those sources 
     for which the \emph{deblend} flag is {\sc false}, 
-    i.e. unconfused sources for which the CASU pipeline did not have to apply 
-    a deblending procedure (lower red line). 
-    }
-    \label{fig:density}
+    i.e. unconfused sources for which the CASU pipeline
+    did not have to apply a deblending procedure.
+    In both cases only counted sources
+    in the latitude range $-5^\circ<b<+5^\circ$,
+    such that one may obtain approximate source densities
+    by dividing the counts by 10~deg$^2$.
+    The apparent variations in the source counts
+    traces the structure of the Galaxy
+    and the distribution of foreground extinction,
+    but also includes instrumental effects
+	such as variations in the survey depth
+	and completeness (see text).
+   }
+    \label{fig:sourcecount}
 \end{figure*}
 
-In Fig.~\ref{fig:density} we also shows the density
+In Fig.~\ref{fig:sourcecount} we also shows the number
 of non-blended sources (thin red line).
 These are sources for which the \emph{deblend} flag is {\sc false},
 i.e. sources for which the CASU pipeline did not have to apply 
@@ -1876,13 +1882,13 @@ at $l>90^\circ$, whereas 24\% are blended at $l<90^\circ$.
 
 As we explained earlier, blended sources must be used with caution.
 In particular, we warn that blended objects
-are likely candidates to have fallen victim
+are likely to have fallen victim
 to source confusion during the band-merging procedure.
 We have started investigating the use of
 more advanced PSF-fitting routines
 in which sources are measured simultaneously across all bands,
-perhaps guided by an external astrometric catalogue such as the one
-that is to be provided by Gaia.
+which may be guided by an external astrometric catalogue
+such as the one that is to be provided by Gaia.
 
 \section{Demonstration}
 \label{sec:demonstration}
@@ -2303,11 +2309,12 @@ Instructions for acknowledging IPHAS can be found on our website.
 \section{Conclusions and future work}
 \label{sec:conclusions}
 
-A new data release for the INT/WFC Photometric \ha\ Survey
-of the Northern Galactic Plane (IPHAS) was presented.
-It is the first survey to offer comprehensive CCD photometry
+A new catalogue of 219 million sources has been
+derived from the INT/WFC Photometric \ha\ Survey
+of the Northern Galactic Plane.
+It is the first catalogue to offer comprehensive CCD photometry
 of point sources across the Galactic Plane at visible wavelengths,
-taking in the entire Northern Milky Way at $|b|<5^\circ$.
+taking in the Northern Milky Way at $|b|<5^\circ$.
 The new 97-column catalogue provides single-epoch photometry
 across 92\% of the survey area,
 and is the first quality-controlled and uniformly calibrated
@@ -2318,8 +2325,9 @@ described and tested the global photometric calibration,
 and detailed the construction of the source catalogue.
 
 The observations included in this release
-achieved a median seeing of 1.1 arcsec
-and a $5\sigma-$depth of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$, \ha$=20.3\pm 0.3$.
+show a median seeing of 1.1 arcsec
+and $5\sigma-$depths of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$,
+and \ha$=20.3\pm 0.3$.
 The global calibration and photometric repeatability
 were found to be accurate at the level of $0.03$ mag (rms),
 providing a significant improvement over the 
@@ -2335,9 +2343,7 @@ and selecting emission-line objects.
 
 In future work, we intend to draw upon the PanSTARRS photometric
 survey to further improve the accuracy of our global calibration.
-We also aim to correct the IPHAS photometry for the
-radial field distortions,
-plan to produce a catalogue 
+We also plan to produce a catalogue 
 which details all the secondary detections
 to aid time-domain studies,
 and are investigating the use of photometry
