@@ -12,5 +12,12 @@
 .tox
 nosetests.xml
 
+# Latex
+*.aux
+*.bbl
+*.blg
+*.synctex.gz
+*.tex.bak
+
 old/
 
