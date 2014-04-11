@@ -719,7 +719,7 @@ we set the default zeropoint for the narrowband to be:
 \textsc{magzpt}_{H\alpha} = \textsc{magzpt}_r - 3.14.
 \label{eqn:zpha}
 \end{equation}
-Note that this implies that the in-band flux corresponding to
+Note that the above implies that the in-band flux corresponding to
 zero magnitude is $1.56 \time 10^{-7}$ ergs\,cm$^{-2}$\,s$^{-1}$,
 when the \ha\ magnitude for Vega is set by convention to 0.03.
 
@@ -765,20 +765,21 @@ are used to fit the calibration parameters
 Unfortunately these schemes cannot be applied
 directly to IPHAS
 for two reasons. 
-Firstly, the survey was carried out 
-in competitive observing time
-on a non-dedicated telescope, 
+First, the survey was carried out 
+in competitively-allocated observing time on a
+common-user telescope, 
 rendering the 2MASS approach 
 of observing standards at a very high frequency
-prohibitively expensive
--- in part because standard fields 
-are very scarce within the Galactic Plane.
-Secondly, the aim of IPHAS is to obtain magnitudes at a single epoch,
-and hence stars are not normally observed at more than one epoch,
+prohibitively expensive (it does not help that 
+standard fields 
+are very scarce within the Galactic Plane).
+Second, IPHAS is not specified as a variability survey, with
+the consequence that stars are not normally observed at more 
+than one epoch,
 unless they happen to fall within a narrow overlap region 
-between two neighbouring fields.
+between two neighbouring field pairs.
 
-Although the IPHAS data does contain a significant number of 
+Although the IPHAS data do contain a significant number of 
 such inter-field repeat measurements,
 we have found the information contained
 in these regions to be insufficient
@@ -791,28 +792,31 @@ the use of twilight sky flats in the pipeline,
 which are known to be imperfect for calibrating stellar photometry 
 due to stray light and vignetting \citep[e.g.][]{Manfroid1995}.
 Moreover, the illumination correction in the overlap regions
-is most strongly affected by a radial geometric distortion in the WFC,
-which causes the pixel scale towards the edges 
-to increase \citep{Gonzalez-Solares2011}.
+is more affected by a radial geometric distortion in the WFC,
+which causes the pixel scale to increase as the edges 
+are approached \citep{Gonzalez-Solares2011}.
 Although these systematics are reasonably small within a single field,
-they can combine to cause artificial zeropoint gradients 
-across the survey
-when they are used to constrain a global calibration
-without other external constraints.
+they can combine, during the global calibration routine, to cause artificial zeropoint gradients 
+across the survey unless controlled by
+%when they are used to constrain a global calibration
+%without 
+other external constraints.
 
 For these reasons, we have decided not to depend
 on an ubercalibration-type scheme alone,
 and have opted to involve an external reference survey
 -- where available --
 to bring the majority of our data onto a uniform calibration.
-This is explained next.
+%This is explained next.
 
 \subsubsection{Correcting zeropoints using APASS}
 
 We have been able to benefit from the
 AAVSO Photometric All-Sky Survey
 (APASS; http://www.aavso.org/apass)
-to bring the vast majority of the survey 
+to bring 
+%the vast majority - exaggerating a bit? 
+most of the survey 
 onto a uniform scale.
 Since 2009,
 APASS has been using two 20~cm-astrographs
@@ -826,7 +830,7 @@ The overlap regions are shown in Fig.~\ref{fig:apass_r}.
 The photometric accuracy of APASS is currently estimated 
 to be at the level of 3\% (Henden, private communication),
 which is significantly better 
-than the provisional calibration of IPHAS,
+than the original nightly calibrations of IPHAS,
 for which we estimate the $1\sigma$-uncertainty to be $\sim$10\%.
 APASS achieves its uniform accuracy 
 by measuring each star at least two times in photometric conditions
@@ -835,8 +839,10 @@ using the large $3\times3$ square degrees field of view of its detectors.
 
 With the aim of bringing IPHAS to a similar accuracy of $\sim$3\%,
 we used the APASS catalogue to identify and adjust the calibration of all IPHAS fields 
-which showed a magnitude offset larger than 3\% against APASS.
-For this purpose,
+which showed a magnitude offset larger than 3\% against APASS.  Experience of re-running
+the calibration and testing the results showed us that it was inadvisable to more
+finely tune the match for IPHAS data obtained in what were generally the most photometric
+nights.  To this end,
 the $r$- and $i$-band detection tables of each IPHAS field
 were cross-matched against the APASS DR7 catalogue 
 using a maximum matching distance of 1~arcsec.
@@ -845,7 +851,7 @@ $13<r_{\rm APASS}<16.5$ and $12.5<i_{\rm APASS}<16.0$
 in order to avoid sources 
 brighter than the IPHAS saturation limit on one hand, 
 and to avoid sources near the faint detection limit of APASS 
-on the other hand.
+on the other.
 
 The resulting set of $\sim$220\,000 cross-matched stars were then used 
 to derive APASS-to-IPHAS magnitude transformations
@@ -859,24 +865,24 @@ i_{\rm IPHAS} = i_{\rm APASS} - 0.364 + 0.006(r-i)_{\rm APASS} \label{eqn:apass_
 The root mean square (rms) residuals of these transformations 
 are 0.041 and 0.051, respectively.
 The small colour terms in the equations
-indicate that the $r$ and $i$ filters 
-are very similar in both surveys.
+indicate that the IPHAS and APASS broadband filters 
+are very similar.
 The transformations include a large fixed offset,
 but this is simply due to the fact that 
 APASS magnitudes are given in the AB system
-and IPHAS uses magnitudes relative to Vega.
+and IPHAS uses Vega magnitudes.
 Separate transformations were derived for sight-lines 
 with varying extinction properties to investigate the robustness
 of the transformations with respect to different reddening regimes.
 The variations at these different
 sight-lines were found to be insignificant.
-This is not surprising because heavily reddened objects 
+This is not surprising because heavily-reddened objects 
 are naturally scarce at $r<16$.
 
 Having transformed APASS magnitudes into the IPHAS system,
 we then computed the median magnitude offset 
 for each field which contained at least 30 cross-matched stars.
-This was the case for 48\% of our fields.
+This was achieved for 48\% of our fields.
 The mean offset was found to be
 $0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
 (Table~\ref{tbl:offsets_before}).
@@ -982,26 +988,25 @@ convergence, which was essentially reached after the first iteration.
 
 At the time of writing, the APASS catalogue did not provide 
 sufficient coverage for 7359 of the fields in our data release.
-Fortunately, these fields are predominantly located 
+Fortunately, these fields are located mainly 
 in the early part of the Galactic Plane (Fig.~\ref{fig:apass_r}),
 which were typically observed during the summer months
 when photometric conditions are more prevalent at the telescope.
 These remaining fields have nevertheless 
 been brought onto the same uniform scale 
-by employing an ubercalibration-style scheme, explained below,
-which minimised the magnitude offsets between stars
-located in the overlap regions with neighbouring fields.
-Although we explained earlier that these overlap regions
-are prone to systematics, the use of APASS enabled us to
-keep the zeropoints of roughly half of the fields fixed,
-which avoids these systematics from combining to introduce
-artificial gradients across the survey.
-In the next section we will show this to be true by validating
-our calibration against SDSS.
-
-A general solution to the problem of minimising the magnitude
-differences between overlapping frames has previously been
-described by~\citet{Glazebrook1994}.
+by employing an ubercalibration-style scheme,
+which minimises the magnitude offsets between stars
+located in the overlap regions between neighbouring fields.
+%Although we explained earlier that these overlap regions
+%are prone to systematics, the use of APASS enabled us to
+%keep the zeropoints of roughly half of the fields fixed,
+%which avoids these systematics from combining to introduce
+%artificial gradients across the survey.
+%In the next section we will show this to be true by validating
+%our calibration against SDSS.
+An algorithm for achieving this minimisation
+%of minimising the magnitude differences between overlapping frames 
+has previously been described by~\citet{Glazebrook1994}.
 In brief, there are two fundamental quantities to be
 minimised between each pair of overlapping exposures, 
 denoted by the indices $i$ and $j$. 
@@ -1044,15 +1049,14 @@ where
 This prescription is essentially identical to \citet{Glazebrook1994}.
 %,although we changed the formulation to ensure that $A_{ij}$ is positive definite.
 
-As explained above, we enforce a strong external constraint
+We enforce a strong external constraint
 on the solution by keeping the zeropoint fixed 
-for the 6\,756 fields which have been compared
-and calibrated against APASS earlier.
+for the 6\,756 fields which have already been compared
+and calibrated against APASS.
 We hereafter refer to these fields as \emph{anchors}.
-It is asserted that the zeropoints $a_i$ of these anchor fields 
-are known and not solved for,
-though they do appear in the vector $b_j$ as constraints.
-In addition to the APASS-based anchors, 
+It is asserted that the zeropoints $a_i$ of the anchor fields 
+are known and not solved for.  However they do appear in the vector 
+$b_j$ as constraints.  In addition to the APASS-based anchors, 
 we selected 3\,273 additional anchor fields by hand
 to provide additional constraints in regions not covered by APASS.
 These extra anchors were deemed to have reliable zeropoints 
@@ -1075,12 +1079,12 @@ It is not possible to re-calibrate the narrowband
 in the same way as the broadbands,
 because the APASS survey does not offer \ha\ photometry.
 We can reasonably assume however,
-that the corrections required for $r$ and \ha\ are identical
-because the IPHAS data-taking pattern ensured 
+that the corrections required for $r$ and \ha\ are identical,
+much of the time, because the IPHAS data-taking pattern ensured 
 that a field's \ha\ and $r$-band exposures
-were taken at essentially the same time, 
-separated only by the $\sim$30~s read-out time required by the WFC.
-We have hence corrected the \ha\ zeropoints 
+were taken consecutively -- 
+separated only by the $\sim$30~s read-out time.
+Hence, we have corrected the \ha\ zeropoints 
 by re-using the zeropoint adjustments that were derived for the $r$ band
 in the earlier steps.
 An exception was made for 3\,101 fields
@@ -1088,17 +1092,16 @@ for which our quality-control routines revealed
 zeropoint variations which exceeded 0.03~mag 
 between consecutive fields,
 suggesting strongly non-photometric conditions.
-For good practice, the \ha\ zeropoints of these fields
+In these cases, the \ha\ zeropoints of these fields
 were adjusted by solving Eqn.~\ref{eqn:matrix}
 rather than linking them directly to the $r$-band shift.
 
 \subsection{Testing the calibration against SDSS}
 
-Having re-calibrated all fields to the expected APASS-accuracy of 3\%,
-we then used a different survey to validate the results.
-We have been able to exploit SDSS Data Release 9 \citep{Ahn2012}
-for this purpose.
-SDSS DR9 provides several strips at low
+Having re-calibrated all fields to the expected APASS accuracy of 3\%,
+we turned to a different survey, SDSS Data Release 9 \citep{Ahn2012},
+to validate the results.
+SDSS DR9 includes several strips at low
 Galactic latitudes,
 providing data across 18\% of the fields in our data release.
 We cross-matched the IPHAS fields against the subset of
@@ -1106,8 +1109,8 @@ objects marked as reliable stars in the SDSS catalogue\footnote{
 We used the CasJobs facility located at http://skyserver.sdss3.org/CasJobs
 to obtain photometry from the SDSS {\sc photoprimary} table 
 with criteria {\sc type = star}, {\sc clean = 1} and {\sc score $>$ 0.7}.}
-in the same way as we did for APASS earlier,
-with the exception of using fainter magnitude ranges of 
+cross-matching in much the same way as for APASS,
+with the difference of selecting from the  fainter magnitude ranges of 
 $15<r_{\rm SDSS}<18.0$ and $14.5<i_{\rm SDSS}<17.5$.
 This provided us with a set of 1.2~million cross-matched stars.
 
@@ -1139,8 +1142,7 @@ and dominate the statistical appraisal of our calibration.
 Having transformed SDSS magnitudes into the IPHAS system,
 we then computed the median magnitude offset for each IPHAS field
 which contained at least 30 objects with a cross-matched counterpart
-in SDSS.
-This was the case for 2\,602 fields.
+in SDSS.  This was the case for 2\,602 fields.
 The median offsets for each of these fields
 are shown in Figs.~\ref{fig:sdss_r}-\ref{fig:sdss_i}.
 Importantly, the mean offset and standard deviation found 
@@ -1157,15 +1159,17 @@ accuracy down to the level of 0.03~mag (rms).
 
 We warn that the SDSS comparison revealed a number of fields where the offsets
 exceeded 0.05~mag (523 fields) or even 0.1~mag (18 fields).
-Such sporadic outliers are consistent with the tails of a Gaussian
-with mean $\approx0$ and $\sigma=0.03$.
-Moreover, the SDSS calibration itself is not a perfect scale itself.
-
-In future work, we hope to draw upon
-the PanSTARRS survey \citep{Schlafly2012}
-to further improve the accuracy of our calibration.
-At the time of preparing this work data from PanSTARRS
-had not been made public yet.
+This pattern of outliers is consistent with the tails of a Gaussian
+with mean $\approx0$ and $\sigma=0.03$.  Furthermore, it should not
+be forgotten that both the SDSS and APASS calibrations are approximations to
+perfection and will not be entirely free of anomalies.  Indeed as we worked, 
+we noticed the occasional unsurprising examples of inconsistency between these 
+two surveys.  
+%, we hope to draw upon
+%the PanSTARRS survey \citep{Schlafly2012}
+%to further improve the accuracy of our calibration.
+%At the time of preparing this work data from PanSTARRS
+%had not been made public yet.
 
 \section{Source catalogue generation}
 \label{sec:catalogue}
