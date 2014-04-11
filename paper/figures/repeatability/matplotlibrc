@@ -1,0 +1,85 @@
+interactive  : False
+
+patch.linewidth        : 0.5    # edge width in points
+patch.facecolor        : 348ABD
+patch.edgecolor        : 000000
+patch.antialiased      : True    # render patches in antialised (no jaggies)
+
+font.family : helvetica
+text.color          : 000000
+text.usetex : True
+text.latex.unicode : True
+
+#text.dvipnghack : None      # some versions of dvipng don't handle alpha
+                             # channel properly.  Use True to correct
+                             # and flush ~/.matplotlib/tex.cache
+                             # before testing and False to force
+                             # correction off.  None will try and
+                             # guess based on your dvipng version
+
+
+# The following settings allow you to select the fonts in math mode.
+# They map from a TeX font name to a fontconfig font pattern.
+# These settings are only used if mathtext.fontset is 'custom'.
+# Note that this "custom" mode is unsupported and may go away in the
+# future.
+#mathtext.cal : cursive
+#mathtext.rm  : serif
+#mathtext.tt  : monospace
+#mathtext.it  : serif:italic
+#mathtext.bf  : serif:bold
+#mathtext.sf  : sans
+#mathtext.fontset : cm # Should be 'cm' (Computer Modern), 'stix',
+                       # 'stixsans' or 'custom'
+#mathtext.fallback_to_cm : True  # When True, use symbols from the Computer Modern
+                                 # fonts when a symbol can not be found in one of
+                                 # the custom math fonts.
+
+#mathtext.default : it # The default font to use for math.
+                       # Can be any of the LaTeX font names, including
+                       # the special name "regular" for the same font
+                       # used in regular text.
+
+
+
+axes.facecolor      : ffffff   # axes background color
+axes.edgecolor      : 333333   # axes edge color
+axes.linewidth      : 0.5      # edge linewidth
+axes.grid           : False   # display grid or not
+axes.labelsize      : 11  # fontsize of the x any y labels
+axes.labelweight    : normal  # weight of the x and y labels
+axes.labelcolor     : 000000
+
+#axes.formatter.limits : -7, 7 # use scientific notation if log10
+                               # of the axis range is smaller than the
+                               # first or larger than the second
+axes.unicode_minus  : True
+axes.color_cycle    : E41A1C, 377EB8, 4DAF4A, 984EA3, FF7F00
+
+
+xtick.major.size     : 2      # major tick size in points
+xtick.minor.size     : 3      # minor tick size in points
+xtick.major.pad      : 5      # distance to major tick label in points
+xtick.minor.pad      : 5      # distance to the minor tick label in points
+xtick.color          : 000000      # color of the tick labels
+xtick.labelsize      : 9 # fontsize of the tick labels
+xtick.direction      : in     # direction: in or out
+
+ytick.major.size     : 2      # major tick size in points
+ytick.minor.size     : 3      # minor tick size in points
+ytick.major.pad      : 5      # distance to major tick label in points
+ytick.minor.pad      : 5      # distance to the minor tick label in points
+ytick.color          : 000000      # color of the tick labels
+ytick.labelsize      : 9 # fontsize of the tick labels
+ytick.direction      : in     # direction: in or out
+
+
+figure.figsize   : 7, 2.5  # figure size in inches
+figure.dpi       : 300
+
+
+legend.fontsize : 8
+
+#pdf.compression   : 6 # integer from 0 to 9
+                       # 0 disables compression (good for debugging)
+#pdf.fonttype       : 3         # Output Type 3 (Type3) or Type 42 (TrueType)
