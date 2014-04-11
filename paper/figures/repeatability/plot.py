@@ -1,4 +1,5 @@
-"""Plots the mean Poissonion error as a function of magnitude."""
+"""Plots the mean absolute difference between magnitude pairs
+to gauge the level of systematics as a function of magnitude."""
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -71,8 +72,8 @@ plt.gca().yaxis.set_major_locator(y_majorLocator)
 plt.xlabel('Magnitude')
 
 if reliable:
-    plt.savefig('pairmag-reliable.pdf')
+    plt.savefig('repeatability-reliable.pdf')
 else:
-    plt.savefig('pairmag.pdf')
-    
+    plt.savefig('repeatability.pdf')
+
 plt.close()

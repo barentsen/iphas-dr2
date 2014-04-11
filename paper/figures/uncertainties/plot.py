@@ -13,8 +13,6 @@ xlim = [11.25, 22.75]
 ylim = [-0.04, 0.49]
 
 majorLocator = MultipleLocator(1.0)
-minorLocator = MultipleLocator(0.5)
-y_minorLocator = MultipleLocator(0.05)
 y_majorLocator = MultipleLocator(0.1)
 
 plt.figure(figsize=(3.5, 3.5))
@@ -27,12 +25,10 @@ plt.errorbar(data_r['mag'], data_r['mean'], yerr=data_r['std'], linestyle='None'
              markersize=3.0, c='black', capsize=1.5, elinewidth=1.5)
 plt.xlim(xlim)
 plt.ylim(ylim)
-plt.ylabel('$\\overline{\\sigma_r}$')
+plt.ylabel('$\\sigma_r$')
 plt.gca().xaxis.set_ticklabels([])
 plt.gca().xaxis.set_major_locator(majorLocator)
-#plt.gca().xaxis.set_minor_locator(minorLocator)
 plt.gca().yaxis.set_major_locator(y_majorLocator)
-#plt.gca().yaxis.set_minor_locator(y_minorLocator)
 
 plt.subplot(3, 1, 2)
 plt.plot([10,30], [0.1,0.1], linestyle='dashed', color='#666666', linewidth=0.5)
@@ -41,12 +37,10 @@ plt.errorbar(data_i['mag'], data_i['mean'], yerr=data_i['std'], linestyle='None'
              markersize=3.0, c='black', capsize=1.5, elinewidth=1.5)
 plt.xlim(xlim)
 plt.ylim(ylim)
-plt.ylabel('$\\overline{\\sigma_i}$')
+plt.ylabel('$\\sigma_i$')
 plt.gca().xaxis.set_ticklabels([])
 plt.gca().xaxis.set_major_locator(majorLocator)
-#plt.gca().xaxis.set_minor_locator(minorLocator)
 plt.gca().yaxis.set_major_locator(y_majorLocator)
-#plt.gca().yaxis.set_minor_locator(y_minorLocator)
 
 plt.subplot(3, 1, 3)
 plt.plot([10,30], [0.1,0.1], linestyle='dashed', color='#666666', linewidth=0.5)
@@ -55,13 +49,10 @@ plt.errorbar(data_ha['mag'], data_ha['mean'], yerr=data_ha['std'], linestyle='No
              markersize=3.0, c='black', capsize=1.5, elinewidth=1.5)
 plt.xlim(xlim)
 plt.ylim(ylim)
-plt.ylabel('$\\overline{\\sigma_{\\rm{H\\alpha}}}$')
+plt.ylabel('$\\sigma_{\\rm{H\\alpha}}$')
 plt.xticks([])
 plt.gca().xaxis.set_major_locator(majorLocator)
-#plt.gca().xaxis.set_minor_locator(minorLocator)
 plt.gca().yaxis.set_major_locator(y_majorLocator)
-#plt.gca().yaxis.set_minor_locator(y_minorLocator)
-
 
 plt.xlabel('Magnitude')
 
