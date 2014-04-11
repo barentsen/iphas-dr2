@@ -8,6 +8,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\restylefloat{table}
+
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
 \def\ha{\mbox{H$\rm \alpha$}}
@@ -116,7 +118,7 @@ for 219 million unique sources
 across 92\% of the survey area.
 The observations were carried out between 2003 and 2013
 at a median seeing of 1.1 arcsec
-and to a mean $5\sigma$-depth of 
+and to mean $5\sigma$-depths of 
 21.2 ($r$), 20.0 ($i$) and 20.3 ($\ha$)
 in the Vega magnitude system.
 We explain the data reduction 
@@ -124,7 +126,7 @@ and quality control procedures,
 describe and test the new uniform calibration,
 and detail the construction of the new 97-column source catalogue.
 We show that the global calibration is accurate to
-0.03~mag (rms) by validating against the Sloan Digital Sky Survey (SDSS),
+0.03~mag (rms),
 and provide a series of recommended quality criteria
 which can be used to select the most reliable data
 from the catalogue.
@@ -737,13 +739,13 @@ allowing zeropoint variations to be tracked
 over very short timescales \citep{Nikolaev2000}.
 Alternatively, the SDSS and PanSTARRS surveys could benefit
 from revisiting regions in their footprint to 
-carry out a so-called \emph{ubercalibration}
-\footnote{The term ubercalibration refers to the name of the code
-first used to re-calibrate SDSS photometry using repeat observations,
-and is a term that has since been adopted by other surveys.
-The name is an anglicised version of the German word \"uberkalibration,
+carry out a so-called \emph{ubercalibration}\footnote{`Ubercalibration'
+refers to the name of the code used to re-calibrate SDSS photometry
+using repeat observations. 
+This name -- which has since been adopted by other surveys --
+is an anglicised version of the German word `\"uberkalibration',
 which was reportedly chosen because authors Doug Finkbeiner and David Schlegel
-have German-sounding names (Finkbeiner 2010).} procedure,
+both have German-sounding names (Finkbeiner 2010).} procedure,
 in which multiple measurements of stars at different epochs
 are used to fit the calibration parameters
 \citep[e.g.][]{Ivezic2007,Padmanabhan2008,Schlafly2012}.
@@ -1712,7 +1714,7 @@ by the fact that stars tend to have
 brighter magnitudes in both $i$ and \ha.
 
 \begin{figure}
-    \includegraphics[width=0.5\textwidth]{./plots/errors/uncertainties.pdf} 
+    \includegraphics[width=0.5\textwidth]{figures/uncertainties/uncertainties.pdf} 
     \caption{Mean photometric uncertainties
              for $r$ (top), $i$ (middle) and \ha\ (bottom).
              Data points shown are the average values of
@@ -1723,7 +1725,7 @@ brighter magnitudes in both $i$ and \ha.
              the 10$\sigma$ and 5$\sigma$ limits, respectively.
              These uncertainties are based only on the (Poissonian)
              photon noise and hence this figure does not show
-             systematic or calibration uncertainties.}
+             the level of systematic uncertainties.}
     \label{fig:uncertainties}
 \end{figure}
 
@@ -1756,14 +1758,14 @@ appear to dominate from $\sim$20th magnitude onward.
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=\textwidth]{figures/repeatability/pairmag.pdf}
+\includegraphics[width=\textwidth]{figures/repeatability/repeatability.pdf}
 \caption{}
 \label{fig:pairmag}
 \end{subfigure}
 \hspace{0.5cm}
 \begin{subfigure}[b]{0.45\linewidth}
 \centering
-\includegraphics[width=\textwidth]{figures/repeatability/pairmag-reliable.pdf}
+\includegraphics[width=\textwidth]{figures/repeatability/repeatability-reliable.pdf}
 \caption{}
 \label{fig:pairmag_reliable}
 \end{subfigure}
@@ -2121,7 +2123,6 @@ in the constellation of Sagitta.
 Nicknamed by amateur astronomers as the ``Little Cocoon Nebula'',
 Sh 2-82 is ionised by 
 the $\sim$10th magnitude star HD\,231616
-% Georgelin1973 claims B0III, others claim B0V
 with spectral type B0V/III
 \citep{Georgelin1973,Mayer1973,Hunter1990}.
 This ionising star has been placed 
@@ -2435,7 +2436,49 @@ Programme (FP/2007-2013) / ERC Grant Agreement n. 320964 (WDTracer).
 \bibliographystyle{mn2e}
 \bibliography{iphas-dr2}
 
+\newpage
 \appendix
+
+
+\section{Converting IPHAS magnitudes into fluxes}
+
+Mean photon wavelength of the passband following eqn.~A14 in Bessel \& Murphy (2012):
+\begin{equation}
+\lambda_0 = \frac{\int{\lambda S(\lambda) d \lambda}}
+{\int{S(\lambda)d\lambda}}
+\end{equation}
+
+Pivot wavelength of the passband following eqn.~A16 in Bessel \& Murphy (2012):
+\begin{equation}
+\lambda_p = \frac{\int{S(\lambda) \lambda d \lambda}}
+{\int{\frac{S(\lambda)}{\lambda} d\lambda}}
+\end{equation}
+
+Mean monochromatic flux,
+following eqn.~A11 in Bessel \& Murphy (2012):
+\begin{equation}
+f_\lambda = \frac{\int{f_\lambda(\lambda) S(\lambda) \lambda d \lambda}}
+{\int{S(\lambda)\lambda d \lambda}}
+\end{equation}
+where $S(\lambda)$ includes the filter, atmosphere and QE.
+
+\begin{table}[h]
+    \caption{Wavelength and mean monochromatic flux density for Vega in the IPHAS filter system.}
+    \label{tbl:flux}
+    \begin{tabular}{lrrrr}
+    \toprule
+     Band & $\lambda_0$ & $\lambda_p$ & EW  & $f_\lambda$   \\
+     & \AA & \AA & \AA & erg\,cm$^{-2}$\,s$^{-1}$\,\AA$^{-1}$  \\
+    \midrule
+$r$ &  6223  &   6211  &  785.6  &  2.47e-9  \\
+\ha &  6568  &   6568  &   59.6  &  1.81e-9  \\
+$i$ &  7674  &   7674  &  759.9  &  1.30e-9   \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\newpage
 \onecolumn
 \section{Catalogue format}
 \label{app:columns}
