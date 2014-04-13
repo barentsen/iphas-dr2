@@ -103,8 +103,8 @@ Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
 is a 1800~deg$^2$ imaging survey
-covering Galactic longitudes $l=30^\circ$ to $215^\circ$
-and latitudes $b = -5^\circ$ to $+5^\circ$
+covering Galactic latitudes $|b| < 5^\circ$
+and longitudes $l=30$ to $215^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-metre Isaac Newton Telescope (INT) in La Palma.
@@ -122,7 +122,7 @@ in the Vega magnitude system.
 We explain the data reduction 
 and quality control procedures,
 describe and test the new uniform calibration,
-and detail the construction of the new 98-column source catalogue.
+and detail the construction of the new catalogue.
 We show that the global calibration is accurate to
 0.03~mag (rms) 
 and recommend a series of quality criteria
@@ -272,8 +272,8 @@ Altogether, the survey contains 15\,270 fields grouped into 7\,635 field pairs.
 To achieve the desired survey depth of 20th magnitude or fainter, 
 the filter exposure times were set at 120 sec (narrowband \ha), 
 30 sec ($r$) and 10 sec ($i$)
-in the vast majority of the survey observations.\footnote{The $r$-band exposure time was 10~s instead of 30~s in the first year of survey observations (2003). Since October 2010, the $i$-band exposure time 
-has been increased from 10~s to 20~s to by-pass a sporadic exposure timing issue that affects the WFC.}
+in the vast majority of the survey observations.\footnote{The $r$-band exposure time was 10~s instead of 30~s in the first year of data taking (2003). Since October 2010, the $i$-band exposure time 
+has been increased from 10~s to 20~s to by-pass a sporadic exposure timing bug that affects the WFC.}
 
 Data-taking began in the second half of 2003, 
 and every field had been observed at least once by the end of 2008.
@@ -1692,9 +1692,8 @@ to revise the quality criteria according to their needs.
 Fig.~\ref{fig:uncertainties} shows the mean photometric
 uncertainties (\emph{rErr}, \emph{iErr}, \emph{haErr})
 as a function of magnitude.
-We find that the uncertainty typically
-reaches 0.1~mag near 20.5 in $r$ 
-and 19.5 in $i$ and \ha.
+We find the typical uncertainty to reach 0.1~mag near $r=$20.5 
+and $i$/\ha$=19.5$.
 We note that the fainter depth in $r$ is compensated
 by the fact that most stars have brighter magnitudes in $i$ and \ha;
 the average colours in the catalogue are
@@ -1704,18 +1703,18 @@ are the random errors based on the expected Poissonian photon noise.
 Systematics, such as calibration and deblending errors,
 are not included.
 
-To appraise the level at which our photometry is affected by systematics,
+To appraise the level at which our photometry is affected by such systematics,
 we can exploit the secondary measurements which are present in the catalogue
 (i.e. \emph{r} vs \emph{r2}, \emph{i} vs \emph{i2}, \emph{ha} vs \emph{ha2}).
 In Fig.~\ref{fig:pairmag} we show the mean absolute residuals between
 these primary and secondary magnitudes as a function of magnitude (black dots).
 We also plot the Poissonian uncertainties for comparison (solid red line).
-We find the mean residual to equal 0.03~mag
+We find the mean residual to equal $0.03\pm0.04$~mag
 across the magnitude ranges 13 to 18 ($r$)
 and 12 to 17 ($i$, \ha),
-consistent with the accuracy of our calibration estimated earlier.
+consistent with the accuracy of our calibration estimated above.
 Stars fainter than this range appear to be dominated by photon noise (red line),
-while stars at the bright end appear to suffer from significant systematic
+while stars at the bright end appear to suffer from large systematic
 errors due to saturation effects.
 
 \begin{figure*}
@@ -1751,7 +1750,7 @@ a similar comparison between the primary and secondary detections,
 but this time we have only included sources which are flagged
 as \emph{veryReliable} in the catalogue.
 We do not observe an improvement in the average residuals as a function of magnitude,
-but the number of outliers is significantly smaller
+but the number of outliers has decreased markedly
 (evidenced by the shorter error bars which denote the standard deviation of the absolute residuals).
 We conclude that the \emph{veryReliable} quality criteria are effective
 at reducing the level of the systematic errors,
@@ -2317,7 +2316,7 @@ by the Isaac Newton Group
 in the Spanish Observatorio del Roque de los Muchachos
 of the Instituto de Astrofisica de Canarias.
 We are deeply indebted to the ING staff and students
-for their ongoing support of the INT.
+for their ongoing support.
 All data were processed 
 by the Cambridge Astronomical Survey Unit
 at the Institute of Astronomy in Cambridge.
@@ -2327,19 +2326,19 @@ of the UK (STFC, ref ST/J001335/1).
 
 Preparation of the catalogue was eased greatly
 by a number of software packages,
-including the PostgreSQL database software,
-the TOPCAT and STILTS packages \citep{Taylor2005,Taylor2006},
+including the {\sc postgresql} database software,
+the {\sc topcat} and {\sc stilts} packages \citep{Taylor2005,Taylor2006},
 and the Python modules
-AstroPy \citep{Astropy},
-NumPy/SciPy \citep{Numpy},
-Matplotlib \citep{Matplotlib},
-IPython \citep{IPython},
-and APLpy.
-We also made use of the Montage software maintained by NASA/IPAC,
-and the SIMBAD, Vizier and Aladin \citep{Aladin} services
-operated at CDS, Strasbourg, France.
+{\sc astropy} \citep{Astropy},
+{\sc numpy} and {\sc scipy} \citep{Numpy},
+{\sc matplotlib} \citep{Matplotlib},
+{\sc ipython} \citep{IPython},
+and {\sc aplpy}.
+We also made use of the {\sc montage} software maintained by NASA/IPAC,
+and the {\sc simbad}, {\sc vizier} and {\sc aladin} services
+operated at CDS, Strasbourg, France \citep{Aladin}.
 
-This research made extensive use of
+Our work made extensive use of
 several complementary photometric surveys.
 Our global calibration was aided
 by the AAVSO Photometric All-Sky Survey (APASS),
