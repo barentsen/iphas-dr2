@@ -790,26 +790,20 @@ which causes the pixel scale to increase as the edges
 are approached \citep{Gonzalez-Solares2011}.
 Although these systematics are reasonably small within a single field,
 they can combine, during the global calibration routine, to cause artificial zeropoint gradients 
-across the survey unless controlled by
-%when they are used to constrain a global calibration
-%without 
-other external constraints.
+across the survey unless controlled by other external constraints.
 
 For these reasons, we have decided not to depend
 on an ubercalibration-type scheme alone,
 and have opted to involve an external reference survey
 -- where available --
 to bring the majority of our data onto a uniform calibration.
-%This is explained next.
 
 \subsubsection{Correcting zeropoints using APASS}
 
 We have been able to benefit from the
 AAVSO Photometric All-Sky Survey
 (APASS; http://www.aavso.org/apass)
-to bring 
-%the vast majority - exaggerating a bit? 
-most of the survey 
+to bring most of the survey 
 onto a uniform scale.
 Since 2009,
 APASS has been using two 20~cm-astrographs
@@ -823,14 +817,14 @@ The overlap regions are shown in Fig.~\ref{fig:apass_r}.
 The photometric accuracy of APASS is currently estimated 
 to be at the level of 3\% (Henden, private communication),
 which is significantly better 
-than the original nightly calibrations of IPHAS,
-for which we estimate the $1\sigma$-uncertainty to be $\sim$10\%.
+than the original nightly calibrations of IPHAS
+which are accurate to $\sim$10\% (Tab.~\ref{tbl:offsets_before}).
 APASS achieves its uniform accuracy 
-by measuring each star at least two times in photometric conditions
--- along with ample standard fields --
-using the large $3\times3$ square degrees field of view of its detectors.
+by measuring each star at least two times in photometric conditions,
+along with ample standard fields,
+benefiting from the large 3-by-3 degrees field of view of its detectors.
 
-With the aim of bringing IPHAS to a similar accuracy of $\sim$3\%,
+With the aim of bringing IPHAS to a similar accuracy of 3\%,
 we used the APASS catalogue to identify and adjust the calibration of all IPHAS fields 
 which showed a magnitude offset larger than 3\% against APASS.  Experience of re-running
 the calibration and testing the results showed us that it was inadvisable to more
@@ -863,7 +857,7 @@ are very similar.
 The transformations include a large fixed offset,
 but this is simply due to the fact that 
 APASS magnitudes are given in the AB system
-and IPHAS uses Vega magnitudes.
+and IPHAS uses Vega-based magnitudes.
 Separate transformations were derived for sight-lines 
 with varying extinction properties to investigate the robustness
 of the transformations with respect to different reddening regimes.
@@ -875,7 +869,7 @@ are naturally scarce at $r<16$.
 Having transformed APASS magnitudes into the IPHAS system,
 we then computed the median magnitude offset 
 for each field which contained at least 30 cross-matched stars.
-This was achieved for 48\% of our fields.
+This was achieved for 48\% of our fields (shown in Figs.~\ref{fig:apass_r} and \ref{fig:apass_i}).
 The mean offset was found to be
 $0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
 (Table~\ref{tbl:offsets_before}).
@@ -908,43 +902,40 @@ convergence, which was essentially reached after the first iteration.
              For clarity, we do not show the fields at the offset positions.}
         \label{fig:apass_r}
     \vspace{1cm}
+    \includegraphics[width=\textwidth]{plots/calibration/APASS-IPHAS-DR2_ishift.pdf} 
+    \includegraphics[width=\textwidth]{plots/calibration/colourbar_apass_i.pdf} 
+    \caption{Same as Fig.~\ref{fig:apass_r} for the $i$-band.}
+    \label{fig:apass_i}
+\end{figure*}
+
+\begin{figure*}
     \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_rshift.pdf}
     \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_r.pdf} 
-    \caption{Median magnitude offset in the $r$ band
-             between IPHAS and SDSS after the re-calibration
-             procedure was applied.
+    \caption{Median magnitude offset between IPHAS and SDSS in the $r$ band
+             \emph{after} the re-calibration procedure was applied.
              Each square represents the footprint of an IPHAS field
              which contains at least 30 stars
              with a counterpart in the SDSS DR9 catalogue.
              The colours denote the median IPHAS-SDSS magnitude offset
              in each field,
              which was computed after applying the SDSS-to-IPHAS
-             transformation to the SDSS magnitudes (Eqn.~\ref{eqn:sdss_r}).
-             For clarity, we do not show the fields at the offset positions.}
+             transformation to the SDSS magnitudes (Eqn.~\ref{eqn:sdss_r}).}
     \label{fig:sdss_r}
-\end{figure*}
-
-\begin{figure*}
-	\vspace{2cm}
-    \includegraphics[width=\textwidth]{plots/calibration/APASS-IPHAS-DR2_ishift.pdf} 
-    \includegraphics[width=\textwidth]{plots/calibration/colourbar_apass_i.pdf} 
-    \caption{Same as Fig.~\ref{fig:apass_r} for the $i$-band.}
-        \label{fig:apass_i}
     \vspace{1cm}
     \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_ishift.pdf}
     \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_i.pdf} 
-    \caption{Same as Fig.~\ref{fig:sdss_i} for the $i$-band.}
+    \caption{Same as Fig.~\ref{fig:sdss_r} for the $i$-band.}
     \label{fig:sdss_i}
 \end{figure*}
 
 \begin{table}
     \caption{Mean magnitude offsets for objects
              cross-matched between IPHAS and APASS/SDSS
-             before the uniform re-calibration.
-             Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
-             to the APASS/SDSS magnitudes to bring them into the
+             \emph{before} the uniform re-calibration was carried out.
+             Transformations were applied
+             to the APASS and SDSS magnitudes to bring them into the
              Vega-based IPHAS system prior to computing
-             the offsets.)
+             these statistics (see text).
              }
     \label{tbl:offsets_before}
     \begin{center}
@@ -959,7 +950,7 @@ convergence, which was essentially reached after the first iteration.
             \bottomrule
        \end{tabular}
        \caption{Same as Table~\ref{tbl:offsets_before}
-                but computed after the uniform re-calibration
+                but computed \emph{after} the uniform re-calibration
                  was carried out.}
         \label{tbl:offsets_after}
             \begin{tabular}{lcc}
@@ -978,9 +969,9 @@ convergence, which was essentially reached after the first iteration.
 \subsubsection{Adjusting fields not covered by APASS}
 
 At the time of writing, the APASS catalogue did not provide 
-sufficient coverage for 7359 of the fields in our data release.
+sufficient coverage for 7359 of our fields.
 Fortunately, these fields are located mainly 
-in the early part of the Galactic Plane (Fig.~\ref{fig:apass_r}),
+at low Galactic longitudes (cf. Figs.~\ref{fig:apass_r} and \ref{fig:apass_i}),
 which were typically observed during the summer months
 when photometric conditions are more prevalent at the telescope.
 These remaining fields have nevertheless 
@@ -988,15 +979,8 @@ been brought onto the same uniform scale
 by employing an ubercalibration-style scheme,
 which minimises the magnitude offsets between stars
 located in the overlap regions between neighbouring fields.
-%Although we explained earlier that these overlap regions
-%are prone to systematics, the use of APASS enabled us to
-%keep the zeropoints of roughly half of the fields fixed,
-%which avoids these systematics from combining to introduce
-%artificial gradients across the survey.
-%In the next section we will show this to be true by validating
-%our calibration against SDSS.
+
 An algorithm for achieving this minimisation
-%of minimising the magnitude differences between overlapping frames 
 has previously been described by~\citet{Glazebrook1994}.
 In brief, there are two fundamental quantities to be
 minimised between each pair of overlapping exposures, 
@@ -1015,15 +999,15 @@ because the magnitude $m$ depends linearly on the ZP (Eqn.~\ref{eqn:mag}).
 Hence we can find the ZP shift to be applied to each field 
 by minimising the sum:
 \begin{equation}
-   S = \sum_{i=1}^N \sum_{j=1}^N w_{ij} \theta_{ij} (\Delta_{ij} + a_i - a_j)^2
+   S = \sum_{i=1}^N \sum_{j=1}^N w_{ij} \theta_{ij} (\Delta_{ij} + a_i - a_j)^2,
    \label{eqn:chi2}
 \end{equation}
-where $i$ denotes the exposure of interest, 
+where $i$ denotes an exposure, 
 $j$ an overlapping exposure, 
 $N$ the number of exposures,
 $a_i$ the ZP to solve for 
 and $a_j$ the ZP of an overlapping field ($\Delta\mathrm{ZP}_{ij}=a_i-a_j$). 
-$w_{ij}$ are weights set to the inverse square of the uncertainty in $\Delta_{ij}$
+$w_{ij}$ are weights set to the inverse square of the uncertainty in $\Delta_{ij}$,
 and $\theta_{ij}$ is an overlap function 
 equal to either 1 if exposures $i$ and $j$ overlap or 0 otherwise. 
 Solving for $a_i$ is equivalent to solving $\partial
@@ -1037,8 +1021,6 @@ where
    A_{ij} &=& \delta_{ij} \sum_{k=1}^N w_{jk}\theta_{jk} - w_{ij} \theta_{ij},\label{eqn:aij}\\
    b_i &=& \sum_{j=1}^N w_{ij} \theta_{ij}\Delta_{ji} = -\sum_{j=1}^N w_{ij} \theta_{ij}\Delta_{ij}.\label{eqn:bi}
 \end{eqnarray}
-This prescription is essentially identical to \citet{Glazebrook1994}.
-%,although we changed the formulation to ensure that $A_{ij}$ is positive definite.
 
 We enforce a strong external constraint
 on the solution by keeping the zeropoint fixed 
@@ -1135,7 +1117,7 @@ we then computed the median magnitude offset for each IPHAS field
 which contained at least 30 objects with a cross-matched counterpart
 in SDSS.  This was the case for 2\,602 fields.
 The median offsets for each of these fields
-are shown in Figs.~\ref{fig:sdss_r}-\ref{fig:sdss_i}.
+are shown in Figs.~\ref{fig:sdss_r} and \ref{fig:sdss_i}.
 Importantly, the mean offset and standard deviation found 
 is $-0.001\pm0.029$~mag in $r$
 and $-0.002\pm0.032$~mag in $i$ (Table~\ref{tbl:offsets_after}).
@@ -1150,17 +1132,12 @@ accuracy down to the level of 0.03~mag (rms).
 
 We warn that the SDSS comparison revealed a number of fields where the offsets
 exceeded 0.05~mag (523 fields) or even 0.1~mag (18 fields).
-This pattern of outliers is consistent with the tails of a Gaussian
-with mean $\approx0$ and $\sigma=0.03$.  Furthermore, it should not
+This pattern of outliers is consistent with the tails of a Gaussian distribution
+with $\sigma=0.03$.  Furthermore, it should not
 be forgotten that both the SDSS and APASS calibrations are approximations to
 perfection and will not be entirely free of anomalies.  Indeed as we worked, 
 we noticed the occasional unsurprising examples of inconsistency between these 
-two surveys.  
-%, we hope to draw upon
-%the PanSTARRS survey \citep{Schlafly2012}
-%to further improve the accuracy of our calibration.
-%At the time of preparing this work data from PanSTARRS
-%had not been made public yet.
+two surveys.
 
 \section{Source catalogue generation}
 \label{sec:catalogue}
@@ -1694,19 +1671,7 @@ which we found to suit many science applications,
 but certainly not all. Users of the data are encouraged 
 to revise the quality criteria according to their needs.
 
-\subsection{Photometric uncertainties and repeatability}
-
-Fig.~\ref{fig:uncertainties} shows the mean photometric
-uncertainty as a function of magnitude in each band.
-We find that the uncertainty typically
-reaches 0.1~mag near 20.5 in $r$ 
-and 19.5 in $i$/\ha\ for the default 2.3\arcsec\ aperture.
-At this point we note that the average colour
-across all sources in the catalogue is
-$1.06\pm0.12$ for $(r-i)$ and $0.44\pm0.03$ for $(r-\ha)$. The
-fainter limiting magnitude in $r$ is hence compensated
-by the fact that most sources have 
-brighter magnitudes in both $i$ and \ha.
+\subsection{Random and systematic uncertainties}
 
 \begin{figure}
     \includegraphics[width=0.5\textwidth]{figures/uncertainties/uncertainties.pdf} 
@@ -1714,40 +1679,44 @@ brighter magnitudes in both $i$ and \ha.
              for $r$ (top), $i$ (middle) and \ha\ (bottom).
              Data points shown are the average values of
              columns \emph{rErr}, \emph{iErr} and \emph{haErr}
-             in the catalogue, 
+             in the catalogue 
              and the error-bars show the standard deviations.
              The dashed and solid lines indicate 
              the 10$\sigma$ and 5$\sigma$ limits, respectively.
-             These uncertainties are based only on the (Poissonian)
-             photon noise and hence this figure does not show
-             the level of systematic uncertainties.}
+             These statistics show the average level of the Poissonian
+             photon noise and do not include systematic uncertainties.}
     \label{fig:uncertainties}
 \end{figure}
 
-The uncertainties shown in Fig.~\ref{fig:uncertainties}
+
+Fig.~\ref{fig:uncertainties} shows the mean photometric
+uncertainties (\emph{rErr}, \emph{iErr}, \emph{haErr})
+as a function of magnitude.
+We find that the uncertainty typically
+reaches 0.1~mag near 20.5 in $r$ 
+and 19.5 in $i$ and \ha.
+We note that the fainter depth in $r$ is compensated
+by the fact that most stars have brighter magnitudes in $i$ and \ha;
+the average colours in the catalogue are
+$\overline{(r-i)}=1.06\pm0.12$ and $\overline{(r-\ha)}=0.44\pm0.03$.
+We warn that the statistics shown in Fig.~\ref{fig:uncertainties}
 are the random errors based on the expected Poissonian photon noise.
 Systematics, such as calibration and deblending errors,
 are not included.
-To appraise the extent to which our photometry is affected
-by such systematics, we can exploit the
-secondary measurements which are present in the catalogue.
-Fig.~\ref{fig:pairmag} shows the mean residuals between
-the primary and secondary magnitudes
--- i.e. the average difference between catalogue columns \emph{r}-\emph{r2},
-\emph{i}-\emph{i2}, \emph{ha}-\emph{ha2} -- as a function of magnitude.
-We find that sources across the magnitude range 
-$13 < r < 17$ are consistent at the level of 5\%
-(i.e. $\sigma_{r-r2} \le 0.05$ mag),
-with the best repeatability
-reached at $r=14$ ($\sigma_{r-r2}~=~0.041$~mag).
-The brightest stars tend to show large residuals
--- e.g. $\sigma_{r-r2}~=~0.14$~mag at $r=12$ --
-which is due to saturation effects.
-At the faint end we find residuals which
-show significantly more scatter than would be expected
-from photon noise alone;
-the effects of source blending and background subtraction
-appear to dominate from $\sim$20th magnitude onward.
+
+To appraise the level at which our photometry is affected by systematics,
+we can exploit the secondary measurements which are present in the catalogue
+(i.e. \emph{r} vs \emph{r2}, \emph{i} vs \emph{i2}, \emph{ha} vs \emph{ha2}).
+In Fig.~\ref{fig:pairmag} we show the mean absolute residuals between
+these primary and secondary magnitudes as a function of magnitude (black dots).
+We also plot the Poissonian uncertainties for comparison (solid red line).
+We find the mean residual to equal 0.03~mag
+across the magnitude ranges 13 to 18 ($r$)
+and 12 to 17 ($i$, \ha),
+consistent with the accuracy of our calibration estimated earlier.
+Stars fainter than this range appear to be dominated by photon noise (red line),
+while stars at the bright end appear to suffer from significant systematic
+errors due to saturation effects.
 
 \begin{figure*}
 \captionsetup[subfigure]{labelformat=empty}
@@ -1765,49 +1734,34 @@ appear to dominate from $\sim$20th magnitude onward.
 \label{fig:pairmag_reliable}
 \end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
-         for both all sources in the catalogue (left panel)
+         for all sources in the catalogue (left panel)
          and for the \emph{veryReliable} sources alone (right panel).
-         The values shown are the mean absolute residuals
-         between the primary and the secondary detections,
-         while the error-bars show the standard deviations.
-         Left panel: 
-         the best photometric repeatability is reached at $r=14$
-         with $\sigma_{r-r2}~=~0.041$~mag.
-         Bright stars at $r<13$ and $i<12$ 
-         show increasing uncertainties due to saturation effects.
-         Right panel: we find that applying the quality criteria
-         has improved the photometric repeatability significantly.
-         The best repeatability is again reached at $r=14$
-         but has reduced to $\sigma=0.028$ mag.
-         The quality criteria have also been successful
-         at removing objects with large systematics at the bright
-         and faint ends.
+         Black dots show the mean absolute residuals
+         between the primary and the secondary detections.
+         The error-bars show the standard deviations.
+         The red trend line shows the average Poissonian uncertainties
+         we derived in Fig.~\ref{fig:uncertainties}.
+         We find that the \emph{veryReliable} quality criteria are successful
+         at removing objects with large uncertainties.
     }
 \end{figure*}
 
 In Fig.~\ref{fig:pairmag_reliable} we show 
-a similar comparison of the primary and secondary detections,
+a similar comparison between the primary and secondary detections,
 but this time we have only included sources which are flagged
-as \emph{veryReliable} in the catalogue
-(i.e. not saturated, not confused, not near bright stars, etc.)
-We find that the average residuals are significantly better
-for this subset. Sources across the magnitude range 
-$13 < r < 17$ now show a scatter of 0.03 instead of 0.05~mag.
-The best repeatability is again reached at $r=14$,
-but this time with $\sigma_{r-r2}~=~0.028$~mag.
+as \emph{veryReliable} in the catalogue.
+We do not observe an improvement in the average residuals as a function of magnitude,
+but the number of outliers is significantly smaller
+(evidenced by the shorter error bars which denote the standard deviation of the absolute residuals).
 We conclude that the \emph{veryReliable} quality criteria are effective
-in reducing the systematic errors to
-the same level as the estimated accuracy of the
-global photometric calibration (cf. \S\ref{sec:calibration}).
-Moreover, the large systematics at the bright and faint end
-disappear.
+at reducing the level of the systematic errors,
+while also removing the unreliable data at the bright and faint end.
 
 \subsection{Source counts and blending}
 \label{sec:densities}
 
-The number of sources in our catalogue,
-counted in 1-by-10~deg$^2$ constant-longitude strips,
-is shown in Fig.~\ref{fig:sourcecount}
+Fig.~\ref{fig:sourcecount} shows the number of sources
+in the catalogue counted in $1^\circ$-wide strips
 as a function of Galactic longitude (thick blue line).	
 Unsurprisingly, we find the number of sources
 to increase towards the Galactic centre.
@@ -1815,9 +1769,8 @@ For example, the average source density near $l\simeq 30^\circ$
 is roughly 300\,000 objects per square degree,
 which is six times more than the density
 found near $l\simeq 180^\circ$.
-
 In addition to the global trend,
-real variations are also apparent on smaller scales.
+variations are also apparent on smaller scales.
 For example, we find a significant drop near the constellations 
 of Aquila ($l\simeq40$) and Cygnus ($l\simeq80$ and $l\simeq90$),
 which are regions known to be affected
