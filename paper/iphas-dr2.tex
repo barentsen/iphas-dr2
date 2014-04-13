@@ -8,8 +8,6 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\restylefloat{table}
-
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
 \def\ha{\mbox{H$\rm \alpha$}}
@@ -97,7 +95,6 @@ Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 \begin{document}
 \date{Current draft typeset \today}
 \pagerange{\pageref{firstpage}--\pageref{lastpage}} \pubyear{2014}
-
 \maketitle
 
 \label{firstpage}
@@ -106,7 +103,8 @@ Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
 is a 1800~deg$^2$ imaging survey
-covering the Galactic latitude range $|b| < 5^\circ$
+covering Galactic longitudes $l=30^\circ$ to $215^\circ$
+and latitudes $b = -5^\circ$ to $+5^\circ$
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-metre Isaac Newton Telescope (INT) in La Palma.
@@ -115,10 +113,10 @@ uniformly-calibrated source catalogue
 derived from the survey,
 providing single-epoch photometry
 for 219 million unique sources
-across 92\% of the 1800 square-degree footprint.
+across 92\% of the footprint.
 The observations were carried out between 2003 and 2013
 at a median seeing of 1.1 arcsec
-and to mean $5\sigma$-depths of 
+and to a mean $5\sigma$-depth of 
 21.2 ($r$), 20.0 ($i$) and 20.3 ($\ha$)
 in the Vega magnitude system.
 We explain the data reduction 
@@ -127,8 +125,8 @@ describe and test the new uniform calibration,
 and detail the construction of the new 98-column source catalogue.
 We show that the global calibration is accurate to
 0.03~mag (rms) 
-and provide a series of recommended quality criteria
-which can be used to select the most reliable data
+and recommend a series of quality criteria
+to select the most reliable data
 from the catalogue.
 Finally, we demonstrate the ability of the 
 catalogue's unique
@@ -945,42 +943,40 @@ convergence, which was essentially reached after the first iteration.
 \end{figure*}
 
 \begin{table}
-% The caption of tables should be on top and not at the bottom
-        \caption{Mean magnitude offsets for objects
-                 cross-matched between IPHAS and APASS/SDSS
-                 before the uniform re-calibration.
-                 Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
-                 to the APASS/SDSS magnitudes to bring them into the
-                 Vega-based IPHAS system prior to computing
-                 the offsets.)
-                 }
-        \label{tbl:offsets_before}
-        \begin{center}
-                \begin{tabular}{lcc}
-                        \toprule
-                         {\bf Before re-calibration} & Mean & $\sigma$  \\
-                        \midrule
-                        $r$ (IPHAS - APASS) & +0.014 & 0.104 \\
-                        $i$ (IPHAS - APASS) & +0.007 & 0.108 \\
-                        $r$ (IPHAS - SDSS) & +0.016 & 0.088 \\
-                        $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
-                        \bottomrule
-                \end{tabular}
-        \caption{Same as Table~\ref{tbl:offsets_before}
-                 but computed after the uniform re-calibration
+    \caption{Mean magnitude offsets for objects
+             cross-matched between IPHAS and APASS/SDSS
+             before the uniform re-calibration.
+             Eqns.~\ref{eqn:apass_r}-\ref{eqn:sdss_i} were applied
+             to the APASS/SDSS magnitudes to bring them into the
+             Vega-based IPHAS system prior to computing
+             the offsets.)
+             }
+    \label{tbl:offsets_before}
+    \begin{center}
+        \begin{tabular}{lcc}
+            \toprule
+            {\bf Before re-calibration} & Mean & $\sigma$  \\
+            \midrule
+            $r$ (IPHAS - APASS) & +0.014 & 0.104 \\
+            $i$ (IPHAS - APASS) & +0.007 & 0.108 \\
+            $r$ (IPHAS - SDSS) & +0.016 & 0.088 \\
+            $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
+            \bottomrule
+       \end{tabular}
+       \caption{Same as Table~\ref{tbl:offsets_before}
+                but computed after the uniform re-calibration
                  was carried out.}
         \label{tbl:offsets_after}
-                \begin{tabular}{lcc}
-                        \toprule
-                         {\bf After re-calibration} & Mean & $\sigma$ \\
-                        \midrule
-                        $r$ (IPHAS - APASS) & +0.000 & 0.011\\
-                        $i$ (IPHAS - APASS) & +0.000 & 0.011 \\
-                        $r$ (IPHAS - SDSS)  & -0.001 & 0.029\\
-                        $i$ (IPHAS - SDSS) & -0.002 & 0.032 \\
-                        \bottomrule
-                \end{tabular}
-
+            \begin{tabular}{lcc}
+                \toprule
+                {\bf After re-calibration} & Mean & $\sigma$ \\
+                \midrule
+                $r$ (IPHAS - APASS) & +0.000 & 0.011\\
+                $i$ (IPHAS - APASS) & +0.000 & 0.011 \\
+                $r$ (IPHAS - SDSS)  & -0.001 & 0.029\\
+                $i$ (IPHAS - SDSS) & -0.002 & 0.032 \\
+                \bottomrule
+            \end{tabular}
         \end{center}
 \end{table}
 
@@ -1508,7 +1504,7 @@ and (iii) the source densities and the frequency of source blending.
 
 Like any other photometric survey,
 the majority of the objects in our catalogue
-are faint sources observed near the detection limits:
+are faint sources observed near the detection limits;
 55\% of the entries in the catalogue
 are fainter than $r > 20$.
 %and 18\% are even fainter than $r > 21$.
@@ -1531,11 +1527,8 @@ in Tables~\ref{tab:reliable} and \ref{tab:veryreliable}.
 Table~\ref{tab:reliable} specifies
 a set of minimum quality criteria
 which should benefit most applications
-which require reliable $(r-i)$ and $(r-\ha)$ colours
-(GEERT: the rest of the sentence looks very odd to me -- I can't rephrase
-because I'm not sure what you are trying to say) without removing more 
-than 80\%
-of the sources brighter than $r < 19$.
+which desire reliable $(r-i)$ and $(r-\ha)$ colours
+as well as completeness.
 The listed criteria are designed to 
 (i) remove low-S/N sources, 
 (ii) remove saturated sources,
@@ -1553,7 +1546,6 @@ For convenience, the catalogue contains a boolean column
 named \emph{reliable} that directly flags these objects.
 
 \begin{table*}
-
 \vspace{2cm}
 \caption{Recommended minimum quality criteria 
 for selecting objects with reliable colours 
@@ -1648,11 +1640,11 @@ using the column named \emph{veryReliable}.}
 
 \label{tab:veryreliable}
 
-\vspace{2cm}
+\vspace{1cm}
 \end{table*}
 
 For applications which require
-an even higher standard of reliability,
+a higher standard of reliability at the expense of completeness,
 a further set of additional quality criteria
 are suggested in Table~\ref{tab:veryreliable}.
 These criteria are designed to ensure that
@@ -1660,27 +1652,23 @@ These criteria are designed to ensure that
 (ii) the object was not blended with a nearby neighbour,
 and (iii) the object was not located near a very bright star.
 59 million sources (27\%) satisfy
-these additional criteria 
+these stricter criteria 
 and are hereafter referred to as ``very reliable''.
 Again, the catalogue contains a boolean column
 named \emph{veryReliable} which flags these objects.
 
 Fig.~\ref{fig:magdist} compares the $r$-band magnitude
-distribution for objects with and without the 
-\emph{reliable} and \emph{veryReliable} criteria applied. 
+distributions for \emph{reliable}, \emph{veryReliable}
+and unfiltered objects.
 We find that 81\% of the sources 
-in the magnitude range $13 < r < 19$
-are considered \emph{reliable},
-which drops to 72\% in the range $19 < r < 20$
-and 9\% at $r>20$.
-In contrast, only 54\% of the sources 
-in the magnitude range $13 < r < 19$
-are considered \emph{veryReliable}.
-In \S\ref{sec:densities} we will show that these
-stricter criteria remove large numbers
-of objects at early Galactic longitudes 
-where source blending can sometimes affect
-more than a quarter of the objects.
+are considered \emph{reliable}
+and 54\% are \emph{veryReliable}
+in the magnitude range $13 < r < 19$.
+We will explain below that the
+\emph{veryReliable} category is least complete
+at low Galactic longitudes,
+where source blending can affect
+up to a quarter of the objects.
 The \emph{veryReliable} flag should hence
 only be used in applications in which 
 completeness is not a concern.
@@ -1702,9 +1690,14 @@ completeness is not a concern.
 It is easy to see how the quality criteria
 may be adapted to be more tolerant.
 For example, by raising the allowed photometric uncertainties
-from 0.1 mag to 0.2 mag,
-42 million candidate sources are added to the 109 
-million satisfying the tighter error bound (GEERT - is this what you mean?).
+from 0.1~mag to 0.2~mag,
+42 million candidate sources would be added to the 109 
+million satisfying the tighter error bound.
+Our choice to adopt 0.1~mag as the cut-off uncertainty
+for the \emph{reliable} category is a pragmatic trade-off
+which we found to suit many science applications,
+but certainly not all. Users of the data are encouraged 
+to revise the quality criteria according to their needs.
 
 \subsection{Photometric uncertainties and repeatability}
 
@@ -1885,7 +1878,6 @@ blend-affected sources correlates with the local source
 density.  In hard numbers, only 11\% of the sources are blended
 at $l>90^\circ$, whereas 24\% are blended at $l<90^\circ$.
 
-%As we explained earlier, blended sources must be used with caution.
 Finally, we warn that blended objects
 are more likely than unblended objects to have fallen victim
 to source confusion during the band-merging procedure.  It is
@@ -2227,24 +2219,25 @@ is marked by yellow triangles in the colour mosaic (Fig.~\ref{fig:mosaic_iphas})
 \begin{table}
     \caption{Candidate \ha-emitters towards Sh 2-82.}
     \label{tbl:emitters}
-\footnotesize
-\resizebox{0.45\textwidth}{!}{
-    \begin{tabular}{clccc}
-    \toprule
-    # & Name [IPHAS2 ...] & $r$ & $i$ & \ha  \\
-    \midrule
-1 & J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
-2 & J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
-3 & J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
-4 & J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
-5 & J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
-6 & J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
-    \bottomrule
-    \end{tabular}}
+    \footnotesize
+    \resizebox{0.45\textwidth}{!}{
+        \begin{tabular}{clccc}
+        \toprule
+        \# & Name [IPHAS2 ...] & $r$ & $i$ & \ha  \\
+        \midrule
+        1 & J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
+        2 & J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
+        3 & J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
+        4 & J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
+        5 & J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
+        6 & J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
+        \bottomrule
+        \end{tabular}
+    }
 \end{table}
 
 In previous work, we have shown that the majority of
-\ha-emitters seen towards an H{\sc ii} region
+\ha-emitters that are unveiled by IPHAS towards an H{\sc ii}
 are likely to be Classical T Tauri Stars \citep{Barentsen2011a}.
 These are young objects
 which are thought to show \ha\ in emission
@@ -2253,21 +2246,18 @@ which is accreting onto the star
 from a circumstellar disk.
 This is likely to be the case for the candidate \ha-emitters
 we discovered towards Sh 2-82 as well.
-Two of our candidates, x and y in Tab.~\ref{tab:emitters}, have recently 
-been identified
-as YSOs in the initial investigation of the region by \cite{Yu2012}.
-In their study, the authors used 2MASS and Spitzer data
-to select likely young stars by selecting objects with
-an infrared colour excess, consistent with 
-the presence of a heated circumstellar disk.
-Although \citeauthor{Yu2012} did not identify
-the other four candidate emitters in our sample
-as having an infrared excess,
-we note that all four objects
-are detected in the Spitzer 8.0~\micron\ image
-at S/N$>$5,
-which is consistent with their
-being optically-unveiled stars with a circumstellar disk,
+Two of our candidates, \#1 and \#4 in Tab.~\ref{tbl:emitters},
+have previously been identified
+as candidate YSOs by \cite{Robitaille2008}
+and \cite{Yu2012}, respectively.
+In their studies, the authors used Spitzer data
+to select intrinsically red objects,
+consistent with the presence of a circumstellar disk.
+Although the other four candidate emitters in our sample
+have not previously appeared in the literature,
+we note that all four are detected
+in the Spitzer 8.0~\micron\ image at S/N$>$5,
+which is consistent with being optically-unveiled stars with a circumstellar disk,
 i.e. they are likely to be Class II YSOs exhibiting a mild infrared excess.
 
 Sh 2-82 is one of a large population of poorly-studied star-forming regions
@@ -2325,12 +2315,8 @@ catalogue to have been constructed from the imaging data.  This
 now means that there is H$\alpha$ coverage, accessible online,
 of the entire Galactic Plane -- given that the 
 southern Plane is already available thanks to the UK
-Schmidt H$\alpha$ Survey \citep[SHS,][][Parker05], the last of the 
+Schmidt H$\alpha$ Survey \citep[SHS,][]{Parker2005}, the last of the 
 photographic surveys carried out by that telescope.
-%We explain the data reduction and quality control procedures that
-%were applied.  We describe and test the global photometric 
-%calibration, 
-%and detailed the construction of the source catalogue.
 
 The observations included in this release
 achieve a median seeing of 1.1 arcsec
@@ -2383,8 +2369,6 @@ the most highly-populated components of the Milky Way.
 
 \section*{Acknowledgments}
 
-The IPHAS survey was carried out 
-at the Isaac Newton Telescope (INT).
 The INT is operated on the island of La Palma
 by the Isaac Newton Group
 in the Spanish Observatorio del Roque de los Muchachos
@@ -2503,19 +2487,19 @@ $i$ &  7674  &   7674  &  759.9  &  1.30e-9   \\
 \label{app:columns}
 
 \small
-\begin{longtable}{lllp{10cm}}
+\begin{longtable}{llllp{10cm}}
 \caption{\label{tab:columns} 
 Definition of columns in the IPHAS DR2 source catalogue.
 } \\
 \hline
-Column & Type & Unit & Description \\
+\# & Column & Type & Unit & Description \\
 \hline
 \endfirsthead
 
 \multicolumn{3}{c}%
 {{\bfseries \tablename\ \thetable{} -- continued}} \\
 \hline
-Column & Type & Unit & Description \\
+\# & Column & Type & Unit & Description \\
 \hline
 \endhead
 
