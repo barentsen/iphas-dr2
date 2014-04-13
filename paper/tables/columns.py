@@ -25,8 +25,9 @@ data = json.loads(open(filename).read())
 
 # Write TeX table
 out = open('columns.tex', 'w')
-for column in data:
+for i, column in enumerate(data):
+    column['n'] = i + 1
     column['desc'] = html2tex(column['desc'])
-    out.write("{name} & {type} & {unit} & {desc} \\\\\n".format(**column))
+    out.write("{n} & {name} & {type} & {unit} & {desc} \\\\\n".format(**column))
 out.close()
 
