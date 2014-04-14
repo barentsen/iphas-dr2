@@ -18,7 +18,7 @@ of the INT Photometric H$\alpha$ Survey
 of the Northern Galactic Plane (IPHAS DR2)}
 		
 \author[G. Barentsen
-et. al]{G. Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
+et. al]{Geert Barentsen$^{1}$\thanks{E-mail:geert@barentsen.be},
 H. J. Farnhill$^1$,
 J. E. Drew$^1$,
 E. A. Gonz$\acute{\rm{a}}$lez-Solares$^2$, 
@@ -152,7 +152,7 @@ of the Northern Galactic Plane \citep[IPHAS;][]{Drew2005}
 is providing new insights into the contents and structure of the disk of the Milky Way.
 This large-scale programme of observation
 -- spanning almost a decade 
-and using more than 300 nights 
+and using more than 300 nights in competitive open time 
 at the Isaac Newton Telescope (INT) in La Palma --
 aims to provide the digital update 
 to the photographic northern H$\alpha$ surveys 
@@ -256,7 +256,7 @@ and longitudes $30\degr < \ell < 215\degr$.
 
 The WFC is a mosaic of 4 CCDs 
 that captures a sky area of close to 0.29~deg$^2$.
-To cover the entire Northern Plane with some overlap,
+To cover the Northern Plane with some overlap,
 the survey area was divided into 7635 telescope pointings.
 Each of these pointings is accompanied by an offset position
 displaced by $+$5 arcmin in declination 
@@ -315,7 +315,7 @@ were obtained in November 2012.
         \label{fig:footprint}
 \end{figure*}
 
-Fig.~\ref{fig:footprint} shows the footprin
+Fig.~\ref{fig:footprint} shows the footprint
 of the quality-approved observations included in this work. 
 The fields which remain missing 
 -- covering 8\% of the survey area --
@@ -410,7 +410,7 @@ in multi-extension FITS files.
 
 At the time of preparing DR2,
 the CASU pipeline had processed
-74\,195 IPHAS exposures 
+74\,195 single-band IPHAS exposures 
 in which a total of 1.9~billion \emph{candidate sources} were detected 
 at the default detection level of 1.25\,$\sigma$.
 This total inevitably includes spurious detections, artefacts and
@@ -597,7 +597,7 @@ was looked at by at least three different pairs of eyes.
 Images affected by clouds or extreme levels of scattered moonlight
 were flagged, investigated,
 and excluded from the release 
-by placing them on a \emph{black-list}.
+by placing them on a black-list.
 
 (7) \emph{Contemporaneous field data.} 
 Finally, only exposures which are part of a sequence 
@@ -607,9 +607,9 @@ were considered for inclusion in the release.
 This ensures that the three bands for a given field
 are observed contemporaneously --  
 normally within 5 minutes of each other.
-An exception was made for 9 fields where the three exposures 
-could not be obtained within the same night
-but for which the time gap between exposures did not exceed 48 hours.
+%An exception was made for 9 fields where the three exposures 
+%could not be obtained within the same night
+%but for which the time gap between exposures did not exceed 48 hours.
 We note that the source catalogue details the exact epoch
 at the start of each exposure
 (columns \emph{rMJD}, \emph{iMJD}, \emph{haMJD}).
@@ -720,7 +720,6 @@ when the \ha\ magnitude for Vega is set by convention to 0.03.
 
 Despite the best efforts made to obtain a nightly calibration,
 large surveys naturally possess field-to-field variations
-at the level of 0.1 mag
 due to atmospheric changes during the night
 and imperfections in the pipeline or the instrument
 (e.g. the WFC is known to suffer from sporadic errors
@@ -1024,7 +1023,9 @@ where
 
 We enforce a strong external constraint
 on the solution by keeping the zeropoint fixed 
-for the 6\,756 fields which have already been compared
+for the 
+% 6\,756 
+fields which have already been compared
 and calibrated against APASS.
 We hereafter refer to these fields as \emph{anchors}.
 It is asserted that the zeropoints $a_i$ of the anchor fields 
@@ -1060,14 +1061,14 @@ separated only by the $\sim$30~s read-out time.
 Hence, we have corrected the \ha\ zeropoints 
 by re-using the zeropoint adjustments that were derived for the $r$ band
 in the earlier steps.
-An exception was made for 3\,101 fields
+An exception was made for a small subset of fields
+% 3\,101 fields
 for which our quality-control routines revealed
-zeropoint variations which exceeded 0.03~mag 
-between consecutive fields,
-suggesting strongly non-photometric conditions.
-In these cases, the \ha\ zeropoints of these fields
+strong zeropoint variations during the night,
+suggesting non-photometric conditions.
+In these cases, the \ha\ zeropoints
 were adjusted by solving Eqn.~\ref{eqn:matrix}
-rather than linking them directly to the $r$-band shift.
+rather than being linked to the $r$-band shift.
 
 \subsection{Testing the calibration against SDSS}
 
@@ -1106,7 +1107,7 @@ Separate equations were derived towards different sight-lines
 to investigate the effects of varying reddening regimes.
 The colour term was found 
 to show some variation towards lowly reddened areas,
-where red objects at $(r-i) > 1$ are rare.
+where different stellar populations are observed.
 The vast majority of red objects in the global sample
 are those in highly reddened areas, however,
 which agree well with the global transformations
@@ -1392,7 +1393,7 @@ Anyone interested in the alternative detections of a source
 can nevertheless obtain this information in two ways.
 To begin with, whenever a secondary detection was collected 
 within 10 minutes of the primary,
-we have included the identifier and the default photometry
+we have included the identifier and the photometry
 of that secondary detection
 in the catalogue for convenience
 (columns \emph{sourceID2}, \emph{fieldID2}, 
@@ -1400,15 +1401,7 @@ in the catalogue for convenience
 \emph{rErr2}, \emph{iErr2}, \emph{haErr2}, \emph{errBits2}).
 Such a secondary detection is available for 66\% of the sources brighter than $r<20$
 due to the IPHAS field pair strategy.
-In addition, the complete set of detection tables -- one for each exposure -- 
-is made accessible on our website to allow other uses of the data.
-%A user-friendly catalogue of secondary detections 
-%has not been compiled at present 
-%but may be part of a future data release.
 
-%The primary detection is defined as the entry in the 
-%set of band-merged field catalogues which provides 
-%the most reliable information for a unique source.
 Primary detections have been selected from all available detections using a so-called \emph{seaming} procedure,
 which we adapted from the algorithm developed for the WSA\footnote{http://surveys.roe.ac.uk/wsa/dboverview.html\#merge}.
 In brief, the first step is to identify all the duplicate detections
@@ -1448,9 +1441,8 @@ greater than 20\%;
 \item the source must not have been detected in one of the strongly
 vignetted corners of the detector, 
 not have had any known bad pixels in the aperture,
-and not have been on the edge of one of the CCDs,
-i.e. we require the \emph{errBits} quality score
-to be smaller than 64.
+and not have been on the edge of one of the CCDs
+(this information is contained in the \emph{errBits} quality score column, which is used for internal bookkeeping).
 \end{enumerate}
 
 A total of 219 million primary detections satisfied
@@ -1483,7 +1475,6 @@ the majority of the objects in our catalogue
 are faint sources observed near the detection limits;
 55\% of the entries in the catalogue
 are fainter than $r > 20$.
-%and 18\% are even fainter than $r > 21$.
 The measurements of faint objects
 are naturally prone to larger
 random and systematic uncertainties:
@@ -1534,7 +1525,7 @@ using the column named \emph{reliable}.}
   \hline
   Quality criterion & Rows passed & Description \\
   \hline
-  rErr\,$<$\,0.1 {\sc and} iErr\,$<$\,0.1 {\sc and} haErr\,$<$\,0.1 &
+  $rErr\,<\,0.1$ {\sc and} $iErr\,<\,0.1$ {\sc and} $haErr\,<\,0.1$ &
   109 million (50\%) &
   Require the photon noise to be less than 
   0.1 mag in all bands (i.e. S/N$>$10).
@@ -1545,8 +1536,8 @@ using the column named \emph{reliable}.}
   and the peak pixel height must not exceed 55\,000 counts.
   Again, this implicitly requires a detection in all three bands.
   \\
-  $|\mathrm{r}- \mathrm{rAperMag1}| 
-  < 3\sqrt{\mathrm{rErr}^2 + \mathrm{rAperMag1Err}^2} 
+  $|r- rAperMag1| 
+  < 3\sqrt{rErr^2 + rAperMag1Err^2} 
   + 0.03$ &
   176 million (80\%) &
   Require the $r$ magnitude measured 
@@ -1557,13 +1548,13 @@ using the column named \emph{reliable}.}
   This will reject sources for which the background
   subtraction or the deblending procedure
   was not performed reliably. \\
-  $|\mathrm{i}- \mathrm{iAperMag1}| 
-  < 3\sqrt{\mathrm{iErr}^2 + \mathrm{iAperMag1Err}^2} 
+  $|i- iAperMag1| 
+  < 3\sqrt{iErr^2 + iAperMag1Err^2} 
   + 0.03$ &
   183 million (84\%) &
   Same as above for $i$. \\
-  $|\mathrm{ha}- \mathrm{haAperMag1}| < 
-  3\sqrt{\mathrm{haErr}^2 + \mathrm{haAperMag1Err}^2} 
+  $|ha- haAperMag1| < 
+  3\sqrt{haErr^2 + haAperMag1Err^2} 
   + 0.03$ &
   158 million (72\%) &
   Same as above for \ha. \\
@@ -1585,11 +1576,11 @@ using the column named \emph{veryReliable}.}
   \hline
   Quality criterion & Rows passed & Description \\
   \hline
-   reliable &
+   \emph{reliable} &
    86 million (39\%) &
    The object must satisfy the criteria listed in Table~\ref{tab:reliable}. \\
    
-   pStar $>$ 0.9 &
+   $pStar > 0.9$ &
    145 million (66\%) &
    % pStar > 0.89 is identical to mergedClass == -1
    The object must appear as a perfect point source,
@@ -1804,15 +1795,15 @@ our Galaxy.
     for which the \emph{deblend} flag is {\sc false}, 
     i.e. unconfused sources for which the CASU pipeline
     did not have to apply a deblending procedure.
-    In both cases only counted sources
+    In both cases we counted only those sources
     in the latitude range $-5\degr<b<+5\degr$,
     such that one may obtain approximate source densities
     by dividing the counts by 10~deg$^2$.
-    The apparent variations in the source counts
+    The global variations in the source counts
     traces the structure of the Galaxy
     and the distribution of foreground extinction,
-    but also includes instrumental effects
-	such as variations in the survey depth
+    but is also affected by instrumental effects
+	such as variations in the observed depth
 	and completeness (see text).
    }
     \label{fig:sourcecount}
@@ -2377,11 +2368,11 @@ to the Physics Department of Imperial College London
 that hosted this project from its inception to 2007 and supported
 her via a sabbatical year in 2003-4.
 JF is supported by the Spanish Plan Nacional de I+D+i and FEDER under contract AYA2010-18352.
-BTG acknowledges funding from the European Research Council
-under the European Union's Seventh Framework Programme (FP/2007-2013) 
-/ ERC Grant Agreement n. 320964 (WDTracer).
-NJW is in receipt of a Fellowship funded by the Royal Astronomical Society
-of the United Kingdom.
+BTG acknowledges funding from the
+European Research Council under the European Union's Seventh Framework
+Programme (FP/2007-2013) / ERC Grant Agreement n. 320964 (WDTracer).
+NJW is in receipt of a Fellowship funded by 
+the Royal Astronomical Society of the United Kingdom.
 
 \label{lastpage}
 
