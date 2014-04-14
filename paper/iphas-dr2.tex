@@ -364,7 +364,8 @@ corresponding to each of the four CCDs.
 Source detection and characterisation is then carried out 
 using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
 The flux of each source is measured using both
-the peak pixel height (i.e. a square 0.33$\arcsec\times$0.33\arcsec\ aperture)
+the peak pixel height
+(i.e. a square 0.33$\arcsec\times$0.33\arcsec\ aperture)
 and a series of circular apertures of increasing diameter 
 (1.2\arcsec, 2.3\arcsec, 3.3\arcsec, 4.6\arcsec\ and 6.6\arcsec).
 
@@ -473,7 +474,7 @@ Such data were typically obtained during poor weather or full moon.
 Most observations were significantly better than these limits.
 Fig.~\ref{fig:depth} presents the distribution of limiting magnitudes
 for all quality-approved fields,
-showing a mean depth of 
+showing mean depths of 
 $21.2\pm0.5$ ($r$), $20.0\pm0.3$ ($i$) and $20.3\pm0.3$ (\ha).
 The depth achieved depended 
 most strongly on the presence of the moon,
@@ -487,75 +488,67 @@ are less sensitive to moonlight, leading to
 narrower magnitude limit distributions
 (middle and bottom panels in Fig.~\ref{fig:depth}).
 
-The minimum depth criterion
-led us to exclude 9\% of the pipelined data,
-which had typically been obtained under cloudy conditions.
-We note that some of the excluded data may nevertheless be useful
-for e.g. time-domain studies of bright stars.
-The detection tables of the discarded data are made
-available through our website for this reason (www.iphas.org),
-but are ignored in what follows.
-
 (2) \emph{Ellipticity.} 
 The ellipticity of a point source,
 defined as $e = 1 - b / a$ 
 with $b$ the semi-minor and $a$ the semi-major axis,
-is a morphological measure of the elongation of the point spread function.
+is a morphological measure of the elongation of the point spread function (PSF).
 It is expected to be zero (circular) across the field 
 in a perfect imaging system,
 but it is slightly non-zero in any real telescope data 
-due to optical distortions and tracking errors.  Indeed, it is worth noting
-that IPHAS data have been collected from unguided exposures that rely
-entirely on the INT's tracking capability.
-The mean ellipticity measured 
-%across a field 
-from exposures forming this release
-%in the IPHAS data set 
-is $0.09\pm0.04$.
+due to optical distortions and tracking errors.
+Indeed, it is worth noting
+that IPHAS data have been collected
+from unguided exposures that rely entirely
+on the INT's tracking capability.
+The mean ellipticity measured
+in the data is $0.09\pm0.04$.
 There have been sporadic episodes with higher ellipticities
 due to mechanical glitches in the telescope tracking system.
 To exclude these, we rejected exposures in which the mean ellipticity
-across the detector exceeded $e > 0.3$. We have also found that, as
-this threshold is breached, the photometric measurements delivered by 
-the pipeline become degraded.
-Only 0.4\% of the exposures were discarded on this basis.
+across the detector exceeded $e > 0.3$.
+We have also found that, as this threshold is breached,
+the photometric measurements delivered by the pipeline become degraded.
 
 (3) \emph{Seeing.} 
 The original survey goal was to obtain data 
-at seeing better than 1.7~arcsec.
+at a resolution better than 1.7~arcsec,
+as evaluated by measuring the average PSF Full Width at Half Maximum (FWHM)
+across an image,
+which is a proxy for the combined effect of atmospheric and dome seeing.
 This target is currently attained across 86\% of the footprint,
 in particular at lower Galactic longitudes,
 e.g. 92\% of the fields at $l<120^\circ$ are better than 1.7~arcsec.
+To slightly increase the sky area offered by this data release,
+we have decided to include data obtained under seeing of up to 2.5 arcsec.
 Fig.~\ref{fig:seeing} presents the distribution
-of the mean seeing for all the quality-approved fields.
-We find a median value of 1.1~arcsec in $r$, \ha\
-and 1.0~arcsec in $i$.
+of the PSF FWHM for the approved fields in the release.
 In the $r$-band, 90\% of the data is better than 1.5~arcsec,
+50\% is better than 1.1~arcsec,
 and 10\% is better than 0.8~arcsec.
-To increase the sky area covered by this data release,
-we have decided to include the small fraction of data
-obtained under seeing of up to 2.5 arcsec.  This limited
-exclusion on grounds of poor seeing to only 1\%\ of the pipelined 
-exposures. 
 In \S\ref{sec:catalogue} we will explain
-that the photometry listed in the catalogue
-is predominantly based on the images with the
-best-available seeing, and that the seeing estimate
+that the photometry compiled in the source catalogue
+is normally derived from the field with the
+best-available seeing for a given object,
+and that the PSF FWHM measurement
 is included as a column in the catalogue.
 
 \begin{figure}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{./plots/seeing_r.pdf} 
+        \includegraphics[width=\textwidth]{figures/seeing/seeing_r.pdf} 
     \end{minipage}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{./plots/seeing_i.pdf} 
+        \includegraphics[width=\textwidth]{figures/seeing/seeing_i.pdf} 
     \end{minipage}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{./plots/seeing_ha.pdf} 
+        \includegraphics[width=\textwidth]{figures/seeing/seeing_ha.pdf} 
     \end{minipage}
-    \caption{Seeing distribution across all
-             quality-approved survey fields
-             for $r$ (top), $i$ (middle) and \ha\ (bottom).}
+    \caption{Distribution of the PSF FWHM
+             for all the quality-approved fields
+             included in the release,
+             measured in $r$ (top), $i$ (middle) and \ha\ (bottom).
+             The PSF FWHM measures the effective image resolution
+             that arises from the combination of atmospheric and dome seeing.}
     \label{fig:seeing}
 \end{figure}
 
@@ -563,8 +556,8 @@ is included as a column in the catalogue.
 (4) \emph{Photometric repeatability.} 
 The IPHAS field-pair observing strategy normally
 ensures that every pointing is immediately followed 
-by an offset pointing at a displacement of $+$5~arcmin in Dec 
-and $+$5~arcmin in RA.
+by an offset pointing at a displacement
+of $+$5~arcmin in Dec and $+$5~arcmin in RA.
 This allows pairs of images to be checked 
 for the presence of clouds or electronic noise.
 To exploit this information,
@@ -576,33 +569,29 @@ showed an inconsistent measurement at the level of 0.2 mag,
 or more than 26\% were inconsistent at the level of 0.1 mag.
 These limits were set empirically after inspecting
 the images and photometry by eye.
-We rejected 11\% of the data as part of this step
-(many of which had already been rejected as part of the limiting magnitude criterion).
 
 (5) \emph{Source density mapping.}
 Spatial maps showing the number density of the detected sources
 down to 20th magnitude were created to verify the health
 of the data and to check for unexpected artefacts.
-%(e.g. bright satellite trails)
 In particular, we created density maps
 which showed the number of \emph{unique} sources
 obtained by cross-matching the detection tables of
 all three bands with a maximum matching distance of 1~arcsec.
 This was particularly effective for revealing
-fields with an inaccurate astrometric solution in one of the bands.
-In the majority of the cases we were able to correct the astrometry
-of such fields by hand.  
+fields with an inaccurate astrometric solution in one of the bands,
+which were subsequently corrected.
 
 (6) \emph{Visual examination.}
-All images and their associated photometric colour/magnitude diagrams
+Images, colour mosaics,
+and the associated photometric colour/magnitude diagrams
 were inspected by a team of 20 survey members, 
 such that each image in the data release 
 was looked at by at least three different pairs of eyes.
-Images deemed unsuitable were flagged, investigated and
-excluded from the release if necessary. 
-6\% of the observations were placed on a \emph{black-list}
-as a result of this -- most commonly because of the obvious 
-presence of clouds or extreme levels of scattered moonlight.
+Images affected by clouds or extreme levels of scattered moonlight
+were flagged, investigated,
+and excluded from the release 
+by placing them on a \emph{black-list}.
 
 (7) \emph{Contemporaneous field data.} 
 Finally, only exposures which are part of a sequence 
@@ -611,7 +600,7 @@ of three consecutive images of the same field
 were considered for inclusion in the release. 
 This ensures that the three bands for a given field
 are observed contemporaneously --  
-typically within 5 minutes of each other.
+normally within 5 minutes of each other.
 An exception was made for 9 fields where the three exposures 
 could not be obtained within the same night
 but for which the time gap between exposures did not exceed 48 hours.
@@ -621,7 +610,6 @@ at the start of each exposure
 
 All of the above criteria were satisfied by at least one observing attempt
 for 14\,115 out of the 15\,270 fields (92\%).
-
 In some cases more than one successful attempt to observe
 a field was available due to stricter
 quality criteria being applied in the initial years of the survey.
@@ -629,10 +617,12 @@ In such cases, only the attempt
 with the best seeing and depth has been selected
 for inclusion in the catalogue, in order  
 to deliver the most reliable measurement at a single epoch.
-Those interested in any of the rejected data 
-can nevertheless data-mine the full set of detection tables 
-via our website.
 
+We note that some of the excluded data may nevertheless be useful
+for e.g. time-domain studies of bright stars.
+The images and detection tables of the discarded data are made
+available through our website for this reason (www.iphas.org),
+but will be ignored in the remainder of this work.
 
 \section{Photometric calibration}
 \label{sec:calibration}
@@ -1589,7 +1579,7 @@ using the column named \emph{veryReliable}.}
    145 million (66\%) &
    % pStar > 0.89 is identical to mergedClass == -1
    The object must appear as a perfect point source,
-   as inferred from comparing its Point Spread Function (PSF)
+   as inferred from comparing its PSF
    with the average PSF measured in the same CCD. \\
    
    {\sc not} \emph{deblend} &
