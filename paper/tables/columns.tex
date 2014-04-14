@@ -48,7 +48,7 @@
 48 & iErrBits & short &  & Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8). \\
 49 & iMJD & double & days & Modified Julian Date at the start of the single-band exposure. \\
 50 & iSeeing & float & arcsec & Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame. \\
-51 & iDetectionID & string &  & Unique identifier of the r-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
+51 & iDetectionID & string &  & Unique identifier of the i-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
 52 & iX & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
 53 & iY & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
 54 & iXi & float & arcsec & Position offset of the i-band detection relative to the ra column. The original i-band coordinates can be obtained by computing (ra+iXi/3600, dec+iEta/3600). \\
@@ -69,7 +69,7 @@
 69 & haErrBits & short &  & Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8). \\
 70 & haMJD & double & days & Modified Julian Date at the start of the single-band exposure. \\
 71 & haSeeing & float & arcsec & Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame. \\
-72 & haDetectionID & string &  & Unique identifier of the r-band detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
+72 & haDetectionID & string &  & Unique identifier of the H-alpha detection in the format "$\#$run-$\#$ccd-$\#$number", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number. \\
 73 & haX & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
 74 & haY & float & pixels & Pixel coordinate of the source, in the coordinate system of the CCD. \\
 75 & haXi & float & arcsec & Position offset of the H-alpha detection relative to the ra column. The original Ha-band coordinates can be obtained by computing (ra+haXi/3600, dec+haEta/3600). \\
