@@ -11,9 +11,6 @@
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
 \def\ha{\mbox{H$\rm \alpha$}}
-\def\arcsec{$''$}
-\def\arcmin{$'$}
-\def\deg{$^{\circ}$}
 \def\micron{\mbox{$\mu$m}}
 
 \title[IPHAS Data Release 2]{The Second Data Release 
@@ -33,28 +30,33 @@ P. Groot$^5$,
 A. Mampaso$^6$, 
 S. E. Sale$^7$, \newauthor
 M. J. Barlow$^{8}$,
+P. J. Carter$^{12}$,
 R. L. M Corradi$^{6}$,
 J. J. Drake$^{9}$,
-J. Eisl\"offel$^{10}$,
-J. Fabregat$^{11}$, \newauthor
-B. T. Gaensicke$^{12}$,
-A. S. Hales$^{13}$,
+J. Eisl\"offel$^{10}$, \newauthor
+J. Fabregat$^{11}$, 
+B. T. G\"ansicke$^{12}$,
+N. P. Gentile Fusillo$^{12}$,
+S. Greiss$^{12}$,
+A. S. Hales$^{13}$, \newauthor
+S. Hodgkin$^2$, 
 J. Irwin$^{9}$,
 C. Knigge$^{14}$,
 T. Kupfer$^{5}$,
-D. J. Lennon$^{15}$, \newauthor
-J. R. Lewis$^{2}$, 
+D. J. Lennon$^{15}$,
+J. R. Lewis$^{2}$,  \newauthor
 M. Mohr-Smith$^{1}$, 
 R. A. H. Morris$^{16}$,
 T. Naylor$^{17}$,
-Q. A. Parker$^{18}$, \newauthor
-S. Phillipps$^{13}$, 
+Q. A. Parker$^{18}$, 
+S. Phillipps$^{13}$, \newauthor
 R. Raddi$^{11}$, 
 P. Rodriguez-Gil$^{6}$,
 L. Sabin$^{19}$,
 S. Scaringi$^{20}$,
-D. Steeghs$^{11}$, \newauthor
-Y. C. Unruh$^{21}$, 
+D. Steeghs$^{11}$, 
+Y. C. Unruh$^{21}$, \newauthor
+J. van Roestel$^5$,
 K. Viironen$^{22}$, 
 J. S. Vink$^{23}$, 
 N. A. Walton$^{2}$,
@@ -72,8 +74,8 @@ $^{8}$University College London, Department of Physics \& Astronomy,
 Gower Street, London WC1E 6BT, U.K.\\
 $^{9}$Harvard-Smithsonian Center for Astrophysics, 60 Garden Street, 
 Cambridge, MA 02138, U.S.A. \\
-$^{10}$Th\"uringer Landessternwarte, Sternwarte 5, 07778, Tautenburg, Germany \\
-$^{11}$Observatorio Astr\'onomico, Universidad de Valencia,
+$^{10}$Th\"uringer Landessternwarte, Sternwarte 5, D-07778, Tautenburg, Germany \\
+$^{11}$Observatorio Astron\'omico, Universidad de Valencia,
 Catedr\'atico Jos\'e Beltr\'an 2, 46980 Paterna, Spain\\
 $^{12}$Department of Physics, University of Warwick, Gibbet Hill Road, Coventry, CV4 7AL, U.K.\\
 $^{13}$Joint ALMA Observatory, Alonso de Córdova 3107, Vitacura 763-0355, Santiago, Chile. \\
@@ -103,27 +105,27 @@ Astronomy, University of Manchester, Manchester M13 9PL, U.K.}
 The INT/WFC Photometric H$\alpha$ Survey 
 of the Northern Galactic Plane (IPHAS)
 is a 1800~deg$^2$ imaging survey
-covering Galactic latitudes $|b| < 5^\circ$
-and longitudes $l=30$ to $215^\circ$
+covering Galactic latitudes $|b| < 5\degr$
+and longitudes $\ell=30$ to 215\degr
 in the $r$, $i$ and \ha\ filters 
 using the Wide Field Camera (WFC) 
 on the 2.5-metre Isaac Newton Telescope (INT) in La Palma.
 We present the first quality-controlled and
-uniformly-calibrated source catalogue
+globally calibrated source catalogue
 derived from the survey,
 providing single-epoch photometry
 for 219 million unique sources
 across 92\% of the footprint.
 The observations were carried out between 2003 and 2013
-at a median seeing of 1.1 arcsec
+at a median seeing of 1.1~arcsec (sampled at 0.33~arcsec/pixel)
 and to a mean $5\sigma$-depth of 
-21.2 ($r$), 20.0 ($i$) and 20.3 ($\ha$)
+21.2~($r$), 20.0~($i$) and 20.3~($\ha$)
 in the Vega magnitude system.
 We explain the data reduction 
 and quality control procedures,
-describe and test the new uniform calibration,
+describe and test the global re-calibration,
 and detail the construction of the new catalogue.
-We show that the global calibration is accurate to
+We show that the new calibration is accurate to
 0.03~mag (rms) 
 and recommend a series of quality criteria
 to select the most reliable data
@@ -133,7 +135,7 @@ catalogue's unique
 $(r-\ha,\ r-i)$ diagram to
 (i) characterise stellar populations and extinction regimes
 towards different Galactic sight-lines
-and (ii) select candidate \ha\ emission-line objects.
+and (ii) select \ha\ emission-line objects.
 IPHAS is the first survey to offer comprehensive CCD photometry
 of point sources across the Galactic Plane at visible wavelengths,
 providing the much-needed counterpart
@@ -163,12 +165,12 @@ the limited bright samples of Galactic emission line objects
 previously available into larger, deeper, and more statistically-robust samples that will 
 better inform our understanding 
 of the early and late stages of stellar evolution.
-Since the publication of the IPHAS Initial Data Release \citep[IDR;][]{Gonzalez-Solares2008},
+Since the publication of the Initial Data Release \citep[IDR;][]{Gonzalez-Solares2008},
 these aims have begun to be realised through a
 range of published studies including: 
 a preliminary catalogue of candidate emission-line objects \citep{Witham2008};
 discoveries of new symbiotic stars \citep{Corradi2008, Corradi2010, Corradi2011}; 
-new cataclysmic variables \citep{Witham2007}; 
+new cataclysmic variables \citep{Witham2007,Wesson2008,Aungwerojwit2012}; 
 new groups of young stellar objects
 \citep{Vink2008,Barentsen2011a,Wright2012};
 new classical Be stars \citep{Raddi2013};
@@ -199,7 +201,7 @@ which are otherwise too faint or numerous
 to be targeted by spectroscopic surveys.
 For such science applications to succeed, however, 
 it is vital that the imaging data are transformed 
-into a uniformly-calibrated photometric catalogue, 
+into a homogeneously-calibrated photometric catalogue, 
 in which quality problems 
 and duplicate detections are flagged. 
 
@@ -209,11 +211,11 @@ and the data were insufficiently complete
 to support a homogeneously calibrated source catalogue.
 The goal of this paper is to present the next release 
 that takes the coverage up to 92 percent of the survey area 
-and includes a uniform calibration.
+and includes a global photometric re-calibration.
 In this work we
 (i) explain the data reduction 
 and quality control procedures that were applied,
-(ii) describe and test the new global photometric calibration, and 
+(ii) describe and test the new photometric calibration, and 
 (iii) detail the construction of the source catalogue
 and demonstrate its use.
 
@@ -221,7 +223,7 @@ In \S\ref{sec:observations} we start by recapitulating the key points
 of the survey observing strategy.
 In \S\ref{sec:reduction} we describe the data reduction
 and quality control procedures.
-In \S\ref{sec:calibration} we explain the uniform re-calibration, in which
+In \S\ref{sec:calibration} we explain the global re-calibration, in which
 we draw upon the AAVSO Photometric All-Sky Survey (APASS)
 and test our results against the Sloan Digital Sky Survey (SDSS).
 In \S\ref{sec:catalogue} we explain how the source catalogue was compiled.
@@ -249,8 +251,8 @@ It is the first digital survey to offer comprehensive optical CCD photometry
 of point sources in the Galactic Plane;
 the footprint spans a box 
 of roughly 180 by 10 degrees, 
-covering Galactic latitudes $-5^{\circ} < b < +5^{\circ}$ 
-and longitudes $30^{\circ} < l < 215^{\circ}$.
+covering Galactic latitudes $-5\degr < b < +5\degr$ 
+and longitudes $30\degr < \ell < 215\degr$.
 
 The WFC is a mosaic of 4 CCDs 
 that captures a sky area of close to 0.29~deg$^2$.
@@ -278,10 +280,11 @@ has been increased from 10~s to 20~s to by-pass a sporadic exposure timing bug t
 Data-taking began in the second half of 2003, 
 and every field had been observed at least once by the end of 2008.
 At that time only 76\% of the field pairs 
-satisfied our minimum quality criteria, however.  The problems affecting
-the 24\% falling below survey standard were, most commonly: variable cloud cover; 
-poor seeing; technical faults (the quality criteria will be detailed in the 
-next section). 
+satisfied our minimum quality criteria, however.
+The problems affecting the 24\% falling below survey standard were,
+most commonly: variable cloud cover;
+poor seeing; technical faults
+(the quality criteria will be detailed in the next section).
 Since then, a programme of repeat observations has been in place 
 to improve data quality. 
 As a result, 92\% of the survey footprint
@@ -306,7 +309,7 @@ were obtained in November 2012.
         of dark grey lines across the survey area.
         Regions with incomplete data are apparent as white gaps (no data) 
         or in light grey (denoting that only one offset is missing).
-        The dark vertical strip near $l \sim$125\deg
+        The dark vertical strip near $\ell \sim$125\degr
         is an arbitrary consequence of the tiling pattern,
         which was populated starting from 0h in right ascension.}
         \label{fig:footprint}
@@ -317,7 +320,7 @@ of the quality-approved observations included in this work.
 The fields which remain missing 
 -- covering 8\% of the survey area --
 are predominantly located towards the Galactic anti-centre 
-at $l > 120^o$.
+at $\ell > 120\degr$.
 Fields at these longitudes are mainly accessed from La Palma 
 in the months of November-December,
 which is when the La Palma weather and seeing conditions are often poor
@@ -350,8 +353,8 @@ A detailed description of the processing steps
 is found in \citet{Irwin2001}.
 Its application to IPHAS has previously been described
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008},
-and much of the source code is available 
-on line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}. 
+and the source code is available
+on-line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}. 
 In brief, the pipeline takes care of bias subtraction,
 linearity correction, flat-fielding,
 gain correction and de-fringing.
@@ -365,9 +368,9 @@ Source detection and characterisation is then carried out
 using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
 The flux of each source is measured using both
 the peak pixel height
-(i.e. a square 0.33$\arcsec\times$0.33\arcsec\ aperture)
+(i.e. a square 0\farcs 33$\times$0\farcs 33 aperture)
 and a series of circular apertures of increasing diameter 
-(1.2\arcsec, 2.3\arcsec, 3.3\arcsec, 4.6\arcsec\ and 6.6\arcsec).
+(1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6 and 6\farcs 6).
 
 The local background levels are estimated 
 by computing the sigma-clipped median
@@ -402,16 +405,16 @@ Sources are classified morphologically
 -- stellar, extended or noise --
 based on the curve-of-growth determined
 from measuring the source intensity in a series of growing apertures.
-Finally, the resulting source detection tables are also stored 
+Finally, the resulting source detection tables are stored 
 in multi-extension FITS files.
 
 At the time of preparing DR2,
 the CASU pipeline had processed
 74\,195 IPHAS exposures 
 in which a total of 1.9~billion \emph{candidate sources} were detected 
-at the sensitive default detection level of 1.25\,$\sigma$.
+at the default detection level of 1.25\,$\sigma$.
 This total inevitably includes spurious detections, artefacts and
-duplicate detections,
+duplicate detections;
 in \S\ref{sec:catalogue} we will explain
 how these have been removed or flagged in the final catalogue.
 The pipelined data set -- comprising 2.5~terabyte of FITS files --
@@ -427,18 +430,16 @@ It is these post-processing steps which are explained next.
 \subsection{Quality control}
 \label{sec:qc}
 
-Observing time for IPHAS was obtained
+Observing time for IPHAS is obtained
 on a semester-by-semester basis
 through the open time allocation committees 
-of the Isaac Newton Group of telescopes,
-which are invariably over-subscribed.
-For this reason, we attempted to utilise 
-\emph{all} the nights allocated to IPHAS,
-even those which were partially or entirely non-photometric
-or otherwise affected by technical problems 
-(e.g. electronic noise or telescope tracking problems).
-Any unsuitable data that were taken as a result
-of this strategy have subsequently been flagged and removed
+of the Isaac Newton Group of telescopes.
+The survey is allocated specific observing dates
+rather than particular observing conditions.
+In consequence, data were acquired
+under a large range of atmospheric conditions.
+Data taken under unsuitable conditions
+have been flagged and removed
 using seven quality criteria,
 which ensure a reliable and homogeneous level of quality
 across the data release:
@@ -461,7 +462,7 @@ across the data release:
              from the data release.
              The $r$-band depth is most sensitive 
              to the presence of the moon above the horizon: 
-             this is the reason for the wide, bi-modal character
+             this is the main reason for the wide, bi-modal character
              of its distribution.}
     \label{fig:depth}
 \end{figure}
@@ -473,20 +474,24 @@ or worse than 19th in $i$ or \ha.
 Such data were typically obtained during poor weather or full moon.
 Most observations were significantly better than these limits.
 Fig.~\ref{fig:depth} presents the distribution of limiting magnitudes
-for all quality-approved fields,
-showing mean depths of 
+for all quality-approved fields;
+the mean depths and standard deviations are 
 $21.2\pm0.5$ ($r$), $20.0\pm0.3$ ($i$) and $20.3\pm0.3$ (\ha).
-The depth achieved depended 
+The depth achieved depended
 most strongly on the presence of the moon,
 which was above the horizon during 62\% 
-of the observations.  The great range in sky brightness this
-produced is the reason for the wide and bi-modal shape
+of the observations.
+The great range in sky brightness this
+produced is the main reason for the wide and bi-modal shape
 of the $r$-band limiting magnitude distribution 
 (top panel in Fig.~\ref{fig:depth}).
 In contrast, the depths attained in $i$ and \ha\ 
 are less sensitive to moonlight, leading to
 narrower magnitude limit distributions
 (middle and bottom panels in Fig.~\ref{fig:depth}).
+To a lesser extent, the wide spread in the $r$-band depth
+is also explained by the shorter $r$-band exposure time
+that was used in the first year of data-taking.
 
 (2) \emph{Ellipticity.} 
 The ellipticity of a point source,
@@ -506,7 +511,7 @@ in the data is $0.09\pm0.04$.
 There have been sporadic episodes with higher ellipticities
 due to mechanical glitches in the telescope tracking system.
 To exclude these, we rejected exposures in which the mean ellipticity
-across the detector exceeded $e > 0.3$.
+\emph{across the detectors} exceeded $e > 0.3$.
 We have also found that, as this threshold is breached,
 the photometric measurements delivered by the pipeline become degraded.
 
@@ -514,18 +519,19 @@ the photometric measurements delivered by the pipeline become degraded.
 The original survey goal was to obtain data 
 at a resolution better than 1.7~arcsec,
 as evaluated by measuring the average PSF Full Width at Half Maximum (FWHM)
-across an image,
+across the detectors,
 which is a proxy for the combined effect of atmospheric and dome seeing.
 This target is currently attained across 86\% of the footprint,
 in particular at lower Galactic longitudes,
-e.g. 92\% of the fields at $l<120^\circ$ are better than 1.7~arcsec.
-To slightly increase the sky area offered by this data release,
-we have decided to include data obtained under seeing of up to 2.5 arcsec.
+e.g. 92\% of the fields at $\ell<120\degr$ are better than 1.7~arcsec.
+To increase the sky area offered by the present release slightly,
+we have decided to accept data obtained with seeing up to 2.5~arcsec.
 Fig.~\ref{fig:seeing} presents the distribution
-of the PSF FWHM for the approved fields in the release.
-In the $r$-band, 90\% of the data is better than 1.5~arcsec,
+of the PSF FWHM for the approved fields.
+In the $r$-band, 90\% is better than 1.5~arcsec,
 50\% is better than 1.1~arcsec,
-and 10\% is better than 0.8~arcsec.
+and 10\% is better than 0.8~arcsec
+(the WFC pixel scale is 0.33~arcsec/px).
 In \S\ref{sec:catalogue} we will explain
 that the photometry compiled in the source catalogue
 is normally derived from the field with the
@@ -628,7 +634,7 @@ but will be ignored in the remainder of this work.
 \label{sec:calibration}
 
 Having obtained a quality-approved set of observations,
-we now turn to the problem of placing the data
+we now turn to the challenge of placing the data
 onto a uniform photometric scale.
 
 \subsection{Provisional nightly calibration}
@@ -662,11 +668,13 @@ averages for La Palma),
 \textsc{airmass} is the normalised optical path length 
 through the atmosphere and
 \textsc{apcor} is a correction for the flux
-lost outside of the aperture used.
+lost outside of the aperture used
+(we adopt a 2.3~arcsec diameter circular aperture by default).
 Finally, \textsc{percorr} is a correction based on the difference
 between the median dark sky for a CCD against the median for all the CCDs, 
 and as such is an ancillary correction 
-to account for sporadic gain variations. 
+to account for sporadic gain variations;
+it is zero for most exposures.
 All these quantities correspond to header keywords in the 
 multi-extension FITS files produced by the CASU pipeline.
 
@@ -708,7 +716,7 @@ zero magnitude is $1.56 \time 10^{-7}$ ergs\,cm$^{-2}$\,s$^{-1}$,
 when the \ha\ magnitude for Vega is set by convention to 0.03.
 
 
-\subsection{Uniform re-calibration}
+\subsection{Global re-calibration}
 
 Despite the best efforts made to obtain a nightly calibration,
 large surveys naturally possess field-to-field variations
@@ -728,7 +736,7 @@ which all achieved photometry
 that is globally consistent to within 0.01--0.02~mag.
 
 Surveys which observe identical stars at different epochs
-can use the repeat measurements to ensure a uniform calibration.
+can use the repeat measurements to ensure a homogeneous calibration.
 For example, 2MASS attained its global calibration
 by observing six standard fields each hour, 
 allowing zeropoint variations to be tracked 
@@ -762,10 +770,8 @@ than one epoch,
 unless they happen to fall within a narrow overlap region 
 between two neighbouring field pairs.
 
-Although the IPHAS data do contain a significant number of 
-such inter-field repeat measurements,
-we have found the information contained
-in these regions to be insufficient
+We have found the information contained
+in these overlap regions to be insufficient
 to constrain the calibration parameters.
 This is because photometry at the extreme edges of the WFC
 -- where neighbouring fields overlap -- 
@@ -786,7 +792,7 @@ For these reasons, we have decided not to depend
 on an ubercalibration-type scheme alone,
 and have opted to involve an external reference survey
 -- where available --
-to bring the majority of our data onto a uniform calibration.
+to bring the majority of our data onto a homogeneous calibration.
 
 \subsubsection{Correcting zeropoints using APASS}
 
@@ -860,10 +866,10 @@ Having transformed APASS magnitudes into the IPHAS system,
 we then computed the median magnitude offset 
 for each field which contained at least 30 cross-matched stars.
 This was achieved for 48\% of our fields (shown in Figs.~\ref{fig:apass_r} and \ref{fig:apass_i}).
-The mean offset was found to be
-$0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
+The offsets follow a near-Gaussian distribution
+centred around $0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
 (Table~\ref{tbl:offsets_before}).
-A total of 4596 fields showed a median offset
+A total of 4596 fields showed a systematic offset
 exceeding $\pm$0.03~mag in either $r$ or $i$.
 
 We then applied the most important step in our calibration scheme,
@@ -902,7 +908,7 @@ convergence, which was essentially reached after the first iteration.
     \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_rshift.pdf}
     \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_r.pdf} 
     \caption{Median magnitude offset between IPHAS and SDSS in the $r$ band
-             \emph{after} the re-calibration procedure was applied.
+             \emph{after} the re-calibration procedure using APASS was applied.
              Each square represents the footprint of an IPHAS field
              which contains at least 30 stars
              with a counterpart in the SDSS DR9 catalogue.
@@ -919,13 +925,15 @@ convergence, which was essentially reached after the first iteration.
 \end{figure*}
 
 \begin{table}
-    \caption{Mean magnitude offsets for objects
+    \caption{Magnitude offsets for objects
              cross-matched between IPHAS and APASS/SDSS
-             \emph{before} the uniform re-calibration was carried out.
-             Transformations were applied
+             \emph{before} the global re-calibration was carried out.
+             We characterise the distribution of the offsets,
+             which is approximately Gaussian in each case,
+             by listing the mean and the standard deviation values.
+			 We remind the reader that transformations were applied
              to the APASS and SDSS magnitudes to bring them into the
-             Vega-based IPHAS system prior to computing
-             these statistics (see text).
+             Vega-based IPHAS system prior to computing the offsets.
              }
     \label{tbl:offsets_before}
     \begin{center}
@@ -939,9 +947,11 @@ convergence, which was essentially reached after the first iteration.
             $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
             \bottomrule
        \end{tabular}
-       \caption{Same as Table~\ref{tbl:offsets_before}
-                but computed \emph{after} the uniform re-calibration
-                 was carried out.}
+       \vspace{1cm}
+       \caption{Same as Table~\ref{tbl:offsets_before},
+                but computed \emph{after} the global re-calibration
+                was carried out. The mean and standard deviation values
+                of the offsets have improved significantly.}
         \label{tbl:offsets_after}
             \begin{tabular}{lcc}
                 \toprule
@@ -1037,7 +1047,7 @@ which were shifted on average by $+0.02\pm0.11$ in $r$
 and $+0.01\pm0.12$ in $i$ compared to their provisional calibration.
 The outcome is validated in the next section.
 
-We then turned to the uniform calibration of the \ha\ data.
+We then turned to the global calibration of the \ha\ data.
 It is not possible to re-calibrate the narrowband 
 in the same way as the broadbands,
 because the APASS survey does not offer \ha\ photometry.
@@ -1091,14 +1101,14 @@ appears to be somewhat more sensitive at longer wavelengths
 than both the IPHAS and APASS filters.
 
 These global transformations were deemed adequate
-for the purpose of validating our uniform calibration in a statistical sense.
+for the purpose of validating our calibration in a statistical sense.
 Separate equations were derived towards different sight-lines
 to investigate the effects of varying reddening regimes.
 The colour term was found 
 to show some variation towards lowly reddened areas,
 where red objects at $(r-i) > 1$ are rare.
 The vast majority of red objects in the global sample
-are those in highly reddened areas however,
+are those in highly reddened areas, however,
 which agree well with the global transformations
 and dominate the statistical appraisal of our calibration.
 
@@ -1120,7 +1130,7 @@ uniformity of the calibration by a factor three
 and has achieved our aim of bringing the
 accuracy down to the level of 0.03~mag (rms).
 
-We warn that the SDSS comparison revealed a number of fields where the offsets
+The SDSS comparison revealed a number of fields where the offsets
 exceeded 0.05~mag (523 fields) or even 0.1~mag (18 fields).
 This pattern of outliers is consistent with the tails of a Gaussian distribution
 with $\sigma=0.03$.  Furthermore, it should not
@@ -1134,7 +1144,7 @@ two surveys.
 
 Having obtained a quality-checked 
 and re-calibrated data set, 
-we now turn to the problem
+we now turn to the challenge
 of transforming the observations 
 into a user-friendly catalogue.
 The aim is to present
@@ -1184,9 +1194,9 @@ is given in Appendix~\ref{app:columns}.
 In the remainder of this section we highlight the main features.
 
 First, we note that each source is uniquely identified by an
-IAU-style designation of the form ``IPHAS2\ JHHMMSS.ss+DDMMSS.s''
+IAU-style designation of the form `IPHAS2\ JHHMMSS.ss+DDMMSS.s'
 (cf. column \emph{name} in Appendix~\ref{app:columns}),
-where ``IPHAS2'' refers to the present
+where `IPHAS2' refers to the present
 data release and the remainder of the string
 denotes the J2000 coordinates in sexagesimal format.
 For convenience, the coordinates
@@ -1195,8 +1205,8 @@ are also included in decimal degrees
 and in Galactic coordinates
 (columns \emph{l} and \emph{b}).
 We have also included an internal object identifier string 
-of the form ``\#run-\#ccd-\#detection''
-(e.g. ``64738-3-6473''),
+of the form `\#run-\#ccd-\#detection'
+(e.g. `64738-3-6473'),
 which documents the INT exposure number (\#run),
 the CCD number (\#ccd),
 and the row number in the CASU detection table (\#detection).
@@ -1327,7 +1337,10 @@ would pose problems for very faint sources
 with large centroiding errors, 
 and would occasionally fail near CCD corners,
 where the astrometric solution can 
-show systematic errors which exceed 0.5~arcsec.
+show local systematic errors which exceed 0.5~arcsec
+(even though the nominal rms accuracy
+-- estimated against 2MASS across the focal plane --
+tends to be better than 0.1~arcsec).
 The position offsets between the $r$ detection and detections in $i$, and/or \ha\
 have been included in the catalogue, giving the user the option to tighten them 
 further if necessary
@@ -1450,6 +1463,7 @@ Half of the single-band detections were made in the $i$-band.
 This is because $i$ is least
 affected by interstellar extinction and can occasionally pick up
 highly-reddened objects which are otherwise lost in $r$ and \ha.
+Moreover, late-type stars tend to be intrinsically brighter in $i$.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -1489,7 +1503,7 @@ in Tables~\ref{tab:reliable} and \ref{tab:veryreliable}.
 Table~\ref{tab:reliable} specifies
 a set of minimum quality criteria
 which should benefit most applications
-which desire reliable $(r-i)$ and $(r-\ha)$ colours
+which desire reliable colours
 as well as completeness.
 The listed criteria are designed to 
 (i) remove low-S/N sources, 
@@ -1503,7 +1517,7 @@ by poor background subtraction
 or failed source deblending.
 A total of 86 out of 219 million sources 
 (39\%) satisfy all the criteria listed in Table~\ref{tab:reliable}
-and are hereafter referred to as ``reliable''.
+and are hereafter referred to as `reliable'.
 For convenience, the catalogue contains a boolean column
 named \emph{reliable} that directly flags these objects.
 
@@ -1536,9 +1550,9 @@ using the column named \emph{reliable}.}
   + 0.03$ &
   176 million (80\%) &
   Require the $r$ magnitude measured 
-  in the default 2.3\arcsec\ diameter aperture
+  in the default 2\farcs 3-diameter aperture
   to be consistent with the measurement 
-  made in the smaller 1.2\arcsec\ aperture,
+  made in the smaller 1\farcs 2 aperture,
   albeit tolerating a 0.03 mag systematic error.
   This will reject sources for which the background
   subtraction or the deblending procedure
@@ -1615,7 +1629,7 @@ These criteria are designed to ensure that
 and (iii) the object was not located near a very bright star.
 59 million sources (27\%) satisfy
 these stricter criteria 
-and are hereafter referred to as ``very reliable''.
+and are hereafter referred to as `very reliable'.
 Again, the catalogue contains a boolean column
 named \emph{veryReliable} which flags these objects.
 
@@ -1750,25 +1764,25 @@ while also removing the unreliable data at the bright and faint end.
 \label{sec:densities}
 
 Fig.~\ref{fig:sourcecount} shows the number of sources
-in the catalogue counted in $1^\circ$-wide strips
+in the catalogue counted in 1\degr-wide strips
 as a function of Galactic longitude (thick blue line).	
 Unsurprisingly, we find the number of sources
 to increase towards the Galactic centre.
-For example, the average source density near $l\simeq 30^\circ$
+For example, the average source density near $\ell\simeq 30\degr$
 is roughly 300\,000 objects per square degree,
 which is six times more than the density
-found near $l\simeq 180^\circ$.
+found near $\ell\simeq 180\degr$.
 In addition to the global trend,
 variations are also apparent on smaller scales.
 For example, we find a significant drop near the constellations 
-of Aquila ($l\simeq40$) and Cygnus ($l\simeq80$ and $l\simeq90$),
+of Aquila ($\ell\simeq40$) and Cygnus ($\ell\simeq80$ and $\ell\simeq90$),
 which are regions known to be affected
 by high levels of foreground extinction
 \citep[the extremities of `the Great Rift', e.g.][]{BokBok}.
 However, we warn that the source counts shown 
 have not been corrected for field pairs that have yet
 to be released or for variations in the depth across the included fields.
-For example, the dip in the density near $l\simeq140^\circ$
+For example, the dip in the density near $\ell\simeq140\degr$
 is an artificial feature caused by gaps
 in the footprint coverage (seen in Fig.~\ref{fig:footprint}).
 
@@ -1784,14 +1798,14 @@ our Galaxy.
     \caption{Number of entries in the IPHAS DR2 source catalogue
     as a function of Galactic longitude.
     The upper blue line shows the number of sources
-    counted in 1\deg-wide longitude bins.
+    counted in 1\degr-wide longitude bins.
     The lower red line uses the same binning
     but includes only those sources 
     for which the \emph{deblend} flag is {\sc false}, 
     i.e. unconfused sources for which the CASU pipeline
     did not have to apply a deblending procedure.
     In both cases only counted sources
-    in the latitude range $-5^\circ<b<+5^\circ$,
+    in the latitude range $-5\degr<b<+5\degr$,
     such that one may obtain approximate source densities
     by dividing the counts by 10~deg$^2$.
     The apparent variations in the source counts
@@ -1813,7 +1827,7 @@ originating from two or more overlapping objects.
 This provides some insight into how the fraction of 
 blend-affected sources correlates with the local source 
 density.  In hard numbers, only 11\% of the sources are blended
-at $l>90^\circ$, whereas 24\% are blended at $l<90^\circ$.
+at $\ell>90\degr$, whereas 24\% are blended at $\ell<90\degr$.
 
 Finally, we warn that blended objects
 are more likely than unblended objects to have fallen victim
@@ -1858,19 +1872,20 @@ in Fig.~\ref{fig:l180}, \ref{fig:l45} \& \ref{fig:l30},
 where we present three sets of IPHAS colour/magnitude diagrams
 towards three distinct sight-lines
 located at Galactic longitudes 
-$180^\circ$, $45^\circ$ and $30^\circ$, respectively.
+180\degr, 45\degr and 30\degr, respectively,
+which were chosen because they show different characteristics.
 Each figure contains all the sources
 flagged as \emph{veryReliable} within a region of one square degree 
 centred on the coordinates indicated in the diagram
-(i.e. within a radius of $0.564^\circ$ from the indicated sight-line).
+(i.e. within a radius of 0\fdg 564 from the indicated sight-line).
 For clarity, we have imposed the additional criterion
 that the photometric uncertainties
 must be smaller than 0.05 mag in each band,
-corresponding to a magnitude limit near $\sim$19th magnitude.
+corresponding to a cut-off near 19th magnitude.
 
-Each of the diagrams reveal a well-defined locus,
-which helps to demonstrate the health of the catalogue and the 
-global calibration
+Each of the diagrams reveals a well-defined locus,
+which helps to demonstrate the health of the catalogue
+and the global calibration
 for investigating stellar populations across wide areas.
 We have annotated the colour-colour diagrams
 by showing the position 
@@ -1883,15 +1898,15 @@ transformed into the Vega-based IPHAS system by \cite{Drew2005}.
 In the colour-magnitude diagrams we only show the reddening vector
 together with the unreddened 1~Gyr isochrone due to \cite{Bressan2012},
 which is made available for the IPHAS system through the
-on line tool hosted at the Observatory of Padova
+on-line tool hosted at the Observatory of Padova
 (http://stev.oapd.inaf.it/cmd).
 The isochrone and reddening vector have been placed
 at an arbitrary distance of 2~kpc.
 
-Each of the sightlines reveal a stellar population
+Each of the sightlines reveals a stellar population
 with distinct characteristics.
 Towards the Galactic anti-centre 
-at $l=180^\circ$ (Fig.~\ref{fig:l180})
+at $\ell=180\degr$ (Fig.~\ref{fig:l180})
 we find a population dominated by lowly-reddened main sequence stars.
 This is consistent with the estimated total sight-line extinction 
 of $E(B-V)=0.49$ given by \cite{Schlegel1998},
@@ -1912,13 +1927,12 @@ that there is a measurable increase in extinction locally.
 We also note a relative absence of late type giants which,
 due to the relative brevity 
 of the corresponding phase of stellar evolution,
-would only account for a small proportion of the more nearly volume 
-limited sample seen in the Anticentre direction.
+would only account for a small proportion of the more nearly \emph{volume-limited} sample seen in the Anticentre direction.
  
-In contrast, 
-closer towards the galactic centre
-at $l=45^{\circ}$ (Fig.~\ref{fig:l45}),
-there is  a wealth of reddened objects.
+In contrast, closer towards the galactic centre,
+we encounter samples which are \emph{magnitude-limited} instead.
+For example, at $\ell=45\degr$ (Fig.~\ref{fig:l45}),
+there is  a wealth of reddened objects and late type giants.
 In the colour-magnitude diagram, it is clear
 that the stars are split into two distinct groups,
 with one significantly redder than the other.
@@ -1931,22 +1945,22 @@ further away than their main sequence counterparts at the same
 apparent magnitude.  Given that extinction continues to increase 
 with distance, along this sightline, 
 the red giants we observe will be subject to appreciably more reddening
-than the main sequence stars, pushing them to $r - i \sim 1.5$.
+than the main sequence stars, pushing them to $(r - i) \sim 1.5$.
 
 
-Finally, in one of our earliest sight-lines at $l=30^{\circ}$,
+Finally, in one of our earliest sight-lines at $\ell=30\degr$,
 we find a very high number of extremely reddened giants
 in addition to an unreddened population
 of foreground dwarfs.
-In contrast to the sight-line at $l=45^{\circ}$,
+In contrast to the sight-line at $\ell=45\degr$,
 there is no clear group of giant stars visible
 in the colour-magnitude diagram of Fig.~\ref{fig:l30},
 although the red clump stars are manifest as a track of slight 
-over density sitting roughly 0.4~mags redder than the A0V reddening track.
-At $(l,b)=(45^{\circ}, +2^{\circ})$ the giant stars observed
+over-density sitting roughly 0.4~mags redder than the A0V reddening track.
+At $(l,b)=(45\degr, +2\degr)$ the giant stars observed
 exhibit a relatively narrow range of reddenings
 as they lie beyond most or essentially all of the Galactic dust.
-At $(l,b)=(30^{\circ}, 0^{\circ})$ this is not the case:
+At $(l,b)=(30\degr, 0\degr)$ this is not the case:
 even at the substantial distances
 at which we can observe reddened giant stars,
 extinction is continuing to rise within the Galactic mid-plane.
@@ -1967,48 +1981,47 @@ is being released in a separate paper (Sale et al., in preparation).
 
 \begin{figure*}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=0.5\textwidth]{./plots/ccd-180-3.pdf} 
-        \includegraphics[width=0.5\textwidth]{./plots/cmd-180-3.pdf}
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/ccd-180-3.pdf} 
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/cmd-180-3.pdf}
     \end{minipage}
     \caption{Colour-colour and colour-magnitude diagrams
     (left and right panel)
     showing sources flagged as \emph{veryReliable}
-    located in an area of one square degree
+    located in an area of 1~deg$^2$
     centred near the Galactic anti-centre 
-    at $(l,b)=(180^\circ,+3^\circ)$.
+    at $(l,b)=(180\degr,+3\degr)$.
     The diagrams are plotted as 2D-histograms
     which show the density of objects
-    in bins of $\sim0.01\times0.01$~mag;
-    bins containing 1-10 objects are coloured red,
-    bins with 10-20 objects are orange,
-    and bins with 20-25 objects are yellow.
+    in bins of 0.01-by-0.01~mag;
+    bins containing 1 to 10 objects are coloured red,
+    bins with 10 to 20 objects are orange,
+    and bins with 20 to 25 objects are yellow.
     The left panel is annotated with
     the position of the main sequence (thin solid line),
     giant stars (thick solid line)
-    and the reddening track for an A0V-type star (dashed line),
-    which are based on the \citet{Pickles1998} library
-    of observed spectra.
-    The right panel only shows the reddening vector
-    along with the unreddened 1~Gyr isochrone due to \citet{Bressan2012},
-    which has been placed at an arbitrary distance of 2~kpc.
+    and the reddening track for an A0V-type star (dashed line). 
+    The right panel shows the unreddened 1~Gyr isochrone
+    from the models by \citet[][solid line]{Bressan2012}
+    along with the reddening vector for an A0V-type (dashed line),
+    both placed at an arbitrary distance of 2~kpc.
     This is one of the least reddened sight-lines
     in the survey
     and hence the observed stellar population appears to be dominated 
     by lowly reddened main sequence stars (see text).}
     \label{fig:l180}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=0.5\textwidth]{./plots/ccd-45-2.pdf}
-        \includegraphics[width=0.5\textwidth]{./plots/cmd-45-2.pdf}
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/ccd-45-2.pdf}
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/cmd-45-2.pdf}
     \end{minipage}
-    \caption{Same as above for $(l,b)=(45^\circ,+2^\circ)$,
+    \caption{Same as above for $(l,b)=(45\degr,+2\degr)$,
     which is one of the highest-density sight-lines in the survey,
     revealing two groups of stars in colour-magnitude space.}
     \label{fig:l45}
     \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=0.5\textwidth]{./plots/ccd-30-0.pdf}
-        \includegraphics[width=0.5\textwidth]{./plots/cmd-30-0.pdf} 
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/ccd-30-0.pdf}
+        \includegraphics[width=0.5\textwidth]{figures/diagrams/cmd-30-0.pdf} 
     \end{minipage}
-    \caption{Same as above for $(l,b)=(30^\circ,0^\circ)$,
+    \caption{Same as above for $(l,b)=(30\degr,0\degr)$,
     showing one of the most reddened sight-lines in the survey.
     }
     \label{fig:l30}
@@ -2035,7 +2048,7 @@ a use of the catalogue for this purpose.
 An initial list of candidate \ha-emitters
 based on the first IPHAS data release was previously
 presented by \cite{Witham2008}. 
-Because no uniform calibration was available
+Because no global calibration was available
 at the time, \citeauthor{Witham2008} employed 
 a sigma-clipping technique to select objects with
 large, outlying $(r-\ha)$ colours.
@@ -2049,7 +2062,7 @@ by selecting candidate emission-line objects
 towards a small region in the sky.
 
 The target of our demonstration is Sh 2-82:
-a 5~arcmin-wide H{\sc ii} region located near $(l,b)=(53.55^\circ, 0.00^\circ)$
+a 5~arcmin-wide H{\sc ii} region located near $(l,b)=(53.55\degr, 0.00\degr)$
 in the constellation of Sagitta.
 Nicknamed by amateur astronomers as the `Little Cocoon Nebula',
 Sh 2-82 is ionised by 
@@ -2093,30 +2106,31 @@ located predominantly in the top-left part
 of the bubble.
 
 \begin{figure*}
-    \begin{minipage}[b]{0.78\linewidth}
+    \begin{minipage}[b]{0.8\linewidth}
         \includegraphics[width=\textwidth]{./plots/mosaic/sh2-82-iphas.pdf} 
     \end{minipage}
 \caption{IPHAS-based mosaic of H{\sc ii} region Sh 2-82,
 composed of \ha\ (red channel), $r$ (green channel) and $i$ (blue channel). Yellow triangles show the position of candidate \ha-emitters
 which have been selected from the colour-colour diagram
-in Fig.~\ref{fig:emitters}. Note that the H{\sc ii} region is surrounded by a faint blue/green reflection nebula
-and dark cloud filaments.}
+in Fig.~\ref{fig:emitters}. 
+%The H{\sc ii} region is surrounded by a very faint blue/green reflection nebula and dark cloud filaments.
+}
 \label{fig:mosaic_iphas}
-    \begin{minipage}[b]{0.78\linewidth}
+    \begin{minipage}[b]{0.8\linewidth}
         \includegraphics[width=\textwidth]{./plots/mosaic/sh2-82-spitzer.pdf} 
     \end{minipage}
     \caption{Star-forming region Sh 2-82 as seen in the mid-infrared
     by the Spitzer Space Telescope. The mosaic is composed of the 24~\micron\ (red), 8.0~\micron\ (green) and 4.5~\micron\ (blue) bands.
     The image reveals a bubble-shaped structure which surrounds the {\sc Hii} region that is seen in the IPHAS mosaic which spans the same region (Fig.~\ref{fig:mosaic_iphas}). 
     This structure has previously been labelled as N115 in the 
-catalogue due to \citet{Churchwell2006}, and could be a possible site of triggered star formation \citep{Thompson2012,Kendrew2012}.}
+catalogue of \citet{Churchwell2006}, and could be a possible site of triggered star formation \citep{Thompson2012,Kendrew2012}.}
     \label{fig:mosaic_spitzer}
 \end{figure*}
 
 Fig.~\ref{fig:emitters} presents
 the IPHAS colour-colour diagram for 
 the 20-by-15 arcmin region shown in the mosaics.
-Gray circles show all objects
+Grey circles show all objects
 which are brighter than $r<20$
 and have been flagged as \emph{reliable}
 in our catalogue.
@@ -2239,10 +2253,10 @@ derived from the INT/WFC Photometric \ha\ Survey
 of the Northern Galactic Plane.
 It is the first catalogue to offer comprehensive CCD photometry
 of point sources across the Northern Galactic Plane at visible wavelengths,
-taking in the latitude range $|b|<5^\circ$.
+taking in the latitude range $|b|<5\degr$.
 The new 98-column catalogue provides single-epoch photometry
 across 92\% of the survey area,
-and is the first quality-controlled and uniformly calibrated
+and is the first quality-controlled and globally calibrated
 catalogue to have been constructed from the imaging data.  This
 now means that there is H$\alpha$ coverage, accessible online,
 of the entire Galactic Plane -- given that the 
@@ -2252,7 +2266,7 @@ photographic surveys carried out by that telescope.
 
 The observations included in this release
 achieve a median seeing of 1.1 arcsec
-and $5\sigma-$depths of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$, and \ha$=20.3\pm 0.3$.
+and $5\sigma$-depths of $r=21.2\pm 0.5$, $i=20.0\pm 0.3$, and \ha$=20.3\pm 0.3$.
 The global calibration and photometric repeatability
 are found to be accurate at the level of $0.03$ mag (rms),
 providing a significant improvement over the 
@@ -2357,12 +2371,15 @@ California Institute of Technology under a contract with NASA.
 GB, JED, SES and BTG acknowledge support from the Science \& Technology
 Facilities Council of the United Kingdom
 (grants: GB and JED ST/J001333/1, SES ST/K00106X/1, BTG ST/I001719/1). 
-HJF is in receipt of an STFC postgraduate studentship.  JED would also
-like to convey her thanks to the Physics Department of Imperial College
-London that hosted this project from its inception to 2007 and supported
-her via a sabbatical year in 2003-4.  BTG acknowledges funding from the
-European Research Council under the European Union's Seventh Framework
-Programme (FP/2007-2013) / ERC Grant Agreement n. 320964 (WDTracer).
+HJF is in receipt of an STFC postgraduate studentship.
+JED would also like to convey her thanks
+to the Physics Department of Imperial College London
+that hosted this project from its inception to 2007 and supported
+her via a sabbatical year in 2003-4.
+JF is supported by the Spanish Plan Nacional de I+D+i and FEDER under contract AYA2010-18352.
+BTG acknowledges funding from the European Research Council
+under the European Union's Seventh Framework Programme (FP/2007-2013) 
+/ ERC Grant Agreement n. 320964 (WDTracer).
 NJW is in receipt of a Fellowship funded by the Royal Astronomical Society
 of the United Kingdom.
 
