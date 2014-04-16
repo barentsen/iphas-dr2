@@ -579,7 +579,7 @@ for stars observed in both pointings.
 We automatically rejected field pairs
 in which more than 2 per cent of the stars 
 showed an inconsistent measurement at the level of 0.2~mag,
-or more than 26 per cent were inconsistent at the level of 0.1~mag.
+or more than 25 per cent were inconsistent at the level of 0.1~mag.
 These limits were set empirically after inspecting
 the images and photometry by eye.
 
@@ -670,13 +670,12 @@ relate to a magnitude $m$ as:
 \end{equation}
 where \textsc{exptime} is the exposure time in seconds,
 \textsc{extinct} is the atmospheric extinction coefficient 
-(set in the pipeline at 0.09 for $r$ and 0.05 for $i$ as representative
-averages for La Palma),
+(set in the pipeline at 0.09 for $r$ and 0.05 for $i$
+as representative averages for La Palma),
 \textsc{airmass} is the normalised optical path length 
-through the atmosphere and
-\textsc{apcor} is a correction for the flux
-lost outside of the aperture used
-(we adopt a 2\farcs 3-diameter circular aperture by default).
+through the atmosphere,
+and \textsc{apcor} is a correction for the flux
+lost outside of the aperture used.
 Finally, \textsc{percorr} is a correction based on the difference
 between the median dark sky for a CCD against the median for all the CCDs, 
 and as such is an ancillary correction 
@@ -686,7 +685,7 @@ All these quantities correspond to header keywords in the
 multi-extension FITS files produced by the CASU pipeline.
 
 The broadband zeropoints were determined such that the resulting magnitude system
-refers to the spectral energy distribution (SED) of Vega 
+refers to the Spectral Energy Distribution (SED) of Vega 
 as the zero colour object. 
 Colour equations were used to transform between the IPHAS passbands 
 and the Johnson-Cousins system 
@@ -733,9 +732,9 @@ discussion on the throughput curves of the bands.
              and the pivot wavelength
              $\lambda_p~=~\sqrt{\int{S(\lambda)\lambda d\lambda} / \int{\frac{S(\lambda)}{\lambda} d\lambda}}$.
              These notations follow the definitions by \citet{Bessell2012}.
-             After multiplying $\langle f_\lambda\rangle$ by the EW,
-             we find that the detected flux for Vega in \ha\ is 3.14~magnitudes less
-             than that received in $r$, 
+             When multiplying $\langle f_\lambda\rangle$ by EW,
+             we find that the flux received for Vega
+             is 3.14~mag less in \ha\ than in $r$. 
           }
     \label{tbl:flux}
     \begin{center}
@@ -763,17 +762,16 @@ and imperfections in the pipeline or the instrument
 in the timing of exposures).
 This is demonstrated in Fig.~\ref{fig:ccd_before},
 where we show the combined colour-colour diagram
-for the set of 2\,801 quality-approved fields
+for all of the 2,801 quality-approved fields
 which are located towards the Galactic anti-centre
 ($160\degr < \ell < 200\degr$).
-Despite the fact that all the fields included in the diagram
-have been quality-approved,
-the main locus of stars is poorly defined
-due to the presence of calibration errors,
-which regularly exceed 0.1~mag.
+The main locus of stars is poorly defined
+in the diagram due to the presence of 
+fields which suffer from calibration errors,
+which can exceed 0.1~mag or more.
 For comparison, Fig.~\ref{fig:ccd_after}
 shows the identical diagram
-obtained after re-calibrating.
+constructed after re-calibrating.
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
