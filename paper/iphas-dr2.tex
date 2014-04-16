@@ -1493,16 +1493,16 @@ in the catalogue for convenience
 (columns \emph{sourceID2}, \emph{fieldID2}, 
 \emph{r2}, \emph{i2}, \emph{ha2},
 \emph{rErr2}, \emph{iErr2}, \emph{haErr2}, \emph{errBits2}).
-Second, detections not included in the catalogue
+Second, tables of detections not included in the catalogue
 are made available on our website.
 
 Primary detections have been selected from all available detections using a so-called \emph{seaming} procedure,
 which we adapted from the algorithm developed for the WSA\footnote{http://surveys.roe.ac.uk/wsa/dboverview.html\#merge}.
 In brief, the first step is to identify all the duplicate detections
 by cross-matching the overlap regions of all field catalogues,
-again using a maximum matching distance of 1\arcsec.
+again using a maximum matching distance of 1~arcsec.
 The duplicate detections for each unique source are then ranked according to
-(i) filter coverage, (ii) quality score (column \emph{errBits}),
+(i) filter coverage, (ii) quality score,
 and (iii) the average seeing of stars in the CCD frame rounded to 0.2~arcsec.
 If this ranking scheme reveals multiple `winners' of seemingly identical quality,
 then the one that was observed closest to the optical axis of the camera is chosen.
@@ -1512,9 +1512,8 @@ then the one that was observed closest to the optical axis of the camera is chos
 
 As the final step, the primary detections
 selected above were compiled
-into the 98-column source catalogue
-that is described in Appendix~\ref{app:columns}
-and is made available on our website and through Vizier.
+into the final 98-column source catalogue
+that is described in Appendix~\ref{app:columns}.
 The original unweeded list of sources naturally included 
 a significant number of spurious entries
 as a result of the very sensitive default detection settings
@@ -1540,12 +1539,13 @@ and not have been on the edge of one of the CCDs
 \end{enumerate}
 
 \begin{table}
-    \caption{Breakdown of catalogue entries as a function of the band(s)
-             in which the source was detected.
-             We also show the fraction of `confirmed' objects,
-             which we define as those sources detected in more than one field
+    \caption{Breakdown of catalogue sources as a function of the band(s)
+             in which the object was detected.
+             We also show the fraction of `confirmed' sources,
+             which we define as those objects
+             detected in more than one field
              (usually the field pair partner).
-             We also show the average magnitudes in each class.}
+             We also show the average magnitudes for each class.}
     \label{tbl:detections}
     \begin{center}
         \begin{tabular}{lrcccc}
@@ -1577,8 +1577,8 @@ and not have been on the edge of one of the CCDs
 A total of 219 million primary detections satisfied
 the above criteria and have been included in the catalogue.
 
-Table~\ref{tbl:detections} details the number of bands
-in which the catalogue entries are captured;
+Table~\ref{tbl:detections} details the breakdown of these
+sources as a function of the bands in which they are captured.
 159 million sources are detected in all three filters (73 per cent),
 30 million are detected in two filters (14 per cent),
 and the remaining 30 million are single-band detections.
@@ -1590,7 +1590,7 @@ one field
 is observed twice due to the field pair strategy).
 We find that the single-band detections tend to show low confirmation rates,
 which suggests that a significant fraction of these entries may be spurious detections.
-Hence, we strongly recommend users not to rely on single-band objects
+We recommend users not to rely on single-band objects
 without inspecting the image data by eye.
 
 Not all the single-band detections are spurious sources, however.
@@ -1679,7 +1679,7 @@ using the column named \emph{reliable}.}
   $r>13$ {\sc and} $i>12$ {\sc and} \ha\,$>12.5$ {\sc and not} \emph{saturated} &
   158 million (72\%) &
   The brightness must not exceed the nominal saturation limit
-  and the peak pixel height must not exceed 55\,000 counts.
+  and the peak pixel height must not exceed 55,000 counts.
   Again, this implicitly requires a detection in all three bands.
   \\
   $|r- rAperMag1| 
@@ -1739,8 +1739,8 @@ using the column named \emph{veryReliable}.}
    
    {\sc not} \emph{brightNeighb} &
    216 million (99\%) &
-   There is no star brighter than $V < 4$ within 10 arcmin, 
-   or brighter than $V < 7$ within 5 arcmin.
+   There is no star brighter than $V < 4$ within 10\arcmin, 
+   or brighter than $V < 7$ within 5\arcmin.
    Such very bright stars cause scattered light and diffraction spikes,
    which may add systematic errors to the photometry
    or even trigger spurious detections. \\  
@@ -1778,13 +1778,10 @@ are considered \emph{reliable}
 and 54\% are \emph{veryReliable}
 in the magnitude range $13 < r < 19$.
 We will explain below that the
-\emph{veryReliable} category is least complete
-at low Galactic longitudes,
+\emph{veryReliable} category suffers most of
+its incompleteness at low Galactic longitudes,
 where source blending can affect
 up to a quarter of the objects.
-The \emph{veryReliable} flag should hence
-only be used in applications in which 
-completeness is not a concern.
 
 \begin{figure}
     \includegraphics[width=0.5\textwidth]{./plots/magdist/magdist-r.pdf} 
@@ -1803,13 +1800,13 @@ completeness is not a concern.
 It is easy to see how the quality criteria
 may be adapted to be more tolerant.
 For example, by raising the allowed photometric uncertainties
-from 0.1~mag to 0.2~mag,
+from 0.1~mag to 0.2~mag in Table~\ref{tab:reliable},
 42 million candidate sources would be added to the 109 
 million satisfying the tighter error bound.
 Our choice to adopt 0.1~mag as the cut-off uncertainty
 for the \emph{reliable} category is a pragmatic trade-off
 which we found to suit many science applications,
-but certainly not all. Users of the data are encouraged 
+but users are nevertheless encouraged 
 to revise the quality criteria according to their needs.
 
 \subsection{Random and systematic uncertainties}
@@ -1821,7 +1818,7 @@ to revise the quality criteria according to their needs.
              for $r$ (top), $i$ (middle) and \ha\ (bottom).
              Data points shown are the average values of
              columns \emph{rErr}, \emph{iErr} and \emph{haErr}
-             in the catalogue 
+             in the catalogue, 
              and the error-bars show the standard deviations.
              The dashed and solid lines indicate 
              the 10$\sigma$ and 5$\sigma$ limits, respectively.
@@ -1835,10 +1832,10 @@ Fig.~\ref{fig:uncertainties} shows the mean photometric
 uncertainties (\emph{rErr}, \emph{iErr}, \emph{haErr})
 as a function of magnitude.
 We find the typical uncertainty to reach 0.1~mag near $r=$20.5 
-and $i$/\ha$=19.5$.
+and $i$,\ha$=19.5$.
 We note that the fainter depth in $r$ is compensated
 by the fact that most stars have brighter magnitudes in $i$ and \ha;
-the average colours in the catalogue are
+the average colours for sources in the catalogue are
 $\overline{(r-i)}=1.06\pm0.12$ and $\overline{(r-\ha)}=0.44\pm0.03$.
 We warn that the statistics shown in Fig.~\ref{fig:uncertainties}
 are the random errors based on the expected Poissonian photon noise.
@@ -1851,10 +1848,9 @@ we can exploit the secondary measurements which are present in the catalogue
 In Fig.~\ref{fig:pairmag} we show the mean absolute residuals between
 these primary and secondary magnitudes as a function of magnitude (black dots).
 We also plot the Poissonian uncertainties for comparison (solid red line).
-We find the mean residual to equal $0.03\pm0.04$~mag
+We find the mean residual and standard deviation to be $0.03\pm0.04$~mag
 across the magnitude ranges 13 to 18 ($r$)
-and 12 to 17 ($i$, \ha),
-consistent with the accuracy of our calibration estimated above.
+and 12 to 17 ($i$, \ha).
 Stars fainter than this range appear to be dominated by photon noise (red line),
 while stars at the bright end appear to suffer from large systematic
 errors due to saturation effects.
