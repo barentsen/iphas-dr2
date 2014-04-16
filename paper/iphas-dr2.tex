@@ -764,7 +764,7 @@ This is demonstrated in Fig.~\ref{fig:ccd_before},
 where we show the combined colour-colour diagram
 for all 2,801 quality-approved fields
 which are located towards the Galactic anti-centre
-($160\degr < \ell < 200\degr$).
+(defined here as $160\degr < \ell < 200\degr$).
 The main locus of stars is poorly defined
 in the diagram due to the presence of
 incorrectly calibrated fields.
@@ -773,7 +773,7 @@ and need to be corrected for
 during a global re-calibration procedure.
 For comparison, Fig.~\ref{fig:ccd_after}
 shows the identical diagram which was constructed
-after our re-calibration.
+after our re-calibration procedure.
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
@@ -796,7 +796,7 @@ after our re-calibration.
          Both figures were created by combining stars
          detected across all 2,801 quality-approved fields
          which are located towards the Galactic anti-centre
-         (here defined as $160\degr<\ell<200\degr$).
+         ($160\degr<\ell<200\degr$).
          The diagrams are plotted as 2D-histograms
          which show the density of sources
          in bins of 0.01-by-0.01~mag;
@@ -806,7 +806,10 @@ after our re-calibration.
          brighter than $r<18$ which were
          classified by the pipeline as being `very reliable'
          (to be explained in
-         \S\ref{sec:qualitycriteria}).}
+         \S\ref{sec:qualitycriteria}).
+         The objects seen to fall above the locus of stars
+         \emph{after} re-calibration 
+         are likely to be genuine \ha\ emission-line objects.}
 \end{figure}
 
 
@@ -818,7 +821,6 @@ and the Panoramic Survey Telescope
 And Rapid Response System survey \citep[Pan-STARRS;][]{Schlafly2012},
 which all achieved photometry 
 that is globally consistent to within 0.01--0.02~mag.
-
 Surveys which observe identical stars at different epochs
 can use the repeat measurements to ensure a homogeneous calibration.
 For example, 2MASS attained its global calibration
@@ -835,7 +837,7 @@ which was reportedly chosen because the initial authors both
 had German-sounding names \citep{Finkbeiner2010}.} procedure,
 in which multiple measurements of stars at different epochs
 are used to fit the calibration parameters
-\citep[e.g.][]{Ivezic2007,Padmanabhan2008,Schlafly2012}.
+\citep{Ivezic2007,Padmanabhan2008,Schlafly2012}.
 
 Unfortunately these schemes cannot be applied
 directly to IPHAS
@@ -855,7 +857,7 @@ unless they happen to fall within a narrow overlap region
 between two neighbouring field pairs.
 
 We have found the information contained
-in these overlap regions to be insufficient
+in these narrow overlap regions to be insufficient
 to constrain the calibration parameters.
 This is because photometry at the extreme edges of the WFC
 -- where neighbouring fields overlap -- 
@@ -898,7 +900,8 @@ The photometric accuracy of APASS is currently estimated
 to be at the level of 3 per cent (Henden, private communication),
 which is significantly better 
 than the original nightly calibrations of IPHAS
-which are accurate to $\sim$10 per cent (Tab.~\ref{tbl:offsets_before}).
+which are only accurate to $\sim$10 per cent
+when compared to APASS (Table~\ref{tbl:offsets_before}).
 APASS achieves its uniform accuracy 
 by measuring each star at least two times in photometric conditions,
 along with ample standard fields,
@@ -920,7 +923,7 @@ brighter than the IPHAS saturation limit on one hand,
 and to avoid sources near the faint detection limit of APASS 
 on the other.
 
-The resulting set of $\sim$220\,000 cross-matched stars were then used 
+The resulting set of 220,000 cross-matched stars were then used 
 to derive APASS-to-IPHAS magnitude transformations
 using a linear least-squares fitting routine, 
 which iteratively removed $3\sigma$-outliers to improve the fit.
@@ -929,7 +932,7 @@ The solution converged to:
 r_{\rm IPHAS} = r_{\rm APASS} - 0.121 + 0.032(r-i)_{\rm APASS} \label{eqn:apass_r} \\
 i_{\rm IPHAS} = i_{\rm APASS} - 0.364 + 0.006(r-i)_{\rm APASS} \label{eqn:apass_i}
 \end{align}
-The root mean square (rms) residuals of these transformations 
+The Root Mean Square (rms) residuals of these transformations 
 are 0.041 and 0.051, respectively.
 The small colour terms in the equations
 indicate that the IPHAS and APASS broadband filters 
@@ -951,10 +954,12 @@ we then computed the median magnitude offset
 for each field which contained at least 30 cross-matched stars.
 This was achieved for 48 per cent of our fields (shown in Figs.~\ref{fig:apass_r} and \ref{fig:apass_i}).
 The offsets follow a near-Gaussian distribution
-centred around $0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
+with mean and sigma $0.014\pm0.104$~mag in $r$
+and $0.007\pm0.108$~mag in $i$
 (Table~\ref{tbl:offsets_before}).
-A total of 4596 fields showed a systematic offset
-exceeding $\pm$0.03~mag in either $r$ or $i$.
+A total of 4,596 IPHAS fields showed a systematic offset
+exceeding $\pm$0.03~mag in either $r$ or $i$
+when compared to APASS.
 
 \begin{table}
     \caption{Magnitude offsets for objects
@@ -998,8 +1003,10 @@ exceeding $\pm$0.03~mag in either $r$ or $i$.
         \end{center}
 \end{table}
 
-We then applied the most important step in our calibration scheme,
-which is to adjust the provisional zeropoints of these 4596 aberrant fields
+We then applied the most important step
+in our re-calibration scheme,
+which is to adjust the provisional zeropoints
+of these 4,596 aberrant fields
 such that their offset is brought to zero.
 This allowed the mean IPHAS-to-APASS offset 
 to be brought down to $0.000\pm0.011$~mag in both $r$ and $i$
@@ -1030,30 +1037,11 @@ convergence, which was essentially reached after the first iteration.
     \label{fig:apass_i}
 \end{figure*}
 
-\begin{figure*}
-    \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_rshift.pdf}
-    \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_r.pdf} 
-    \caption{Median magnitude offset between IPHAS and SDSS in the $r$ band
-             \emph{after} the re-calibration procedure using APASS was applied.
-             Each square represents the footprint of an IPHAS field
-             which contains at least 30 stars
-             with a counterpart in the SDSS DR9 catalogue.
-             The colours denote the median IPHAS-SDSS magnitude offset
-             in each field,
-             which was computed after applying the SDSS-to-IPHAS
-             transformation to the SDSS magnitudes (Eqn.~\ref{eqn:sdss_r}).}
-    \label{fig:sdss_r}
-    \vspace{1cm}
-    \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_ishift.pdf}
-    \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_i.pdf} 
-    \caption{Same as Fig.~\ref{fig:sdss_r} for the $i$-band.}
-    \label{fig:sdss_i}
-\end{figure*}
 
 \subsubsection{Adjusting fields not covered by APASS}
 
 At the time of writing, the APASS catalogue did not provide 
-sufficient coverage for 7359 of our fields.
+sufficient coverage for 7,359 of our fields.
 Fortunately, these fields are located mainly 
 at low Galactic longitudes (cf. Figs.~\ref{fig:apass_r} and \ref{fig:apass_i}),
 which were typically observed during the summer months
@@ -1069,10 +1057,10 @@ has previously been described by~\citet{Glazebrook1994}.
 In brief, there are two fundamental quantities to be
 minimised between each pair of overlapping exposures, 
 denoted by the indices $i$ and $j$. 
-Firstly, the mean magnitude difference between stars in the overlap
+First, the mean magnitude difference between stars in the overlap
 region $\Delta_{ij}=\langle m_i-m_j\rangle=-\Delta_{ji}$ is a local
 constraint. 
-Secondly, to ensure the solution does not stray far 
+Second, to ensure the solution does not stray far 
 from the existing calibration, 
 the difference in zeropoints 
 $\Delta\mathrm{ZP}_{ij}=-\Delta\mathrm{ZP}_{ji}$ 
@@ -1089,7 +1077,7 @@ by minimising the sum:
 where $i$ denotes an exposure, 
 $j$ an overlapping exposure, 
 $N$ the number of exposures,
-$a_i$ the ZP to solve for 
+$a_i$ the ZP to solve for, 
 and $a_j$ the ZP of an overlapping field ($\Delta\mathrm{ZP}_{ij}=a_i-a_j$). 
 $w_{ij}$ are weights set to the inverse square of the uncertainty in $\Delta_{ij}$,
 and $\theta_{ij}$ is an overlap function 
@@ -1116,7 +1104,7 @@ We hereafter refer to these fields as \emph{anchors}.
 It is asserted that the zeropoints $a_i$ of the anchor fields 
 are known and not solved for.  However they do appear in the vector 
 $b_j$ as constraints.  In addition to the APASS-based anchors, 
-we selected 3\,273 additional anchor fields by hand
+we selected 3,273 additional anchor fields by hand
 to provide additional constraints in regions not covered by APASS.
 These extra anchors were deemed to have reliable zeropoints 
 based on 
@@ -1131,25 +1119,23 @@ in Python's {\sc scipy.sparse} module for sparse matrix algebra.
 This provided us with corrected zeropoints for the remaining fields,
 which were shifted on average by $+0.02\pm0.11$ in $r$ 
 and $+0.01\pm0.12$ in $i$ compared to their provisional calibration.
-The outcome is validated in the next section.
 
 We then turned to the global calibration of the \ha\ data.
 It is not possible to re-calibrate the narrowband 
 in the same way as the broadbands,
 because the APASS survey does not offer \ha\ photometry.
-We can reasonably assume however,
+We can reasonably assume, however,
 that the corrections required for $r$ and \ha\ are identical,
 much of the time, because the IPHAS data-taking pattern ensured 
 that a field's \ha\ and $r$-band exposures
 were taken consecutively,
-albeit separated by the $\sim$30~s read-out time.
+albeit separated by a $\sim$30~s read-out time.
 Hence, we have corrected the \ha\ zeropoints 
 by re-using the zeropoint adjustments that were derived for the $r$ band
 in the earlier steps.
-An exception was made for a small subset of fields
-% 3\,101 fields
+An exception was made for 3,101 fields
 for which our quality-control routines revealed
-strong zeropoint variations during the night,
+strong zeropoint variations to exist during the night,
 suggesting non-photometric conditions.
 In these cases, the \ha\ zeropoints
 were adjusted by solving Eqn.~\ref{eqn:matrix}
@@ -1157,8 +1143,10 @@ rather than being linked to the $r$-band shift.
 
 \subsection{Testing the calibration against SDSS}
 
-Having re-calibrated all fields to the expected APASS accuracy of 3 per cent,
-we turned to a different survey, SDSS Data Release 9 \citep{Ahn2012},
+Having re-calibrated all fields
+to the expected APASS accuracy of 3 per cent,
+we turned to a different survey,
+SDSS Data Release 9 \citep{Ahn2012},
 to validate the results.
 SDSS DR9 includes several strips at low
 Galactic latitudes,
@@ -1167,8 +1155,7 @@ We cross-matched the IPHAS fields against the subset of
 objects marked as reliable stars in the SDSS catalogue\footnote{
 We used the CasJobs facility located at http://skyserver.sdss3.org/CasJobs
 to obtain photometry from the SDSS {\sc photoprimary} table 
-with criteria {\sc type = star}, {\sc clean = 1} and {\sc score $>$ 0.7}.}
-cross-matching in much the same way as for APASS,
+with criteria {\sc type = star}, {\sc clean = 1} and {\sc score $>$ 0.7}.}, in much the same way as for APASS,
 with the difference of selecting from the  fainter magnitude ranges of 
 $15<r_{\rm SDSS}<18.0$ and $14.5<i_{\rm SDSS}<17.5$.
 This provided us with a set of 1.2~million cross-matched stars.
@@ -1201,20 +1188,41 @@ and dominate the statistical appraisal of our calibration.
 Having transformed SDSS magnitudes into the IPHAS system,
 we then computed the median magnitude offset for each IPHAS field
 which contained at least 30 objects with a cross-matched counterpart
-in SDSS.  This was the case for 2\,602 fields.
+in SDSS.  This was the case for 2,602 fields.
 The median offsets for each of these fields
 are shown in Figs.~\ref{fig:sdss_r} and \ref{fig:sdss_i}.
 Importantly, the mean offset and standard deviation found 
 is $-0.001\pm0.029$~mag in $r$
 and $-0.002\pm0.032$~mag in $i$ (Table~\ref{tbl:offsets_after}).
 In comparison, offsets computed in the identical way
-\emph{before} carrying out our re-calibration showed means
+\emph{before} carrying out the re-calibration showed means
 of $+0.016\pm0.088$~mag in $r$ and $+0.010\pm0.089$~mag in $i$ (Table~\ref{tbl:offsets_after}).
 We conclude that our re-calibration procedure has
 been successful in improving the
-uniformity of the calibration by a factor three
-and has achieved our aim of bringing the
-accuracy down to the level of 0.03~mag (rms).
+uniformity of the calibration
+by a factor three (i.e. from $\sigma=0.088$ to $\sigma=0.029$ in $r$),
+and as such has achieved our aim of bringing the
+accuracy to the aimed level of 0.03~mag.
+
+\begin{figure*}
+    \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_rshift.pdf}
+    \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_r.pdf} 
+    \caption{Median magnitude offset between IPHAS and SDSS in the $r$ band
+             \emph{after} the re-calibration procedure using APASS was applied.
+             Each square represents the footprint of an IPHAS field
+             which contains at least 30 stars
+             with a counterpart in the SDSS DR9 catalogue.
+             The colours denote the median IPHAS-SDSS magnitude offset
+             in each field,
+             which was computed after applying the SDSS-to-IPHAS
+             transformation to the SDSS magnitudes (Eqn.~\ref{eqn:sdss_r}).}
+    \label{fig:sdss_r}
+    \vspace{1cm}
+    \includegraphics[width=\textwidth]{plots/calibration/SDSS-IPHAS_ishift.pdf}
+    \includegraphics[width=\textwidth]{plots/calibration/colourbar_sdss_i.pdf} 
+    \caption{Same as Fig.~\ref{fig:sdss_r} for the $i$-band.}
+    \label{fig:sdss_i}
+\end{figure*}
 
 The SDSS comparison revealed a number of fields where the offsets
 exceeded 0.05~mag (523 fields) or even 0.1~mag (18 fields).
@@ -2322,7 +2330,7 @@ which is accreting onto the star
 from a circumstellar disk.
 This is likely to be the case for the candidate \ha-emitters
 we discovered towards Sh 2-82 as well.
-Two of our candidates, \#1 and \#4 in Tab.~\ref{tbl:emitters},
+Two of our candidates, \#1 and \#4 in Table~\ref{tbl:emitters},
 have previously been identified
 as candidate YSOs by \cite{Robitaille2008}
 and \cite{Yu2012}, respectively.
