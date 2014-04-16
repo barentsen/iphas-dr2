@@ -694,30 +694,60 @@ in photometric conditions \citep{Gonzalez-Solares2011}.
 
 Unlike the broadbands, 
 standard-star photometry is not available in the literature 
-for the H$\alpha$ passband
+for the \ha\ passband
 and hence there is no formally recognised flux scale 
 for it.
 We can specify here, however, 
-that the integrated in-band energy flux for Vega 
-in the IPHAS \ha\ filter 
-is $1.52 \times 10^{-7}$ erg\,cm$^{-2}$\,s$^{-1}$ 
-at the top of the Earth's atmosphere,
-which is the flux obtained by folding 
-Vega's SED with the filter transmission curve 
-(uncorrected for the atmosphere and detector quantum efficiency,
-which would otherwise scale down the narrowband flux by 0.707).
-This is 3.14 magnitudes less than the flux captured 
-by the much broader $r$ band
-which includes the \ha\ band.
+that the detected flux for Vega in the
+IPHAS \ha\ filter is 3.14 magnitudes
+less than the flux captured by the much broader
+$r$ band which includes the \ha\ band.
 Hence to assure zero colour relative to the broadbands,
 we set the default zeropoint for the narrowband to be:
 \begin{equation}
 \textsc{magzpt}_{H\alpha} = \textsc{magzpt}_r - 3.14.
 \label{eqn:zpha}
 \end{equation}
-Note that the above implies that the in-band flux corresponding to
-zero magnitude is $1.56 \time 10^{-7}$ erg\,cm$^{-2}$\,s$^{-1}$,
-when the \ha\ magnitude for Vega is set by convention to 0.03.
+For reference, Table~\ref{tbl:flux} details the flux of Vega
+in the IPHAS filter system.
+We refer to \citet{Drew2005} for a more comprehensive
+discussion on the throughput curves of the bands.
+
+\begin{table}
+    \caption{Mean monochromatic flux of Vega in the IPHAS filter system,
+             defined as 
+             $\langle f_\lambda\rangle~=~\int{f_\lambda(\lambda) S(\lambda) \lambda d \lambda} / \int{S(\lambda)\lambda d \lambda}$,
+             where $S(\lambda)$ is the photon response function 
+             (which includes atmospheric transmission,
+             filter transmission
+             and CCD response)
+             and $f_\lambda(\lambda)$ is the model SED for Vega
+             by Kurucz (http://kurucz.harvard.edu/stars.html).
+             For reference, we also provide the 
+             filter equivalent width EW~=~$\int S(\lambda) d\lambda$,
+             the mean photon wavelength 
+             $\lambda_0~=~\int{S(\lambda)\lambda d\lambda} / \int{S(\lambda)d\lambda}$,
+             and the pivot wavelength
+             $\lambda_p~=~\sqrt{\int{S(\lambda)\lambda d\lambda} / \int{\frac{S(\lambda)}{\lambda} d\lambda}}$.
+             These notations follow the definitions by \citet{Bessell2012}.
+             After multiplying $\langle f_\lambda\rangle$ by the EW,
+             we find that the detected flux for Vega in \ha\ is 3.14~magnitudes less
+             than that received in $r$, 
+          }
+    \label{tbl:flux}
+    \begin{center}
+    \begin{tabular}{lccrc}
+    \toprule
+     Filter  & $\langle f_\lambda \rangle$  & \multicolumn{1}{c}{EW} &$\lambda_0$ & $\lambda_p$    \\
+             & [erg\,cm$^{-2}$\,s$^{-1}$\,\AA$^{-1}$] & [\AA] & [\AA] & [\AA] \\
+    \midrule
+$r$ &  $2.47 \times 10^{-9}$  &  785.6 &  6223  &   6211   \\
+\ha &  $1.81 \times 10^{-9}$ &   59.6 &  6568  &   6568    \\
+$i$  &  $1.30 \times 10^{-9}$  &  759.9  &  7674  &   7674   \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+\end{table}
 
 
 \subsection{Global re-calibration}
@@ -1452,31 +1482,15 @@ and not have been on the edge of one of the CCDs
 (this information is contained in the \emph{errBits} quality score column, which is used for internal bookkeeping).
 \end{enumerate}
 
-A total of 219 million primary detections satisfied
-the above criteria and have been included in the catalogue.
-Amongst these, 159 million are detected 
-in all three bands (73 per cent),
-30 million are detected in two bands (14 per cent),
-and the remaining 30 million are single-band detections.
-The detailed breakdown is presented in Table~\ref{tbl:detections},
-along with the fraction of `confirmed' sources,
-hich we define
-as objects which were detected in more than
-one field pointing (usually the alternative pointing of a field pair).
-Sources detected in all three 
-(Table~\ref{tbl:detections}).
-Half of the single-band detections were made in the $i$-band.
-This is most likely because $i$ is least
-affected by interstellar extinction and can occasionally pick up
-highly-reddened objects which are otherwise lost in $r$ and \ha.
-Table~\ref{tbl:detections} also shows the fraction of the
-sources that were `confirmed', w
-For the class of 
-in more than one field (usually the field observed at the small offset position)
-
 \begin{table}
-    \caption{Breakdown of catalogue entries as a function of the band(s) in which the source was detected. We also show the fraction of `confirmed' objects, which we define as sources which were detected in more than one field pointing (usually the field pair partner). Also included are the mean magnitudes for each class.}
+    \caption{Breakdown of catalogue entries as a function of the band(s)
+             in which the source was detected.
+             We also show the fraction of `confirmed' objects,
+             which we define as those sources detected in more than one field
+             (usually the field pair partner).
+             We also show the average magnitudes in each class.}
     \label{tbl:detections}
+    \begin{center}
         \begin{tabular}{lrcccc}
         \toprule
         Band(s) & Sources & Confirmed & $\overline{r}$ & $\overline{i}$ & $\overline{\ha}$ \\
@@ -1493,20 +1507,48 @@ in more than one field (usually the field observed at the small offset position)
         Total  & 219 & 81\% & 19.6 & 18.6 & 18.9 \\
         \bottomrule
         \end{tabular}
+        % riha: 158831809 / 144339044
+		% ri: 24558323 / 18878201
+		% iha: 3422905 / 2495655
+		% rha: 1606867 / 1036607
+		% i: 15463660 / 6612351
+		% r: 9263422 / 2478774
+		% ha: 5844538 / 727732
+	\end{center}
 \end{table}
 
-% riha: 158831809 / 144339044
-% ri: 24558323 / 18878201
-% iha: 3422905 / 2495655
-% rha: 1606867 / 1036607
-% i: 15463660 / 6612351
-% r: 9263422 / 2478774
-% ha: 5844538 / 727732
+A total of 219 million primary detections satisfied
+the above criteria and have been included in the catalogue.
+
+Table~\ref{tbl:detections} details the number of bands
+in which the catalogue entries are captured;
+159 million sources are detected in all three filters (73 per cent),
+30 million are detected in two filters (14 per cent),
+and the remaining 30 million are single-band detections.
+Table~\ref{tbl:detections} also presents the average magnitudes
+and the fraction of `confirmed' objects,
+which we define as those sources which have been detected in more than
+one field
+(recall that the majority of the survey area
+is observed twice due to the field pair strategy).
+We find that the single-band detections tend to show low confirmation rates,
+which suggests that a significant fraction of these entries may be spurious detections.
+Hence, we strongly recommend users not to rely on single-band objects
+without inspecting the image data by eye.
+
+Not all the single-band detections are spurious sources, however.
+We note that the confirmation rate for $i$-band detections
+is markedly better than for $r$ and \ha,
+which is likely explained by the fact that $i$ is least
+affected by interstellar extinction, and so the survey can occasionally pick up
+highly-reddened objects in $i$ which are otherwise lost in $r$ and \ha.
+Moreover, objects which are intrinsically very red may also be picked
+up in $i$ alone, while faint objects with strong Balmer emission
+may appear only in \ha.
 
 \section{Discussion}
 \label{sec:discussion}
 
-%Having explained how the catalogue was created,
 We now offer an overview of the properties of the
 catalogue by discussing  
 (i) the recommended quality criteria,
@@ -2254,29 +2296,30 @@ IPHAS data can offer a handle
 on the extinction, distance
 and stellar contents of these unexplored regions.
 
-\section{Data access and source code}
+\section{Catalogue and image access}
 \label{sec:dataaccess}
 
-The catalogue is made available on our website (www.iphas.org)
+The catalogue is made available through the
+Vizier service (http://vizier.u-strasbg.fr),
+where it can be queried using a web interface
+and using Virtual Observatory (VO) protocols.
+In addition, the catalogue can be downloaded
+in its entirety from our website (www.iphas.org)
 as a collection of binary FITS tables,
 each covering a $5\degr\times5\degr$ tile
 of the footprint.
-The catalogue can be queried in two ways.
-First, will be made available through the
-Vizier on-line service (http://vizier.u-strasbg.fr),
-where it can be accessed using a web interface
-and using Virtual Observatory (VO) protocols.
-Second, on our website we provide a script
-to ingest the binary FITS tables into a
-{\sc PostgreSQL} database for users
-who wish to mine the data locally.
 
-The website also provides access to the pipeline-processed
-imaging data, which we have updated to include
-a new keyword, called {\sc photzp},
+We do not recommend using the catalogue
+to study extended objects which
+are larger than the
+aperture diameters used in this work.
+To enable the analysis of diffuse sources,
+our website provides access to the pipeline-processed
+imaging data. These have been updated to include
+a new FITS header keyword, called {\sc photzp},
 which contains the re-calibrated zeropoint.
-The keyword can be used to convert the number counts $DN$,
-which stored in the pixel values,
+This keyword can be used to convert the number counts $DN$,
+i.e. the pixel values in the images,
 into Vega-based magnitudes $m$ using:
 \begin{equation}
 \begin{split}
@@ -2284,63 +2327,38 @@ into Vega-based magnitudes $m$ using:
 \label{eqn:mag}
 \end{split}
 \end{equation}
-That is, {\sc photzp} has been computed such that it
+The {\sc photzp} value has been computed such that it
 absorbs the required corrections for atmospheric extinction,
-gain variations, exposure time, and the re-calibration.
+gain variations, exposure time, and the re-calibration shift.
+Users will only need to apply an aperture correction, if necessary.
 
-A user will only have to apply a correction
-for the flux lost outside
+To estimate absolute narrow-band \ha\ fluxes from the image data,
+we note that the integrated in-band energy flux for Vega 
+in the IPHAS \ha\ filter 
+is $1.52 \times 10^{-7}$~erg\,cm$^{-2}$\,s$^{-1}$ 
+at the top of the Earth's atmosphere,
+which is the flux obtained by folding the 
+Vega model SED from Kurucz with the filter transmission curve 
+(uncorrected for the atmosphere and detector quantum efficiency,
+which would otherwise scale down the narrowband flux by 0.707).
+This implies that the in-band flux corresponding to
+zero magnitude is $1.56 \time 10^{-7}$ erg\,cm$^{-2}$\,s$^{-1}$,
+when the \ha\ magnitude for Vega is set by convention to 0.03 \citep{Fukugita1996}.
 
-
-To convert the magnitude $m$ into fluxes,
-we list in Table~\ref{tbl:flux} something. 
-
-% and the best-available
-%astrometric solution in the image headers.
+The image repository on our website
+is accompanied by an archive of detection tables
+-- one for each image --
+which may be used to retrieve secondary detections that are not included
+in the DR2 source catalogue.
+We warn that this set of original images and detection tables
+includes data that did not pass quality control,
+and has not been globally re-calibrated.
+Such data are flagged and must be used with great caution.
 
 In the spirit of reproducibility,
 the source code that was used to generate
 the catalogue is made available at
 https://github.com/barentsen/iphas-dr2
-
-Users of the data are reminded to cite both \citet{Drew2005}
-and this paper.
-
-
-Mean photon wavelength of the passband following eqn.~A14 in Bessel \& Murphy (2012):
-\begin{equation}
-\lambda_0 = \frac{\int{\lambda S(\lambda) d \lambda}}
-{\int{S(\lambda)d\lambda}}
-\end{equation}
-
-Pivot wavelength of the passband following eqn.~A16 in Bessel \& Murphy (2012):
-\begin{equation}
-\lambda_p = \frac{\int{S(\lambda) \lambda d \lambda}}
-{\int{\frac{S(\lambda)}{\lambda} d\lambda}}
-\end{equation}
-
-Mean monochromatic flux,
-following eqn.~A11 in Bessel \& Murphy (2012):
-\begin{equation}
-f_\lambda = \frac{\int{f_\lambda(\lambda) S(\lambda) \lambda d \lambda}}
-{\int{S(\lambda)\lambda d \lambda}}
-\end{equation}
-where $S(\lambda)$ includes the filter, atmosphere and QE.
-
-\begin{table}
-    \caption{Wavelength and mean monochromatic flux density for Vega in the IPHAS filter system.}
-    \label{tbl:flux}
-    \begin{tabular}{lrrrr}
-    \toprule
-     Band & $\lambda_0$ & $\lambda_p$ & EW  & $f_\lambda$   \\
-     & \AA & \AA & \AA & erg\,cm$^{-2}$\,s$^{-1}$\,\AA$^{-1}$  \\
-    \midrule
-$r$ &  6223  &   6211  &  785.6  &  2.47e-9  \\
-\ha &  6568  &   6568  &   59.6  &  1.81e-9  \\
-$i$ &  7674  &   7674  &  759.9  &  1.30e-9   \\
-    \bottomrule
-    \end{tabular}
-\end{table}
 
 
 \section{Concluding remarks and future work}
