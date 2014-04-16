@@ -303,7 +303,7 @@
         "name": "iDetectionID",
         "type": "string",
         "unit": "",
-        "desc": "Unique identifier of the r-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
+        "desc": "Unique identifier of the i-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
     },
     {
         "name": "iX",
@@ -429,7 +429,7 @@
         "name": "haDetectionID",
         "type": "string",
         "unit": "",
-        "desc": "Unique identifier of the r-band detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
+        "desc": "Unique identifier of the H-alpha detection in the format \"#run-#ccd-#number\", i.e. composed of the INT telescope run number, the CCD number and a sequential source detection number."
     },
     {
         "name": "haX",
