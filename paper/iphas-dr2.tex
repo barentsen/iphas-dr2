@@ -1,4 +1,4 @@
-\documentclass[useAMS,usenatbib]{mn2e}
+\documentclass[a4paper,useAMS,usenatbib]{mn2e}
 \usepackage{amssymb,amsmath}
 \usepackage[pdftex]{graphicx}
 \usepackage{longtable} 
@@ -7,6 +7,8 @@
 \usepackage{aas_macros}
 \usepackage{caption}
 \usepackage{subcaption}
+
+\voffset=-0.5in
 
 \graphicspath{ {/home/gb/msc/Dropbox/papers/dr2/} }
 
@@ -168,8 +170,9 @@ with respect to these previous surveys
 by a factor $\sim$1000 (7~magnitudes), 
 IPHAS can expand
 the limited bright samples of Galactic emission line objects 
-previously available into larger, deeper, and more statistically-robust samples that will 
-better inform our understanding 
+previously available into larger, deeper,
+and more statistically-robust samples
+that will better inform our understanding 
 of the early and late stages of stellar evolution.
 Since the publication of the Initial Data Release \citep[IDR;][]{Gonzalez-Solares2008},
 these aims have begun to be realised through a
@@ -697,15 +700,14 @@ in stable photometric conditions \citep{Gonzalez-Solares2011}.
 Unlike the broadbands, 
 standard-star photometry is not available in the literature 
 for the \ha\ passband
-and hence there is no formally recognised flux scale 
-for it.
+and hence there is no formally recognised flux scale for it.
 We can specify here, however, 
 that the detected flux for Vega in the
 IPHAS \ha\ filter is 3.14 magnitudes
 less than the flux captured by the much broader
-$r$ band which includes the \ha\ band.
-Hence to assure zero colour relative to the broadbands,
-we set the default zeropoint for the narrowband to be:
+$r$ band \citep{Gonzalez-Solares2008}.
+Hence to assure that $(r-\ha)=0$ for Vega,
+we set the zeropoint for the narrowband to be:
 \begin{equation}
 \textsc{magzpt}_{H\alpha} = \textsc{magzpt}_r - 3.14.
 \label{eqn:zpha}
@@ -713,7 +715,7 @@ we set the default zeropoint for the narrowband to be:
 For reference, Table~\ref{tbl:flux} details the flux of Vega
 in the IPHAS filter system.
 We refer to \citet{Drew2005} for a more comprehensive
-discussion on the throughput curves of the bands.
+discussion on the filter throughput curves.
 
 \begin{table}
     \caption{Mean monochromatic flux of Vega in the IPHAS filter system,
@@ -2383,7 +2385,6 @@ into Vega-based magnitudes $m$ using:
 The {\sc photzp} value has been computed such that it
 absorbs the required corrections for atmospheric extinction,
 gain variations, exposure time, and the re-calibration shift.
-Users will only need to apply an aperture correction, if necessary.
 
 To estimate absolute narrow-band \ha\ fluxes from the image data,
 we note that the integrated in-band energy flux for Vega 
@@ -2464,11 +2465,10 @@ one further major IPHAS source catalogue,
 in which the remaining gaps in sky coverage
 will have been eliminated
 -- observations aimed at replacing data
-not meeting the IPHAS minimum quality requirements
-are continuing.
+not meeting the quality requirements are continuing.
 We will also examine options to further improve
 the global calibration,
-perhaps tightening the accuracy to better than 2\%.
+perhaps tightening the accuracy to better than 2 per cent.
 For example, we have in mind investigating
 the use of the PanSTARRS photometric ladder \citep{Magnier2013}
 as a reference set,
@@ -2572,8 +2572,10 @@ the Royal Astronomical Society of the United Kingdom.
 
 \label{lastpage}
 
-\bibliographystyle{mn2e}
-\bibliography{iphas-dr2}
+\footnotesize{
+  \bibliographystyle{mn2e}
+  \bibliography{iphas-dr2}
+}
 
 \newpage
 \appendix
