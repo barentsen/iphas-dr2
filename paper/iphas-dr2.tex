@@ -762,16 +762,18 @@ and imperfections in the pipeline or the instrument
 in the timing of exposures).
 This is demonstrated in Fig.~\ref{fig:ccd_before},
 where we show the combined colour-colour diagram
-for all of the 2,801 quality-approved fields
+for all 2,801 quality-approved fields
 which are located towards the Galactic anti-centre
 ($160\degr < \ell < 200\degr$).
 The main locus of stars is poorly defined
-in the diagram due to the presence of 
-fields which suffer from calibration errors,
-which can exceed 0.1~mag or more.
+in the diagram due to the presence of
+incorrectly calibrated fields.
+The calibration errors can exceed 0.1~mag or more
+and need to be corrected for 
+during a global re-calibration procedure.
 For comparison, Fig.~\ref{fig:ccd_after}
-shows the identical diagram
-constructed after re-calibrating.
+shows the identical diagram which was constructed
+after our re-calibration.
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
@@ -787,25 +789,30 @@ constructed after re-calibrating.
 \caption{}
 \label{fig:ccd_after}
 \end{subfigure}
-\caption{IPHAS $(r-\ha,\ r-i)$ colour-colour diagram for an area of 400~deg$^2$, plotted before (panel a) and after (panel b)
-re-calibration.
-Both figures were created by combining the stars detected
-across the entire set of 2\,801 quality-approved fields which are located
-towards the Galactic anti-centre  ($160\degr < \ell < 200\degr$).
-The diagrams are plotted as 2D-histograms
-which show the density of sources
-in bins of 0.01-by-0.01~mag;
-bins containing 1 to 200 sources are coloured red,
-while bins containing more than 400 sources are bright yellow.
-We have included all stars which are brighter than $r<18$
-and are classified as `very reliable'
-(these criteria will be explained in \S\ref{sec:qualitycriteria}).}
+\caption{IPHAS $(r-\ha,\ r-i)$ colour-colour diagram
+         covering an area of 400~deg$^2$,
+         shown before (panel a) and after (panel b)
+         our global re-calibration was applied.
+         Both figures were created by combining stars
+         detected across all 2,801 quality-approved fields
+         which are located towards the Galactic anti-centre
+         (here defined as $160\degr<\ell<200\degr$).
+         The diagrams are plotted as 2D-histograms
+         which show the density of sources
+         in bins of 0.01-by-0.01~mag;
+         bins containing 1 to 200 sources are coloured red,
+         while bins containing more than 400 sources are bright yellow.
+         The diagrams include all stars
+         brighter than $r<18$ which were
+         classified by the pipeline as being `very reliable'
+         (to be explained in
+         \S\ref{sec:qualitycriteria}).}
 \end{figure}
 
-The calibration variations need to be corrected for 
-during a global re-calibration procedure.
-Notable past examples include the global re-calibration 
-of 2MASS \citep[][]{Nikolaev2000},
+
+Notable past examples of surveys which required
+global re-calibration include 
+2MASS \citep[][]{Nikolaev2000},
 SDSS \citep[][]{Padmanabhan2008}
 and the Panoramic Survey Telescope 
 And Rapid Response System survey \citep[Pan-STARRS;][]{Schlafly2012},
