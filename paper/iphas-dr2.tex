@@ -690,7 +690,7 @@ and the Johnson-Cousins system
 of the published standard star photometry.
 The entire procedure has been found to deliver zeropoints which 
 are accurate at the level of 1--2 per cent 
-in photometric conditions \citep{Gonzalez-Solares2011}.
+in stable photometric conditions \citep{Gonzalez-Solares2011}.
 
 Unlike the broadbands, 
 standard-star photometry is not available in the literature 
@@ -758,7 +758,50 @@ due to atmospheric changes during the night
 and imperfections in the pipeline or the instrument
 (e.g. the WFC is known to suffer from sporadic errors
 in the timing of exposures).
-Such variations need to be corrected for 
+This is demonstrated in Fig.~\ref{fig:ccd_before},
+where we show the combined colour-colour diagram
+for the set of 2\,801 quality-approved fields
+which are located towards the Galactic anti-centre
+($160\degr < \ell < 200\degr$).
+Despite the fact that all the fields included in the diagram
+have been quality-approved,
+the main locus of stars is poorly defined
+due to the presence of calibration errors,
+which regularly exceed 0.1~mag.
+For comparison, Fig.~\ref{fig:ccd_after}
+shows the identical diagram
+obtained after re-calibrating.
+
+\begin{figure}
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\textwidth]{figures/caldiagram/ccd-uncalibrated.pdf}
+\caption{}
+\label{fig:ccd_before}
+\end{subfigure}
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\textwidth]{figures/caldiagram/ccd-calibrated.pdf}
+\caption{}
+\label{fig:ccd_after}
+\end{subfigure}
+\caption{IPHAS $(r-\ha,\ r-i)$ colour-colour diagram for an area of 400~deg$^2$, plotted before (panel a) and after (panel b)
+re-calibration.
+Both figures were created by combining the stars detected
+across the entire set of 2\,801 quality-approved fields which are located
+towards the Galactic anti-centre  ($160\degr < \ell < 200\degr$).
+The diagrams are plotted as 2D-histograms
+which show the density of sources
+in bins of 0.01-by-0.01~mag;
+bins containing 1 to 200 sources are coloured red,
+while bins containing more than 400 sources are bright yellow.
+We have included all stars which are brighter than $r<18$
+and are classified as `very reliable'
+(these criteria will be explained in \S\ref{sec:qualitycriteria}).}
+\end{figure}
+
+The calibration variations need to be corrected for 
 during a global re-calibration procedure.
 Notable past examples include the global re-calibration 
 of 2MASS \citep[][]{Nikolaev2000},
@@ -905,6 +948,48 @@ centred around $0.014\pm0.104$~mag in $r$ and $0.007\pm0.108$~mag in $i$
 A total of 4596 fields showed a systematic offset
 exceeding $\pm$0.03~mag in either $r$ or $i$.
 
+\begin{table}
+    \caption{Magnitude offsets for objects
+             cross-matched between IPHAS and APASS/SDSS
+             \emph{before} the global re-calibration was carried out.
+             We characterise the distribution of the offsets,
+             which is approximately Gaussian in each case,
+             by listing the mean and the standard deviation values.
+			 We remind the reader that transformations were applied
+             to the APASS and SDSS magnitudes to bring them into the
+             Vega-based IPHAS system prior to computing the offsets.
+             }
+    \label{tbl:offsets_before}
+    \begin{center}
+        \begin{tabular}{lcc}
+            \toprule
+            {\bf Before re-calibration} & Mean & $\sigma$  \\
+            \midrule
+            $r$ (IPHAS - APASS) & +0.014 & 0.104 \\
+            $i$ (IPHAS - APASS) & +0.007 & 0.108 \\
+            $r$ (IPHAS - SDSS) & +0.016 & 0.088 \\
+            $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
+            \bottomrule
+       \end{tabular}
+       \vspace{1cm}
+       \caption{Same as Table~\ref{tbl:offsets_before},
+                but computed \emph{after} the global re-calibration
+                was carried out. The mean and standard deviation values
+                of the offsets have improved significantly.}
+        \label{tbl:offsets_after}
+            \begin{tabular}{lcc}
+                \toprule
+                {\bf After re-calibration} & Mean & $\sigma$ \\
+                \midrule
+                $r$ (IPHAS - APASS) & +0.000 & 0.011\\
+                $i$ (IPHAS - APASS) & +0.000 & 0.011 \\
+                $r$ (IPHAS - SDSS)  & -0.001 & 0.029\\
+                $i$ (IPHAS - SDSS) & -0.002 & 0.032 \\
+                \bottomrule
+            \end{tabular}
+        \end{center}
+\end{table}
+
 We then applied the most important step in our calibration scheme,
 which is to adjust the provisional zeropoints of these 4596 aberrant fields
 such that their offset is brought to zero.
@@ -956,48 +1041,6 @@ convergence, which was essentially reached after the first iteration.
     \caption{Same as Fig.~\ref{fig:sdss_r} for the $i$-band.}
     \label{fig:sdss_i}
 \end{figure*}
-
-\begin{table}
-    \caption{Magnitude offsets for objects
-             cross-matched between IPHAS and APASS/SDSS
-             \emph{before} the global re-calibration was carried out.
-             We characterise the distribution of the offsets,
-             which is approximately Gaussian in each case,
-             by listing the mean and the standard deviation values.
-			 We remind the reader that transformations were applied
-             to the APASS and SDSS magnitudes to bring them into the
-             Vega-based IPHAS system prior to computing the offsets.
-             }
-    \label{tbl:offsets_before}
-    \begin{center}
-        \begin{tabular}{lcc}
-            \toprule
-            {\bf Before re-calibration} & Mean & $\sigma$  \\
-            \midrule
-            $r$ (IPHAS - APASS) & +0.014 & 0.104 \\
-            $i$ (IPHAS - APASS) & +0.007 & 0.108 \\
-            $r$ (IPHAS - SDSS) & +0.016 & 0.088 \\
-            $i$ (IPHAS - SDSS) & +0.010 & 0.089 \\
-            \bottomrule
-       \end{tabular}
-       \vspace{1cm}
-       \caption{Same as Table~\ref{tbl:offsets_before},
-                but computed \emph{after} the global re-calibration
-                was carried out. The mean and standard deviation values
-                of the offsets have improved significantly.}
-        \label{tbl:offsets_after}
-            \begin{tabular}{lcc}
-                \toprule
-                {\bf After re-calibration} & Mean & $\sigma$ \\
-                \midrule
-                $r$ (IPHAS - APASS) & +0.000 & 0.011\\
-                $i$ (IPHAS - APASS) & +0.000 & 0.011 \\
-                $r$ (IPHAS - SDSS)  & -0.001 & 0.029\\
-                $i$ (IPHAS - SDSS) & -0.002 & 0.032 \\
-                \bottomrule
-            \end{tabular}
-        \end{center}
-\end{table}
 
 \subsubsection{Adjusting fields not covered by APASS}
 
@@ -2071,8 +2114,7 @@ is being released in a separate paper (Sale et al., in preparation).
     which show the density of objects
     in bins of 0.01-by-0.01~mag;
     bins containing 1 to 10 objects are coloured red,
-    bins with 10 to 20 objects are orange,
-    and bins with 20 to 25 objects are yellow.
+    while bins with more than 20 objects are yellow.
     The left panel is annotated with
     the position of the main sequence (thin solid line),
     giant stars (thick solid line)
