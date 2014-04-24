@@ -3,14 +3,7 @@
 """Prepares IPHAS images for public release.
 
 This script will edit all images in the data release to ensure they have
-the correct astrometric solution (WCS) and calibration information (PHOTZP)
-in the header, which follows the conventions from the "ESO External Data
-Products Standard" where possible
-(cf. http://www.eso.org/sci/observing/phase3/p3edpstd.pdf )
-
-Finally, the images are converted from Rice tile-compression into GZIP format,
-which is slightly larger and slower but somewhat less obscure and in line with
-many other archives.
+the correct astrometric solution (WCS) and calibration information (PHOTZP).
 """
 from __future__ import division, print_function, unicode_literals
 from astropy.io import fits
@@ -69,8 +62,8 @@ class SurveyImage(object):
         self.run = run
         self.ccd = ccd
         # Open the image
-        self.path_orig = constants.RAWDATADIR + METADATA[run]['image']
-        self.fits_orig = fits.open(self.path_orig, do_not_scale_image_data=True)
+        self.path = constants.RAWDATADIR + METADATA[run]['image']
+        self.fits = fits.open(self.path, do_not_scale_image_data=True)
 
         # Is the run a DR2-recalibrated run?
         mycaldb = get_caldb()
@@ -80,24 +73,10 @@ class SurveyImage(object):
             self.calibrated = False
 
         # Sort out the new FITS image and header
-        self.hdu = fits.PrimaryHDU(self.fits_orig[self.ccd].data)
+        self.hdu = self.fits[self.ccd]
         self.set_header()
         self.fix_wcs()
         self.add_comments()
-
-    def orig_header(self, keyword, extension=0):
-        """Returns a keyword value from the original header."""
-        try:
-            return self.fits_orig[extension].header[keyword]
-        except KeyError:
-            return ""
-
-    def orig_comments(self, keyword, extension=0):
-        """Returns keyword comments from the original header."""
-        try:
-            return self.fits_orig[extension].header.comments[keyword]
-        except KeyError:
-            return ""
 
     @property
     def exptime(self):
@@ -147,77 +126,31 @@ class SurveyImage(object):
     def set_header(self):
         # Copy keywords from the original HDU[0]
         for kw in ['RUN', 'OBSERVAT', 'OBSERVER', 'OBJECT',
-                   'LATITUDE', 'LONGITUD', 'HEIGHT', 'SLATEL',
-                   'TELESCOP',
-                   'MJD-OBS', 'JD', 'PLATESCA', 'TELFOCUS',
-                   'AIRMASS', 'DATE-OBS', 'UTSTART',
+                   'LATITUDE', 'LONGITUD', 'HEIGHT', 'SLATEL', 'TELESCOP',
+                   'MJD-OBS', 'JD', 'PLATESCA', 'TELFOCUS', 'AIRMASS',
                    'TEMPTUBE', 'INSTRUME', 'WFFPOS', 'WFFBAND', 'WFFID',
                    'SECPPIX', 'DETECTOR', 'CCDSPEED',
                    'CCDXBIN', 'CCDYBIN', 'CCDSUM', 'CCDTEMP', 'NWINDOWS']:
-            self.hdu.header[kw] = self.orig_header(kw)
-            self.hdu.header.comments[kw] = self.orig_comments(kw)
+            self.hdu.header.insert('NAXIS2', (kw,
+                                              self.fits[0].header[kw],
+                                              self.fits[0].header.comments[kw])
+                                   )
 
-        # Copy keywords from the original image extension
-        for kw in ['BSCALE', 'BZERO', 'CCDNAME', 'CCDXPIXE', 'CCDYPIXE',
-                   'AMPNAME', 'GAIN', 'READNOIS',
-                   'NUMBRMS', 'STDCRMS',
-                   'PERCORR', 'EXTINCT']:
-            self.hdu.header[kw] = self.orig_header(kw, self.ccd)
-            self.hdu.header.comments[kw] = self.orig_comments(kw, self.ccd)
-
-        # Make it a proper ISO stamp
-        self.hdu.header['DATE-OBS'] = self.fits_orig[0].header['DATE-OBS']+'T'+self.fits_orig[0].header['UTSTART']
-
-        # Fix WCS - see fix_wcs() in detections.py!
-        # Enforce the pipeline's defaults
-        self.hdu.header['RADESYS'] = 'ICRS'
-        self.hdu.header['EQUINOX'] = 2000.0
-        self.hdu.header['CTYPE1'] = 'RA---ZPN'
-        self.hdu.header['CTYPE2'] = 'DEC--ZPN'
-        self.hdu.header['CRPIX1'] = self.fits_orig[self.ccd].header['CRPIX1']
-        self.hdu.header['CRPIX2'] = self.fits_orig[self.ccd].header['CRPIX2']
-        self.hdu.header['CRVAL1'] = self.fits_orig[self.ccd].header['CRVAL1']
-        self.hdu.header['CRVAL2'] = self.fits_orig[self.ccd].header['CRVAL2']
-        self.hdu.header['CRUNIT1'] = 'deg'
-        self.hdu.header['CRUNIT2'] = 'deg'
-        self.hdu.header['CD1_1'] = self.fits_orig[self.ccd].header['CD1_1']
-        self.hdu.header['CD1_2'] = self.fits_orig[self.ccd].header['CD1_2']
-        self.hdu.header['CD2_1'] = self.fits_orig[self.ccd].header['CD2_1']
-        self.hdu.header['CD2_2'] = self.fits_orig[self.ccd].header['CD2_2']
-        self.hdu.header['PV2_1'] = 1.0
-        self.hdu.header['PV2_2'] = 0.0
-        self.hdu.header['PV2_3'] = 220.0
-
-        # Following the documentation at
-        # http://apm49.ast.cam.ac.uk/surveys-projects/wfcam/technical/astrometry
-        self.hdu.header.comments['RADESYS'] = 'WCS calibrated against 2MASS'
-        self.hdu.header.comments['CTYPE1'] = 'Algorithm type for axis 1'
-        self.hdu.header.comments['CTYPE2'] = 'Algorithm type for axis 2'
-        self.hdu.header.comments['CRPIX1'] = '[pixel] Reference pixel along axis 1'
-        self.hdu.header.comments['CRPIX2'] = '[pixel] Reference pixel along axis 2'
-        self.hdu.header.comments['CRVAL1'] = '[deg] Right ascension at the reference pixel'
-        self.hdu.header.comments['CRVAL2'] = '[deg] Declination at the reference pixel'
-        self.hdu.header.comments['CRUNIT1'] = 'Unit of right ascension coordinates'
-        self.hdu.header.comments['CRUNIT2'] = 'Unit of declination coordinates'
-        self.hdu.header.comments['CD1_1'] = 'Transformation matrix element'
-        self.hdu.header.comments['CD1_2'] = 'Transformation matrix element'
-        self.hdu.header.comments['CD2_1'] = 'Transformation matrix element'
-        self.hdu.header.comments['CD2_2'] = 'Transformation matrix element'
-        self.hdu.header.comments['PV2_1'] = 'Coefficient for r term'
-        self.hdu.header.comments['PV2_2'] = 'Coefficient for r**2 term'
-        self.hdu.header.comments['PV2_3'] = 'Coefficient for r**3 term'
-
-        # Fix zeropoint
-        self.hdu.header['MAGZPT'] = self.orig_header('MAGZPT', self.ccd)
-        self.hdu.header.comments['MAGZPT'] = 'Uncorrected nightly ZP (per second)'
+        # Ensure a proper ISO stamp
+        isostamp = (self.fits[0].header['DATE-OBS']
+                    + 'T' + self.fits[0].header['UTSTART'])
+        self.hdu.header.insert('NAXIS2', ('DATE-OBS',
+                                          isostamp,
+                                          'Start time of the exposure [UTC]'))
 
         # Fix exposure time -- it might have changed in detections.py
         self.hdu.header['EXPTIME'] = self.exptime
         self.hdu.header.comments['EXPTIME'] = '[sec] Exposure time adopted in DR2'
 
-        # True zeropoint with all corrections absorbed (including exposure time)
+        # Add true zeropoint with all corrections absorbed
         self.hdu.header['PHOTZP'] = self.photzp
         self.hdu.header.comments['PHOTZP'] = 'mag(Vega) = -2.5*log(pixel value) + PHOTZP'
+        self.hdu.header.comments['MAGZPT'] = 'Uncorrected nightly ZP (per second)'
 
         # Add keywords according to the "ESO External Data Products standard"
         self.hdu.header['PHOTZPER'] = 0.03
@@ -232,11 +165,45 @@ class SurveyImage(object):
             self.hdu.header['FLUXCAL'] = 'UNCALIBRATED'
         self.hdu.header.comments['FLUXCAL'] = 'Certifies the validity of PHOTZP'
 
-        # Where is the confidence map?
+        # Where is the conf map?
         self.hdu.header['CONFMAP'] = self.confmap
 
-
     def fix_wcs(self):
+        """Derived from fix_wcs() in detections.py."""
+        # Never trust these WCS keywords, which may have been left behind
+        # by older versions of the CASU pipeline:
+        for kw in ['PV1_0', 'PV1_1', 'PV1_2', 'PV1_3',
+                   'PV2_0', 'PV2_1', 'PV2_2', 'PV2_3', 'PV2_5',
+                   'PV3_0', 'PV3_1', 'PV3_3', 'PV3_3',
+                   'PROJP1', 'PROJP3', 'PROJP5', 'WAT1_001', 'WAT2_001',
+                   'RADECSYS', 'CTYPE1', 'CTYPE2', 'CUNIT1', 'CUNIT2']:
+            try:
+                del self.hdu.header[kw]
+            except KeyError:
+                pass
+
+        # Ensure the pipeline defaults are set correctly
+        self.hdu.header.insert('CRVAL1', ('RADESYS', 'ICRS', 'WCS calibrated against 2MASS'))
+        self.hdu.header.insert('CRVAL1', ('EQUINOX', 2000.0))
+        self.hdu.header.insert('CRVAL1', ('CTYPE1', 'RA---ZPN', 'Algorithm type for axis 1'))
+        self.hdu.header.insert('CRVAL1', ('CTYPE2', 'DEC--ZPN', 'Algorithm type for axis 2'))
+        self.hdu.header.insert('CRVAL1', ('CRUNIT1', 'deg', 'Unit of right ascension coordinates'))
+        self.hdu.header.insert('CRVAL1', ('CRUNIT2', 'deg', 'Unit of declination coordinates'))
+        self.hdu.header.insert('CRVAL1', ('PV2_1', 1.0, 'Coefficient for r term'))
+        self.hdu.header.insert('CRVAL1', ('PV2_2', 0.0, 'Coefficient for r**2 term'))
+        self.hdu.header.insert('CRVAL1', ('PV2_3', 220.0, 'Coefficient for r**3 term'))
+
+        # Improvide the documentation following
+        # http://apm49.ast.cam.ac.uk/surveys-projects/wfcam/technical/astrometry
+        self.hdu.header.comments['CRPIX1'] = '[pixel] Reference pixel along axis 1'
+        self.hdu.header.comments['CRPIX2'] = '[pixel] Reference pixel along axis 2'
+        self.hdu.header.comments['CRVAL1'] = '[deg] Right ascension at the reference pixel'
+        self.hdu.header.comments['CRVAL2'] = '[deg] Declination at the reference pixel'
+        self.hdu.header.comments['CD1_1'] = 'Transformation matrix element'
+        self.hdu.header.comments['CD1_2'] = 'Transformation matrix element'
+        self.hdu.header.comments['CD2_1'] = 'Transformation matrix element'
+        self.hdu.header.comments['CD2_2'] = 'Transformation matrix element'
+
         # Is an updated (fixed) WCS available?
         if self.run in WCSFIXES['RUN']:
             idx = ((WCSFIXES['RUN'] == self.run)
@@ -248,38 +215,41 @@ class SurveyImage(object):
                            'CD1_1', 'CD1_2', 'CD2_1', 'CD2_2']:
                     self.hdu.header[kw] = WCSFIXES[kw][idx_fix]
 
-
     def add_comments(self):
-        """Populate the HISTORY and COMMENT keywords of the FITS file."""
-        # Add history
-        for line in str(self.fits_orig[self.ccd].header['HISTORY']).split('\n'):
-            self.hdu.header['HISTORY'] = line
-        self.hdu.header['HISTORY'] = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
-        self.hdu.header['HISTORY'] = 'Headers updated by Geert Barentsen as part of DR2.'
-        self.hdu.header['HISTORY'] = 'This included changes to PHOTZP, EXPTIME and the WCS.'
+        """Populate the HISTORY and COMMENT keywords of the FITS file.
+
+        At the time of writing, we use "hdu._header" rather than "hdu.header"
+        to by-pass Astropy issue #2363.
+        """
+        self.hdu._header['HISTORY'] = datetime.datetime.now().strftime('%Y-%m-%d')+':'
+        self.hdu._header['HISTORY'] = 'Headers updated by G. Barentsen to add the DR2 calibration information.'
+        self.hdu._header['HISTORY'] = 'This includes changes to PHOTZP, EXPTIME, and the WCS keywords.'
 
         # Set calibration comments
-        self.hdu.header['COMMENT'] = 'Photometric calibration info'
-        self.hdu.header['COMMENT'] = '============================'
-
         if self.calibrated:
-            self.hdu.header['COMMENT'] = 'The PHOTZP keyword in this header includes all the required'
-            self.hdu.header['COMMENT'] = 'corrections for atmospheric extinction, gain variations,'
-            self.hdu.header['COMMENT'] = 'exposure time, and the DR2 re-calibration shifts.'
-            self.hdu.header['COMMENT'] = 'Hence to obtain calibrated magnitudes in the Vega system, use:'
-            self.hdu.header['COMMENT'] = '    mag(Vega) = -2.5*log10(pixel value) + PHOTZP'
-            self.hdu.header['COMMENT'] = 'If the brightness of a star is measured using a small aperture, then'
-            self.hdu.header['COMMENT'] = 'you still need to add an aperture correction to this equation.'
-        else:  # Uncalibrated image
-            self.hdu.header['COMMENT'] = 'WARNING: this data is not part of DR2 and has not been re-calibrated.'
-            self.hdu.header['COMMENT'] = 'It was likely excluded from DR2 due to a serious quality problem.'
-            self.hdu.header['COMMENT'] = 'For example, PHOTZP might be inaccurate due to clouds.'
-            self.hdu.header['COMMENT'] = '***USE AT YOUR OWN RISK***'
+            self.hdu._header['COMMENT'] = 'Photometric calibration info'
+            self.hdu._header['COMMENT'] = '============================'
+            self.hdu._header['COMMENT'] = 'The pixel values (number counts) in this image can be converted into'
+            self.hdu._header['COMMENT'] = 'Vega-based magnitudes using the PHOTZP keyword as follows:'
+            self.hdu._header['COMMENT'] = '    mag(Vega) = -2.5*log10(pixel value) + PHOTZP.'
+            self.hdu._header['COMMENT'] = 'The PHOTZP value has been computed such that it absorbs the required'
+            self.hdu._header['COMMENT'] = 'corrections for atmospheric extinction, gain variations, exposure time,'
+            self.hdu._header['COMMENT'] = 'and the DR2 re-calibration shift.'
+            self.hdu._header['COMMENT'] = 'As these images still include moonlight and other sources of'
+            self.hdu._header['COMMENT'] = 'non-astronomical background, they can only support flux measurements'
+            self.hdu._header['COMMENT'] = 'that include a suitably-chosen local background subtraction.'
+        else:
+            self.hdu._header['COMMENT'] = 'WARNING'
+            self.hdu._header['COMMENT'] = '======='
+            self.hdu._header['COMMENT'] = 'This image is not part of IPHAS DR2 and has not been re-calibrated.'
+            self.hdu._header['COMMENT'] = 'It may have been excluded from DR2 due to a serious quality problem,'
+            self.hdu._header['COMMENT'] = 'for example, PHOTZP may be inaccurate due to clouds.'
+            self.hdu._header['COMMENT'] = '*USE AT YOUR OWN RISK*'
 
     @property
     def output_filename(self):
         """Filename of the output?"""
-        return 'r{0}-{1}.fits.gz'.format(self.run, self.ccd).encode('ascii')
+        return 'r{0}-{1}.fits.fz'.format(self.run, self.ccd).encode('ascii')
 
     def save(self):
         """Save the ccd image to a new file."""
@@ -287,7 +257,7 @@ class SurveyImage(object):
                                  'r'+str(self.run)[0:3])
         util.setup_dir(directory)
         target = os.path.join(directory, self.output_filename)
-        # checksum=True will add the CHECKSUM and DATASUM keywords
+        # checksum=True adds the CHECKSUM and DATASUM keywords
         self.hdu.writeto(target, clobber=True, checksum=True)
 
     def get_metadata(self):
@@ -312,6 +282,7 @@ class SurveyImage(object):
         meta = {'filename': self.output_filename,
                 'run': self.run,
                 'ccd': self.ccd,
+                'in_dr2': in_dr2,
                 'ra': ra,
                 'dec': dec,
                 'ra_min': ra1,
@@ -321,7 +292,6 @@ class SurveyImage(object):
                 'band': band,
                 'utstart': str(self.hdu.header['DATE-OBS']).encode('ascii'),
                 'exptime': self.hdu.header['EXPTIME'],
-                'in_dr2': in_dr2,
                 'seeing': METADATA[self.run]['CCD{0}_SEEING'.format(self.ccd)],
                 'elliptic': METADATA[self.run]['CCD{0}_ELLIPTIC'.format(self.ccd)],
                 'skylevel': METADATA[self.run]['CCD{0}_SKYLEVEL'.format(self.ccd)],
@@ -356,7 +326,7 @@ def prepare_one(run):
                 img = SurveyImage(run, ccd)
                 img.save()
                 result.append(img.get_metadata())
-                img.fits_orig.close()  # avoid memory leak
+                img.fits.close()  # avoid memory leak
             except Exception, e:
                 log.error(str(run)+': '+util.get_pid()+': '+str(e))
         return result
@@ -376,24 +346,24 @@ def prepare_images(clusterview):
         # [constants.IPHASQC_COND_RELEASE]
         runs = constants.IPHASQC['run_'+idx_band]
         # Prepare each run
-        result = clusterview.map(prepare_one, runs[-600:-590], block=True)
+        result = clusterview.map(prepare_one, runs, block=True)
         metadata.extend(result)
 
     # Write the metadata to a table
     mycolumns = (str('filename'), str('run'), str('ccd'),
+                 str('in_dr2'),
                  str('ra'), str('dec'),
                  str('ra_min'), str('ra_max'),
                  str('dec_min'), str('dec_max'),
                  str('band'),
                  str('utstart'), str('exptime'),
-                 str('in_dr2'),
                  str('seeing'), str('elliptic'),
                  str('skylevel'), str('skynoise'),
                  str('airmass'), str('photzp'),
                  str('confmap'))
     rows = list(itertools.chain.from_iterable(metadata))  # flatten list
     t = table.Table(rows, names=mycolumns)
-    table_filename = os.path.join(constants.PATH_IMAGES, 'iphas-exposures.fits')
+    table_filename = os.path.join(constants.PATH_IMAGES, 'iphas-images.fits')
     t.write(table_filename, format='fits', overwrite=True)
 
 
@@ -402,7 +372,7 @@ def prepare_images(clusterview):
 ################################
 
 if __name__ == '__main__':
-
+    """
     from IPython.parallel import client
     client = client.client.Client()
     with client[:].sync_imports():
@@ -413,6 +383,6 @@ if __name__ == '__main__':
         from astropy.io import fits
         import os
     prepare_images(client[:])
-
+    """
     #prepare_one(571408)
-    #prepare_one(649055)
+    #prepare_one(476845)
