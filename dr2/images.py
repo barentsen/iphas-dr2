@@ -11,6 +11,7 @@ from astropy.io import ascii
 from astropy import log
 from astropy import wcs
 from astropy import table
+from astropy import time
 import numpy as np
 import itertools
 import datetime
@@ -124,6 +125,23 @@ class SurveyImage(object):
             return confmap[1:]  # get rid of leading slash
 
     def set_header(self):
+        # In a few cases the date/time is missing from the headers;
+        # we recovered these from the observing logs:
+        if self.run == 755575:
+            self.fits[0].header['DATE-OBS'] = '2010-08-30'
+            self.fits[0].header['UTSTART'] = '03:52:00'
+        if self.run == 948917:
+            self.fits[0].header['DATE-OBS'] = '2012-11-20'
+            self.fits[0].header['UTSTART'] = '02:48:00'
+
+        # The MJD-OBS keyword is sometimes missing when the header-packet 
+        # from the Telescope Control System was not collected.
+        if self.run in [755574, 755575, 940983, 942046,
+                        942495, 943312, 948917]:
+            isostamp = (self.fits[0].header['DATE-OBS']
+                        + 'T' + self.fits[0].header['UTSTART'])
+            self.fits[0].header['MJD-OBS'] = time.Time(isostamp, scale='utc').mjd
+
         # Copy keywords from the original HDU[0]
         for kw in ['RUN', 'OBSERVAT', 'OBSERVER', 'OBJECT',
                    'LATITUDE', 'LONGITUD', 'HEIGHT', 'SLATEL', 'TELESCOP',
@@ -131,10 +149,13 @@ class SurveyImage(object):
                    'TEMPTUBE', 'INSTRUME', 'WFFPOS', 'WFFBAND', 'WFFID',
                    'SECPPIX', 'DETECTOR', 'CCDSPEED',
                    'CCDXBIN', 'CCDYBIN', 'CCDSUM', 'CCDTEMP', 'NWINDOWS']:
-            self.hdu.header.insert('NAXIS2', (kw,
-                                              self.fits[0].header[kw],
-                                              self.fits[0].header.comments[kw])
-                                   )
+            try:
+                self.hdu.header.insert('NAXIS2', (kw,
+                                                  self.fits[0].header[kw],
+                                                  self.fits[0].header.comments[kw])
+                                       )
+            except KeyError:
+                pass
 
         # Ensure a proper ISO stamp
         isostamp = (self.fits[0].header['DATE-OBS']
@@ -221,17 +242,37 @@ class SurveyImage(object):
         At the time of writing, we use "hdu._header" rather than "hdu.header"
         to by-pass Astropy issue #2363.
         """
-        self.hdu._header['HISTORY'] = datetime.datetime.now().strftime('%Y-%m-%d')+':'
-        self.hdu._header['HISTORY'] = 'Headers updated by G. Barentsen to add the DR2 calibration information.'
-        self.hdu._header['HISTORY'] = 'This includes changes to PHOTZP, EXPTIME, and the WCS keywords.'
+        self.hdu._header['HISTORY'] = ''
+        self.hdu._header['HISTORY'] = 'Updated ' + datetime.datetime.now().strftime('%Y-%m-%d')
+        self.hdu._header['HISTORY'] = '------------------'
+        self.hdu._header['HISTORY'] = 'This frame contains pipeline-reduced IPHAS data that was originally'
+        self.hdu._header['HISTORY'] = 'processed by the Cambridge Astronomical Survey Unit (CASU), but the'
+        self.hdu._header['HISTORY'] = 'headers have been updated by Geert Barentsen (Hertfordshire) in 2014'
+        self.hdu._header['HISTORY'] = 'to add a re-calibrated zeropoint and to tweak the WCS keywords.'
+
+        self.hdu._header['COMMENT'] = ' _____ _____  _    _           _____ '     
+        self.hdu._header['COMMENT'] = '|_   _|  __ \| |  | |   /\    / ____|'
+        self.hdu._header['COMMENT'] = '  | | | |__) | |__| |  /  \  | (___  '
+        self.hdu._header['COMMENT'] = '  | | |  ___/|  __  | / /\ \  \___ \ '
+        self.hdu._header['COMMENT'] = ' _| |_| |    | |  | |/ ____ \ ____) |'
+        self.hdu._header['COMMENT'] = '|_____|_|    |_|  |_/_/    \_\_____/ '
+        self.hdu._header['COMMENT'] = ''                                     
+        self.hdu._header['COMMENT'] = 'Data origin'
+        self.hdu._header['COMMENT'] = '-----------'
+        self.hdu._header['COMMENT'] = 'This image is part of the INT Photometric H-Alpha Survey'
+        self.hdu._header['COMMENT'] = 'of the Northern Galactic Plane (IPHAS). For more information,'
+        self.hdu._header['COMMENT'] = 'visit http://www.iphas.org.'
+        self.hdu._header['COMMENT'] = ''
 
         # Set calibration comments
         if self.calibrated:
             self.hdu._header['COMMENT'] = 'Photometric calibration info'
-            self.hdu._header['COMMENT'] = '============================'
+            self.hdu._header['COMMENT'] = '----------------------------'
             self.hdu._header['COMMENT'] = 'The pixel values (number counts) in this image can be converted into'
             self.hdu._header['COMMENT'] = 'Vega-based magnitudes using the PHOTZP keyword as follows:'
+            self.hdu._header['COMMENT'] = ''
             self.hdu._header['COMMENT'] = '    mag(Vega) = -2.5*log10(pixel value) + PHOTZP.'
+            self.hdu._header['COMMENT'] = ''
             self.hdu._header['COMMENT'] = 'The PHOTZP value has been computed such that it absorbs the required'
             self.hdu._header['COMMENT'] = 'corrections for atmospheric extinction, gain variations, exposure time,'
             self.hdu._header['COMMENT'] = 'and the DR2 re-calibration shift.'
@@ -239,12 +280,18 @@ class SurveyImage(object):
             self.hdu._header['COMMENT'] = 'non-astronomical background, they can only support flux measurements'
             self.hdu._header['COMMENT'] = 'that include a suitably-chosen local background subtraction.'
         else:
-            self.hdu._header['COMMENT'] = 'WARNING'
-            self.hdu._header['COMMENT'] = '======='
-            self.hdu._header['COMMENT'] = 'This image is not part of IPHAS DR2 and has not been re-calibrated.'
-            self.hdu._header['COMMENT'] = 'It may have been excluded from DR2 due to a serious quality problem,'
-            self.hdu._header['COMMENT'] = 'for example, PHOTZP may be inaccurate due to clouds.'
-            self.hdu._header['COMMENT'] = '*USE AT YOUR OWN RISK*'
+            self.hdu._header['COMMENT'] = '*** IMPORTANT WARNING ***'
+            self.hdu._header['COMMENT'] = '-------------------------'
+            self.hdu._header['COMMENT'] = 'This image is not part of IPHAS Data Release 2. It may have been'
+            self.hdu._header['COMMENT'] = 'excluded from DR2 due to a serious quality problem, e.g. clouds,'
+            self.hdu._header['COMMENT'] = 'and hence the photometric zeropoint should NOT be trusted.'
+            self.hdu._header['COMMENT'] = '*** USE AT YOUR OWN RISK ***'
+
+        self.hdu._header['COMMENT'] = ''
+        self.hdu._header['COMMENT'] = 'Usage conditions'
+        self.hdu._header['COMMENT'] = '----------------'
+        self.hdu._header['COMMENT'] = 'You are required to cite Drew et al. (2005) and Barentsen et al. (2014),'
+        self.hdu._header['COMMENT'] = 'and to include the acknowledgement text available from www.iphas.org.'
 
     @property
     def output_filename(self):
@@ -278,6 +325,12 @@ class SurveyImage(object):
         else:
             in_dr2 = "false".encode('ascii')
 
+        # The AIRMASS keyword might be missing if the TCS header packet was not received
+        try:
+            airmass = self.hdu.header['AIRMASS']
+        except KeyError:
+            airmass = ''
+
         band = str(self.hdu.header['WFFBAND']).lower()
         meta = {'filename': self.output_filename,
                 'run': self.run,
@@ -296,7 +349,7 @@ class SurveyImage(object):
                 'elliptic': METADATA[self.run]['CCD{0}_ELLIPTIC'.format(self.ccd)],
                 'skylevel': METADATA[self.run]['CCD{0}_SKYLEVEL'.format(self.ccd)],
                 'skynoise': METADATA[self.run]['CCD{0}_SKYNOISE'.format(self.ccd)],
-                'airmass': self.hdu.header['AIRMASS'],
+                'airmass': airmass,
                 'photzp': self.hdu.header['PHOTZP'],
                 'confmap': self.confmap,
                 }
@@ -328,7 +381,10 @@ def prepare_one(run):
                 result.append(img.get_metadata())
                 img.fits.close()  # avoid memory leak
             except Exception, e:
-                log.error(str(run)+': '+util.get_pid()+': '+str(e))
+                log.error(str(run) + ': '
+                          + util.get_pid() + ': '
+                          + e.__class__.__name__ + ': '
+                          + str(e))
         return result
 
 
@@ -384,5 +440,9 @@ if __name__ == '__main__':
         import os
     prepare_images(client[:])
     """
-    #prepare_one(571408)
-    #prepare_one(476845)
+    #prepare_one(943312)
+    prepare_one(948917)
+
+    #for r in [755574, 755575, 940983, 942046,
+    #                    942495, 943312, 948917]:
+    #    prepare_one(r)
