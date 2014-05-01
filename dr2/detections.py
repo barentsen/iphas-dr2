@@ -257,7 +257,7 @@ class DetectionCatalogue():
                                                 942495, 943312, 948917]:
                 isostamp = (self.fits[ccd].header['DATE-OBS']
                             + 'T' + self.fits[ccd].header['UTSTART'])
-                self.fits[ccd].header['MJD-OBS'] = Time(isostamp).mjd
+                self.fits[ccd].header['MJD-OBS'] = Time(isostamp, scale='utc').mjd
 
             # Some runs do not have date/time stored due to a glitch in the
             # Telescope Control System. We consider this a show-stopper.
