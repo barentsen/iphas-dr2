@@ -357,7 +357,7 @@ class SurveyImage(object):
                 'skynoise': METADATA[self.run]['CCD{0}_SKYNOISE'.format(self.ccd)],
                 'airmass': airmass,
                 'photzp': self.hdu.header['PHOTZP'],
-                'confmap': self.confmap,
+                'confmap': str(self.confmap).encode('ascii'),
                 }
         return meta
 
@@ -447,8 +447,3 @@ if __name__ == '__main__':
     prepare_images(client[:])
     """
     #prepare_one(943312)
-    prepare_one(948917)
-
-    #for r in [755574, 755575, 940983, 942046,
-    #                    942495, 943312, 948917]:
-    #    prepare_one(r)
