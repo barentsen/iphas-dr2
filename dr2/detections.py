@@ -85,6 +85,7 @@ Future improvements
 from astropy.io import fits
 from astropy.io import ascii
 from astropy.table import Table
+from astropy.time import Time
 from astropy import wcs
 from astropy import log
 import numpy as np
@@ -241,14 +242,22 @@ class DetectionCatalogue():
             if self.fits[ccd].columns[0].name == 'No.':
                 self.fits[ccd].columns[0].name = 'Number'
 
-            # Header-packet from the Telescope Control System not collected.
+            # In a few cases the date/time is missing from the headers;
+            # we recovered these from the observing logs:
+            if self.fits[ccd].header['RUN'] == 755575:
+                self.fits[ccd].header['DATE-OBS'] = '2010-08-30'
+                self.fits[ccd].header['UTSTART'] = '03:52:00'
             if self.fits[ccd].header['RUN'] == 948917:
-                self.fits[ccd].header['UTSTART'] = '02:48:00'
                 self.fits[ccd].header['DATE-OBS'] = '2012-11-20'
-                self.fits[ccd].header['MJD-OBS'] = 56251.11666666667
+                self.fits[ccd].header['UTSTART'] = '02:48:00'
 
-            if self.fits[ccd].header['RUN'] == 943312:
-                self.fits[ccd].header['MJD-OBS'] = 56212.966935185184
+            # The MJD-OBS keyword is sometimes missing when the header-packet 
+            # from the Telescope Control System was not collected.
+            if self.fits[ccd].header['RUN'] in [755574, 755575, 940983, 942046,
+                                                942495, 943312, 948917]:
+                isostamp = (self.fits[ccd].header['DATE-OBS']
+                            + 'T' + self.fits[ccd].header['UTSTART'])
+                self.fits[ccd].header['MJD-OBS'] = Time(isostamp).mjd
 
             # Some runs do not have date/time stored due to a glitch in the
             # Telescope Control System. We consider this a show-stopper.
@@ -1288,6 +1297,6 @@ if __name__ == '__main__':
     log.setLevel('INFO')
     #Some test-cases:
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
-    #index_one(constants.RAWDATADIR+'/iphas_oct2004/oct2004c/r431162_cat.fits')
     #sanitise_zeropoints()
     #save_metadata()
+    print get_metadata(constants.RAWDATADIR+'/uvex_oct2012/r942046_cat.fits')
