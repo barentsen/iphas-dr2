@@ -1211,16 +1211,15 @@ def save_metadata(clusterview,
     """
     # Get the metadata for all catalogues in parallel on the cluster
     catalogues = list_catalogues(data)
-    results = clusterview.map(get_metadata, catalogues)
+    results = clusterview.map(get_metadata, catalogues, block=True)
 
-    # Avoid passing empty rows (i.e. row is None) to the output table
-    rows = []
-    for row in results.get():
+    metadata = []
+    for row in results:
         if row is not None:
-            rows.append(row)
-    #import pdb; pdb.set_trace()
+            metadata.append(row)
+    t = Table(metadata, names=row.keys())
     # Finally, create and write the output table
-    t = Table(rows, names=row.keys())   
+    #t = Table(rows, names=row.keys())   
     t.write(target, format='fits', overwrite=True)
 
 
@@ -1298,5 +1297,4 @@ if __name__ == '__main__':
     #Some test-cases:
     #convert_one(constants.RAWDATADIR+'/iphas_aug2004a/r413424_cat.fits')
     #sanitise_zeropoints()
-    #save_metadata()
-    print get_metadata(constants.RAWDATADIR+'/uvex_oct2012/r942046_cat.fits')
+    #print get_metadata(constants.RAWDATADIR+'/uvex_oct2012/r942046_cat.fits')
