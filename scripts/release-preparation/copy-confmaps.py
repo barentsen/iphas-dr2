@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-"""Copies the confidence maps into the data release directory."""
+"""Copies the confidence maps into the data release directory.
+
+This will place all the confidence maps into images/confmaps/...
+"""
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-__author__ = "Geert Barentsen"
 
 import os
 import subprocess
@@ -17,6 +19,8 @@ if __name__ == '__main__':
                                            'iphas-images.fits'))
 
     for filename in np.unique(imagetable['confmap']):
+        if filename == '':
+            continue
         source = os.path.join(constants.RAWDATADIR, filename)
         target = os.path.join(destination, filename)
         if not os.path.exists(os.path.dirname(target)):
@@ -24,3 +28,6 @@ if __name__ == '__main__':
             os.makedirs(os.path.dirname(target))
         log.info('Copying {0} to {1}'.format(source, target))
         c = subprocess.call(['cp', '-a', source, target])
+        log.info('Compressing {0}'.format(target))
+        c2 = subprocess.call(['fpack', '-D', target])
+
