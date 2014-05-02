@@ -256,18 +256,12 @@ class SurveyImage(object):
         self.hdu._header['COMMENT'] = '  | | |  ___/|  __  | / /\ \  \___ \ '
         self.hdu._header['COMMENT'] = ' _| |_| |    | |  | |/ ____ \ ____) |'
         self.hdu._header['COMMENT'] = '|_____|_|    |_|  |_/_/    \_\_____/ '
-        self.hdu._header['COMMENT'] = ''                                     
-        self.hdu._header['COMMENT'] = 'Acknowledgement text'
-        self.hdu._header['COMMENT'] = '--------------------'
-        self.hdu._header['COMMENT'] = 'Based on data obtained as part of the INT Photometric H-Alpha Survey'
-        self.hdu._header['COMMENT'] = 'of the Northern Galactic Plane (IPHAS, www.iphas.org) carried out at'
-        self.hdu._header['COMMENT'] = 'the Isaac Newton Telescope (INT).'
-        self.hdu._header['COMMENT'] = 'The INT is operated on La Palma by the Isaac Newton Group in the Spanish'
-        self.hdu._header['COMMENT'] = 'Observatorio del Roque de los Muchachos at the Instituto de Astrofisica'
-        self.hdu._header['COMMENT'] = 'de Canarias. All IPHAS data are processed by the Cambridge Astronomical'
-        self.hdu._header['COMMENT'] = 'Survey Unit, at the Institute of Astronomy in Cambridge.'
-        self.hdu._header['COMMENT'] = 'IPHAS DR2 was assembled at the Centre for Astrophysics Research,'
-        self.hdu._header['COMMENT'] = 'University of Hertfordshire, supported by STFC grant ST/J001333/1.'
+        self.hdu._header['COMMENT'] = ''
+        self.hdu._header['COMMENT'] = 'Data origin'
+        self.hdu._header['COMMENT'] = '-----------'
+        self.hdu._header['COMMENT'] = 'This image is part of the INT Photometric H-Alpha Survey'
+        self.hdu._header['COMMENT'] = 'of the Northern Galactic Plane (IPHAS). For more information,'
+        self.hdu._header['COMMENT'] = 'visit http://www.iphas.org.'
         self.hdu._header['COMMENT'] = ''
 
         # Set calibration comments
@@ -291,13 +285,14 @@ class SurveyImage(object):
             self.hdu._header['COMMENT'] = 'This image is not part of IPHAS Data Release 2. It may have been'
             self.hdu._header['COMMENT'] = 'excluded from DR2 due to a serious quality problem, e.g. clouds,'
             self.hdu._header['COMMENT'] = 'and hence the photometric zeropoint should NOT be trusted.'
-            self.hdu._header['COMMENT'] = '*** USE AT YOUR OWN RISK ***'
+            self.hdu._header['COMMENT'] = 'In other words, *** USE THIS IMAGE AT YOUR OWN RISK ***.'
 
         self.hdu._header['COMMENT'] = ''
-        self.hdu._header['COMMENT'] = 'Usage conditions'
-        self.hdu._header['COMMENT'] = '----------------'
-        self.hdu._header['COMMENT'] = 'You are required to cite Drew et al. (2005) and Barentsen et al. (2014),'
-        self.hdu._header['COMMENT'] = 'and to include the acknowledgement text given above.'
+        self.hdu._header['COMMENT'] = 'Acknowledgement instructions'
+        self.hdu._header['COMMENT'] = '----------------------------'
+        self.hdu._header['COMMENT'] = 'If you use this data, please cite Drew et al. (2005) and'
+        self.hdu._header['COMMENT'] = 'Barentsen et al. (2014), and include the acknowledgement text'
+        self.hdu._header['COMMENT'] = 'that is available from www.iphas.org.'
 
     @property
     def output_filename(self):
@@ -446,4 +441,4 @@ if __name__ == '__main__':
         import os
     prepare_images(client[:])
     """
-    #prepare_one(943312)
+    prepare_one(943312)
