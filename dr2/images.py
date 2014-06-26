@@ -319,6 +319,10 @@ class SurveyImage(object):
                                        [2048, 1]],
                                       1)
         ra1, ra2 = np.min(corners[:, 0]), np.max(corners[:, 0])
+        # If CCD crosses 0h RA, then need to separate corners on either side
+        if ra2 - ra1 > 180:
+            ra1 = np.max(corners[:, 0][corners[:, 0] < 180])
+            ra2 = np.min(corners[:, 0][corners[:, 0] > 180])
         dec1, dec2 = np.min(corners[:, 1]), np.max(corners[:, 1])
 
         if self.calibrated:
