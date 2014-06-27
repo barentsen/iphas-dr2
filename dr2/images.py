@@ -4,6 +4,8 @@
 
 This script will edit all images in the data release to ensure they have
 the correct astrometric solution (WCS) and calibration information (PHOTZP).
+
+This script will fail for r376022.fit, which is unfortunately a corrupt file.
 """
 from __future__ import division, print_function, unicode_literals
 from astropy.io import fits
@@ -376,16 +378,16 @@ def prepare_one(run):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'images.log')):
         result = []
         for ccd in constants.EXTENSIONS:
-            try:
-                img = SurveyImage(run, ccd)
-                img.save()
-                result.append(img.get_metadata())
-                img.fits.close()  # avoid memory leak
-            except Exception, e:
-                log.error(str(run) + ': '
-                          + util.get_pid() + ': '
-                          + e.__class__.__name__ + ': '
-                          + str(e))
+            #try:
+            img = SurveyImage(run, ccd)
+            img.save()
+            result.append(img.get_metadata())
+            img.fits.close()  # avoid memory leak
+            #except Exception, e:
+            #    log.error(str(run) + ': '
+            #              + util.get_pid() + ': '
+            #              + e.__class__.__name__ + ': '
+            #              + str(e))
         return result
 
 
@@ -441,4 +443,4 @@ if __name__ == '__main__':
         import os
     prepare_images(client[:])
     """
-    prepare_one(943312)
+    prepare_one(367744)
