@@ -320,11 +320,11 @@ class SurveyImage(object):
                                        [2048, 4096],
                                        [2048, 1]],
                                       1)
-        ra1, ra2 = np.min(corners[:, 0]), np.max(corners[:, 0])
+        ra_min, ra_max = np.min(corners[:, 0]), np.max(corners[:, 0])
         # If CCD crosses 0h RA, then need to separate corners on either side
-        if ra2 - ra1 > 180:
-            ra1 = np.max(corners[:, 0][corners[:, 0] < 180])
-            ra2 = np.min(corners[:, 0][corners[:, 0] > 180])
+        if ra_max - ra_min > 180:
+            ra_min = np.min(corners[:, 0][corners[:, 0] > 180])
+            ra_max = np.max(corners[:, 0][corners[:, 0] < 180]) + 360.
         dec1, dec2 = np.min(corners[:, 1]), np.max(corners[:, 1])
 
         if self.calibrated:
@@ -345,8 +345,8 @@ class SurveyImage(object):
                 'in_dr2': in_dr2,
                 'ra': ra,
                 'dec': dec,
-                'ra_min': ra1,
-                'ra_max': ra2,
+                'ra_min': ra_min,
+                'ra_max': ra_max,
                 'dec_min': dec1,
                 'dec_max': dec2,
                 'band': band,
@@ -378,20 +378,15 @@ def get_caldb():
         return CALDB
 
 
-def prepare_one(run):
+def prepare_one(run, save=False):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'images.log')):
         result = []
         for ccd in constants.EXTENSIONS:
-            #try:
             img = SurveyImage(run, ccd)
-            img.save()
+            if save:
+                img.save()
             result.append(img.get_metadata())
             img.fits.close()  # avoid memory leak
-            #except Exception, e:
-            #    log.error(str(run) + ': '
-            #              + util.get_pid() + ': '
-            #              + e.__class__.__name__ + ': '
-            #              + str(e))
         return result
 
 
@@ -407,7 +402,7 @@ def prepare_images(clusterview):
         else:
             idx_band = band
         # [constants.IPHASQC_COND_RELEASE]
-        runs = constants.IPHASQC['run_'+idx_band]
+        runs = constants.IPHASQC['run_'+idx_band][0:10]
         # Prepare each run
         result = clusterview.map(prepare_one, runs, block=True)
         metadata.extend(result)
@@ -435,7 +430,7 @@ def prepare_images(clusterview):
 ################################
 
 if __name__ == '__main__':
-    """
+    
     from IPython.parallel import client
     client = client.client.Client()
     with client[:].sync_imports():
@@ -446,5 +441,5 @@ if __name__ == '__main__':
         from astropy.io import fits
         import os
     prepare_images(client[:])
-    """
-    prepare_one(367744)
+
+    #prepare_one(367744)
