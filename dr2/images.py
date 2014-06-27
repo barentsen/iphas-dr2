@@ -378,15 +378,18 @@ def get_caldb():
         return CALDB
 
 
-def prepare_one(run, save=False):
+def prepare_one(run, save=True):
     with log.log_to_file(os.path.join(constants.LOGDIR, 'images.log')):
         result = []
         for ccd in constants.EXTENSIONS:
-            img = SurveyImage(run, ccd)
-            if save:
-                img.save()
-            result.append(img.get_metadata())
-            img.fits.close()  # avoid memory leak
+            try:
+                img = SurveyImage(run, ccd)
+                if save:
+                    img.save()
+                result.append(img.get_metadata())
+                img.fits.close()  # avoid memory leak
+            except Exception, e:
+                log.error(e)
         return result
 
 
@@ -402,7 +405,7 @@ def prepare_images(clusterview):
         else:
             idx_band = band
         # [constants.IPHASQC_COND_RELEASE]
-        runs = constants.IPHASQC['run_'+idx_band][0:10]
+        runs = constants.IPHASQC['run_'+idx_band]
         # Prepare each run
         result = clusterview.map(prepare_one, runs, block=True)
         metadata.extend(result)
