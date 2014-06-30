@@ -9,13 +9,17 @@
         "name": "ra",
         "type": "double",
         "unit": "degrees",
-        "desc": "J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H&alpha;-band coordinate is given."
+        "desc": "J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H&alpha;-band coordinate is given.",
+        "form": ".5f",
+        "suff": "°"
     },
     {
         "name": "dec",
         "type": "double",
         "unit": "degrees",
-        "desc": "J2000 Declination. See comments above."
+        "desc": "J2000 Declination. See comments above.",
+        "form": ".5f",
+        "suff": "°"
     },
     {
         "name": "sourceID",
@@ -27,19 +31,25 @@
         "name": "posErr",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Astrometric fit error (RMS). Be aware that the error might be significantly larger than the RMS near CCD edges."
+        "desc": "Astrometric fit error (RMS). Be aware that the error might be significantly larger than the RMS near CCD edges.",
+        "form": ".2f",
+        "suff": "\""
     },
     {
         "name": "l",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic longitude $\\ell$ converted from ra/dec (IAU 1958 system)."
+        "desc": "Galactic longitude $\\ell$ converted from ra/dec (IAU 1958 system).",
+        "form": ".5f",
+        "suff": "°"
     },
     {
         "name": "b",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic latitude $b$ converted from ra/dec (IAU 1958 system)."
+        "desc": "Galactic latitude $b$ converted from ra/dec (IAU 1958 system).",
+        "form": ".5f",
+        "suff": "°"
     },
     {
         "name": "mergedClass",
@@ -51,109 +61,127 @@
         "name": "mergedClassStat",
         "type": "float",
         "unit": "",
-        "desc": "Merged N(0,1) stellarness-of-profile statistic. Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat\">UKIDSS scheme</a>."
+        "desc": "Merged N(0,1) stellarness-of-profile statistic. Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclassstat\">UKIDSS scheme</a>.",
+        "form": ".2f"
     },
     {
         "name": "pStar",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is a star (value between 0 and 1)."
+        "desc": "Probability that the source is a star (value between 0 and 1).",
+        "form": ".2f"
     },
     {
         "name": "pGalaxy",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is a galaxy (value between 0 and 1)."
+        "desc": "Probability that the source is a galaxy (value between 0 and 1).",
+        "form": ".2f"
     },
     {
         "name": "pNoise",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is noise (value between 0 and 1)."
+        "desc": "Probability that the source is noise (value between 0 and 1).",
+        "form": ".2f"
     },
     {
         "name": "pSaturated",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is saturated (value between 0 and 1)."
+        "desc": "Probability that the source is saturated (value between 0 and 1).",
+        "form": ".2f"
     },
     {
         "name": "rmi",
         "type": "float",
         "unit": "mag",
-        "desc": "($r$ - $i$) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#i\">i</a>. Included in the catalogue for convenience only. To obtain the uncertainty, take the root of the sum of the squares of columns <a href=\"#rErr\">rErr</a> and <a href=\"#iErr\">iErr</a>."
+        "desc": "($r$ - $i$) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#i\">i</a>. Included in the catalogue for convenience only. To obtain the uncertainty, take the root of the sum of the squares of columns <a href=\"#rErr\">rErr</a> and <a href=\"#iErr\">iErr</a>.",
+        "form": ".2f"
     },
     {
         "name": "rmha",
         "type": "float",
         "unit": "mag",
-        "desc": "($r$ - H&alpha;) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#ha\">ha</a>. See comments above."
+        "desc": "($r$ - H&alpha;) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#ha\">ha</a>. See comments above.",
+        "form": ".2f"
     },
     {
         "name": "r",
         "type": "float",
         "unit": "mag",
-        "desc": "Default r-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Default r-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "rErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for r. Does not include systematic errors."
+        "desc": "Uncertainty for r. Does not include systematic errors.",
+        "form": ".2f"
     },
     {
         "name": "rPeakMag",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative r-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+        "desc": "Alternative r-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "rPeakMagErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in rPeakMag. Does not include systematics."
+        "desc": "Uncertainty in rPeakMag. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "rAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative r-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative r-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "rAperMag1err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in rAperMag1. Does not include systematics."
+        "desc": "Uncertainty in rAperMag1. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "rAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative r-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative r-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "rAperMag3err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in rAperMag3. Does not include systematics."
+        "desc": "Uncertainty in rAperMag3. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "rGauSig",
         "type": "float",
         "unit": "pixels",
-        "desc": "RMS of axes of ellipse fit in r."
+        "desc": "RMS of axes of ellipse fit in r.",
+        "form": ".2f"
     },
     {
         "name": "rEll",
         "type": "float",
         "unit": "",
-        "desc": "Ellipticity in the r-band."
+        "desc": "Ellipticity in the r-band.",
+        "form": ".2f"
     },
     {
         "name": "rPA",
         "type": "float",
         "unit": "degrees",
-        "desc": "Position angle in the r-band."
+        "desc": "Position angle in the r-band.",
+        "form": ".2f"
     },
     {
         "name": "rClass",
@@ -165,7 +193,8 @@
         "name": "rClassStat",
         "type": "float",
         "unit": "",
-        "desc": "N(0,1) stellarness-of-profile statistic."
+        "desc": "N(0,1) stellarness-of-profile statistic.",
+        "form": ".2f"
     },
     {
         "name": "rErrBits",
@@ -183,7 +212,8 @@
         "name": "rSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame.",
+        "form": ".1f"
     },
     {
         "name": "rDetectionID",
@@ -195,79 +225,92 @@
         "name": "rX",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "rY",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source in the r-band exposure, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "i",
         "type": "float",
         "unit": "mag",
-        "desc": "Default i-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Default i-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "iErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for i. Does not include systematic errors."
+        "desc": "Uncertainty for i. Does not include systematic errors.",
+        "form": ".2f"
     },
     {
         "name": "iPeakMag",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative i-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+        "desc": "Alternative i-band magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "iPeakMagErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in iPeakMag. Does not include systematics."
+        "desc": "Uncertainty in iPeakMag. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "iAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative i-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative i-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "iAperMag1err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in iAperMag1. Does not include systematics."
+        "desc": "Uncertainty in iAperMag1. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "iAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative i-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative i-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "iAperMag3err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in iAperMag3. Does not include systematics."
+        "desc": "Uncertainty in iAperMag3. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "iGauSig",
         "type": "float",
         "unit": "pixels",
-        "desc": "RMS of axes of ellipse fit."
+        "desc": "RMS of axes of ellipse fit.",
+        "form": ".2f"
     },
     {
         "name": "iEll",
         "type": "float",
         "unit": "",
-        "desc": "Ellipticity."
+        "desc": "Ellipticity.",
+        "form": ".2f"
     },
     {
         "name": "iPA",
         "type": "float",
         "unit": "degrees",
-        "desc": "Position angle."
+        "desc": "Position angle.",
+        "form": ".2f"
     },
     {
         "name": "iClass",
@@ -279,7 +322,8 @@
         "name": "iClassStat",
         "type": "float",
         "unit": "",
-        "desc": "N(0,1) stellarness-of-profile statistic."
+        "desc": "N(0,1) stellarness-of-profile statistic.",
+        "form": ".2f"
     },
     {
         "name": "iErrBits",
@@ -297,7 +341,8 @@
         "name": "iSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame.",
+        "form": ".1f"
     },
     {
         "name": "iDetectionID",
@@ -309,91 +354,106 @@
         "name": "iX",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "iY",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "iXi",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the i-band detection relative to the <a href=\"#ra\">ra</a> column. The original i-band coordinates can be obtained by computing (ra+iXi/3600, dec+iEta/3600)."
+        "desc": "Position offset of the i-band detection relative to the <a href=\"#ra\">ra</a> column. The original i-band coordinates can be obtained by computing (ra+iXi/3600, dec+iEta/3600).",
+        "form": ".2f"
     },
     {
         "name": "iEta",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the i-band detection relative to the <a href=\"#dec\">dec</a> column. See comments above."
+        "desc": "Position offset of the i-band detection relative to the <a href=\"#dec\">dec</a> column. See comments above.",
+        "form": ".2f"
     },
     {
         "name": "ha",
         "type": "float",
         "unit": "mag",
-        "desc": "Default H-alpha magnitude using a 2.3 arcsec aperture. Calibrated in the Vega system."
+        "desc": "Default H-alpha magnitude using a 2.3 arcsec aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "haErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for ha. Does not include systematic errors."
+        "desc": "Uncertainty for ha. Does not include systematic errors.",
+        "form": ".2f"
     },
     {
         "name": "haPeakMag",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative H-alpha magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system."
+        "desc": "Alternative H-alpha magnitude derived from the peak pixel height (i.e. a 0.3x0.3 arcsec square aperture). Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "haPeakMagErr",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in haPeakMag. Does not include systematics."
+        "desc": "Uncertainty in haPeakMag. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "haAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative H-alpha magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative H-alpha magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "haAperMag1err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in haAperMag1. Does not include systematics."
+        "desc": "Uncertainty in haAperMag1. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "haAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative H-alpha magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system."
+        "desc": "Alternative H-alpha magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "form": ".2f"
     },
     {
         "name": "haAperMag3err",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty in haAperMag3. Does not include systematics."
+        "desc": "Uncertainty in haAperMag3. Does not include systematics.",
+        "form": ".2f"
     },
     {
         "name": "haGauSig",
         "type": "float",
         "unit": "pixels",
-        "desc": "RMS of axes of ellipse fit."
+        "desc": "RMS of axes of ellipse fit.",
+        "form": ".2f"
     },
     {
         "name": "haEll",
         "type": "float",
         "unit": "",
-        "desc": "Ellipticity"
+        "desc": "Ellipticity.",
+        "form": ".2f"
     },
     {
         "name": "haPA",
         "type": "float",
         "unit": "degrees",
-        "desc": "Position angle."
+        "desc": "Position angle.",
+        "form": ".2f"
     },
     {
         "name": "haClass",
@@ -405,7 +465,8 @@
         "name": "haClassStat",
         "type": "float",
         "unit": "",
-        "desc": "N(0,1) stellarness-of-profile statistic."
+        "desc": "N(0,1) stellarness-of-profile statistic.",
+        "form": ".2f"
     },
     {
         "name": "haErrBits",
@@ -423,7 +484,8 @@
         "name": "haSeeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame."
+        "desc": "Average Full Width at Half Maximum (FWHM) of stars in the same CCD frame.",
+        "form": ".1f"
     },
     {
         "name": "haDetectionID",
@@ -435,25 +497,29 @@
         "name": "haX",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "haY",
         "type": "float",
         "unit": "pixels",
-        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD."
+        "desc": "Pixel coordinate of the source, in the coordinate system of the CCD.",
+        "form": ".2f"
     },
     {
         "name": "haXi",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the H-alpha detection relative to the <a href=\"#ra\">ra</a> column. The original Ha-band coordinates can be obtained by computing (ra+haXi/3600, dec+haEta/3600)."
+        "desc": "Position offset of the H-alpha detection relative to the <a href=\"#ra\">ra</a> column. The original Ha-band coordinates can be obtained by computing (ra+haXi/3600, dec+haEta/3600).",
+        "form": ".2f"
     },
     {
         "name": "haEta",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Position offset of the H-alpha relative to the <a href=\"#dec\">ra</a> column. See comments above."
+        "desc": "Position offset of the H-alpha relative to the <a href=\"#dec\">ra</a> column. See comments above.",
+        "form": ".2f"
     },
     {
         "name": "brightNeighb",
@@ -519,7 +585,8 @@
         "name": "seeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Maximum value of (<a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, <a href=\"#haSeeing\">haSeeing</a>)."
+        "desc": "Maximum value of (<a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, <a href=\"#haSeeing\">haSeeing</a>).",
+        "form": ".1f"
     },
     {
         "name": "ccd",
@@ -549,37 +616,43 @@
         "name": "r2",
         "type": "float",
         "unit": "mag",
-        "desc": "r-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
+        "desc": "r-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available).",
+        "form": ".2f"
     },
     {
         "name": "rErr2",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for r2."
+        "desc": "Uncertainty for r2.",
+        "form": ".2f"
     },
     {
         "name": "i2",
         "type": "float",
         "unit": "mag",
-        "desc": "i-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
+        "desc": "i-band magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available).",
+        "form": ".2f"
     },
     {
         "name": "iErr2",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for i2."
+        "desc": "Uncertainty for i2.",
+        "form": ".2f"
     },
     {
         "name": "ha2",
         "type": "float",
         "unit": "mag",
-        "desc": "H-alpha magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available)."
+        "desc": "H-alpha magnitude in the dithered partner field, i.e. the dithered repeat measurement obtained within 10 minutes (if available).",
+        "form": ".2f"
     },
     {
         "name": "haErr2",
         "type": "float",
         "unit": "mag",
-        "desc": "Uncertainty for ha2."
+        "desc": "Uncertainty for ha2.",
+        "form": ".2f"
     },
     {
         "name": "errBits2",
