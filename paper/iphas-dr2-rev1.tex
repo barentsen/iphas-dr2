@@ -224,13 +224,13 @@ into a homogeneously-calibrated photometric catalogue,
 in which quality problems 
 and duplicate detections are flagged. 
 
-When the initial data release was created in late 2007,
+{\bf When the previous release -- the IDR -- was created in late 2007,
 just over half of the survey footprint was covered
 and the data were insufficiently complete 
 to support a homogeneously calibrated source catalogue.
-The goal of this paper is to present the next release 
-that takes the coverage up to 92 per cent of the survey area 
-and includes a global photometric re-calibration.
+The goal of this paper is to present the next release, 
+ which supersedes the IDR by providing a global re-calibration
+and taking the coverage up to 92 per cent of the survey area.}
 In this work we
 (i) explain the data reduction 
 and quality control procedures that were applied,
@@ -281,7 +281,7 @@ our future ambitions.
 \end{figure*}
 
 \begin{table}
-    \caption{Overview of the key survey properties.}
+    \caption{Key properties of IPHAS DR2.}
     \label{tbl:survey}
     \begin{center}
         \begin{tabular}{ll}
@@ -290,16 +290,19 @@ our future ambitions.
         \midrule
         Telescope & 2.5m Isaac Newton Telescope, La Palma \\
         Instrument & Wide Field Camera \\
-        FoV CCD & ... \\
-        Dates & ... \\
-        Detector scale & 0.33 arcsec/pixel \\
+        Detectors & Four 2048 $\times$ 4100 pixel CCD's \\
+        %Detector field of view & 11 $\times$ 23 arcmin \\
+        Detector scale & 0.33 arcsec/pixel \\        
         Filters & $r$, $i$, \ha \\
         Filter properties & See Table~2 \\
-        Exposure time & 30~s ($r$), 10~s ($i$), 120~s (\ha) \\
-        Magnitude limit (5$\sigma$, Vega) & 21.3 ($r$), 20.1 ($i$), 20.3 (\ha) \\
+        Exposure times & 30~s ($r$), 10~s ($i$), 120~s (\ha) \\
+		Saturation limit & TBC \\
+        Detection limit (5$\sigma$, Vega) & 21.3 ($r$), 20.1 ($i$), 20.3 (\ha) \\
         PSF FWHM (median) & 1.1\arcsec\ ($r$), 1.0\arcsec\ ($i$), 1.1\arcsec\ (\ha) \\
         Survey area & $\sim 1860$~deg$^2$ \\
-        Footprint limits & $ -5\degr < b < +5\degr,\ 29\degr < \ell < 215\degr$ \\
+        Footprint boundaries & $ -5\degr < b < +5\degr,\ 29\degr < \ell < 215\degr$ \\
+        DR2 observing period & August 2003 - November 2012 \\
+        Website & www.iphas.org \\
         \bottomrule
         \end{tabular}
 	\end{center}
@@ -308,7 +311,8 @@ our future ambitions.
 The detailed properties of the IPHAS observing programme 
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
-To set the stage for this release, we recap some key points.
+To set the stage for this release,
+we recap some key points {\bf below and in Table~1}.
 IPHAS is an imaging survey of the Galactic Plane north of the celestial equator, 
 from which photometry in Sloan $r$ and $i$ 
 is extracted along with narrowband \ha. 
@@ -389,7 +393,7 @@ are available.
 
 All raw IPHAS data were transferred
 to the Cambridge Astronomical Survey Unit (CASU) 
-for initial processing and archival.
+for initial processing and archiving.
 The procedures used by CASU were originally devised
 for the INT Wide Field imaging Survey \citep[WFS;][]{McMahon2001,Irwin2005},
 which was a 200 deg$^2$ survey programme carried out 
@@ -469,7 +473,13 @@ detection tables into a more reliable source catalogue which
 (i) is quality-controlled,
 (ii) is homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
-It is these post-processing steps which are explained next.
+{ \bf It is these post-processing steps which distinguish the present release
+from the IDR, which enforced less stringent quality limits,
+did not offer a global calibration,
+and provided a catalogue in which duplicate detections
+of unique sources were not flagged.
+These new processing steps are explained next.}
+%It is these post-processing steps which are explained next.
 
 
 \subsection{Quality control}
@@ -836,11 +846,12 @@ obtained after re-calibrating.
          in bins of 0.01-by-0.01~mag;
          bins containing 1 to 200 sources are coloured red,
          while bins containing more than 400 sources are bright yellow.
-         The diagrams include all stars
+         {\bf The diagrams include all stars
          brighter than $r<18$ which were
-         classified by the pipeline as being `very reliable'
-         (to be explained in
-         \S\ref{sec:qualitycriteria}).
+         classified by the pipeline as `bestQualityAllBand'
+         (indicating a high-significance point source detection with
+         accurate photometry in all bands,
+         to be explained in \S\ref{sec:qualitycriteria})}.
          The objects which are seen to fall above the locus of stars
          \emph{after} re-calibration 
          are likely to be genuine \ha\ emission-line objects.}
@@ -1173,9 +1184,11 @@ rather than by simply applying Eqn.~\ref{eqn:zpha}.
 Having re-calibrated all fields to the expected APASS accuracy of 3 per cent,
 we turned to a different survey, SDSS Data Release 9 \citep{Ahn2012},
 to validate the results.
-SDSS DR9 includes several strips at low
+{\bf SDSS DR9 includes photometry across several strips at low
 Galactic latitudes,
-providing data across 18 per cent of the fields in our data release.
+which were observed as part of 
+the Sloan Extension for Galactic Understanding and Exploration \citep[SEGUE;][]{segue}.}
+These strips provide data across 18 per cent of the fields in our data release.
 We cross-matched the IPHAS fields against the subset of
 objects marked as reliable stars in the SDSS catalogue\footnote{
 We used the CasJobs facility located at http://skyserver.sdss3.org/CasJobs
@@ -1653,7 +1666,7 @@ Table~\ref{tab:reliable} specifies
 a set of minimum quality criteria
 which should benefit most applications
 which desire reliable colours
-as well as completeness.
+as well as completeness {\bf down to $\sim$19th magnitude}.
 The listed criteria are designed to 
 (i) remove low-S/N sources, 
 (ii) remove saturated sources,
@@ -1667,9 +1680,9 @@ by poor background subtraction
 or failed source deblending.
 A total of 86 million sources out of 219 million 
 (39 per cent) satisfy all the criteria listed in Table~\ref{tab:reliable}
-and are hereafter referred to as `reliable'.
+and are hereafter referred to as {\bf `highQualityAllBand'}.
 For convenience, the catalogue contains a boolean column
-named \emph{reliable} that directly flags these objects.
+named {\bf \emph{highQualityAllBand}} that directly flags these objects.
 
 \begin{table*}
 \vspace{2cm}
@@ -1893,8 +1906,8 @@ while also removing the unreliable data at the bright and faint end.
 \label{fig:pairmag_reliable}
 \end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
-         for all sources in the catalogue (left panel)
-         and for the \emph{veryReliable} sources alone (right panel).
+         for all sources in the catalogue (panel a)
+         and for the \emph{veryReliable} sources alone (panel b).
          Black dots show the mean absolute residuals
          between the primary and the secondary detections.
          The error-bars show the standard deviations.
