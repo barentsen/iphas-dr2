@@ -288,7 +288,7 @@ our future ambitions.
         \toprule
         Property & Value \\
         \midrule
-        Telescope & 2.5m Isaac Newton Telescope, La Palma \\
+        Telescope & 2.5m Isaac Newton Telescope \\
         Instrument & Wide Field Camera \\
         Detectors & Four 2048 $\times$ 4100 pixel CCD's \\
         %Detector field of view & 11 $\times$ 23 arcmin \\
@@ -296,12 +296,13 @@ our future ambitions.
         Filters & $r$, $i$, \ha \\
         Filter properties & See Table~2 \\
         Exposure times & 30~s ($r$), 10~s ($i$), 120~s (\ha) \\
-		Saturation limit & TBC \\
-        Detection limit (5$\sigma$, Vega) & 21.3 ($r$), 20.1 ($i$), 20.3 (\ha) \\
+		Saturation limit & $\sim$13 ($r$), $\sim$12.5 ($i$), $\sim$12.5 (\ha) \\
+        Detection limit (5$\sigma$) & 21.3 ($r$), 20.1 ($i$), 20.3 (\ha) \\
+		Magnitude system & Vega \\
         PSF FWHM (median) & 1.1\arcsec\ ($r$), 1.0\arcsec\ ($i$), 1.1\arcsec\ (\ha) \\
         Survey area & $\sim 1860$~deg$^2$ \\
         Footprint boundaries & $ -5\degr < b < +5\degr,\ 29\degr < \ell < 215\degr$ \\
-        DR2 observing period & August 2003 - November 2012 \\
+        Observing period & August 2003 - November 2012 \\
         Website & www.iphas.org \\
         \bottomrule
         \end{tabular}
@@ -2373,6 +2374,127 @@ For example, amongst the 1810 high-quality sources considered in Fig.~\ref{fig:e
 and 371 objects (20\%) have a counterpart in the 
 Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
 both within a matching radius of 2 arcsec.}
+
+
+\subsection{$r - \ha$ excess as a quantitative measure of H$\alpha$ emission}
+
+{ \bf
+
+As well as discover emission line stars, IPHAS data can provide a
+first estimate of the equivalent width of line emission.
+How this is done has been discussed in previous works 
+-- most notably by \citet{Drew2005}
+and more recently by \cite{Barentsen2011a}.
+Given that the narrowband filter used has a FWHM of 95~\AA ,
+it is to be expected that the appearance
+in a spectrum of line emission corresponding to an equivalent width (EW)
+of 95~\AA\ would increase $r - \ha$ by 0.75 magnitudes
+(i.e. the flux captured within the narrow band doubles).
+Similarly, 10~\AA\ of line emission
+should increase $r - H\alpha$ by 0.11~mag.
+
+This simple reasoning breaks down
+when the $H\alpha$ emission becomes so bright
+that it also dominates the flux captured across the entire $r$ broadband.
+It was noted by \cite{Drew2005}
+that the very bright line limiting value 
+of $r - \ha$ is $\sim$3.1 in the Vega system.
+This fact, on its own, implies that any apparent detection
+of an \ha\ emission line star without a corresponding $r$ 
+detection is only real if the \ha\ magnitude is not brighter 
+by more than 3.1~mag relative to the $r$ detection limit
+(i.e. typically, credible H$\alpha$-only sources
+must be fainter than $\sim$18th mag).  
+
+In order to infer the emission EW from the DR2 $r - \ha$ colour
+it is necessary to know the value this colour would have
+in the case of no excess line emission.
+In the {\em general} case this is not possible
+without some prior knowledge of the star's reddening and spectral type
+(i.e. the inferences drawn for an unreddened M dwarf or
+a reddened F star would not be the same -- the absolute value of the 
+equivalent width in the latter case would be greater because the 
+reddened F star {\em without} emission would lie at lower $r -\ha$).
+This is the situation faced in the study of IC 1396 by
+\cite{Barentsen2011a} in which \ha\ EWs were inferred
+relative to a reddened sequence of K-M stars
+appropriate to this star-forming region.
+A different choice of reddening would have resulted
+in different EW estimates.
+
+However it was found by \cite{Drew2005}
+that for earlier type stars in which the spectrum
+is not heavily modulated by line features or molecular bands
+the estimation of net emission EW is more straightforward and unambiguous.  
+It was demonstrated, for spectral slopes ranging
+from the Rayleigh-Jeans limit to that appropriate to an early G star
+and for a range of reddenings,
+that it is possible to draw a unique set of constant equivalent-width 
+lines in the $(r - \ha, r - i)$ diagram
+that can be compared directly with the positions
+of candidate emission line stars,
+thereby predicting emission EW \citep[see fig.~6, ][]{Drew2005}.
+The EW in this case should be understood
+to be the measure of the emission observed
+above the interpolated continuum
+(i.e. no correction is present
+for any assumed infilled photospheric line absorption).
+
+In Fig.~\ref{fig:raddi} we show how well this works in reality:
+the predicted lines of constant emission EW
+in the $(r - \ha, r - i)$ plane
+are compared with the positions of a sample
+of over 200 classical Be stars in Perseus (from Raddi et al, 2014).
+Stars of this type come with the advantage that secular variation,
+whilst itcertainly occurs,
+is not as common as in T Tau stars.
+The objects plotted are a bright selection ($r \lesssim 16.5$)
+for which there are spectroscopic determinations
+of \ha\ emission equivalent width.
+A colour scale has been applied to the data points
+that darkens as EW increases.
+The gradation apparent in the shading of the datapoints
+follows the trend set by the constant EW lines quite well.  
+The experience has been that the EW deduced from
+IPHAS photometry for individual objects is commonly within 10~\AA\
+of subsequent spectroscopic measurement
+\citep[see also fig.~5 of][]{Barentsen2011a}.
+Evidently, the photometry is well-suited to statistical measurement
+across large samples, while for individual objects a useful
+approximation is delivered.
+
+\begin{figure}
+\begin{center}
+  \includegraphics[width=\linewidth]{figures/raddi.pdf}
+    \caption{Photometric predictions of \ha\ equivalent width (EW)
+    compared with spectroscopic measurements
+    of a sample of classical Be stars (from Raddi et al 2014, submitted).
+    The broken lines are predicted lines
+    of constant net emission EW,
+    while the analogous spectroscopic EW is represented
+    by the colouring of the data points.
+    The unreddened main sequence, which normally serves 
+    as the upper bound to the main stellar locus,
+    is drawn as a solid black line.
+    Strongly reddened stars with not-so-strong line emission
+    will fall below it
+    and be hard to pick out without additional information.
+    The two vertical lines drawn are 'curves of growth'
+    showing how $r - H\alpha$ increases 
+    -- and $r - i$ drops a little --
+    as more and more line emission is added,
+    raising the flux in \ha\ narrowband
+    and to a lesser proportion the flux in the $r$ band.
+    The blue line represents the trend
+    for an unreddened Rayleigh-Jeans continuum
+    (with superposed \ha\ emission),
+    while the green line is the trend
+    for the case of an unreddened A0 continuum.}
+    \label{fig:raddi}
+\end{center}
+\end{figure}
+
+}
 
 \section{Catalogue and image access}
 \label{sec:dataaccess}
