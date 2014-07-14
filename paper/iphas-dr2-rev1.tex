@@ -1834,6 +1834,81 @@ which we found to suit many science applications,
 but users are encouraged 
 to revise the quality criteria according to their needs.
 
+\subsection{Reliability}
+\label{sec:reliability}
+
+In producing a point source catalogue, spurious detections 
+will inevitably be made. A fraction of these will mimic stellar 
+sources closely enough that they cannot be excluded using the 
+recorded parameters. 
+
+%The majority of sources have been observed in IPHAS more than 
+%once (for objects with S/N $>$ 10 in the $r$-band, 62\% of 
+%objects have secondary detections), however there are regions 
+%observed only once - e.g. survey edges, intersections of inter-CCD 
+%gaps. As such, requiring that objects have a secondary observation 
+%to be considered reliable eliminates a significant fraction of
+%genuine objects..
+
+A statistic that can represent the confidence that objects in the 
+catalogue are genuine is the reliability of the survey. The 
+reliability gives the fraction of objects that can be repeatedly 
+observed; provided the comparison is made to an external source of 
+comparable depth this will provide the ratio of genuine astronomical 
+sources to sources in the catalogue.
+
+The IPHAS catalogue was compared to the SDSS DR7 point source 
+catalogue (table \emph{PhotoObjAll}), in regions of 1 deg$^2$ 
+chosen for contiguous coverage in both IPHAS and SDSS. This limited 
+the choice of comparison regions to the second and third Galactic 
+quadrants as the SDSS strips passing through the early plane are 
+incomplete. DR7 was chosen for this comparison due to a change in 
+the catalogue generation for DR8 which resulted in fewer stars being 
+detected near bright ($r\,<\,10$) sources, which in turn gave an unduly 
+pessimistic values for the reliability of IPHAS sources.
+
+Comparisons were made for a number of subsets of the IPHAS point 
+source catalogue: 
+\begin{enumerate}
+\item the entire (unfiltered) catalogue
+\item objects detected in all three bands with \emph{mergedClass} equals -1, -2 or +1
+\item $rErr\,<\,0.1$ and \emph{rClass} equals -1, -2 or +1
+\item $iErr\,<\,0.1$ and \emph{iClass} equals -1, -2 or +1
+\item \emph{reliable} sources
+\item \emph{veryReliable} sources
+\end{enumerate}
+\noindent with the results presented in Table~\ref{tbl:reliability}. 
+Requiring S/N $>$ 10 eliminates the majority of unreliable detections, 
+as does selecting objects observed in multiple bands. The $i$-band performs 
+marginally better than the $r$-band in terms of reliability, returning a 
+slightly higher ($< 0.5\%$) reliability percentage for detections with S/N 
+$>\,10$. Reliabilities $>99\%$ and $>99.5\%$ are achieved by using the 
+supplied \emph{reliable} and \emph{veryReliable} quality flags.
+
+The majority of unreliable sources in the IPHAS catalogue are 
+located in the vicinity of bright ($r\,\lesssim\,12$) stars, tracing 
+out the area surrounding the saturated source affected by scattered 
+light. These can be eliminated in most cases by requiring detections 
+in multiple bands.
+
+\begin{table}
+    \caption{Reliability values as computed by crossmatching the point 
+             source catalogues of IPHAS and SDSS DR7 for a number of 
+             subsets of IPHAS DR2 across 1 deg$^2$ regions.}
+    \label{tbl:reliability}
+    \begin{center}
+        \begin{tabular}{lcccccc}
+        \toprule
+        Region ($\ell$, $b$) & Raw & nBands == 3 & $rErr\,<\,0.1$ & $iErr\,<\,0.1$ & \emph{reliable} & \emph{veryReliable} \\
+        \midrule
+        (149.39, 4.06) & 92.95 & 98.83 & 98.53 & 98.54 & 99.67 & 99.82 \\
+        (186.59, -2.50) & 89.99 & 98.82 & 98.34 & 98.44 & 99.36 & 99.57 \\
+        (202.70, -1.75) & 89.42 & 98.46 & 97.8 & 98.11 & 99.4 & 99.65 \\
+        \bottomrule
+        \end{tabular}
+    \end{center}
+\end{table}
+
 \subsection{Random and systematic uncertainties}
 \label{sec:uncertainties}
 
