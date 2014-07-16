@@ -14,14 +14,7 @@ def augment(filename_origin, filename_target):
     for i in np.arange(1, 99, 1):  # Loop over all columns
         name = f[1].header['TTYPE{0}'.format(i)]
 
-        # Rename reliable/veryReliable into a10/a10point
-        if name == 'reliable':
-            f[1].header['TTYPE{0}'.format(i)] = 'a10'
-        if name == 'veryReliable':
-            f[1].header['TTYPE{0}'.format(i)] = 'a10point'
-
-        # Set an appropriate TDISP keyword for floating points
-        
+        # Set an appropriate TDISP keyword for floating points      
         if name in ['ra', 'dec', 'l', 'b']:
             f[1].header['TDISP{0}'.format(i)] = 'F9.5'
         if name in ['posErr', 'pStar', 'pGalaxy', 'pNoise', 'pSaturated',
@@ -90,7 +83,8 @@ def augment(filename_origin, filename_target):
 if __name__ == '__main__':
     DR2 = '/car-data/gb/iphas-dr2-rc6/concatenated'
 
-    for l in np.arange(25, 220, 5):
+    #for l in np.arange(25, 220, 5):
+    for l in [215]:
         for part in ['a', 'b']:
             origin = DR2+'/full-compressed/iphas-dr2-{0}{1}.fits.gz'.format(l, part)
             target = DR2+'/full-augmented/iphas-dr2-{0}{1}.fits.gz'.format(l, part)
