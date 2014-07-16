@@ -5,13 +5,14 @@ and add origin information.
 """
 import numpy as np
 from astropy.io import fits
+from astropy import log
 
 
 def augment(filename_origin, filename_target):
-
+    log.info('Opening {0}'.format(filename_origin))
     f = fits.open(filename_origin)
 
-    for i in np.arange(1, 99, 1):  # Loop over all columns
+    for i in np.arange(1, f[1].header['TFIELDS']+1, 1):  # Loop over all columns
         name = f[1].header['TTYPE{0}'.format(i)]
 
         # Set an appropriate TDISP keyword for floating points      
@@ -76,21 +77,22 @@ def augment(filename_origin, filename_target):
     f[1].header['COMMENT'] = 'This catalogue is part of IPHAS DR2.'
     f[1].header['COMMENT'] = 'For more information, visit http://www.iphas.org.'
 
-    f.writeto(filename_target, checksum=True, output_verify='exception',
+    log.info('Writing {0}'.format(filename_target))
+    f.writeto(filename_target, checksum=True,
               clobber=True)
 
 
 if __name__ == '__main__':
     DR2 = '/car-data/gb/iphas-dr2-rc6/concatenated'
 
-    #for l in np.arange(25, 220, 5):
-    for l in [215]:
+    ##for l in [215]:
+    for l in np.arange(25, 220, 5):
         for part in ['a', 'b']:
             origin = DR2+'/full-compressed/iphas-dr2-{0}{1}.fits.gz'.format(l, part)
             target = DR2+'/full-augmented/iphas-dr2-{0}{1}.fits.gz'.format(l, part)
             augment(origin, target)
 
-            #origin = DR2+'/light-compressed/iphas-dr2-{0}{1}-light.fits.gz'.format(l, part)
-            #target = DR2+'/light-augmented/iphas-dr2-{0}{1}-light.fits.gz'.format(l, part)
-            #augment(origin, target)
+            origin = DR2+'/light-compressed/iphas-dr2-{0}{1}-light.fits.gz'.format(l, part)
+            target = DR2+'/light-augmented/iphas-dr2-{0}{1}-light.fits.gz'.format(l, part)
+            augment(origin, target)
 
