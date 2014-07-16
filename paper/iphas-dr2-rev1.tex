@@ -813,7 +813,7 @@ which are located towards the Galactic anti-centre
 The main locus of stars is poorly defined
 in the diagram due to the presence of
 incorrectly calibrated fields.
-The calibration errors can exceed 0.1~mag
+The nightly calibration errors can exceed 0.1~mag
 and need to be corrected for 
 during a global re-calibration procedure.
 For comparison, Fig.~\ref{fig:ccd_after}
@@ -1658,7 +1658,8 @@ quality criteria to be enforced for the purpose
 of removing lower-quality objects.
 
 The choice of quality criteria will always tension 
-completeness against accuracy.
+completeness {\bf against reliability,
+i.e. the fraction of spurious sources}.
 To aid users we have listed two sets of
 recommended quality criteria 
 in Tables~\ref{tab:reliable} and \ref{tab:veryreliable}.
@@ -2374,6 +2375,13 @@ For example, amongst the 1810 high-quality sources considered in Fig.~\ref{fig:e
 and 371 objects (20\%) have a counterpart in the 
 Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
 both within a matching radius of 2 arcsec.}
+
+%TODO: This is an example of a high-extinction sightline where
+% optical observations will naturally be extinction-limited.
+% IPHAS will naturally count far fewer sources than (N)IR surveys.
+% In the outer-plane the situation is, in fact, reversed,
+% except where there is UKIDSS GPS coverage (i.e. dec > 60).
+% For example, in the anti-centre region where the dust optical depths are low, IPHAS contains more...
 
 
 \subsection{$r - \ha$ excess as a quantitative measure of H$\alpha$ emission}
