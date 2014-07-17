@@ -4,7 +4,7 @@
 # Author: Geert Barentsen
 
 # Configuration
-DATAPATH="/home/gb/tmp/iphas-dr2-rc6/concatenated/full"  # Path to catalogue FITS tables
+DATAPATH="/home/gb/tmp/iphas-dr2-rc6/concatenated/full-augmented"  # Path to catalogue FITS tables
 TABLENAME="iphas2"
 DBNAME="gb"
 DBPORT=5433
@@ -29,7 +29,6 @@ mergedClassStat real, \
 pStar real, \
 pGalaxy real, \
 pNoise real, \
-pSaturated real, \
 rmi real, \
 rmha real, \
 r real, \
@@ -45,7 +44,8 @@ rEll real, \
 rPA real, \
 rClass smallint, \
 rClassStat real, \
-rErrBits smallint, \
+rDeblend boolean, \
+rSaturated boolean, \
 rMJD double precision, \
 rSeeing real, \
 rDetectionID text, \
@@ -64,7 +64,8 @@ iEll real, \
 iPA real, \
 iClass smallint, \
 iClassStat real, \
-iErrBits smallint, \
+iDeblend boolean, \
+iSaturated boolean, \
 iMJD double precision, \
 iSeeing real, \
 iDetectionID text, \
@@ -85,7 +86,8 @@ haEll real, \
 haPA real, \
 haClass smallint, \
 haClassStat real, \
-haErrBits smallint, \
+haDeblend boolean, \
+haSaturated boolean, \
 haMJD double precision, \
 haSeeing real, \
 haDetectionID text, \
@@ -96,10 +98,9 @@ haEta real, \
 brightNeighb boolean, \
 deblend boolean, \
 saturated boolean, \
-errBits smallint, \
 nBands smallint, \
-reliable boolean, \
-veryReliable boolean, \
+a10 boolean, \
+a10point boolean, \
 fieldID text, \
 fieldGrade text, \
 night integer, \
@@ -134,8 +135,8 @@ echo "Creating iphas2_l_idx"
 $PSQL -c "CREATE INDEX iphas2_l_idx ON iphas2(l);"
 echo "Creating iphas2_b_idx"
 $PSQL -c "CREATE INDEX iphas2_b_idx ON iphas2(b);"
-echo "Creating iphas2_reliable_idx"
-$PSQL -c "CREATE INDEX iphas2_reliable_idx ON iphas2(reliable);"
+echo "Creating iphas2_a10_idx"
+$PSQL -c "CREATE INDEX iphas2_a10_idx ON iphas2(a10);"
 
 # Analyze
 echo "Analyzing"
