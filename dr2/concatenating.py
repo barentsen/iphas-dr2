@@ -202,6 +202,7 @@ class Concatenator(object):
                              colmeta -desc "N(0,1) stellarness-of-profile statistic." mergedClassStat;
                              colmeta -desc "1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy." rClass;
                              colmeta -desc "1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy." iClass;
+                             colmeta -desc "1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy." haClass;
                              colmeta -desc "Unique r-band detection identifier (run-ccd-detectionnumber)." rDetectionID;
                              colmeta -desc "Unique i-band detection identifier (run-ccd-detectionnumber)." iDetectionID;
                              colmeta -desc "Unique H-alpha detection identifier (run-ccd-detectionnumber)." haDetectionID;
