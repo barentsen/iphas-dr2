@@ -3,13 +3,13 @@
         "name": "name",
         "type": "string",
         "unit": "",
-        "desc": "Sexagesimal, equatorial position-based source name in the form: JHHMMSS.ss+DDMMSS.s. The full naming convention for IPHAS DR2 sources has the form \"IPHAS2 JHHMMSS.ss+DDMMSS.s\", where \"J\" indicates the position is J2000. The \"IPHAS2\" prefix is not included in the column."
+        "desc": "Position-based source name in the sexagesimal form: \"JHHMMSS.ss+DDMMSS.s\". You need to add the prefix \"IPHAS2\" followed by a whitespace to obtain the official name \"IPHAS2 JHHMMSS.ss+DDMMSS.s\" (where \"J\" indicates that the position is J2000 equatorial and \"IPHAS2\" indicates DR2)."
     },
     {
         "name": "ra",
         "type": "double",
         "unit": "degrees",
-        "desc": "J2000 Right Ascension with respect to the 2MASS PSC reference frame (which is consistent with ICRS to within 0.1 arcsec). The coordinate given is obtained from the astrometric measurement in the r'-band exposure. If the source is undetected in r', then the i' or H&alpha;-band coordinate is given.",
+        "desc": "J2000 Right Ascension with respect to the 2MASS PSC reference frame, which is consistent with ICRS to within 0.1 arcsec. The coordinate given is obtained from the astrometric measurement in the r-band exposure. If the source is undetected in r, then the i or H&alpha;-band coordinate is given.",
         "form": ".5f",
         "suff": "°"
     },
@@ -25,13 +25,13 @@
         "name": "sourceID",
         "type": "string",
         "unit": "",
-        "desc": "Unique identification number of the detection. Identical to <a href=\"#rDetectionID\">rDetectionID</a> if the source was detected in the r-band; identical to <a href=\"#iDetectionID\">iDetectionID</a> or <a href=\"#haDetectionID\">haDetectionID</a> otherwise."
+        "desc": "Unique identification number of the detection. Identical to <a href=\"#rDetectionID\">rDetectionID</a> if the source was detected in the r-band. Identical to <a href=\"#iDetectionID\">iDetectionID</a> or <a href=\"#haDetectionID\">haDetectionID</a> otherwise."
     },
     {
         "name": "posErr",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Astrometric fit error (RMS). Be aware that the error might be significantly larger than the RMS near CCD edges.",
+        "desc": "Astrometric root mean square (RMS) residual measured against 2MASS across the CCD in which the source is detected. Be aware that the astrometric error for a source near the corner of a CCD may be significantly larger than the RMS statistic.",
         "form": ".2f",
         "suff": "\""
     },
@@ -55,7 +55,7 @@
         "name": "mergedClass",
         "type": "short",
         "unit": "",
-        "desc": "Image classification flag based on all bands (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated). Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass\">UKIDSS scheme</a>."
+        "desc": "Image classification flag based on all bands: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated. Computed using the <a href=\"http://surveys.roe.ac.uk/wsa/www/gloss_m.html#gpssource_mergedclass\">UKIDSS scheme</a>."
     },
     {
         "name": "mergedClassStat",
@@ -68,49 +68,42 @@
         "name": "pStar",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is a star (value between 0 and 1).",
+        "desc": "Probability that the source is a point source (value between 0 and 1).",
         "form": ".2f"
     },
     {
         "name": "pGalaxy",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is a galaxy (value between 0 and 1).",
+        "desc": "Probability that the source is an extended object, such as a galaxy, or a close blend of two point sources (value between 0 and 1).",
         "form": ".2f"
     },
     {
         "name": "pNoise",
         "type": "float",
         "unit": "",
-        "desc": "Probability that the source is noise (value between 0 and 1).",
-        "form": ".2f"
-    },
-    {
-        "name": "pSaturated",
-        "type": "float",
-        "unit": "",
-        "desc": "Probability that the source is saturated (value between 0 and 1).",
+        "desc": "Probability that the source is noise, e.g. a cosmic ray (value between 0 and 1).",
         "form": ".2f"
     },
     {
         "name": "rmi",
         "type": "float",
         "unit": "mag",
-        "desc": "($r$ - $i$) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#i\">i</a>. Included in the catalogue for convenience only. To obtain the uncertainty, take the root of the sum of the squares of columns <a href=\"#rErr\">rErr</a> and <a href=\"#iErr\">iErr</a>.",
+        "desc": "(r - i) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#i\">i</a>.  To obtain the uncertainty, take the root of the sum of the squares of columns <a href=\"#rErr\">rErr</a> and <a href=\"#iErr\">iErr</a>.",
         "form": ".2f"
     },
     {
         "name": "rmha",
         "type": "float",
         "unit": "mag",
-        "desc": "($r$ - H&alpha;) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#ha\">ha</a>. See comments above.",
+        "desc": "(r - Halpha) colour, formed by subtracting columns <a href=\"#r\">r</a> and <a href=\"#ha\">ha</a>. See comments above.",
         "form": ".2f"
     },
     {
         "name": "r",
         "type": "float",
         "unit": "mag",
-        "desc": "Default r-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Default r-band magnitude using the 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -138,7 +131,7 @@
         "name": "rAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative r-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative r-band magnitude using the 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -152,7 +145,7 @@
         "name": "rAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative r-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative r-band magnitude using the 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -187,7 +180,7 @@
         "name": "rClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
     },
     {
         "name": "rClassStat",
@@ -197,10 +190,16 @@
         "form": ".2f"
     },
     {
-        "name": "rErrBits",
-        "type": "short",
+        "name": "rDeblend",
+        "type": "boolean",
         "unit": "",
-        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+        "desc": "True if the source is blended with a nearby neighbour in the r-band. Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (colours should not be trusted in particular)."
+    },
+    {
+        "name": "rSaturated",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if the source is too bright to make an accurate measurement in the r-band (e.g. peak pixel &gt; 55000 counts). The photometry is likely affected by systematic errors."
     },
     {
         "name": "rMJD",
@@ -239,7 +238,7 @@
         "name": "i",
         "type": "float",
         "unit": "mag",
-        "desc": "Default i-band magnitude using a 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Default i-band magnitude using the 2.3 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -267,7 +266,7 @@
         "name": "iAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative i-band magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative i-band magnitude using the 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -281,7 +280,7 @@
         "name": "iAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative i-band magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative i-band magnitude using the 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -316,7 +315,7 @@
         "name": "iClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
     },
     {
         "name": "iClassStat",
@@ -326,10 +325,16 @@
         "form": ".2f"
     },
     {
-        "name": "iErrBits",
-        "type": "short",
+        "name": "iDeblend",
+        "type": "boolean",
         "unit": "",
-        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+        "desc": "True if the source is blended with a nearby neighbour in the i-band. See comments for <a href=\"#rDeblend\">rDeblend</a> above."
+    },
+    {
+        "name": "iSaturated",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if the source is too bright to make an accurate measurement in the i-band. See comments for <a href=\"#rSaturated\">rSaturated</a> above."
     },
     {
         "name": "iMJD",
@@ -382,7 +387,7 @@
         "name": "ha",
         "type": "float",
         "unit": "mag",
-        "desc": "Default H-alpha magnitude using a 2.3 arcsec aperture. Calibrated in the Vega system.",
+        "desc": "Default H-alpha magnitude using the 2.3 arcsec aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -410,7 +415,7 @@
         "name": "haAperMag1",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative H-alpha magnitude using a 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative H-alpha magnitude using the 1.2 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -424,7 +429,7 @@
         "name": "haAperMag3",
         "type": "float",
         "unit": "mag",
-        "desc": "Alternative H-alpha magnitude using a 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
+        "desc": "Alternative H-alpha magnitude using the 3.3 arcsec diameter aperture. Calibrated in the Vega system.",
         "form": ".2f"
     },
     {
@@ -459,7 +464,7 @@
         "name": "haClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag (1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated)."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
     },
     {
         "name": "haClassStat",
@@ -469,10 +474,16 @@
         "form": ".2f"
     },
     {
-        "name": "haErrBits",
-        "type": "short",
+        "name": "haDeblend",
+        "type": "boolean",
         "unit": "",
-        "desc": "Bitmask used to flag a bright neighbour (1), source blending (2) and saturation (8)."
+        "desc": "True if the source is blended with a nearby neighbour in H-alpha. See comments for <a href=\"#rDeblend\">rDeblend</a> above."
+    },
+    {
+        "name": "haSaturated",
+        "type": "boolean",
+        "unit": "",
+        "desc": "True if the source is too bright to make an accurate measurement in H-alpha. See comments for <a href=\"#rSaturated\">rSaturated</a> above."
     },
     {
         "name": "haMJD",
@@ -525,25 +536,19 @@
         "name": "brightNeighb",
         "type": "boolean",
         "unit": "",
-        "desc": "True if a very bright star is nearby (i.e. <a href=\"#errBits\">errBits</a> &ge; 1). This indicates that the source might be spurious, or the photometry unreliable."
+        "desc": "True if a very bright star is nearby (defined as brighter than V&lt;4 within 10 arcmin, or brighter than V&lt;7 within 5 arcmin).  Such very bright stars cause scattered light and diffraction spikes, which may add systematic errors to the photometry or even trigger spurious detections."
     },
     {
         "name": "deblend",
         "type": "boolean",
         "unit": "",
-        "desc": "True if the source was blended with a nearby neighbour due to crowding (i.e. <a href=\"#errBits\">errBits</a> &ge; 2). Although a deblending procedure is applied when measuring the photometry, the result may be unreliable (e.g. colours should not be trusted)."
+        "desc": "True if the source is blended with a nearby neighbour in one or more bands. Although a deblending procedure is applied when measuring the photometry, the result may be inaccurate and the colours should not be trusted."
     },
     {
         "name": "saturated",
         "type": "boolean",
         "unit": "",
-        "desc": "True if the source is saturated (i.e. peak pixel &gt; 55000 counts) in one or more bands (i.e. <a href=\"#errBits\">errBits</a> &ge; 8). The photometry of saturated stars is affected by systematic errors."
-    },
-    {
-        "name": "errBits",
-        "type": "short",
-        "unit": "",
-        "desc": "Maximum value of (<a href=\"#rErrBits\">rErrBits</a>, <a href=\"#iErrBits\">iErrBits</a>, <a href=\"#haErrBits\">haErrBits</a>)."
+        "desc": "True if the source is saturated in one or more bands. The photometry of saturated stars is affected by systematic errors."
     },
     {
         "name": "nBands",
@@ -552,22 +557,22 @@
         "desc": "Number of bands in which the source is detected (equals 1, 2 or 3)."
     },
     {
-        "name": "reliable",
+        "name": "a10",
         "type": "boolean",
         "unit": "",
-        "desc": "True if: <a href=\"#errBits\">errBits</a>&thinsp;&le;&thinsp;2 &amp; <a href=\"#nBands\">nBands</a>&thinsp;==&thinsp;3 &amp; r&thinsp;&gt;&thinsp;13 &amp; i&thinsp;&gt;&thinsp;12 &amp; ha&thinsp;&gt;&thinsp;12.5 &amp; <a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.1 &amp; (abs(r-rAperMag1)&thinsp;&lt;&thinsp;3*hypot(rErr,rAperMag1Err)+0.03) &amp; (abs(i-iAperMag1)&thinsp;&lt;&thinsp;3*hypot(iErr,iAperMag1Err)+0.03) &amp; (abs(ha-haAperMag1)&thinsp;&lt;&thinsp;3*hypot(haErr,haAperMag1Err)+0.03)."
+        "desc": "True if the source is detected at S/N&thinsp;&gt;&thinsp;10 in all bands without being saturated, and has photometric measurements which are consistent across different aperture diameters. Algebraic condition: (<a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.1 &amp; NOT <a href=\"#saturated\">saturated</a> &amp; (abs(r-rAperMag1)&thinsp;&lt;&thinsp;3*hypot(rErr,rAperMag1Err)+0.03) &amp; (abs(i-iAperMag1)&thinsp;&lt;&thinsp;3*hypot(iErr,iAperMag1Err)+0.03) &amp; (abs(ha-haAperMag1)&thinsp;&lt;&thinsp;3*hypot(haErr,haAperMag1Err)+0.03)."
     },
     {
-        "name": "veryReliable",
+        "name": "a10point",
         "type": "boolean",
         "unit": "",
-        "desc": "True if: <a href=\"#reliable\">reliable</a> &amp; <a href=\"#pStar\">pStar</a>&thinsp;&gt;&thinsp;0.9 &amp; <a href=\"#errBits\">errBits</a>&thinsp;=&thinsp;0."
+        "desc": "True if both the <a href=\"#a10\">a10</a> quality criteria above are satisfied, and if the object looks like a single, unconfused point source. Algebraic condition: <a href=\"#a10\">a10</a> &amp; <a href=\"#pStar\">pStar</a>&thinsp;&gt;&thinsp;0.9 &amp; NOT <a href=\"#deblend\">deblend</a> &amp; NOT <a href=\"#brightNeighb\">brightNeighb</a>."
     },
     {
         "name": "fieldID",
         "type": "string",
         "unit": "",
-        "desc": "Human-readable IPHAS field number and observing run (e.g. 0001o_aug2003)."
+        "desc": "Survey field identifier (e.g. 0001_aug2003)."
     },
     {
         "name": "fieldGrade",
@@ -585,7 +590,7 @@
         "name": "seeing",
         "type": "float",
         "unit": "arcsec",
-        "desc": "Maximum value of (<a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, <a href=\"#haSeeing\">haSeeing</a>).",
+        "desc": "Maximum value of <a href=\"#rSeeing\">rSeeing</a>, <a href=\"#iSeeing\">iSeeing</a>, or <a href=\"#haSeeing\">haSeeing</a>.",
         "form": ".1f"
     },
     {
@@ -598,13 +603,13 @@
         "name": "nObs",
         "type": "short",
         "unit": "",
-        "desc": "Number of repeat observations of this source in the survey."
+        "desc": "Number of repeat observations of this source in the survey. A value larger than 1 indicates that the source is unlikely to be spurious."
     },
     {
         "name": "sourceID2",
         "type": "string",
         "unit": "",
-        "desc": "SourceID of the object in the partner exposure (if obtained within 10 minutes of the primary detection)."
+        "desc": "SourceID of the alternative detection of the object in the partner exposure."
     },
     {
         "name": "fieldID2",
@@ -658,6 +663,6 @@
         "name": "errBits2",
         "type": "integer",
         "unit": "",
-        "desc": "Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768)."
+        "desc": "Error bitmask for the partner detection. Used to flag a bright neighbour (1), source blending (2), saturation (8), vignetting (64), truncation (128) and bad pixels (32768).  Be careful if errBits2&thinsp;&gt;&thinsp;0."
     }
 ]
