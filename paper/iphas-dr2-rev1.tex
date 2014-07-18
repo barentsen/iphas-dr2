@@ -77,7 +77,7 @@ A. A. Zijlstra$^{17}$.
 $^{1}$School of Physics, Astronomy \& Mathematics, University of Hertfordshire, College Lane, Hatfield, Hertfordshire, AL10 9AB, U.K.\\
 $^{2}$Institute of Astronomy, University of Cambridge, Madingley Road, Cambridge, CB3 OHA, U.K.\\
 $^{3}$IGAM, Institute of Physics, University of Graz, Universit\"atsplatz 5, 8010 Graz, Austria.\\
-$^{4}$South African Astronomical Observatory, P.O. Box 9, Observatory, 7935 Cape Town, South Africa.\\
+$^{4}$South African Astronomical Observatory \& SALT Foundation, P.O. Box 9, Observatory, 7935 Cape Town, South Africa.\\
 $^{5}$Afdeling Sterrenkunde, Radboud Universiteit Nijmegen, Faculteit NWI, Postbus 9010, 6500 GL Nijmegen, The Netherlands.\\
 $^{6}$Instituto de Astrof\'\i sica de Canarias, V\'\i a L\'actea, s/n, La Laguna, E-38205, Santa Cruz de Tenerife, Spain.\\
 $^{7}$Departamento de Astrof\'\i sica, Universidad de La Laguna, La Laguna, E-38204, Santa Cruz de Tenerife, Spain.\\
@@ -145,7 +145,7 @@ and detail the construction of the new catalogue.
 We show that the new calibration is accurate to
 0.03~mag (rms) 
 and recommend a series of quality criteria
-to select the most reliable data
+to select accurate data
 from the catalogue.
 Finally, we demonstrate the ability of the 
 catalogue's unique
@@ -229,8 +229,8 @@ just over half of the survey footprint was covered
 and the data were insufficiently complete 
 to support a homogeneously calibrated source catalogue.
 The goal of this paper is to present the next release, 
- which supersedes the IDR by providing a global re-calibration
-and taking the coverage up to 92 per cent of the survey area.}
+ which supersedes the IDR by including a global re-calibration
+and by taking the coverage up to 92 per cent of the survey area.}
 In this work we
 (i) explain the data reduction 
 and quality control procedures that were applied,
@@ -291,14 +291,13 @@ our future ambitions.
         Telescope & 2.5m Isaac Newton Telescope \\
         Instrument & Wide Field Camera \\
         Detectors & Four 2048 $\times$ 4100 pixel CCD's \\
-        %Detector field of view & 11 $\times$ 23 arcmin \\
-        Detector scale & 0.33 arcsec/pixel \\        
+        Pixel scale & 0.33 arcsec/pixel \\        
         Filters & $r$, $i$, \ha \\
         Filter properties & See Table~2 \\
-        Exposure times & 30~s ($r$), 10~s ($i$), 120~s (\ha) \\
-		Saturation limit & $\sim$13 ($r$), $\sim$12.5 ($i$), $\sim$12.5 (\ha) \\
-        Detection limit (5$\sigma$) & 21.3 ($r$), 20.1 ($i$), 20.3 (\ha) \\
 		Magnitude system & Vega \\
+        Exposure times & 30~s ($r$), 10~s ($i$), 120~s (\ha) \\
+		Saturation limit & 13 ($r$), 12 ($i$), 12.5 (\ha) \\
+        Detection limit (5$\sigma$, mean) & 21.2 ($r$), 20.0 ($i$), 20.3 (\ha) \\
         PSF FWHM (median) & 1.1\arcsec\ ($r$), 1.0\arcsec\ ($i$), 1.1\arcsec\ (\ha) \\
         Survey area & $\sim 1860$~deg$^2$ \\
         Footprint boundaries & $ -5\degr < b < +5\degr,\ 29\degr < \ell < 215\degr$ \\
@@ -467,20 +466,20 @@ This total inevitably includes spurious objects, artefacts and
 duplicate detections;
 in \S\ref{sec:catalogue} we will explain
 how these have been removed or flagged in the final catalogue.
+{ \bf
 The pipelined data set -- comprising 2.5~terabyte of FITS files --
 was then transferred to the University of Hertfordshire
 for the purpose of transforming the raw
-detection tables into a more reliable source catalogue which
+detection tables into a proper source catalogue which
 (i) is quality-controlled,
 (ii) is homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
-{ \bf It is these post-processing steps which distinguish the present release
+It is these post-processing steps which distinguish the present release
 from the IDR, which enforced less stringent quality limits,
 did not offer a global calibration,
 and provided a catalogue in which duplicate detections
 of unique sources were not flagged.
 These new processing steps are explained next.}
-%It is these post-processing steps which are explained next.
 
 
 \subsection{Quality control}
@@ -496,7 +495,7 @@ In consequence, data were acquired
 under a large range of atmospheric conditions.
 Data taken under unsuitable conditions
 have been rejected using seven quality criteria,
-which ensure a reliable and homogeneous level of quality
+which ensure a a10 and homogeneous level of quality
 across the data release:
 
 \begin{figure}
@@ -673,7 +672,7 @@ quality criteria being applied in the initial years of the survey.
 In such cases, only the attempt 
 with the best seeing and depth has been selected
 for inclusion in the catalogue, in order  
-to deliver the most reliable measurement at a single epoch.
+to deliver the most accurate measurement at a single epoch.
 
 We note that some of the excluded data may nevertheless be useful
 for e.g. time-domain studies of bright stars.
@@ -849,7 +848,7 @@ obtained after re-calibrating.
          while bins containing more than 400 sources are bright yellow.
          {\bf The diagrams include all stars
          brighter than $r<18$ which were
-         classified by the pipeline as `bestQualityAllBand'
+         classified by the pipeline as `a10point'
          (indicating a high-significance point source detection with
          accurate photometry in all bands,
          to be explained in \S\ref{sec:qualitycriteria})}.
@@ -1145,7 +1144,7 @@ are known and not solved for.  However they do appear in the vector
 $b_j$ as constraints.  In addition to the APASS-based anchors, 
 we selected 3,273 additional anchor fields by hand
 to provide additional constraints in regions not covered by APASS.
-These extra anchors were deemed to have reliable zeropoints 
+These extra anchors were deemed to have accurate zeropoints 
 based on 
 (i) the information contained in the observing logs,
 (ii) the stability of the standard star zeropoints during the night, and
@@ -1191,7 +1190,7 @@ which were observed as part of
 the Sloan Extension for Galactic Understanding and Exploration \citep[SEGUE;][]{segue}.}
 These strips provide data across 18 per cent of the fields in our data release.
 We cross-matched the IPHAS fields against the subset of
-objects marked as reliable stars in the SDSS catalogue\footnote{
+objects marked as a10 stars in the SDSS catalogue\footnote{
 We used the CasJobs facility located at http://skyserver.sdss3.org/CasJobs
 to obtain photometry from the SDSS {\sc photoprimary} table 
 with criteria {\sc type = star}, {\sc clean = 1} and {\sc score $>$ 0.7}.}
@@ -1389,7 +1388,7 @@ source blending or a rapidly spatially-varying nebulous background.
 In \S\ref{sec:qualitycriteria} we will explain that the consistency
 of the different-aperture magnitude measurements
 can be used as a criterion for selecting stellar objects
-with reliable photometry.
+with accurate photometry.
 
 The brightness of each object as a function of increasing
 aperture size is also used by the CASU pipeline to provide
@@ -1491,7 +1490,7 @@ for similar reasons \citep{Hambly2008}.
 
 The resulting band-merged catalogues were inspected
 as part of our quality control procedures
-and were found to be reliable.
+and were found to be a10.
 
 \subsection{Selecting the primary detections}
 
@@ -1503,7 +1502,7 @@ and 25 per cent were detected three times or more.
 Only 9 per cent were detected once.
 
 Since the principal aim of this data release is to provide 
-reliable photometry at a single epoch,
+accurate photometry at a single epoch,
 we have focused on providing the magnitudes
 and coordinates from the \emph{best-available} 
 detection of each object -- 
@@ -1546,7 +1545,7 @@ then the one that was observed closest to the optical axis of the camera is chos
 
 As the final step, the primary detections
 selected above were compiled
-into the final 98-column source catalogue
+into the final 99-column source catalogue
 that is described in Appendix~\ref{app:columns}.
 The original unweeded list of sources naturally included 
 a significant number of spurious entries
@@ -1568,8 +1567,7 @@ greater than 20 per cent;
 \item the source must not have been detected in one of the strongly
 vignetted corners of the detector, 
 not have had any known bad pixels in the aperture,
-and not have been on the edge of one of the CCDs
-(this information is contained in the \emph{errBits} quality score column, which is used for internal bookkeeping).
+and not have been on the edge of one of the CCDs.
 \end{enumerate}
 
 \begin{table}
@@ -1642,10 +1640,11 @@ and (iii) the source densities and the frequency of source blending.
 \subsection{Recommended quality criteria}
 \label{sec:qualitycriteria}
 
+{\bf
 Like any other photometric survey,
 the majority of the objects in our catalogue
-are faint sources observed near the detection limits;
-55 per cent of the entries in the catalogue
+are faint sources observed near the detection limits,
+e.g. 55 per cent of the entries in the catalogue
 are fainter than $r > 20$.
 The measurements of faint objects
 are naturally prone to larger
@@ -1662,12 +1661,12 @@ completeness {\bf against reliability,
 i.e. the fraction of spurious sources}.
 To aid users we have listed two sets of
 recommended quality criteria 
-in Tables~\ref{tab:reliable} and \ref{tab:veryreliable}.
+in Tables~\ref{tab:a10} and \ref{tab:a10point}.
 
-Table~\ref{tab:reliable} specifies
+Table~\ref{tab:a10} specifies
 a set of minimum quality criteria
 which should benefit most applications
-which desire reliable colours
+which desire accurate colours
 as well as completeness {\bf down to $\sim$19th magnitude}.
 The listed criteria are designed to 
 (i) remove low-S/N sources, 
@@ -1681,20 +1680,22 @@ for identifying objects which are affected
 by poor background subtraction
 or failed source deblending.
 A total of 86 million sources out of 219 million 
-(39 per cent) satisfy all the criteria listed in Table~\ref{tab:reliable}
-and are hereafter referred to as {\bf `highQualityAllBand'}.
+(39 per cent) satisfy all the criteria listed in Table~\ref{tab:a10}
+and are hereafter referred to as `a10'.
 For convenience, the catalogue contains a boolean column
-named {\bf \emph{highQualityAllBand}} that directly flags these objects.
+named \emph{a10} that directly flags these objects.
 
 \begin{table*}
-\vspace{2cm}
-\caption{Recommended minimum quality criteria 
-for selecting objects with reliable colours 
-from the IPHAS DR2 source catalogue. 
-86~million entries in the catalogue (39\%)
-satisfy all the criteria listed in this table.
-For convenience, these have been flagged in the catalogue
-using the column named \emph{reliable}.}
+\vspace{2.5cm}
+\caption{\bf Recommended quality criteria 
+for selecting objects with accurate colours.
+These criteria serve to identify objects detected 
+at S/N$\,>\,$10 in all three bands without being saturated,
+and with the added requirement that the photometric measurements
+need to be consistent across different aperture sizes.
+The 86~million objects which satisfy these criteria
+have been flagged in the catalogue using the column named \emph{a10}
+(short for ``all-band 10$\sigma$'').}
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
@@ -1704,11 +1705,9 @@ using the column named \emph{reliable}.}
   Require the photon noise to be less than 
   0.1 mag in all bands (i.e. S/N$>$10).
   This implicitly requires a detection in all three bands.  \\
-  $r>13$ {\sc and} $i>12$ {\sc and} \ha\,$>12.5$ {\sc and not} \emph{saturated} &
+  {\sc not} \emph{saturated} &
   158 million (72\%) &
-  The brightness must not exceed the nominal saturation limit
-  and the peak pixel height must not exceed 55,000 counts.
-  Again, this implicitly requires a detection in all three bands.
+  The brightness must not exceed the nominal saturation limits.
   \\
   $|r- rAperMag1| 
   < 3\sqrt{rErr^2 + rAperMag1Err^2} 
@@ -1733,26 +1732,25 @@ using the column named \emph{reliable}.}
   158 million (72\%) &
   Same as above for \ha. \\
   \hline
-  All of the above (flagged as {\bf\emph{reliable}}) &
+  All of the above (flagged as {\bf\emph{a10}}) &
   86 million (39\%) & \\
   \hline
 \end{tabular}
-\label{tab:reliable}
+\label{tab:a10}
 
-\vspace{2cm}
-\caption{Additional quality criteria which are recommended
-for applications which require very reliable colours
-at the expense of completeness. 
-For convenience, the sources which satisfy the criteria listed
-in this table have been flagged in the catalogue
-using the column named \emph{veryReliable}.}
+\vspace{2.5cm}
+\caption{\bf Additional quality criteria which are recommended
+for applications which require objects to be
+single, unconfused point sources with accurate colours.
+The 59 million sources which satisfy these criteria 
+have been flagged using the column named \emph{a10point}.}
 \begin{tabular}{p{8cm}lp{6cm}}
   \hline
   Quality criterion & Rows passed & Description \\
   \hline
-   \emph{reliable} &
+   \emph{a10} &
    86 million (39\%) &
-   The object must satisfy the criteria listed in Table~\ref{tab:reliable}. \\
+   The object must satisfy the criteria for accurate colours listed in Table~\ref{tab:a10}. \\
    
    $pStar > 0.9$ &
    145 million (66\%) &
@@ -1774,36 +1772,39 @@ using the column named \emph{veryReliable}.}
    or even trigger spurious detections. \\  
   \hline
   
-  All of the above (flagged as {\bf\emph{veryReliable}}) &
+  All of the above (flagged as {\bf\emph{a10point}}) &
   59 million (27\%) & \\
   \hline
 \end{tabular}
-\label{tab:veryreliable}
+\label{tab:a10point}
 \vspace{1cm}
 \end{table*}
 
 For applications which require
-a higher standard of reliability at the expense of completeness,
+a higher standard of {\bf accuracy} at the expense of completeness,
 a further set of additional quality criteria
-are suggested in Table~\ref{tab:veryreliable}.
+are suggested in Table~\ref{tab:a10point}.
 These criteria are designed to ensure that
 (i) the object appeared as a perfect point source,
 (ii) the object was not blended with a nearby neighbour,
 and (iii) the object was not located near a very bright star.
 59 million sources (27 per cent) satisfy
 these stricter criteria 
-and are hereafter referred to as `very reliable'.
+and are hereafter referred to as `a10point'.
 Again, the catalogue contains a boolean column
-named \emph{veryReliable} which flags these objects.
+named \emph{a10point} which flags these objects.
 
 \begin{figure}
     \includegraphics[width=0.5\textwidth]{figures/magdist/magdist-r.pdf} 
-    \caption{r-band magnitude distribution for all objects in the catalogue 
-    (light grey), for objects flagged as \emph{reliable} 
-    according to the criteria set out in Table~\ref{tab:reliable} (grey),
-    and for objects flagged as \emph{veryReliable} 
-    following Table~\ref{tab:veryreliable} (dark grey).
-    The magnitude distributions for $i$ and \ha\
+    \caption{r-band magnitude distribution
+    for all objects in the catalogue (light grey).
+    Overlaid we also show the distribution for objects
+    detected at S/N $>$ 10 in all bands
+    selected according to the quality criteria 
+    described in Table~\ref{tab:a10} (\emph{a10}, grey),
+    and for the set of unconfused 10$\sigma$ point source detections
+    described in Table~\ref{tab:a10point} (\emph{a10point}, dark grey).
+    The distributions for $i$ and \ha\
     look identical, apart from being shifted
     by about 1 and 0.5 mag towards brighter magnitudes,
     respectively.}
@@ -1811,14 +1812,14 @@ named \emph{veryReliable} which flags these objects.
 \end{figure}
 
 Fig.~\ref{fig:magdist} compares the $r$-band magnitude
-distributions for \emph{reliable}, \emph{veryReliable}
+distributions for \emph{a10}, \emph{a10point}
 and unfiltered objects.
 We find that 81 per cent of the sources 
-are considered \emph{reliable}
-and 54 per cent are \emph{veryReliable}
+are flagged \emph{a10}
+and 54 per cent are flagged \emph{a10point}
 in the magnitude range $13 < r < 19$.
 We will explain below that the
-\emph{veryReliable} category is least complete
+\emph{a10point} category is least complete
 at low Galactic longitudes,
 where source blending can affect
 up to a quarter of the objects.
@@ -1826,14 +1827,16 @@ up to a quarter of the objects.
 It is easy to see how the quality criteria
 may be adapted to be more tolerant.
 For example, by raising the allowed photometric uncertainties
-from 0.1~mag to 0.2~mag in Table~\ref{tab:reliable},
+from 0.1~mag to 0.2~mag in Table~\ref{tab:a10},
 42 million candidate sources would be added to the 109 
 million satisfying the tighter error bound.
 Our choice to adopt 0.1~mag as the cut-off uncertainty
-for the \emph{reliable} category is a pragmatic trade-off
+for the \emph{a10} category is a pragmatic trade-off
 which we found to suit many science applications,
 but users are encouraged 
 to revise the quality criteria according to their needs.
+
+
 
 \subsection{Reliability}
 \label{sec:reliability}
@@ -1875,8 +1878,8 @@ source catalogue:
 \item objects detected in all three bands with \emph{mergedClass} equals -1, -2 or +1
 \item $rErr\,<\,0.1$ and \emph{rClass} equals -1, -2 or +1
 \item $iErr\,<\,0.1$ and \emph{iClass} equals -1, -2 or +1
-\item \emph{reliable} sources
-\item \emph{veryReliable} sources
+\item \emph{a10} sources
+\item \emph{a10point} sources
 \end{enumerate}
 \noindent with the results presented in Table~\ref{tbl:reliability}. 
 Requiring S/N $>$ 10 eliminates the majority of unreliable detections, 
@@ -1884,7 +1887,7 @@ as does selecting objects observed in multiple bands. The $i$-band performs
 marginally better than the $r$-band in terms of reliability, returning a 
 slightly higher ($< 0.5\%$) reliability percentage for detections with S/N 
 $>\,10$. Reliabilities $>99\%$ and $>99.5\%$ are achieved by using the 
-supplied \emph{reliable} and \emph{veryReliable} quality flags.
+supplied \emph{a10} and \emph{a10point} quality flags.
 
 The majority of unreliable sources in the IPHAS catalogue are 
 located in the vicinity of bright ($r\,\lesssim\,12$) stars, tracing 
@@ -1900,7 +1903,7 @@ in multiple bands.
     \begin{center}
         \begin{tabular}{lcccccc}
         \toprule
-        Region ($\ell$, $b$) & Raw & nBands == 3 & $rErr\,<\,0.1$ & $iErr\,<\,0.1$ & \emph{reliable} & \emph{veryReliable} \\
+        Region ($\ell$, $b$) & Raw & nBands == 3 & $rErr\,<\,0.1$ & $iErr\,<\,0.1$ & \emph{a10} & \emph{a10point} \\
         \midrule
         (149.39, 4.06) & 92.95 & 98.83 & 98.53 & 98.54 & 99.67 & 99.82 \\
         (186.59, -2.50) & 89.99 & 98.82 & 98.34 & 98.44 & 99.36 & 99.57 \\
@@ -1909,6 +1912,8 @@ in multiple bands.
         \end{tabular}
     \end{center}
 \end{table}
+
+}
 
 \subsection{Random and systematic uncertainties}
 \label{sec:uncertainties}
@@ -1956,16 +1961,16 @@ Stars fainter than this range appear to be dominated by photon noise (red line),
 while stars at the bright end appear to suffer from large systematic
 errors due to saturation effects.
 
-In Fig.~\ref{fig:pairmag_reliable} we show 
+In Fig.~\ref{fig:pairmag_a10} we show 
 a similar comparison between the primary and secondary detections,
 but this time we have only included sources which are flagged
-as \emph{veryReliable} in the catalogue.
+as \emph{a10point} in the catalogue.
 We do not observe an improvement in the average residuals as a function of magnitude,
 but the number of outliers has decreased markedly
 (evidenced by the shorter error bars which denote the standard deviation of the absolute residuals).
-We conclude that the \emph{veryReliable} quality criteria are effective
+We conclude that the \emph{a10point} quality criteria are effective
 at reducing the level of the systematic errors,
-while also removing the unreliable data at the bright and faint end.
+while also removing the inaccurate data at the bright and faint end.
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
@@ -1978,19 +1983,19 @@ while also removing the unreliable data at the bright and faint end.
 \hspace{0.5cm}
 \begin{subfigure}[b]{\linewidth}
 \centering
-\includegraphics[width=0.9\textwidth]{figures/repeatability/repeatability-reliable.pdf}
+\includegraphics[width=0.9\textwidth]{figures/repeatability/repeatability-a10point.pdf}
 \caption{}
 \label{fig:pairmag_reliable}
 \end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
          for all sources in the catalogue (panel a)
-         and for the \emph{veryReliable} sources alone (panel b).
+         and for the \emph{a10point} sources alone (panel b).
          Black dots show the mean absolute residuals
          between the primary and the secondary detections.
          The error-bars show the standard deviations.
          The red trend line shows the average Poissonian uncertainties
          we derived in Fig.~\ref{fig:uncertainties}.
-         We find that the \emph{veryReliable} quality criteria are successful
+         We find that the \emph{a10point} quality criteria are successful
          at removing objects with large residuals.
     }
 \end{figure}
@@ -2104,7 +2109,7 @@ and the extinction along a line of sight.
     \end{minipage}
     \caption{Colour-colour and colour-magnitude diagrams
     (left and right panel)
-    showing sources flagged as \emph{veryReliable}
+    showing sources flagged as \emph{a10point}
     located in an area of 1~deg$^2$
     centred near the Galactic anti-centre 
     at $(l,b)=(180\degr,+3\degr)$.
@@ -2153,7 +2158,7 @@ located at Galactic longitudes
 which were chosen because they show stellar populations
 with different characteristics.
 Each figure contains all the sources
-flagged as \emph{veryReliable} within a region of one square degree 
+flagged as \emph{a10point} within a region of one square degree 
 centred on the coordinates indicated in the diagram
 (i.e. within a radius of 0\fdg 564 from the indicated sightline).
 For clarity, we have imposed the additional criterion
@@ -2356,7 +2361,7 @@ of the bubble.
     20-by-15 arcmin centred on the H{\sc ii} region Sh 2-82,
     which is the area shown in Fig.~\ref{fig:mosaic_iphas}.    
     The diagram shows all objects in the catalogue
-    which have been flagged as \emph{reliable} and are brighter
+    which have been flagged as \emph{a10} and are brighter
     than $r<20$ (grey circles).
     The unreddened main sequence is indicated by a solid line,
     while the main sequence for stars with an \ha\ emission line
@@ -2373,7 +2378,7 @@ the IPHAS colour-colour diagram for
 the 20-by-15 arcmin region shown in the mosaics.
 Grey circles show all objects
 which are brighter than $r<20$
-and have been flagged as \emph{reliable}
+and have been flagged as \emph{a10}
 in IPHAS DR2.
 The diagram also shows the unreddened main sequence (solid line)
 and the expected position of unreddened main-sequence stars
@@ -2660,7 +2665,7 @@ It is the first to offer comprehensive CCD photometry
 of point sources across the Northern Galactic Plane at visible wavelengths,
 taking in the Galactic latitude range $|b|<5\degr$
 at longitudes $\ell=30\degr$ to 215\degr.
-The new 98-column catalogue provides single-epoch photometry
+The new 99-column catalogue provides single-epoch photometry
 across 92 per cent of the survey area,
 and is the first quality-controlled and globally calibrated
 catalogue to have been constructed from the imaging data.  This
@@ -2681,7 +2686,7 @@ The source catalogue specifies the best-available
 single-epoch astrometry and photometry
 for 219~million unique sources.
 To support its exploitation, we provide a list of recommended quality criteria
-that will permit the selection of objects with reliable colours from 
+that will permit the selection of objects with accurate colours from 
 the catalogue.  The closing demonstrations highlight the use of the 
 survey's unique $(r-\ha,\ r-i)$ diagram for characterising stellar populations
 and selecting emission-line objects.  More comprehensive applications of IPHAS
