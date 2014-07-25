@@ -1838,7 +1838,7 @@ to revise the quality criteria according to their needs.
 
 
 
-\subsection{Reliability}
+\subsection{Source reliability}
 \label{sec:reliability}
 
 In producing a point source catalogue, spurious detections 
@@ -1896,18 +1896,40 @@ light. These can be eliminated in most cases by requiring detections
 in multiple bands.
 
 \begin{table}
-    \caption{Reliability values as computed by crossmatching the point 
-             source catalogues of IPHAS and SDSS DR7 for a number of 
-             subsets of IPHAS DR2 across 1 deg$^2$ regions.}
+    \caption{Fractions of sources in our catalogue
+             which are also found in the SDSS DR7 catalogue
+             within a cross-matching radius of 0.5~arcsec.
+             These statistics can be interpreted
+             as lower limits
+             for the reliability of our sources,
+             i.e. the probability that an entry in our
+             catalogue is a genuine astrophysical source
+             rather than an instrumental artefact.
+             The recovery fractions were computed
+             in three 1 deg$^2$ circular areas
+             where both surveys overlapped.
+             The recovery rates are shown
+             for IPHAS sources 
+             without selection criteria applied (``all''),
+             using only objects detected in all three bands (``$nBands=3$''),
+             using objects detected at 10$\sigma$
+             in all three bands (``a10''),
+             and finally using the detections
+             which we classified earlier
+             as reliable 10$\sigma$ point sources (``a10point'').
+    		%Reliability values as computed by crossmatching the point 
+             %source catalogues of IPHAS and SDSS DR7 for a number of 
+             %subsets of IPHAS DR2 across 1 deg$^2$ regions.
+             }
     \label{tbl:reliability}
     \begin{center}
         \begin{tabular}{lcccccc}
         \toprule
-        Region ($\ell$, $b$) & Raw & nBands == 3 & $rErr\,<\,0.1$ & $iErr\,<\,0.1$ & \emph{a10} & \emph{a10point} \\
+        Region ($\ell$, $b$) & all & $nBands=3$ & \emph{a10} & \emph{a10point} \\
         \midrule
-        (149.39, 4.06) & 92.95 & 98.83 & 98.53 & 98.54 & 99.67 & 99.82 \\
-        (186.59, -2.50) & 89.99 & 98.82 & 98.34 & 98.44 & 99.36 & 99.57 \\
-        (202.70, -1.75) & 89.42 & 98.46 & 97.8 & 98.11 & 99.4 & 99.65 \\
+        (149.39, 4.06) & 93.0\% & 98.8\% & 99.7\% & 99.8\% \\
+        (186.59, -2.50) & 90.0\% & 98.8\% & 99.4\% & 99.6\% \\
+        (202.70, -1.75) & 89.4\% & 98.5\% &99.4\% & 99.7\% \\
         \bottomrule
         \end{tabular}
     \end{center}
@@ -1985,7 +2007,7 @@ while also removing the inaccurate data at the bright and faint end.
 \centering
 \includegraphics[width=0.9\textwidth]{figures/repeatability/repeatability-a10point.pdf}
 \caption{}
-\label{fig:pairmag_reliable}
+\label{fig:pairmag_a10}
 \end{subfigure}
 \caption{Photometric repeatability as a function of magnitude
          for all sources in the catalogue (panel a)
@@ -2437,7 +2459,8 @@ we note that all four are detected
 in the Spitzer 8.0~\micron\ image at S/N$>$5.
 They are likely to be YSOs exhibiting a mild infrared excess.
 
-Sh 2-82 is one of a large population of poorly-studied star-forming regions
+Sh 2-82 is one of a large population 
+of poorly-studied star-forming regions
 located at low Galactic latitudes,
 which have only recently started to become revealed
 by efforts to catalogue the wealth of `bubbles' detected
@@ -2446,16 +2469,50 @@ and by efforts to catalogue previously unknown clusters seen
 in the near-infrared \cite[e.g.][]{Bica2003}.
 IPHAS data can offer a handle
 on the extinction, distance
-and stellar contents of these unexplored regions.
+and stellar contents of many of such unexplored regions.
+{\bf For example,
+in the region studied above,
+the IPHAS catalogue and the Spitzer/GLIMPSE archive
+have 4798 sources in common
+within a cross-matching radius of 1 arcsec,
+(out of a total of 10\,739 and 11\,321 entries in the
+IPHAS and Spitzer catalogues, respectively).
+This is a favourable statistic,
+given that this is a high-extinction sightline towards the inner plane
+where an optical survey will naturally be extinction limited,
+and IPHAS can be shown not to reach beyond 4-5\,kpc \citep{Sale2014}.
+The situation will be even more favourable
+in the outer-plane, where dust optical depths are low.
 
-{\bf Moreover, IPHAS provides the much-needed counterpart
-to the source catalogues being provided by the recent infrared surveys.
-For example, amongst the 1810 high-quality sources considered in Fig.~\ref{fig:emitters},
-1623 objects (90\%) have a counterpart in the Spitzer catalogue,
-and 371 objects (20\%) have a counterpart in the 
-Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
-both within a matching radius of 2 arcsec.}
+%where IPHAS is not limited by extinction
+%This is an example of a high-extinction sightline where
+%optical observations will naturally be extinction-limited.
+%IPHAS will naturally count far fewer sources than (N)IR surveys.
+%In the outer-plane the situation is, in fact, reversed,
+%except where there is UKIDSS GPS coverage (i.e. dec > 60).
+%For example, in the anti-centre region where the dust optical depths are low, IPHAS contains more...
 
+%Amongst the 1810 high-quality sources which we
+%plotted in Fig.~\ref{fig:emitters},
+%no less than 1561 objects (87\%) have a counterpart
+%in the Spitzer GLIMPSE archive
+%within a matching radius of 1 arcsec.
+%In the other direction, out of the 6753 objects
+%which are in the Spitzer/GLIMPSE catalogue for this region,
+%2984 (44\%) have a counterpart in IPHAS.
+
+% are 6753 region considered in Fig.~\ref{fig:emitters}
+%contains 6753 objects in the
+%Spitzer GLIMPSE catalogue
+
+%371 objects (20\%) also have a counterpart in the 
+%Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
+%both within a matching radius of 2 arcsec.
+
+}
+
+% reliable & r < 20 & (l > 53.55-10/60.) & (l < 53.55+10/60.)                  & (b > 0.01-7.5/60.) & (b < 0.01+7.5/60.)
+% Vizier II/293
 %TODO: This is an example of a high-extinction sightline where
 % optical observations will naturally be extinction-limited.
 % IPHAS will naturally count far fewer sources than (N)IR surveys.
@@ -2592,20 +2649,24 @@ Vizier service (http://vizier.u-strasbg.fr),
 where it can be queried using a web interface
 and using Virtual Observatory (VO) protocols.
 In addition, the catalogue can be downloaded
-in its entirety from our website (www.iphas.org)
+in its entirety from our website
 as a collection of binary FITS tables,
 each covering a $5\degr\times5\degr$ tile
 of the footprint and comprising 50~gigabyte
-in total.
+in total (see www.iphas.org/dr2).
 
 We do not recommend using the catalogue
 to study extended objects which
 are larger than the
 aperture diameters specified in this work.
-To enable the analysis of diffuse sources,
-our website provides access to the pipeline-processed
-imaging data. These have been updated to include
-a new FITS header keyword, called {\sc photzp},
+{\bf To enable the analysis of diffuse sources,
+our website provides access to the entire set
+of pipeline-processed imaging data,
+the associated metadata,
+and the documentation describing the FITS header keywords
+(see www.iphas.org/images)}.
+The image headers have been updated to include
+a new keyword, called {\sc photzp},
 which contains the re-calibrated zeropoint.
 This keyword can be used to convert the number counts $DN$,
 i.e. the pixel values in the images,
@@ -2638,15 +2699,11 @@ when the \ha\ magnitude for Vega is set by convention to 0.03 \citep{Fukugita199
 These flux estimates are consistent with the most recent
 version of Vega's SED presented by \citet{Bohlin2014}.
 
-The image repository on our website
-is accompanied by an archive of detection tables
--- one for each image --
-which may be used to retrieve secondary detections that are not included
-in the DR2 source catalogue.
-We warn that this set of original images and detection tables
-includes data that did not pass quality control,
+We warn that the image repository on our website
+includes data that did not pass quality control
 and has not been globally re-calibrated.
-Such data are flagged and must be used with great caution.
+Such data are flagged {\bf in the metadata table}
+and must be used with great caution.
 
 In the spirit of reproducibility,
 the source code that was used to generate

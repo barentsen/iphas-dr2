@@ -45,7 +45,7 @@ plt.gca().xaxis.set_major_locator(majorLocator)
 plt.gca().yaxis.set_major_locator(y_majorLocator)
 
 if reliable:
-    plt.text(0., 1.05, "(b) \emph{veryReliable} sources", fontsize=11,
+    plt.text(0., 1.05, "(b) \emph{a10point} sources", fontsize=11,
              ha='left', va='bottom', transform=ax.transAxes)
 else:
     plt.text(0., 1.05, "(a) all sources", fontsize=11,
@@ -80,7 +80,7 @@ plt.gca().yaxis.set_major_locator(y_majorLocator)
 plt.xlabel('Magnitude')
 
 if reliable:
-    plt.savefig('repeatability-reliable.pdf')
+    plt.savefig('repeatability-a10point.pdf')
 else:
     plt.savefig('repeatability.pdf')
 

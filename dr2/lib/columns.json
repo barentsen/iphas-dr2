@@ -560,7 +560,7 @@
         "name": "a10",
         "type": "boolean",
         "unit": "",
-        "desc": "True if the source is detected at S/N&thinsp;&gt;&thinsp;10 in all bands without being saturated, and has photometric measurements which are consistent across different aperture diameters. Algebraic condition: (<a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.1 &amp; NOT <a href=\"#saturated\">saturated</a> &amp; (abs(r-rAperMag1)&thinsp;&lt;&thinsp;3*hypot(rErr,rAperMag1Err)+0.03) &amp; (abs(i-iAperMag1)&thinsp;&lt;&thinsp;3*hypot(iErr,iAperMag1Err)+0.03) &amp; (abs(ha-haAperMag1)&thinsp;&lt;&thinsp;3*hypot(haErr,haAperMag1Err)+0.03)."
+        "desc": "True if the source is detected at S/N&thinsp;&gt;&thinsp;10 in all bands without being saturated, and if the photometric measurements are consistent across different aperture diameters. Algebraic condition: (<a href=\"#rErr\">rErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#iErr\">iErr</a>&thinsp;&lt;&thinsp;0.1 &amp; <a href=\"#haErr\">haErr</a>&thinsp;&lt;&thinsp;0.1 &amp; NOT <a href=\"#saturated\">saturated</a> &amp; (abs(r-rAperMag1)&thinsp;&lt;&thinsp;3*hypot(rErr,rAperMag1Err)+0.03) &amp; (abs(i-iAperMag1)&thinsp;&lt;&thinsp;3*hypot(iErr,iAperMag1Err)+0.03) &amp; (abs(ha-haAperMag1)&thinsp;&lt;&thinsp;3*hypot(haErr,haAperMag1Err)+0.03)."
     },
     {
         "name": "a10point",

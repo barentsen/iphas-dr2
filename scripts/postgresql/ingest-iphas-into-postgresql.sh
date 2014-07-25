@@ -142,3 +142,6 @@ $PSQL -c "CREATE INDEX iphas2_a10_idx ON iphas2(a10);"
 echo "Analyzing"
 $PSQL -c "ANALYZE iphas2;"
 
+# Clean up
+$PSQL -c "VACUUM;"
+

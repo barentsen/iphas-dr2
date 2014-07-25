@@ -1,0 +1,209 @@
+MN-14-1011-MJ: Authors' response to the reviewer's comments
+===========================================================
+
+We are grateful to the referee for the insightful feedback, which has helped us
+to improve the presentation of the data products.  In his/her report, the 
+referee identified areas where additional information would (i) strengthen the 
+role of the paper as a user's guide to the survey, and (ii) would lessen the 
+burden on the reader to track down information from previous works.  
+We appreciate the merits of the referee's suggestions in this respect, and have 
+acted upon them by adding a total of N new pages, 1 new table, and 1 new figure 
+to the manuscript.  These changes have been marked in bold in the manuscript.  
+We have also added N new sections of auxillary material to our web site as a 
+direct consequence.
+
+In what follows we will start by explaining our response to each of the issues 
+which the referee identified as high-level remarks (9 items), followed by our 
+response to the more specific remarks (8 items).
+
+
+High-level items
+----------------
+
+[Referee]
+> 1. This manuscript presents a large amount of information about IPHAS and the preparation
+> of and contents of the data products.  It also relies heavily on previous
+> publications for general descriptions of the survey, particulars of the instrumentation,
+> data processing algorithms and earlier data releases.   As such, it puts considerable burden 
+> on the readers to track down information from many different sources.  It is
+> understandable that the authors prefer to not duplicate information that is already
+> available elsewhere, but it will make it much easier to understand and use the IPHAS data
+> products if at least some of the general information  could be repeated in this
+> manuscript.
+>
+> For example, it would be helpful to include concise summary of the IPHAS survey
+> parameters and this data release in tabular form.  This summary would serve as
+> a "IPHAS-At-A-Glance" for users, and coule include the survey area, dates, telescope,
+> camera and survey bandpasses, etc.  Much of the information is presented in the paper,
+> but widely spread over the manuscript.  Without at least a guide to finding the
+> information, users will be challenged to find what they need.
+
+[Authors' response]
+We have kept the referee's recommendation to lessen the burden on the reader in
+mind while revising the paper in response to the items to follow below.
+As request by the referee, we have included a concise summary table of the
+survey parameters at the start of Section 2, in which the 15 key properties
+of the survey are summarised (Table 1).
+
+
+[Referee]
+> 2. It was not immediately obvious if the images and catalogue from the Second IPHAS
+> release supersede those in the 2008 Initial Data Release.  I believe the
+> Second Release includes a reprocessing of all of the survey data to-date, so it
+> is intended to replace the Initial Release, but that should be stated explicitly
+> in the Introduction (e.g. in the 3rd paragraph).
+>
+> If my assumption is correct, there should be a summary statement about why the
+> Second Release images and catalogue are in fact better products.  For example,
+> better calibrations, processing algorithms, etc.
+
+[Authors' response]
+The referee correctly identified that we forgot to state that this new release 
+supersedes the previous one.  We have added an explicit statement in this sense
+to the third paragraph of Section 1, and in addition we have edited the last
+paragraph of Section 3.1 to list the key differences between the past and the
+present release.
+
+
+[Referee]
+> 3. As stated in Section 7.2, the aim of IPHAS is to enable the discovery of
+> emission line objects in the Galactic Plane.  Consequently, I was very surprised
+> that no discussion of the sensitivity to line emission (e.g. H-alpha EW) was
+> presented in the manuscript.  Perhaps this will be addressed further in the planned
+> Barentsen et al paper, but it seems that at least some rudimentary demonstration
+> of the sensitivity to line emission is a requirement for this paper.  The
+> general photometric sensitivity in the three bands is discussed in section 6.2, and
+> an illustration is given how to find emission-line candidates using the color-color
+> diagram in Figure 18.  I strongly recommend that at least some examples be given
+> of the r-H-alpha color excess as a function of line EW for a sample of objects
+> with published spectra.
+
+[Authors' response]
+The referee requested a discussion on the sensitivity of the H-alpha 
+photometry to line emission to be included in this work.  In response, we have
+added one new section (Sect 7.3) and one new figure (Fig 19) to the paper.
+In this new section, which is titled "r-Halpha excess as a quantitative measure
+of Halpha emission", we compare the spectroscopic H-alpha EWs for a sample of
+classical Be stars from Raddi et al (2014) against the position of these
+objects in the IPHAS colour-colour diagram.  A good agreement is found.
+Moreover, the accompanying discussion offers a brief guide to the previous 
+works on this topic.
+
+
+[Referee]
+> 4. Many of the successful large surveys include a list of known caveats concerning
+> released data products to help user's avoid pitfalls in their research.  I suggest that
+> the authors generate a short list of the most important things about which users
+> should be aware when using IPHAS data.  Users appreciate knowing how to avoid mistakes
+> due to misinterpretation of known issues, and do not think less of a product because
+> of them.
+
+[Authors' response]
+In response to the referee's suggestion, we have (i) introduced a summary of
+the most common pitfalls at the start of Section 6, and (ii) have added a
+caveats section to our data release web page (www.iphas.org/dr2).
+We note that it is not possible, at this stage, to include an exhaustive list
+of all the caveats, because we cannot anticipate all forms of use of the data.
+Hence in Section 6 we alert the reader to the fact that we offer a caveats
+section on the website, which will be updated as user experience accumulates.
+
+
+[Referee]
+> 5. In general, the images do not receive the same level of description in the manuscript
+> as does the Catalogue.  Any guidance that can be given to users about them would be
+> beneficial.  For example, at the very least include a description of the FITS image
+> headers, analogous to the descriptions of the catalog columns that is given in
+> the Appendix.  They should also mention that tables containing the image metadata are available at IPHAS web site.
+
+[Authors' response]
+Although the paper intended to focus on the catalogue product, we agree with the
+referee that it would be beneficial to give users additional guidance on the use 
+of the image products.  For this reason, we have made significant improvements 
+to our web site by (i) providing a query tool to retrieve IPHAS images by 
+coordinates, and (ii) provide more comprehensive documentation on the metadata, 
+the FITS header keywords, and the flux calibration (see www.iphas.org/images).
+Section 6 of the paper has been edited to advertise these resources, which are 
+set to be updated in the future whilst we prepare a data release which focuses
+more strongly on image and image mosaic products.
+
+
+[Referee]
+> 6. The fact that only 39% of the catalogue entries satisfy the criteria necessary to be
+> classified as "reliable" begs the question "just what are the other 61% of objects."
+> The authors should add more information about the general reliability of the
+> catalogue with and without their criteria. For example, If a users selects
+> "reliable" category sources, what should they expect the net reliability to be?
+> Certainly not 100%.  How does reliability vary with source magnitude, SNR, or other 
+> measurement parameters?  How much does the reliability vary with source environment
+> (e.g. crowding, complex backgrounds)?
+>
+> Reliability can be gauged in a number of ways, such as comparisons with external,
+> deeper catalogues (e.g. SDSS, UKIDSS GPS).
+
+[Authors' response]
+The referee questioned the nature of the objects which are marked as "reliable"
+in the catalogue, and in particular questioned the nature of the large number of 
+sources not flagged as "reliable".  Having considered this comment, we have come 
+to conclude that we made a poor choice of terminology by adopting the labels 
+"reliable" and "veryReliable" as quality qualifiers.
+These classes, which are based on stringent quality criteria set out in 
+Tables 6 and 7, aim to help users identify high-quality objects, e.g. by 
+demanding a 10-sigma detection in all bands.  It goes without saying that 
+there are plenty of objects which do not strictly satisfy these criteria but are 
+nevertheless genuine astrophysical objects.  The qualifier "reliable" might 
+however confer the incorrect impression that such sources are "unreliable".
+As a result, we have decided to change the terminology by renaming the class 
+previously known as "reliable" into "a10" (which is short for "all-band 10-sigma"), 
+and renaming "veryReliable" into "a10point".  We believe this change in 
+terminology will better serve as an operational description of the detection quality.
+
+In addition to this change in terminology, we have followed the referee's suggestion
+to gauge the reliability of our objects against an external catalogue.  That is,
+we have introduced a new Section 6.2, titled "Source reliability", in which the 
+reliability of IPHAS sources as a function of the quality criteria is gauged 
+by comparing out catalogue against SDSS.  Moreover, we note that a separate paper 
+is in an advanced state of preparation (Farnhill et al.), which will investigate 
+the issues surrounding the completeness and reliability of our catalogue, 
+e.g. by injecting artificial sources into the images and measuring their recovery 
+rates, whilst also comparing source counts between SDSS and IPHAS in more detail.
+
+
+[Referee]
+> 7. The authors have done a good job describing the photometric measurements and
+> calibration accuracy.  However, there is relatively little discussion of the
+> astrometric position reconstruction other than saying it is done relative to
+> the 2MASS Point Source Catalogue, and there is no validation of the astrometric
+> quality of the Catalogue other than to mention matching success.  Some quantification
+> of the astrometric performance should be added (e.g. mean position residuals as a function
+> of magnitude from comparisons with the astrometric reference stars, or external
+> astrometric collections, such as UCAC4).
+>
+> Positions in the IPHAS Catalogue have been reconstructed with respect to 2MASS.
+> However, the authors do not state if the proper motion of the 2MASS reference stars 
+> was taken into account.  Although small, the net motion of the reference stars can
+> collectively imprint on the Catalogue because the IPHAS observations were made at
+> different epochs than 2MASS, in some cases as much as 12 years later.   
+> Failure to do so can imprint the proper motion onto IPHAS, and also because the 
+> IPHAS measurements span nearly 10 years (2003-2012), there can be secular variations.
+
+[Authors' response]
+astrometry ...
+proper motions ...
+
+(There does not appear to be an item number 8 in the reviewer's comments.)
+
+
+[Referee]
+> 9. The authors point out in the introduction that IPHAS will complement a number of
+> new infrared surveys of the Galactic Plane.  The paper would benefit from at least
+> one cross-comparison with the catalogue of one of those surveys, such as GLIMPSE
+> or MIPSGAL, as an illustration of how the combination of surveys will enable
+> new science.  At present, the only tie-in to the infrared surveys is the
+> visual comparison between IPHAS and GLIMPSE images of one field.
+
+[Authors' response]
+In response to the referee's suggestion to include a cross-comparison between
+IPHAS and an infrared survey, we have added a brief discussion on the overlap
+between the GLIMPSE and IPHAS catalogues at the end of Section 7.2.  The 
+discussion warns the reader that an optical survey will naturally be 
+extinction-limited.

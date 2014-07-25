@@ -31,9 +31,9 @@ def get_filesize(host, url):
     return result
 
 
-args = {'host': 'stri-cluster.herts.ac.uk',
-        'dir_light': '/~gb/iphas-dr2-catalogue/light-compressed',
-        'dir_full': '/~gb/iphas-dr2-catalogue/full-compressed',
+args = {'host': 'www.iphas.org',
+        'dir_light': '/data/dr2/light',
+        'dir_full': '/data/dr2/full',
         'last_update': datetime.datetime.utcnow().strftime("%Y-%m-%d"),
         'columns': columns}
 
