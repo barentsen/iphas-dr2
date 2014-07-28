@@ -400,7 +400,7 @@ which was a 200 deg$^2$ survey programme carried out
 between 1998 and 2003.
 Because IPHAS uses the same telescope and camera combination,
 we have been able to benefit from the existing WFS pipeline.
-A detailed description of the processing steps 
+A description of the processing steps 
 is found in \citet{Irwin2001}.
 Its application to IPHAS has previously been described
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008},
@@ -410,39 +410,68 @@ In brief, the pipeline takes care of bias subtraction,
 linearity correction, flat-fielding,
 gain correction and de-fringing.
 
-The reduced images are then stored in multi-extension FITS files
-with a primary header describing the characteristics
-(position, filter, exposure time, etc.) 
-and four image extensions 
-corresponding to each of the four CCDs.
-Source detection and characterisation is then carried out 
-using the \textsc{imcore} tool \citep{Irwin1985,Irwin1997}.
-The flux of each source is measured using both
-the peak pixel height
-(i.e. a square 0\farcs 33$\times$0\farcs 33 aperture)
-and a series of circular apertures of increasing diameter 
-(1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6 and 6\farcs 6).
+%The reduced images are then stored in multi-extension FITS files
+%with a primary header describing the characteristics
+%(position, filter, exposure time, etc.) 
+%and four image extensions 
+%corresponding to each of the four CCDs.
 
-The local background levels are estimated 
-by computing the sigma-clipped median
-flux in a grid of 64$\times$64 pixels (21\arcsec$\times$21\arcsec)
-across the image,
-which is then interpolated to obtain an estimate 
+% called \textsc{imcore},
+
+{ \bf
+Source detection and parametrisation is then carried out
+using the standard methods in use by CASU,
+which can be summarised in four steps
+\citep[a discussion on each of these steps
+and related points can be found in][]{Irwin1985,Irwin1997}:
+\begin{enumerate}
+\item The local sky background is estimated
+by computing the sigma-clipped median intensity
+in a grid of 64$\times$64 pixel bins across the image,
+which is robust against contaminating sources.
+Bilinear interpolation is then used to obtain an estimate 
 of the background level at each pixel.
-These sky levels are subtracted from the aperture photometry and
--- when required --
-a deblending routine is applied to remove
-the contamination from any nearby sources.
-{ \textbf explained in detail in \citep{Irwin1985} }
-This approach works very well 
-across the vast majority of the survey area.  Nevertheless,
-the Galactic Plane contains crowded regions 
-with large numbers of overlapping sources
-or rapidly spatially-varying nebulosity,
-where aperture photometry will be compromised by frequent blending
-or poor background subtraction.
-In \S\ref{sec:catalogue} we will explain how affected sources are 
-flagged. 
+\item Objects, or blends of objects, are detected
+by identifying groups of 4 or more neighbouring pixels
+in which the intensity exceeds the background level by $1.25\sigma$.
+\item The object are parametrised:
+positions are obtained by computing 
+the intensity-weighted isophotal centre-of-gravity
+of each object,
+while photometry is obtained 
+by measuring the intensity
+in a series of soft-edged circular apertures of increasing diameter 
+(1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6 and 6\farcs 6).
+\item Finally, the parametrisation of overlapping objects
+is refined by simultaneous fitting of
+soft-edged apertures to each blend,
+which is essentially identical 
+to multiple "profile" fitting.
+\end{enumerate}
+A discussion on each of these steps
+can be found in \citep{Irwin1985,Irwin1997}.
+We note that the parametrisation of single, unconfused objects
+is naturally more reliable than that of
+objects which had to be deblended.
+In \S\ref{sec:catalogue} we will explain
+how blended sources are flagged in the catalogue. 
+
+
+%The sentence about deblending could be misleading since the objects are
+%detected using our standard deblending algorithm while the aperture flux
+%estimates for overlapping images are computed by simultaneous fitting of
+%soft-edged apertures.  During this multiple "profile" fitting the sky
+%level is based on the interpolated global detector-level fit
+
+%This approach works very well 
+%across the vast majority of the survey area.  Nevertheless,
+%the Galactic Plane contains crowded regions 
+%with large numbers of overlapping sources
+%or rapidly spatially-varying nebulosity,
+%where aperture photometry will be compromised by frequent blending
+%or poor background subtraction. 
+}
+
 
 Finally, an astrometric solution is determined
 based on the Two-Micron All Sky Survey (2MASS) point source catalogue \citep{Skrutskie2006},
@@ -523,9 +552,18 @@ across the data release:
 \end{figure}
 
 (1) \emph{Depth.} 
-We discarded any exposures for which the $5\sigma$ limiting magnitude 
+We discarded any exposures 
+for which the $5\sigma$ limiting magnitude\footnote{\bf
+We defined the $5\sigma$ limiting magnitude
+as the magnitude which a point source would have,
+when its flux in a 2\farcs 3-diameter aperture
+is five times the level of the noise in the sky background.
+The sky noise was estimated using a robust MAD estimator 
+for noise scaled to equivalent Gaussian rms value, ie. = MAD x 1.48,
+after removing large scale sky background variations.
+(MAD = Median of the Absolute Deviations about the median.)}
 was brighter than 20th magnitude in the $r$-band
-or brighter than 19th in $i$ or \ha. 
+or brighter than 19th in $i$ or \ha.
 Such data were typically obtained during poor weather or full moon.
 Most observations were significantly better than these limits.
 Fig.~\ref{fig:depth} presents the distribution of limiting magnitudes
@@ -566,11 +604,21 @@ The mean ellipticity measured
 in the data is $0.09\pm0.04$.
 There have been sporadic episodes with higher ellipticities
 due to mechanical glitches in the telescope tracking system.
-To exclude these, we rejected exposures
-in which the \emph{average} ellipticity
-across the detectors exceeded $e > 0.3$.
-We have also found that, as this threshold is breached,
-the photometric measurements delivered by the pipeline become degraded.
+{ \bf As a result, 3 per cent of our images show an
+average ellipticity across the detectors which is worse
+than $e > 0.2$.
+The inspection of these examples revealed no evidence for
+degraded photometry up to ellipticities less than 0.3.
+In fact high ellipticities are correlated with superior seeing,
+and therefore somewhat deeper frames.
+We did however exclude a small number of exposures
+which exceeded $e > 0.3$.}
+
+%To exclude these, we rejected exposures
+%in which the average ellipticity
+%across the detectors exceeded $e > 0.3$.
+%We have also found that, as this threshold is breached,
+%the photometric measurements delivered by the pipeline become degraded.
 
 (3) \emph{Seeing.} 
 The original survey goal was to obtain data 

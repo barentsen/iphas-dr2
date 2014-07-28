@@ -226,11 +226,19 @@ This has been corrected.
 > should be provided.  Are contaminants removed from the sky background measurement,
 > the source measurement aperture, both?
 
+[Authors' response]
+The second paragraph of 3.1 has been edited to explain the steps of the CASU
+object detection pipeline in more detail.
+
 
 [Referee]
 > 3. At the beginning of the Data Reduction section (section 3), it would be helpful
 > to provide a summary of how data processing for this release differed from that
 > used for the Initial Data Release.
+
+[Authors' response]
+We have edited the final paragraph of Section 3.1 to highlight the key differences
+between the present and previous data release.
 
 
 [Referee]
@@ -238,11 +246,22 @@ This has been corrected.
 > had 5-sigma limiting magnitudes of r>20 or i>19 and H-apha>19 mag. How were the
 > limiting magnitudes for an exposure estimated?
 
+[Authors' response]
+We have added a footnote to Section 3.2 which details how the 5-sigma limiting 
+magnitude is defined and estimated in our work.
+
 
 [Referee]
 > 4.b. Section 3.2 also specifies that an ellipticity limit of eps>0.3 was used.
 > What is the justification of this limit?  For example, what is the potential impact on
 > photometry and sensitivity at eps=0.25?
+
+[Authors' response]
+We have edited the third paragraph in Section 3.2 to explain that the choice
+of our ellipticity limit at eps>0.3 is based on inspecting examples of 
+high-ellipticity exposures, which revealed no evidence for degraded photometry
+up to ellipticities less than 0.3. In fact high ellipticities are correlated 
+with superior seeing, and therefore somewhat deeper frames.
 
 
 [Referee]
@@ -250,6 +269,9 @@ This has been corrected.
 > adopted, or was there any attempt to measure them?  Is there an estimate of
 > how much the extinction may have varied with time, either during a night, or
 > seasonally?
+
+[Authors' response]
+TBD
 
 
 [Referee]
