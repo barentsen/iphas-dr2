@@ -13,8 +13,8 @@ We have also added N new sections of auxillary material to our web site as a
 direct consequence.
 
 In what follows we will start by explaining our response to each of the issues 
-which the referee identified as high-level remarks (9 items), followed by our 
-response to the more specific remarks (8 items).
+which the referee identified as high-level remarks (9 items), followed by the
+referee's additional comments which affect specific sections (8 items).
 
 
 High-level items
@@ -207,3 +207,131 @@ IPHAS and an infrared survey, we have added a brief discussion on the overlap
 between the GLIMPSE and IPHAS catalogues at the end of Section 7.2.  The 
 discussion warns the reader that an optical survey will naturally be 
 extinction-limited.
+
+
+Section-specific remarks
+------------------------
+
+[Referee]
+> 1. In Section 3.1, paragraph 1, sentence 1:
+> "archival" should be "archiving"
+
+[Authors' response]
+This has been corrected.
+
+
+[Referee]
+> 2. In the second paragraph of section 3.1, it is stated that a deblending routine
+> is used to remove contaminating sources.  Additional information about this routine
+> should be provided.  Are contaminants removed from the sky background measurement,
+> the source measurement aperture, both?
+
+
+[Referee]
+> 3. At the beginning of the Data Reduction section (section 3), it would be helpful
+> to provide a summary of how data processing for this release differed from that
+> used for the Initial Data Release.
+
+
+[Referee]
+> 4.a. It is stated in section 3.2 that the exposures were discarded unless they
+> had 5-sigma limiting magnitudes of r>20 or i>19 and H-apha>19 mag. How were the
+> limiting magnitudes for an exposure estimated?
+
+
+[Referee]
+> 4.b. Section 3.2 also specifies that an ellipticity limit of eps>0.3 was used.
+> What is the justification of this limit?  For example, what is the potential impact on
+> photometry and sensitivity at eps=0.25?
+
+
+[Referee]
+> 5.a. Were the atmospheric extinction coefficients of 0.09 (r) and 0.05 (i) simply
+> adopted, or was there any attempt to measure them?  Is there an estimate of
+> how much the extinction may have varied with time, either during a night, or
+> seasonally?
+
+
+[Referee]
+> 5.b. The PERCORR factor in equation 1 is used to correct for "sporadic gain variation."
+> What was the nature of the variations when non-zero?  How was it measured?
+> What is the size of the correction when it was applied?
+
+
+[Referee]
+> 5.c. The first paragraph of section 4.2 on Global Calibration states that calibration
+> errors  can be up to 0.1 magnitude in reference to the colour-colour diagram shown in
+> Figure 4a. There are outlier populations in that figure that are up to 0.6 mags
+> from the main locus of points.  These seem to be accurately corrected by
+> the recalibration, but the text seems to understate the severity of the
+> systematics.
+
+
+[Referee]
+> 5.d.  It is stated in section 4.2, paragraph 2 that 2MASS observed six calibration
+> fields each hour.  That is not correct.  2MASS observed two calibration fields each hour.  However, each observation of a field consisted of six scans.
+
+
+[Referee]
+> 5.e The authors may wish to specify in Section 4.3 that the SDSS DR9 Galactic Plane data
+> that were used to test the IPHAS calibration were specifically from the SEGUE program
+> of SDSS II, and cite the appropriate reference for SEGUE.
+
+
+[Referee]
+> 6.a. Section 5.1
+> Would it be possible to provide the aperture corrections applied to the aperture
+> photometry for each image along with the image metadata?
+
+> Shouldn't the "saturated" column flag be specified per band?  Surely it must
+> be possible for extremely red objects to be saturated in the i-band exposure
+> but not r-band.
+
+
+> 6.b. Section 5.2
+> Little information about the specifics of band-merging is provided other than the
+> reference to Taylor 2006 and TMATCHN.  Users will be forced to track down
+> the reference to understand the process.  The authors should consider giving a short
+> summary of the algorithm.  Some important information that should be provided are:
+
+- How is confusion handled in the band merging process (e.g. what happens when
+more than one i-band detection can be matched to an r-band detection?).
+Source confusion in the band-merging process is mentioned in the final
+paragraph of section 6.3.
+
+- Is there any band-filling when a source is not detected in all bands?  If so, what
+is the algorithm used to provide the flux limits in the non-detected bands?
+
+
+6.c. Section 5.3 - Table 4
+
+It is not clear what is the specific value is of the average magnitude given for each of
+the different band-detection combinations in Table 4?  Wouldn't something like the peak
+of the log N - log M curves be of more interest to provide some sense of the
+completeness and/or depth of the Catalogue?
+
+6.d. Section 5.4
+
+While the authors provide a thorough description of the criteria used for
+Catalogue selection, no reasons were offered for why those criteria were adopted.
+For example, were there requirements for completeness and reliability that were
+being satisfies?  If not, what were the objectives?
+
+In the first paragraph of section 5.4, it is stated the three criteria were
+enforced to limit the size of the catalogue.  Was this the main driver for establishing
+the top-level criteria?  It seems unusual in this day and age of massive catalogues
+that this would be a driver.
+
+As stated earlier in this review, some description should be offered as to the nature of
+the very large number of detections in the catalogue that are not classified as "reliable."
+It would be useful to describe them to the user, and to offer suggestions of
+how to recognize problematic detections, and also ones that may be real.
+
+7. Section 6.1, par. 2, sentence 1
+
+Should the work "accuracy" be "reliability"?
+
+8. Figure 11 - caption
+
+The reference to the left and right panels should presumably be to the top and bottom panels,
+unless the two figures will be arranged differently in the published version.
