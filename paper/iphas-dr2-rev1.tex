@@ -415,7 +415,6 @@ gain correction and de-fringing.
 %(position, filter, exposure time, etc.) 
 %and four image extensions 
 %corresponding to each of the four CCDs.
-
 % called \textsc{imcore},
 
 { \bf
@@ -472,6 +471,10 @@ in the International Celestial Reference System (ICRS).
 A provisional photometric calibration is also determined 
 based on the average zeropoint
 obtained from sets of standard stars observed within the same night.
+
+%%(even though the nominal rms accuracy
+%-- estimated against 2MASS across the focal plane --
+%tends to be better than 0.1~arcsec).
 
 At the time of preparing DR2,
 the pipeline had processed
@@ -755,13 +758,17 @@ through the atmosphere and
 \textsc{apcor} is a correction for the flux
 lost outside of the aperture used
 (we adopt a 2\farcs 3-diameter circular aperture by default).
-Finally, \textsc{percorr} is a correction based on the difference
-between the median dark sky for a CCD against the median for all the CCDs, 
-and as such is an ancillary correction 
-to account for sporadic gain variations --
-it is zero for most exposures.
-All these quantities correspond to header keywords in the 
-multi-extension FITS files produced by the CASU pipeline.
+{\bf
+Finally, \textsc{percorr} is a term used to correct 
+for the small difference in internal gain
+computed using the twilight flats
+compared to the much redder typical astronomical objects. 
+It is estimated by making a robust average of the dark sky levels 
+measured on each detector during an observing run.
+The correction is $0.01\pm0.01$ on average in $i$ and
+$0.00\pm0.00$ in $r$ and \ha.
+All these quantities correspond to header keywords
+in the FITS files produced by the CASU pipeline. }
 
 The broadband zeropoints were determined such that the resulting magnitude system
 refers to the spectral energy distribution (SED) of Vega 
@@ -842,17 +849,22 @@ in the timing of exposures).
 This is demonstrated in Fig.~\ref{fig:ccd_before},
 where we show the combined colour-colour diagram
 for the set of 2\,801 quality-approved fields
-which are located towards the Galactic anti-centre
-($160\degr < \ell < 200\degr$).
+which are located towards the Galactic anti-centre.
+{ \bf
 The main locus of stars is poorly defined
 in the diagram due to the presence of
-incorrectly calibrated fields.
-The nightly calibration errors can exceed 0.1~mag
-and need to be corrected for 
-during a global re-calibration procedure.
+incorrectly calibrated fields,
+which need to be corrected
+during a global re-calibration step.
+The application of such a procedure,
+to be explained below,
+has revealed that the error in our initial nightly calibration
+exceeded 0.1~mag in 12 per cent of fields,
+and even exceeded 0.5~mag in 0.7 per cent.
 For comparison, Fig.~\ref{fig:ccd_after}
-shows the identical diagram
-obtained after re-calibrating.
+demonstrates the improvement 
+in the colour-colour diagram
+after re-calibrating. }
 
 \begin{figure}
 \captionsetup[subfigure]{labelformat=empty}
@@ -903,8 +915,8 @@ that is globally consistent to within 0.01--0.02~mag.
 
 Surveys which observe identical stars at different epochs
 can use the repeat measurements to ensure a homogeneous calibration.
-For example, 2MASS attained its global calibration
-by observing six standard fields each hour, 
+{\bf For example, 2MASS attained its global calibration
+by observing two standard fields each hour, }
 allowing zeropoint variations to be tracked 
 over very short timescales \citep{Nikolaev2000}.
 Alternatively, the SDSS and PanSTARRS surveys could benefit
@@ -925,13 +937,12 @@ First, the survey was carried out
 in competitively-allocated observing time on a
 common-user telescope, 
 rendering the 2MASS approach 
-of observing standards at a very high frequency
+of observing standards at a high frequency
 prohibitively expensive (it does not help that 
-standard fields 
-are very scarce within the Galactic Plane).
-Second, IPHAS is not specified as a variability survey, with
-the result that stars are not normally observed at more 
-than one epoch,
+standard fields are very scarce within the Galactic Plane).
+Second, IPHAS is not specified as a variability survey,
+with the result that stars are not normally observed
+at more than one epoch,
 unless they happen to fall within a narrow overlap region 
 between two neighbouring field pairs.
 
@@ -1486,6 +1497,7 @@ indexed by \emph{fieldID}, is made available on our website.
 
 \subsection{Band-merging the detection tables}
 
+{\bf
 The second step in compiling the source catalogue
 is to merge the contemporaneous trios
 of $r$, $i$, \ha\ detection tables
@@ -1493,15 +1505,31 @@ into multi-band field catalogues.
 This required a position matching procedure 
 to link sources between the three bands.
 We used the \textsc{tmatchn} function 
-of the \textsc{stilts} software for this purpose,
-which allows rows from multiple tables to be matched \citep{Taylor2006}.
+of the \textsc{stilts} software
+for this purpose,
+which allows rows from multiple tables
+to be matched \citep{Taylor2006}.
+In brief, the algorithm\footnote{The exact options used
+to band-merge a field using \textsc{stilts tmatchn} are: matcher=sky params=1.0 multimode=group nin=3 in1=r
+in2=i in3=halpha join1=always join2=always join3=always}
+identifies groups of linked detections such that
+(i) each detection is located within a specified maximum distance from
+one or more members of the group,
+(ii) each detection appears in exactly one group, and
+(iii) the largest possible groups are preferred
+(i.e. preferably containing three detections from all three bands).
 The result of the procedure is a band-merged catalogue
-in which each row corresponds to a group of linked $r$, $i$, and \ha\ detections
-which satisfy a maximum matching distance criterion in a pair-wise sense.
+in which each row corresponds
+to a group of linked $r$, $i$, and \ha\ detections
+which satisfy the matching distance criterion
+in a pair-wise sense.
 Sources for which no counterpart was identified
-are retained in the catalogue as single-band detections.
+in all three bands are retained in the catalogue
+as single- or double-band detections, with the columns
+for the missing bands left empty.
 
-We employed a maximum matching distance of 1~arcsec, trading off completeness against reliability.
+We employed a maximum matching distance of 1~arcsec,
+trading off completeness against reliability.
 On the one hand, a matching distance larger than 1~arcsec 
 was found to allow too many spurious and unrelated sources 
 to be linked. 
@@ -1510,22 +1538,30 @@ would pose problems for very faint sources
 with large centroiding errors, 
 and would occasionally fail near CCD corners,
 where the astrometric solution can 
-show local systematic errors which exceed 0.5~arcsec
-(even though the nominal rms accuracy
--- estimated against 2MASS across the focal plane --
-tends to be better than 0.1~arcsec).
+show local systematic errors which exceed 0.5~arcsec.
 The position offsets between the $r$ detection and detections in $i$, and/or \ha\
 have been included in the catalogue, giving the user the option to tighten them 
 further if necessary
 (columns \emph{iXi}, \emph{iEta}, \emph{haXi}, \emph{haEta}),
 or simply to examine light centre differences.
 We note that UKIDSS/GPS adopted 
-the same maximum matching distance of 1 arcsec
+the same maximum matching distance
 for similar reasons \citep{Hambly2008}.
 
-The resulting band-merged catalogues were inspected
+The resulting band-merged catalogues were inspected by eye
 as part of our quality control procedures
-and were found to be a10.
+and were found to be reliable for the vast majority of objects.
+We do warn that blended objects
+can occasionally fall victim to source confusion
+during the band-merging procedure,
+which is a complicated problem
+that we have not attempted to resolve in this release.
+It is important to bear this in mind when appraising stars
+of seemingly unusual colours (such as candidate emission line stars).
+If blending is flagged, or if the inter-band matching distance
+is unusually large, then the probability that the unusual colour is 
+spurious is greatly increased.
+}
 
 \subsection{Selecting the primary detections}
 
@@ -1561,7 +1597,7 @@ in the catalogue for convenience
 (columns \emph{sourceID2}, \emph{fieldID2}, 
 \emph{r2}, \emph{i2}, \emph{ha2},
 \emph{rErr2}, \emph{iErr2}, \emph{haErr2}, \emph{errBits2}).
-Second, tables of detections not included in the catalogue
+Second, images not included in the catalogue
 are made available on our website.
 
 Primary detections have been selected from all available detections using a so-called \emph{seaming} procedure,
@@ -1582,14 +1618,14 @@ As the final step, the primary detections
 selected above were compiled
 into the final 99-column source catalogue
 that is described in Appendix~\ref{app:columns}.
+{ \bf
 The original unweeded list of sources naturally included 
 a significant number of spurious entries
-as a result of the very sensitive default detection settings
-that are employed by the CASU pipeline.
-To limit the size of the source catalogue,
-we have decided to enforce three basic criteria
+as a result of the sensitive detection level
+that is employed by the CASU pipeline.
+We have decided to enforce three basic criteria
 which must be met for a candidate source
-to be included in the catalogue:
+to be included in the catalogue:}
 \begin{enumerate}
 \item the source must have been detected at S/N$>5$ in at least
 one of the bands, i.e. it is required that at least one of
@@ -1611,24 +1647,23 @@ and not have been on the edge of one of the CCDs.
              We also show the fraction of `confirmed' sources,
              which we define as those objects
              detected in more than one field
-             (usually the field pair partner).
-             We also show the average magnitudes for each class.}
+             (usually the field pair partner).}
     \label{tbl:detections}
     \begin{center}
         \begin{tabular}{lrcccc}
         \toprule
-        Band(s) & Sources & Confirmed & $\overline{r}$ & $\overline{i}$ & $\overline{\ha}$ \\
-        & [$10^6$] & [\emph{nObs}$>$1] & [mag] & [mag] & [mag] \\
+        Band(s) & Sources & Confirmed \\
+        & [$10^6$] & (\emph{nObs}$>$1) \\
         \midrule
-        $r$, $i$, \ha & 159 & 91\% & 19.3 & 18.2 & 18.8  \\
-        $r$, $i$ & 25 & 77\% & 21.2 & 19.9 & - \\
-        $i$, \ha & 3 & 73\% & - & 19.6 & 20.2 \\
-        $r$, \ha & 2 & 65\% & 20.6 & - & 20.1 \\
-        $i$ & 15 & 43\% & - & 19.8 & - \\
-        $r$ & 9 & 27\% & 21.1 & - & - \\
-        \ha & 6 & 12\% & - & - & 19.9 \\
+        $r$, $i$, \ha & 159 & 91\% \\
+        $r$, $i$ & 25 & 77\% \\
+        $i$, \ha & 3 & 73\% \\
+        $r$, \ha & 2 & 65\% \\
+        $i$ & 15 & 43\% \\
+        $r$ & 9 & 27\% \\
+        \ha & 6 & 12\% \\
         \midrule
-        Total  & 219 & 81\% & 19.6 & 18.6 & 18.9 \\
+        Total  & 219 & 81\% \\
         \bottomrule
         \end{tabular}
 	\end{center}
@@ -1642,16 +1677,18 @@ sources as a function of the bands in which they are captured.
 159 million sources are detected in all three filters (73 per cent),
 30 million are detected in two filters (14 per cent),
 and the remaining 30 million are single-band detections.
-Table~\ref{tbl:detections} also presents the average magnitudes
-and the fraction of `confirmed' objects,
-which we define as those sources which have been detected in more than
-one field
-(recall that the majority of the survey area
+{\bf
+Table~\ref{tbl:detections} also presents 
+the fraction of `confirmed' objects,
+which we define as those sources
+which have been detected more than once
+(recall that much of the survey area
 is observed twice due to the field pair strategy).
-We find that the single-band detections tend to show low confirmation rates,
-which suggests that a significant fraction of these entries may be spurious detections.
-We recommend users not to rely on single-band objects
-without inspecting the image data by eye.
+We find that the single-band detections tend
+to show much lower confirmation rates (32 per cent on average)
+than double- and triple-band detections (89 per cent).
+This suggests that a significant fraction of
+these entries may be spurious detections.
 
 Not all the single-band detections are spurious sources, however.
 We note that the confirmation rate for $i$-band detections
@@ -1662,22 +1699,58 @@ highly-reddened objects in $i$ which are otherwise lost in $r$ and \ha.
 Moreover, objects which are intrinsically very red may also be picked
 up in $i$ alone, while faint objects with very strong Balmer emission
 may appear only in \ha.
+Nevertheless, we recommend users not to rely on single-band objects
+without inspecting the image data by eye,
+or verifying that the object
+was detected more than once (\emph{nObs}$>$1).
+}
 
 \section{Discussion}
 \label{sec:discussion}
 
-We now offer an overview of the properties of the
-catalogue by discussing  
-(i) the recommended quality criteria,
-(ii) the photometric uncertainties and repeatability,
-and (iii) the source densities and the frequency of source blending.
-
-\subsection{Recommended quality criteria}
-\label{sec:qualitycriteria}
-
 {\bf
-Like any other photometric survey,
-the majority of the objects in our catalogue
+
+We now offer an overview of the properties of the
+catalogue by discussing 
+(i) the known caveats,
+(ii) the recommended quality criteria,
+(iii) the reliability of sources,
+(iv) the photometric uncertainties,
+and (v) the source densities.
+
+\subsection{Known caveats}
+
+Like any other photometric survey
+which operates close
+to the detection and resolution limits,
+our catalogue inevitable contains sources
+with are spurious or have been parametrised inaccurately.
+In what follows, we highlight the most common
+caveats which users of the catalogue might face,
+followed by a discussion on how they can be avoided.
+Known caveats include:
+\begin{itemize}
+\item \emph{Spurious objects.}
+Nebulous sky backgrounds,
+saturation artefacts near bright stars,
+and cosmic rays
+are known to be able to trigger spurious detections.
+The majority of these can be removed by requiring
+that a detection is made in more than one band
+(\emph{nBands}$>$1),
+on more than one occasion (\emph{nObs}$>$1),
+or by ensuring that the object looks like a perfect
+point source (\emph{pStar}$>$0.9).
+\item \emph{Source blending and confusion.}
+Blended objects are known to be parametrised less accurately
+and to be more prone 
+to have fallen victim to source confusion
+during the band-merging procedure.
+We remind the reader that such objects are flagged in the catalogue
+using the columns \emph{rDeblend}, \emph{iDeblend},
+or \emph{haDeblend}.
+\item \emph{Low S/N detections.}
+The majority of the objects in our catalogue
 are faint sources observed near the detection limits,
 e.g. 55 per cent of the entries in the catalogue
 are fainter than $r > 20$.
@@ -1687,10 +1760,35 @@ random and systematic uncertainties:
 for example, an inaccurately-subtracted background
 will introduce a proportionally larger systematic error
 for a faint object.
-Most scientific applications will hence require a set of
-quality criteria to be enforced for the purpose
-of removing lower-quality objects.
+These objects can be removed by ensuring that an
+object is detected at $S/N>10$
+(\emph{rErr}$<$0.1, \emph{iErr}$<$0.1, \emph{haErr}$<$0.1)
+or has photometry which is consistent across
+the different aperture sizes.
+\item \emph{Saturation.}
+The photometry and astrometry of objects
+brighter than the saturation limit of the instrument
+is subject to systematic errors
+(typically at $r<13$, $i<12$, $\ha<12.5$).
+Such objects can be removed by ensuring that the columns
+\emph{rSaturated}, \emph{iSaturated},
+or \emph{haSaturated} are set to ``False''.
+\end{itemize}
+We note that it is not possible, at this stage,
+to include an exhaustive list of all the caveats,
+because we cannot anticipate all forms of use of the data.
+For this reason, we recommend users to read
+the caveats section on the webpage (www.iphas.org/dr2),
+which will be updated as user experience accumulates.
 
+
+\subsection{Recommended quality criteria}
+\label{sec:qualitycriteria}
+
+Most applications will require
+a combination of the quality criteria outlined above
+to remove lower-quality objects.
+In what follows we recommend two sets of such criteria.
 The choice of quality criteria will always tension 
 completeness {\bf against reliability,
 i.e. the fraction of spurious sources}.
@@ -1872,63 +1970,74 @@ but users are encouraged
 to revise the quality criteria according to their needs.
 
 
-
 \subsection{Source reliability}
 \label{sec:reliability}
 
-In producing a point source catalogue, spurious detections 
-will inevitably be made. A fraction of these will mimic stellar 
-sources closely enough that they cannot be excluded using the 
-recorded parameters. 
-
-%The majority of sources have been observed in IPHAS more than 
-%once (for objects with S/N $>$ 10 in the $r$-band, 62\% of 
-%objects have secondary detections), however there are regions 
-%observed only once - e.g. survey edges, intersections of inter-CCD 
-%gaps. As such, requiring that objects have a secondary observation 
-%to be considered reliable eliminates a significant fraction of
-%genuine objects..
-
-A statistic that can represent the confidence that objects in the 
-catalogue are genuine is the reliability of the survey. The 
-reliability gives the fraction of objects that can be repeatedly 
-observed; provided the comparison is made to an external source of 
-comparable depth this will provide the ratio of genuine astronomical 
-sources to sources in the catalogue.
-
-The IPHAS catalogue was compared to the SDSS DR7 point source 
-catalogue (table \emph{PhotoObjAll}), in regions of 1 deg$^2$ 
-chosen for contiguous coverage in both IPHAS and SDSS. This limited 
-the choice of comparison regions to the second and third Galactic 
-quadrants as the SDSS strips passing through the early plane are 
-incomplete. DR7 was chosen for this comparison due to a change in 
-the catalogue generation for DR8 which resulted in fewer stars being 
+Having obtained a set of quality criteria,
+we now assess how these improve the data quality.
+In this section we start by discussing
+the \emph{reliability} of the survey,
+which we define as the fraction of sources
+which are genuine astrophysical objects.
+To estimate the reliability, we cross-matched the IPHAS catalogue
+against SDSS DR7,
+which is a catalogue of similar resolution and depth.\footnote{DR7 was chosen for this comparison due to a change in 
+the catalogue generation for DR8, which resulted in fewer stars being 
 detected near bright ($r\,<\,10$) sources, which in turn gave an unduly 
-pessimistic values for the reliability of IPHAS sources.
+pessimistic values for the reliability of IPHAS sources.}
+By computing the fraction of IPHAS sources which were
+independently detected by SDSS as well,
+we obtain a lower limit for the reliability.
 
-Comparisons were made for a number of subsets of the IPHAS point 
-source catalogue: 
+%Such contiguous areas were only found to exist
+%in the second and third Galactic quadrants.
+% as the SDSS strips passing through the early plane are 
+%incomplete. 
+
+%, which has a comparable depth.
+
+%observed; provided the comparison is made to an external source of 
+%comparable depth this will provide the ratio of genuine astronomical 
+%sources to sources in the catalogue.
+
+%In producing a point source catalogue, spurious detections 
+%will inevitably be made. A fraction of these will mimic stellar 
+%sources closely enough that they cannot be excluded using the 
+%recorded parameters. 
+
+The comparison was carried out across three cone-shaped regions,
+each covering 1 deg$^2$,
+using a strict cross-matching distance of 0.5~arcsec.
+We considered four subsets of the IPHAS catalogue:
 \begin{enumerate}
-\item the entire (unfiltered) catalogue
-\item objects detected in all three bands with \emph{mergedClass} equals -1, -2 or +1
-\item $rErr\,<\,0.1$ and \emph{rClass} equals -1, -2 or +1
-\item $iErr\,<\,0.1$ and \emph{iClass} equals -1, -2 or +1
-\item \emph{a10} sources
-\item \emph{a10point} sources
+\item the entire (unfiltered) catalogue;
+\item objects detected in all three bands;
+\item \emph{a10} sources;
+\item \emph{a10point} sources.
 \end{enumerate}
-\noindent with the results presented in Table~\ref{tbl:reliability}. 
-Requiring S/N $>$ 10 eliminates the majority of unreliable detections, 
-as does selecting objects observed in multiple bands. The $i$-band performs 
-marginally better than the $r$-band in terms of reliability, returning a 
-slightly higher ($< 0.5\%$) reliability percentage for detections with S/N 
-$>\,10$. Reliabilities $>99\%$ and $>99.5\%$ are achieved by using the 
-supplied \emph{a10} and \emph{a10point} quality flags.
 
-The majority of unreliable sources in the IPHAS catalogue are 
-located in the vicinity of bright ($r\,\lesssim\,12$) stars, tracing 
-out the area surrounding the saturated source affected by scattered 
-light. These can be eliminated in most cases by requiring detections 
-in multiple bands.
+The results for each of the regions and subsets
+are presented in Table~\ref{tbl:reliability}.
+We find that our catalogue shows a good
+baseline reliability (90.8 per cent),
+which is improved markedly by the simple requirement
+that a source needs to be detected in all three bands
+(98.7 per cent). 
+Reliabilities $>99\%$ and $>99.5\%$ are achieved using the 
+\emph{a10} and \emph{a10point} quality flags.
+
+To understand the nature of the small fraction of objects
+which appear to be ``unreliable'' in this test,
+despite having been flagged as \emph{a10point},
+we investigated the data by eye.
+We found these ``unreliable'' sources to be located
+in the vicinity of moderately bright stars ($r\,\lesssim\,12$),
+tracing out an area which is affected by saturation spikes or
+scattered light in the SDSS images.
+In all cases these remaining objects appear as genuine
+stars in both the IPHAS and SDSS images,
+and hence we think it is likely that the reliability
+of the \emph{a10point} class of objects is close to 100 per cent.
 
 \begin{table}
     \caption{Fractions of sources in our catalogue
@@ -1940,21 +2049,18 @@ in multiple bands.
              i.e. the probability that an entry in our
              catalogue is a genuine astrophysical source
              rather than an instrumental artefact.
-             The recovery fractions were computed
-             in three 1 deg$^2$ circular areas
-             where both surveys overlapped.
-             The recovery rates are shown
+             The fractions were computed
+             in three 1 deg$^2$ regions
+             where both surveys
+             show contiguous overlap.
+             The reliability is shown
              for IPHAS sources 
              without selection criteria applied (``all''),
-             using only objects detected in all three bands (``$nBands=3$''),
+             using only objects detected in all three bands ($nBands=3$),
              using objects detected at 10$\sigma$
-             in all three bands (``a10''),
+             in all three bands (\emph{a10}),
              and finally using the detections
-             which we classified earlier
-             as reliable 10$\sigma$ point sources (``a10point'').
-    		%Reliability values as computed by crossmatching the point 
-             %source catalogues of IPHAS and SDSS DR7 for a number of 
-             %subsets of IPHAS DR2 across 1 deg$^2$ regions.
+             classified as reliable 10$\sigma$ point sources (\emph{a10point}).
              }
     \label{tbl:reliability}
     \begin{center}
@@ -1964,7 +2070,8 @@ in multiple bands.
         \midrule
         (149.39, 4.06) & 93.0\% & 98.8\% & 99.7\% & 99.8\% \\
         (186.59, -2.50) & 90.0\% & 98.8\% & 99.4\% & 99.6\% \\
-        (202.70, -1.75) & 89.4\% & 98.5\% &99.4\% & 99.7\% \\
+        (202.70, -1.75) & 89.4\% & 98.5\% &99.4\% & 99.7\% \\ \midrule
+        mean & 90.8\% & 98.7\% & 99.5\% & 99.7\% \\
         \bottomrule
         \end{tabular}
     \end{center}
@@ -2895,6 +3002,9 @@ Programme (FP/2007-2013) / ERC Grant Agreement n. 320964 (WDTracer).
 PRG is supported by a Ram\'on y Cajal fellowship (RYC-2010-05762), and acknowledges support provided by the Spanish MINECO AYA2012--38700 grant.
 NJW is in receipt of a Fellowship funded by 
 the Royal Astronomical Society of the United Kingdom.
+
+We are grateful to the anonymous referee for the insightful feedback,
+which has helped us to improve the presentation of the data products.
 
 \label{lastpage}
 

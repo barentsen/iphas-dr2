@@ -8,13 +8,13 @@ role of the paper as a user's guide to the survey, and (ii) would lessen the
 burden on the reader to track down information from previous works.  
 We appreciate the merits of the referee's suggestions in this respect, and have 
 acted upon them by adding a total of N new pages, 1 new table, and 1 new figure 
-to the manuscript.  These changes have been marked in bold in the manuscript.  
-We have also added N new sections of auxillary material to our web site as a 
-direct consequence.
+to the manuscript (marked in bold).  We have also added N new sections of 
+auxillary material to our web site as a direct consequence of the referee's
+suggestions.
 
 In what follows we will start by explaining our response to each of the issues 
 which the referee identified as high-level remarks (9 items), followed by the
-referee's additional comments which affect specific sections (8 items).
+referee's comments on specific sections (8 items).
 
 
 High-level items
@@ -30,7 +30,6 @@ High-level items
 > available elsewhere, but it will make it much easier to understand and use the IPHAS data
 > products if at least some of the general information  could be repeated in this
 > manuscript.
->
 > For example, it would be helpful to include concise summary of the IPHAS survey
 > parameters and this data release in tabular form.  This summary would serve as
 > a "IPHAS-At-A-Glance" for users, and coule include the survey area, dates, telescope,
@@ -39,11 +38,11 @@ High-level items
 > information, users will be challenged to find what they need.
 
 [Authors' response]
-We have kept the referee's recommendation to lessen the burden on the reader in
-mind while revising the paper in response to the items to follow below.
-As request by the referee, we have included a concise summary table of the
-survey parameters at the start of Section 2, in which the 15 key properties
-of the survey are summarised (Table 1).
+Whilst revising the manuscript in response to the items that follow below, we
+have kept the referee's recommendation to lessen the burden on the reader in 
+mind.
+We have also added an overview table of the survey parameters at the start of 
+Section 2, in which 15 key properties of the survey are summarised (Table 1).
 
 
 [Referee]
@@ -52,7 +51,6 @@ of the survey are summarised (Table 1).
 > Second Release includes a reprocessing of all of the survey data to-date, so it
 > is intended to replace the Initial Release, but that should be stated explicitly
 > in the Introduction (e.g. in the 3rd paragraph).
->
 > If my assumption is correct, there should be a summary statement about why the
 > Second Release images and catalogue are in fact better products.  For example,
 > better calibrations, processing algorithms, etc.
@@ -60,9 +58,8 @@ of the survey are summarised (Table 1).
 [Authors' response]
 The referee correctly identified that we forgot to state that this new release 
 supersedes the previous one.  We have added an explicit statement in this sense
-to the third paragraph of Section 1, and in addition we have edited the last
-paragraph of Section 3.1 to list the key differences between the past and the
-present release.
+to the third paragraph of Section 1.  We have also Section 3.1 to highlight 
+the key differences between the past and the present release (last paragraph).
 
 
 [Referee]
@@ -81,13 +78,13 @@ present release.
 [Authors' response]
 The referee requested a discussion on the sensitivity of the H-alpha 
 photometry to line emission to be included in this work.  In response, we have
-added one new section (Sect 7.3) and one new figure (Fig 19) to the paper.
+added one new section (7.3) and one new figure (Fig 19) to the paper.
 In this new section, which is titled "r-Halpha excess as a quantitative measure
 of Halpha emission", we compare the spectroscopic H-alpha EWs for a sample of
 classical Be stars from Raddi et al (2014) against the position of these
 objects in the IPHAS colour-colour diagram.  A good agreement is found.
-Moreover, the accompanying discussion offers a brief guide to the previous 
-works on this topic.
+Moreover, the accompanying discussion offers a guide to the previous works on 
+this topic.
 
 
 [Referee]
@@ -99,13 +96,10 @@ works on this topic.
 > of them.
 
 [Authors' response]
-In response to the referee's suggestion, we have (i) introduced a summary of
-the most common pitfalls at the start of Section 6, and (ii) have added a
-caveats section to our data release web page (www.iphas.org/dr2).
-We note that it is not possible, at this stage, to include an exhaustive list
-of all the caveats, because we cannot anticipate all forms of use of the data.
-Hence in Section 6 we alert the reader to the fact that we offer a caveats
-section on the website, which will be updated as user experience accumulates.
+In response to the referee's suggestion, we have added a new Section 6.1
+to alert users to the most common pitfalls.  We have also added a new
+FAQ/Caveats section to our web page (www.iphas.org/dr2), which will be
+updated as user experience accumulates.
 
 
 [Referee]
@@ -121,10 +115,11 @@ referee that it would be beneficial to give users additional guidance on the use
 of the image products.  For this reason, we have made significant improvements 
 to our web site by (i) providing a query tool to retrieve IPHAS images by 
 coordinates, and (ii) provide more comprehensive documentation on the metadata, 
-the FITS header keywords, and the flux calibration (see www.iphas.org/images).
+the FITS header keywords, the flux calibration, and the astrometric solution
+(see www.iphas.org/images).
 Section 6 of the paper has been edited to advertise these resources, which are 
-set to be updated in the future whilst we prepare a data release which focuses
-more strongly on image and image mosaic products.
+set to be updated in the future.  DR3 is likely to focus more strongly on image
+and image mosaic products, as the survey coverage is approaching 100%.
 
 
 [Referee]
@@ -157,7 +152,7 @@ previously known as "reliable" into "a10" (which is short for "all-band 10-sigma
 and renaming "veryReliable" into "a10point".  We believe this change in 
 terminology will better serve as an operational description of the detection quality.
 
-In addition to this change in terminology, we have followed the referee's suggestion
+In addition to this change in terminology, we have adopted the referee's suggestion
 to gauge the reliability of our objects against an external catalogue.  That is,
 we have introduced a new Section 6.2, titled "Source reliability", in which the 
 reliability of IPHAS sources as a function of the quality criteria is gauged 
@@ -283,12 +278,13 @@ APASS-based zeropoint estimation.
 > What is the size of the correction when it was applied?
 
 [Authors' response]
-We have edited the text to clarify that the PERCORR factor is in fact
-used to correct for the slight difference in internal gain computed using 
-the twilight flats compared to the much redder typical astronomical object.  
+We have edited the text in Section 4.1 to clarify that the PERCORR term is in 
+fact used to correct for the slight difference in internal gain computed using 
+the twilight flats compared to the much redder typical astronomical objects.  
 It is computed by making a robust average of the dark sky levels measured on each
-detector during an observing run.  In other words its a few% level update
-on the internal gain values estimated from the flats.
+detector during an observing run.  The correction is 0.01 +/- 0.01 mag on average
+in the i-band, and 0.00 +/- 0.00 mag on average in r and H-alpha, which is
+now also mentioned in the text.
 
 
 [Referee]
@@ -299,10 +295,22 @@ on the internal gain values estimated from the flats.
 > the recalibration, but the text seems to understate the severity of the
 > systematics.
 
+[Authors' response]
+We have edited the first paragraph of Section 4.2 to offer more detail on the
+calibration errors, including the statement that we found the calibration error
+to exceed 0.1 mag in 12 per cent of the fields, and 0.5 mag in 0.7 per cent.
+
 
 [Referee]
 > 5.d.  It is stated in section 4.2, paragraph 2 that 2MASS observed six calibration
-> fields each hour.  That is not correct.  2MASS observed two calibration fields each hour.  However, each observation of a field consisted of six scans.
+> fields each hour.  That is not correct.  2MASS observed two calibration fields each hour.  
+> However, each observation of a field consisted of six scans.
+
+[Authors' response]
+We have corrected the paragraph accordingly.  Fortunately, our mistake did not
+affect the main point of the sentence, which is that 2MASS observed standard
+fields far more regularly than IPHAS (which observed standards at intervals of 
+2-3 hours, or even less in the presence of clouds).
 
 
 [Referee]
@@ -310,61 +318,134 @@ on the internal gain values estimated from the flats.
 > that were used to test the IPHAS calibration were specifically from the SEGUE program
 > of SDSS II, and cite the appropriate reference for SEGUE.
 
+[Authors' response]
+We have added the appropriate citation for SEGUE (Yanny et al. 2009) to the 
+first paragraph of Section 4.3.
+
 
 [Referee]
 > 6.a. Section 5.1
 > Would it be possible to provide the aperture corrections applied to the aperture
 > photometry for each image along with the image metadata?
 
+[Authors' response]
+Manpower-permitting, we intend to make recommended aperture corrections
+available on our website later this year, as part of a release of the
+single-band detection catalogues and in preparation of the DR3 release.
+
+
+[Referee]
 > Shouldn't the "saturated" column flag be specified per band?  Surely it must
 > be possible for extremely red objects to be saturated in the i-band exposure
 > but not r-band.
 
+[Authors' response]
+The saturation flag was already available for each band as part of the 
+"errBits" columns, but as a result of the referee's comment, we have decided 
+to make this information available in a more user-friendly way through the
+introduction of three new boolean columns to the catalogue: "rSaturated", 
+"iSaturated", and "haSaturated".
+Likewise, we have introduced the new user-friendly columns "rDeblend",
+"iDeblend", and "haDeblend" to flag blended sources on a per-band basis. The
+latter change has allowed the original, more obscure columns "rErrBits",
+"iErrBits", and "haErrBits" to be removed, because the information they
+contained is now entirely captured within the six new columns. Our catalogue
+files and column descriptions have been updated accordingly.
 
+
+[Referee]
 > 6.b. Section 5.2
 > Little information about the specifics of band-merging is provided other than the
 > reference to Taylor 2006 and TMATCHN.  Users will be forced to track down
 > the reference to understand the process.  The authors should consider giving a short
 > summary of the algorithm.  Some important information that should be provided are:
+> - How is confusion handled in the band merging process (e.g. what happens when
+> more than one i-band detection can be matched to an r-band detection?).
+> Source confusion in the band-merging process is mentioned in the final
+> paragraph of section 6.3.
 
-- How is confusion handled in the band merging process (e.g. what happens when
-more than one i-band detection can be matched to an r-band detection?).
-Source confusion in the band-merging process is mentioned in the final
-paragraph of section 6.3.
+[Authors' response]
+We have edition Section 5.2 to include a summary of the STILTS TMATCHN 
+algorithm, and to add a footnote which details the exact options that were used 
+to run the algorithm.  We have also included a warning that blended objects can
+occasionally fall victim to source confusion, which is a complicated problem
+that we have not attempted to resolve in this release, other than by means of
+clearly flagging blended objects in the catalogue and allowing users to refine
+the inter-band matching distance.  The last paragraph of Section 5.2 now
+reminds users of this more clearly.
 
-- Is there any band-filling when a source is not detected in all bands?  If so, what
-is the algorithm used to provide the flux limits in the non-detected bands?
+
+[Referee]
+> - Is there any band-filling when a source is not detected in all bands?  If so, what
+> is the algorithm used to provide the flux limits in the non-detected bands?
+
+[Authors' response]
+We do not provide flux limits in the non-detected bands at present, and have
+made this more clear in the first paragraph of Section 5.2.  We do expect to 
+provide flux limits in DR3, however.
 
 
-6.c. Section 5.3 - Table 4
+[Referee]
+> 6.c. Section 5.3 - Table 4
+> It is not clear what is the specific value is of the average magnitude given for each of
+> the different band-detection combinations in Table 4?  Wouldn't something like the peak
+> of the log N - log M curves be of more interest to provide some sense of the
+> completeness and/or depth of the Catalogue?
 
-It is not clear what is the specific value is of the average magnitude given for each of
-the different band-detection combinations in Table 4?  Wouldn't something like the peak
-of the log N - log M curves be of more interest to provide some sense of the
-completeness and/or depth of the Catalogue?
+[Authors' response]
+Section 5.4 has been edited to make the role of Table 4 clearer, and the average
+magnitudes have been removed since they indeed did not contribute to the key message
+of the Section.
 
-6.d. Section 5.4
 
-While the authors provide a thorough description of the criteria used for
-Catalogue selection, no reasons were offered for why those criteria were adopted.
-For example, were there requirements for completeness and reliability that were
-being satisfies?  If not, what were the objectives?
+[Referee]
+> 6.d. Section 5.4
+> While the authors provide a thorough description of the criteria used for
+> Catalogue selection, no reasons were offered for why those criteria were adopted.
+> For example, were there requirements for completeness and reliability that were
+> being satisfies?  If not, what were the objectives?
+> In the first paragraph of section 5.4, it is stated the three criteria were
+> enforced to limit the size of the catalogue.  Was this the main driver for establishing
+> the top-level criteria?  It seems unusual in this day and age of massive catalogues
+> that this would be a driver.
 
-In the first paragraph of section 5.4, it is stated the three criteria were
-enforced to limit the size of the catalogue.  Was this the main driver for establishing
-the top-level criteria?  It seems unusual in this day and age of massive catalogues
-that this would be a driver.
+[Authors' response]
+The main driver for imposing the top-level criteria is to avoid the catalogue
+from being dominated by the breadth of spurious detections which the pipeline
+naturally picks up at S/N < 5.  We have edited the first paragraph of Section 
+5.4 to clarify this point.  For IPHAS DR3, we consider following the example
+set by Spitzer/GLIMPSE to offer both a "highly reliable" as well as a 
+"more complete, less reliable" version of the catalogue to the public.
 
-As stated earlier in this review, some description should be offered as to the nature of
-the very large number of detections in the catalogue that are not classified as "reliable."
-It would be useful to describe them to the user, and to offer suggestions of
-how to recognize problematic detections, and also ones that may be real.
 
-7. Section 6.1, par. 2, sentence 1
+[Referee]
+> As stated earlier in this review, some description should be offered as to the nature of
+> the very large number of detections in the catalogue that are not classified as "reliable."
+> It would be useful to describe them to the user, and to offer suggestions of
+> how to recognize problematic detections, and also ones that may be real.
 
-Should the work "accuracy" be "reliability"?
+[Authors' response]
+At this point we acknowledge again that our choice of the word "reliable" as
+the name of a class of high-quality objects was misleading. As explained in our
+reply to "point 6" above, we believe to have resolved this problem by renaming
+the "reliable" class into the "a10" class, to avoid conveying the incorrect 
+impression that objects not in this class are spurious.
 
-8. Figure 11 - caption
 
-The reference to the left and right panels should presumably be to the top and bottom panels,
-unless the two figures will be arranged differently in the published version.
+[Referee]
+> 7. Section 6.1, par. 2, sentence 1
+> Should the work "accuracy" be "reliability"?
+
+[Authors' response]
+Indeed, we have corrected this mistake.  Once again, we would like to thank
+the referee for pointing us to the correct use of the term "reliable" in this
+context.
+
+
+[Referee]
+> 8. Figure 11 - caption
+> The reference to the left and right panels should presumably be to the top and bottom panels,
+> unless the two figures will be arranged differently in the published version.
+
+[Authors' response]
+We have corrected this mistake.
