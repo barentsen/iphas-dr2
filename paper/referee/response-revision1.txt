@@ -271,13 +271,24 @@ with superior seeing, and therefore somewhat deeper frames.
 > seasonally?
 
 [Authors' response]
-TBD
+The atmospheric extinction coefficients adopted are standard default values 
+for La Palma.  No direct measures or corrections were attempted, because our 
+re-calibration procedure naturally absorbs extinction variations as part of the
+APASS-based zeropoint estimation.
 
 
 [Referee]
 > 5.b. The PERCORR factor in equation 1 is used to correct for "sporadic gain variation."
 > What was the nature of the variations when non-zero?  How was it measured?
 > What is the size of the correction when it was applied?
+
+[Authors' response]
+We have edited the text to clarify that the PERCORR factor is in fact
+used to correct for the slight difference in internal gain computed using 
+the twilight flats compared to the much redder typical astronomical object.  
+It is computed by making a robust average of the dark sky levels measured on each
+detector during an observing run.  In other words its a few% level update
+on the internal gain values estimated from the flats.
 
 
 [Referee]

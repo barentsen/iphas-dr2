@@ -419,7 +419,7 @@ gain correction and de-fringing.
 % called \textsc{imcore},
 
 { \bf
-Source detection and parametrisation is then carried out
+Object detection and parametrisation is then carried out
 using the standard methods in use by CASU,
 which can be summarised in four steps
 \citep[a discussion on each of these steps
@@ -427,41 +427,33 @@ and related points can be found in][]{Irwin1985,Irwin1997}:
 \begin{enumerate}
 \item The local sky background is estimated
 by computing the sigma-clipped median intensity
-in a grid of 64$\times$64 pixel bins across the image,
-which is robust against contaminating sources.
+in a grid of 64$\times$64 pixel bins across the image.
 Bilinear interpolation is then used to obtain an estimate 
-of the background level at each pixel.
+of the background level at each pixel,
+which is robust against contaminating sources.
 \item Objects, or blends of objects, are detected
 by identifying groups of 4 or more neighbouring pixels
-in which the intensity exceeds the background level by $1.25\sigma$.
+in which the intensity exceeds the background level by at least $1.25\sigma$.
 \item The object are parametrised:
 positions are obtained by computing 
 the intensity-weighted isophotal centre-of-gravity
 of each object,
-while photometry is obtained 
+and photometry is obtained 
 by measuring the intensity
 in a series of soft-edged circular apertures of increasing diameter 
 (1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6 and 6\farcs 6).
-\item Finally, the parametrisation of overlapping objects
+Objects are also classified morphologically
+-- stellar, extended or noise --
+based on their intensity as a function of aperture size.
+\item The parametrisation of overlapping objects
 is refined by simultaneous fitting of
 soft-edged apertures to each blend,
-which is essentially identical 
-to multiple "profile" fitting.
+effectively carrying out profile fitting where necessary.
+We note that the parametrisation of these blended objects is naturally
+less reliable than that of single, unconfused sources,
+but they are clearly flagged in the catalogue
+(to be explained in \S\ref{sec:catalogue}).
 \end{enumerate}
-A discussion on each of these steps
-can be found in \citep{Irwin1985,Irwin1997}.
-We note that the parametrisation of single, unconfused objects
-is naturally more reliable than that of
-objects which had to be deblended.
-In \S\ref{sec:catalogue} we will explain
-how blended sources are flagged in the catalogue. 
-
-
-%The sentence about deblending could be misleading since the objects are
-%detected using our standard deblending algorithm while the aperture flux
-%estimates for overlapping images are computed by simultaneous fitting of
-%soft-edged apertures.  During this multiple "profile" fitting the sky
-%level is based on the interpolated global detector-level fit
 
 %This approach works very well 
 %across the vast majority of the survey area.  Nevertheless,
@@ -470,33 +462,27 @@ how blended sources are flagged in the catalogue.
 %or rapidly spatially-varying nebulosity,
 %where aperture photometry will be compromised by frequent blending
 %or poor background subtraction. 
-}
 
-
-Finally, an astrometric solution is determined
-based on the Two-Micron All Sky Survey (2MASS) point source catalogue \citep{Skrutskie2006},
+Having carried out object detection and characterisation,
+an astrometric solution is then fitted
+based on the Two-Micron All Sky Survey (2MASS)
+point source catalogue \citep{Skrutskie2006},
 which itself is calibrated 
 in the International Celestial Reference System (ICRS).
-A provisional photometric calibration is also provided 
+A provisional photometric calibration is also determined 
 based on the average zeropoint
-determined from sets of standard stars observed within the same night.
-Sources are classified morphologically
--- stellar, extended or noise --
-based on the curve-of-growth determined
-from measuring the source intensity in a series of growing apertures.
-Finally, the resulting source detection tables are stored 
-in multi-extension FITS files.
+obtained from sets of standard stars observed within the same night.
 
 At the time of preparing DR2,
-the CASU pipeline had processed
+the pipeline had processed
 74,195 single-band IPHAS exposures 
 in which a total of 1.9~billion \emph{candidate} detections
-were made at the default detection level of 1.25\,$\sigma$.
+were made.
 This total inevitably includes spurious objects, artefacts and
 duplicate detections;
 in \S\ref{sec:catalogue} we will explain
 how these have been removed or flagged in the final catalogue.
-{ \bf
+
 The pipelined data set -- comprising 2.5~terabyte of FITS files --
 was then transferred to the University of Hertfordshire
 for the purpose of transforming the raw
