@@ -172,7 +172,6 @@ rates, whilst also comparing source counts between SDSS and IPHAS in more detail
 > of the astrometric performance should be added (e.g. mean position residuals as a function
 > of magnitude from comparisons with the astrometric reference stars, or external
 > astrometric collections, such as UCAC4).
->
 > Positions in the IPHAS Catalogue have been reconstructed with respect to 2MASS.
 > However, the authors do not state if the proper motion of the 2MASS reference stars 
 > was taken into account.  Although small, the net motion of the reference stars can
@@ -182,13 +181,17 @@ rates, whilst also comparing source counts between SDSS and IPHAS in more detail
 > IPHAS measurements span nearly 10 years (2003-2012), there can be secular variations.
 
 [Authors' response]
-astrometry ...
-proper motions ...
-
-(There does not appear to be an item number 8 in the reviewer's comments.)
+We have edited Section 3.1 to offer the reader more details on the astrometric 
+calibration.  This section now also includes the results of an external validation of 
+our astrometry against UCAC4, which showed a mean residual of 0.09 +/- 0.07 arcsec at the 
+bright end of our catalogue.  We have also added a statement to specify that
+no proper motion information was used in arriving at our astrometry, which is
+of limited effect because hundreds 2MASS positional reference stars were available 
+in each CCD to fit the parameters of the WCS solution.
 
 
 [Referee]
+(There does not appear to be an item number 8 in the referee report.)
 > 9. The authors point out in the introduction that IPHAS will complement a number of
 > new infrared surveys of the Galactic Plane.  The paper would benefit from at least
 > one cross-comparison with the catalogue of one of those surveys, such as GLIMPSE

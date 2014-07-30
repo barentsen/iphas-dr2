@@ -426,10 +426,10 @@ and related points can be found in][]{Irwin1985,Irwin1997}:
 \begin{enumerate}
 \item The local sky background is estimated
 by computing the sigma-clipped median intensity
-in a grid of 64$\times$64 pixel bins across the image.
-Bilinear interpolation is then used to obtain an estimate 
-of the background level at each pixel,
+in a grid of 64$\times$64 pixel bins across the image,
 which is robust against contaminating sources.
+Bilinear interpolation is then used to obtain an estimate 
+of the background level at each pixel.
 \item Objects, or blends of objects, are detected
 by identifying groups of 4 or more neighbouring pixels
 in which the intensity exceeds the background level by at least $1.25\sigma$.
@@ -447,10 +447,10 @@ based on their intensity as a function of aperture size.
 \item The parametrisation of overlapping objects
 is refined by simultaneous fitting of
 soft-edged apertures to each blend,
-effectively carrying out profile fitting where necessary.
+effectively carrying out profile fitting where it is necessary.
 We note that the parametrisation of these blended objects is naturally
 less reliable than that of single, unconfused sources,
-but they are clearly flagged in the catalogue
+which is why they are flagged in the catalogue
 (to be explained in \S\ref{sec:catalogue}).
 \end{enumerate}
 
@@ -463,18 +463,57 @@ but they are clearly flagged in the catalogue
 %or poor background subtraction. 
 
 Having carried out object detection and characterisation,
-an astrometric solution is then fitted
-based on the Two-Micron All Sky Survey (2MASS)
-point source catalogue \citep{Skrutskie2006},
-which itself is calibrated 
-in the International Celestial Reference System (ICRS).
-A provisional photometric calibration is also determined 
-based on the average zeropoint
-obtained from sets of standard stars observed within the same night.
+the astrometric calibration is then determined.
+The solution starts with a rough 
+World Coordinate System (WCS)
+based on the known telescope and camera geometry,
+which uses a Zenithal Polynomial projection
+\citep[ZPN;][]{Calabretta2002}
+to model the field distortion of the WFC.
+The parameters of this solution
+are then progressively refined using the
+Two-Micron All Sky Survey catalogue \citep[2MASS; ][]{Skrutskie2006}.
+We did not include proper motion information during this step,
+because each CCD typically contains
+hundreds of 2MASS reference stars.
+The resulting fit has previously been shown
+to deliver results which are internally consistent
+to better than 0\farcs 1 across the detector
+\citep{Gonzalez-Solares2008}.
 
-%%(even though the nominal rms accuracy
-%-- estimated against 2MASS across the focal plane --
-%tends to be better than 0.1~arcsec).
+An external validation has been carried out
+by comparing our positions against the
+United States Naval Observatory CCD Astrograph Catalog 
+\citep[UCAC4;][]{UCAC4}.
+Fig.~\ref{fig:astrometry} shows the distribution
+of the astrometric residuals
+between IPHAS and UCAC4
+for N million stars in the magnitude
+range $13 < r < 15$,
+which is the range where both surveys overlap
+and where the formal mean error of UCAC4
+is better than 50~mas \citep{UCAC3}.
+We find the mean residual to be $0\farcs 09\pm0\farcs 07$,
+which is satisfactory for our purposes.
+
+\begin{figure}
+    \includegraphics[width=0.5\textwidth]{figures/astrometry/astrometry.pdf} 
+    \caption{Distribution of position residuals
+            between IPHAS DR2 and UCAC4.
+            The residuals were computed for stars
+            in the magnitude range $13 < r < 15$ which were
+            not blended and not saturated.}
+    \label{fig:astrometry}
+\end{figure}
+
+%which itself is calibrated
+%in the International Celestial Reference System (ICRS).
+%(Figure: note that blended stars were excluded).
+
+%A provisional photometric calibration is also determined 
+%based on the average zeropoint
+%obtained from sets of standard stars observed within the same night.
+
 
 At the time of preparing DR2,
 the pipeline had processed
@@ -486,7 +525,7 @@ duplicate detections;
 in \S\ref{sec:catalogue} we will explain
 how these have been removed or flagged in the final catalogue.
 
-The pipelined data set -- comprising 2.5~terabyte of FITS files --
+The entire data set -- comprising 2.5~terabyte of FITS files --
 was then transferred to the University of Hertfordshire
 for the purpose of transforming the raw
 detection tables into a proper source catalogue which
@@ -494,7 +533,7 @@ detection tables into a proper source catalogue which
 (ii) is homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
 It is these post-processing steps which distinguish the present release
-from the IDR, which enforced less stringent quality limits,
+from the IDR; which enforced less stringent quality limits,
 did not offer a global calibration,
 and provided a catalogue in which duplicate detections
 of unique sources were not flagged.
@@ -545,10 +584,11 @@ We discarded any exposures
 for which the $5\sigma$ limiting magnitude\footnote{\bf
 We defined the $5\sigma$ limiting magnitude
 as the magnitude which a point source would have,
-when its flux in a 2\farcs 3-diameter aperture
-is five times the level of the noise in the sky background.
+when its flux in the 2\farcs 3-diameter aperture
+equals five times the level of the noise in the sky background.
 The sky noise was estimated using a robust MAD estimator 
-for noise scaled to equivalent Gaussian rms value, ie. = MAD x 1.48,
+for noise scaled to equivalent Gaussian standard deviation,
+ie. = MAD x 1.48,
 after removing large scale sky background variations.
 (MAD = Median of the Absolute Deviations about the median.)}
 was brighter than 20th magnitude in the $r$-band
