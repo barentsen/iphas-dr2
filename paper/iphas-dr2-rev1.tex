@@ -152,7 +152,7 @@ catalogue's unique
 $(r-\ha,\ r-i)$ diagram to
 (i) characterise stellar populations and extinction regimes
 towards different Galactic sightlines
-and (ii) select \ha\ emission-line objects.
+and (ii) select and quantify \ha\ emission-line objects.
 IPHAS is the first survey to offer comprehensive CCD photometry
 of point sources across the Galactic Plane at visible wavelengths,
 providing the much-needed counterpart
@@ -187,14 +187,14 @@ Since the publication of the Initial Data Release \citep[IDR;][]{Gonzalez-Solare
 these aims have begun to be realised through a
 range of published studies including: 
 a preliminary catalogue of candidate emission-line objects \citep{Witham2008};
-discoveries of new symbiotic stars \citep{Corradi2008, Corradi2010, Corradi2011}; 
+discoveries of new symbiotic stars \citep{Corradi2008, Corradi2010, Corradi2011, Rodriguez2014}; 
 new cataclysmic variables \citep{Witham2007,Wesson2008,Aungwerojwit2012}; 
 new groups of young stellar objects
 \citep{Vink2008,Barentsen2011a,Wright2012};
 new classical Be stars \citep{Raddi2013};
 along with discoveries of new supernova remnants \citep{Sabin2013}
 and new and remarkable planetary nebulae 
-\citep{Mampaso2006, Viironen2009a, Viironen2009b, Sabin2010, Corradi2011, Viironen2011}.
+\citep{Mampaso2006, Viironen2009a, Viironen2009b, Sabin2010, Corradi2011, Viironen2011,Sabin2014}.
 
 Over the years it has become apparent that the legacy of IPHAS 
 will reach beyond these traditional \ha\ applications 
@@ -211,7 +211,7 @@ This has opened the door
 to a wide range of Galactic science applications, 
 including the mapping of extinction across the Plane in three dimensions
 and the probabilistic inference of stellar properties
-\citep{Sale2009, Sale2010, Giammanco2011, Sale2012, Barentsen2013}. 
+\citep{Sale2009, Sale2010, Giammanco2011, Sale2012, Barentsen2013, Sale2014}. 
 In effect, the availability of narrowband \ha\
 alongside $r$ and $i$ magnitudes
 provides coarse spectral information for huge samples of stars 
@@ -250,7 +250,7 @@ In \S\ref{sec:discussion} we discuss the properties of the catalogue
 and in \S\ref{sec:demonstration} we demonstrate
 the scientific exploitation of the colour/magnitude diagrams.
 Finally, in \S\ref{sec:dataaccess} we discuss access
-to the catalogue, an online library of reduced images and relevant source code,
+to the catalogue and an online library of reduced images.
 The paper ends with conclusions in \S\ref{sec:conclusions} where we also outline
 our future ambitions.
 
@@ -266,7 +266,7 @@ our future ambitions.
         Property & Value \\
         \midrule
         Telescope & 2.5m Isaac Newton Telescope \\
-        Instrument & Wide Field Camera \\
+        Instrument & Wide Field Camera (WFC) \\
         Detectors & Four 2048 $\times$ 4100 pixel CCD's \\
         Pixel scale & 0.33 arcsec/pixel \\        
         Filters & $r$, $i$, \ha \\
@@ -289,7 +289,7 @@ The detailed properties of the IPHAS observing programme
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
 To set the stage for this release,
-we recap some key points {\bf below and in Table~1}.
+we recap some key points in this section {\bf (see Table~1 for a summary)}.
 IPHAS is an imaging survey of the Galactic Plane north of the celestial equator, 
 from which photometry in Sloan $r$ and $i$ 
 is extracted along with narrowband \ha. 
@@ -309,11 +309,16 @@ and longitudes $30\degr < \ell < 215\degr$.
     Each field in the survey is accompanied by an offset field
     at 5\arcmin\ West and South
 	to deal with gaps between the CCDs.
-	This unit of observation is called a \emph{field pair}.
+	This unit of observation is called a \emph{field pair},
+	which is observed in all three filters within a span of 10 minutes.
 	The WFC is a mosaic of four CCDs,
 	and hence a field pair is composed of eight CCD frames.
-	In this example, each CCD is plotted in semi-transparent grey
+	In this example, each CCD is plotted as a semi-transparent grey rectangle
 	to highlight the overlap regions.
+	Note that the L-shaped arrangement of the CCD mosaic allows
+	nearly the entire field to be captured using just two pointings,
+	apart from two $\sim10\arcsec$-wide squares
+	which are located where inter-CCD gaps overlap.	
 	}
     \label{fig:fieldpair}
 \end{figure}
@@ -328,8 +333,8 @@ displaced by $+$5 arcmin in Dec
 and $+$5 arcmin in RA,
 to deal with inter-CCD gaps, detector imperfections,
 and to enable quality checks.
-An example of the footprint of a pointing
-with its offset position is shown in Fig.~\ref{fig:fieldpair}.
+{ \bf An example footprint of a pointing
+and its offset position is shown in Fig.~\ref{fig:fieldpair}.}
 Hence, the basic unit of observation
 amounts to $2 \times 3$ exposures, 
 in which each of the 3 survey filters is exposed at 2 offset sky positions 
@@ -343,8 +348,8 @@ To achieve the desired survey depth
 of 20th magnitude or fainter in each filter, 
 the exposure times were set at 120~s (\ha), 
 30~s ($r$) and 10~s ($i$)
-in the vast majority of the survey observations.\footnote{The $r$-band exposure time was 10~s instead of 30~s in the first months of data taking. Since October 2010, the $i$-band exposure time 
-has been increased from 10~s to 20~s to by-pass a sporadic exposure timing bug that affects the WFC.}
+in the vast majority of the survey observations.\footnote{The $r$-band exposure time was 10s instead of 30s in the first months of data taking. Since October 2010, the $i$-band exposure time 
+has been increased from 10s to 20s to by-pass a sporadic exposure timing bug that affects the WFC.}
 
 Data-taking began in the second half of 2003, 
 and every field had been observed at least once by the end of 2008.
@@ -414,7 +419,7 @@ to the Cambridge Astronomical Survey Unit (CASU)
 for initial processing and archiving.
 The procedures used by CASU were originally devised
 for the INT Wide Field imaging Survey \citep[WFS;][]{McMahon2001,Irwin2005},
-which was a 200 deg$^2$ survey programme carried out 
+which was a 200 deg$^2$ {\bf extragalactic} survey programme carried out 
 between 1998 and 2003.
 Because IPHAS uses the same telescope and camera combination,
 we have been able to benefit from the existing WFS pipeline.
@@ -427,13 +432,6 @@ on-line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}.
 In brief, the pipeline takes care of bias subtraction,
 linearity correction, flat-fielding,
 gain correction and de-fringing.
-
-%The reduced images are then stored in multi-extension FITS files
-%with a primary header describing the characteristics
-%(position, filter, exposure time, etc.) 
-%and four image extensions 
-%corresponding to each of the four CCDs.
-% called \textsc{imcore},
 
 { \bf
 Object detection and parametrisation is then carried out
@@ -477,9 +475,9 @@ the astrometric calibration is then determined.
 The solution starts with a rough 
 World Coordinate System (WCS)
 based on the known telescope and camera geometry,
-which uses a Zenithal Polynomial projection
+using a Zenithal Polynomial projection
 \citep[ZPN;][]{Calabretta2002}
-to model the field distortion of the WFC.
+to model the field distortion of the camera.
 The parameters of this solution
 are then progressively refined by fitting against the
 Two-Micron All Sky Survey \citep[2MASS; ][]{Skrutskie2006}.
@@ -506,32 +504,24 @@ We find the mean position offset to be $0\farcs 09\pm0\farcs 07$,
 which is satisfactory for our purposes.
 We note that both UCAC4 and 2MASS -- and hence also IPHAS --
 are calibrated in the International Celestial Reference System (ICRS).
-%(Figure: note that blended stars were excluded).
 %We note that the mean residual is  
 %is $-0.006 \pm 0.086$ in R.A.
 %and $0.012\pm0.073$ in Dec.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/astrometry/astrometry.pdf} 
-    \caption{Distribution of the distance
-    		between the positions of stars
+    \caption{Distribution of the position offsets
+    		of stars
     		which appear both in IPHAS DR2 and UCAC4
     		within a cross-matching distance of 1\arcsec.
             The residuals were computed for 
             the 1.3 million stars in the IPHAS catalogue
             which are not blended, not saturated,
-            and fall in the magnitude range $13 < r < 15$.}
+            and fall in the magnitude range $13 < r < 15$.
+            The mean and standard deviation of this distribution 
+            equals $0\farcs 09\pm0\farcs 07$.}
     \label{fig:astrometry}
 \end{figure}
-
-%which itself is calibrated
-%in the International Celestial Reference System (ICRS).
-%(Figure: note that blended stars were excluded).
-
-%A provisional photometric calibration is also determined 
-%based on the average zeropoint
-%obtained from sets of standard stars observed within the same night.
-
 
 At the time of preparing DR2,
 the pipeline had processed
@@ -550,12 +540,12 @@ detection tables into a proper source catalogue which
 (i) is quality-controlled,
 (ii) is homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
-It is these post-processing steps which distinguish the present release
-from the IDR; which enforced less stringent quality limits,
-did not offer a global calibration,
-and provided a catalogue in which duplicate detections
+It is these post-processing steps which distinguish this release
+from the IDR, which (i) enforced less stringent quality limits,
+(ii) did not offer a global calibration,
+and (iii) provided a catalogue in which duplicate detections
 of unique sources were not flagged.
-These new processing steps are explained next.}
+These improvements are explained next.}
 
 
 \subsection{Quality control}
@@ -571,7 +561,7 @@ In consequence, data were acquired
 under a large range of atmospheric conditions.
 Data taken under unsuitable conditions
 have been rejected using seven quality criteria,
-which ensure a a10 and homogeneous level of quality
+which ensure a good and homogeneous level of quality
 across the data release:
 
 \begin{figure}
@@ -601,9 +591,8 @@ across the data release:
 We discarded any exposures 
 for which the $5\sigma$ limiting magnitude\footnote{\bf
 We defined the $5\sigma$ limiting magnitude
-as the magnitude which a point source would have,
-when its flux in the 2\farcs 3-diameter aperture
-equals five times the level of the noise in the sky background.
+as the magnitude which an imaginary point source would have
+if its flux equalled five times the level of the noise in the sky background.
 The sky noise was estimated using a robust MAD estimator 
 for noise scaled to equivalent Gaussian standard deviation,
 ie. = MAD x 1.48,
@@ -656,16 +645,9 @@ average ellipticity across the detectors which is worse
 than $e > 0.2$.
 The inspection of these examples revealed no evidence for
 degraded photometry up to ellipticities less than 0.3.
-In fact high ellipticities are correlated with superior seeing,
-and therefore somewhat deeper frames.
+In fact high ellipticities are naturally correlated with superior seeing.
 We did however exclude a small number of exposures
 which exceeded $e > 0.3$.}
-
-%To exclude these, we rejected exposures
-%in which the average ellipticity
-%across the detectors exceeded $e > 0.3$.
-%We have also found that, as this threshold is breached,
-%the photometric measurements delivered by the pipeline become degraded.
 
 (3) \emph{Seeing.} 
 The original survey goal was to obtain data 
@@ -734,7 +716,7 @@ was looked at by at least three different pairs of eyes.
 Images affected by clouds or extreme levels of scattered moonlight
 were flagged, investigated,
 and excluded from the release 
-by placing them on a black-list.
+if deemed necessary.
 
 (6) \emph{Source density mapping.}
 Spatial maps showing the number density of the detected sources
@@ -772,8 +754,8 @@ to deliver the most accurate measurement at a single epoch.
 
 We note that some of the excluded data may nevertheless be useful
 for e.g. time-domain studies of bright stars.
-The images and detection tables of the discarded data are made
-available through our website (www.iphas.org),
+The discarded data is
+available through our website,
 but will be ignored in the remainder of this work.
 
 \section{Photometric calibration}
@@ -822,9 +804,9 @@ for the small difference in internal gain
 computed using the twilight flats
 compared to the much redder typical astronomical objects. 
 It is estimated by making a robust average of the dark sky levels 
-measured on each detector during an observing run.
-The correction is $0.01\pm0.01$ on average in $i$ and
-$0.00\pm0.00$ in $r$ and \ha.
+measured on each detector during an observing run
+(the correction is $0.01\pm0.01$ on average in $i$ and
+$0.00\pm0.00$ in $r$ and \ha).
 All these quantities correspond to header keywords
 in the FITS files produced by the CASU pipeline. }
 
@@ -904,11 +886,10 @@ due to atmospheric changes during the night
 and imperfections in the pipeline or the instrument
 (e.g. the WFC is known to suffer from sporadic errors
 in the timing of exposures).
+{ \bf
 This is demonstrated in Fig.~\ref{fig:ccd_before},
 where we show the combined colour-colour diagram
-for the set of 2\,801 quality-approved fields
-which are located towards the Galactic anti-centre.
-{ \bf
+for nearly 3,000 fields across an area of 400~deg$^2$.
 The main locus of stars is poorly defined
 in the diagram due to the presence of
 incorrectly calibrated fields,
@@ -917,7 +898,7 @@ during a global re-calibration step.
 The application of such a procedure,
 to be explained below,
 has revealed that the error in our initial nightly calibration
-exceeded 0.1~mag in 12 per cent of fields,
+exceeded 0.1~mag in 12 per cent of the fields,
 and even exceeded 0.5~mag in 0.7 per cent.
 For comparison, Fig.~\ref{fig:ccd_after}
 demonstrates the improvement 
@@ -951,12 +932,12 @@ after re-calibrating. }
          in bins of 0.01-by-0.01~mag;
          bins containing 1 to 200 sources are coloured red,
          while bins containing more than 400 sources are bright yellow.
-         {\bf The diagrams include all stars
+         The diagrams include all stars
          brighter than $r<18$ which were
          classified by the pipeline as `a10point'
          (indicating a high-significance point source detection with
          accurate photometry in all bands,
-         to be explained in \S\ref{sec:qualitycriteria})}.
+         to be explained in \S\ref{sec:qualitycriteria}).
          The objects which are seen to fall above the locus of stars
          \emph{after} re-calibration 
          are likely to be genuine \ha\ emission-line objects.}
@@ -969,14 +950,15 @@ SDSS \citep{Padmanabhan2008}
 and the Panoramic Survey Telescope 
 And Rapid Response System survey \citep[Pan-STARRS;][]{Schlafly2012},
 which all achieved photometry 
-that is globally consistent to within 0.01--0.02~mag.
+that is globally consistent to within 0.01--0.02~mag
+after re-calibration.
 
 Surveys which observe identical stars at different epochs
 can use the repeat measurements to ensure a homogeneous calibration.
 {\bf For example, 2MASS attained its global calibration
 by observing two standard fields each hour, }
 allowing zeropoint variations to be tracked 
-over very short timescales \citep{Nikolaev2000}.
+over short timescales \citep{Nikolaev2000}.
 Alternatively, the SDSS and PanSTARRS surveys could benefit
 from revisiting regions in their footprint to 
 carry out a so-called \emph{ubercalibration}\footnote{`ubercalibration'
@@ -1294,7 +1276,7 @@ which were observed as part of
 the Sloan Extension for Galactic Understanding and Exploration \citep[SEGUE;][]{segue}.}
 These strips provide data across 18 per cent of the fields in our data release.
 We cross-matched the IPHAS fields against the subset of
-objects marked as a10 stars in the SDSS catalogue\footnote{
+objects marked as reliable stars in the SDSS catalogue\footnote{
 We used the CasJobs facility located at http://skyserver.sdss3.org/CasJobs
 to obtain photometry from the SDSS {\sc photoprimary} table 
 with criteria {\sc type = star}, {\sc clean = 1} and {\sc score $>$ 0.7}.}
@@ -1562,14 +1544,12 @@ of $r$, $i$, \ha\ detection tables
 into multi-band field catalogues.
 This required a position matching procedure 
 to link sources between the three bands.
-We used the \textsc{tmatchn} function 
-of the \textsc{stilts} software
+We used the TMATCHN function 
+of the STILTS software
 for this purpose,
 which allows rows from multiple tables
 to be matched \citep{Taylor2006}.
-In brief, the algorithm\footnote{The exact options used
-to band-merge a field using \textsc{stilts tmatchn} are: matcher=sky params=1.0 multimode=group nin=3 in1=r
-in2=i in3=halpha join1=always join2=always join3=always}
+In brief, the algorithm
 identifies groups of linked detections such that
 (i) each detection is located within a specified maximum distance from
 one or more members of the group,
@@ -1583,8 +1563,8 @@ which satisfy the matching distance criterion
 in a pair-wise sense.
 Sources for which no counterpart was identified
 in all three bands are retained in the catalogue
-as single- or double-band detections, with the columns
-for the missing bands left empty.
+as single- or double-band detections,
+with empty columns for the missing bands.
 
 We employed a maximum matching distance of 1~arcsec,
 trading off completeness against reliability.
@@ -1618,7 +1598,7 @@ It is important to bear this in mind when appraising stars
 of seemingly unusual colours (such as candidate emission line stars).
 If blending is flagged, or if the inter-band matching distance
 is unusually large, then the probability that the unusual colour is 
-spurious is greatly increased.
+spurious due to source confusion is greatly increased.
 }
 
 \subsection{Selecting the primary detections}
@@ -1748,7 +1728,7 @@ than double- and triple-band detections (89 per cent).
 This suggests that a significant fraction of
 these entries may be spurious detections.
 
-Not all the single-band detections are spurious sources, however.
+Not all the single-band detections are spurious, however.
 We note that the confirmation rate for $i$-band detections
 is markedly better than for $r$ and \ha,
 which is likely explained by the fact that $i$ is least
@@ -1781,7 +1761,7 @@ and (v) the source densities.
 Like any other photometric survey
 which operates close
 to the detection and resolution limits,
-our catalogue inevitable contains sources
+our catalogue inevitably contains sources
 with are spurious or have been parametrised inaccurately.
 In what follows, we highlight the most common
 caveats which users of the catalogue might face,
@@ -1802,11 +1782,11 @@ point source (\emph{pStar}$>$0.9).
 \item \emph{Source blending and confusion.}
 Blended objects are known to be parametrised less accurately
 and to be more prone 
-to have fallen victim to source confusion
+to source confusion
 during the band-merging procedure.
 We remind the reader that such objects are flagged in the catalogue
 using the columns \emph{rDeblend}, \emph{iDeblend},
-or \emph{haDeblend}.
+\emph{haDeblend}, and \emph{deblend}.
 \item \emph{Low S/N detections.}
 The majority of the objects in our catalogue
 are faint sources observed near the detection limits,
@@ -1820,23 +1800,23 @@ will introduce a proportionally larger systematic error
 for a faint object.
 These objects can be removed by ensuring that an
 object is detected at $S/N>10$
-(\emph{rErr}$<$0.1, \emph{iErr}$<$0.1, \emph{haErr}$<$0.1)
-or has photometry which is consistent across
+and has photometry which is consistent across
 the different aperture sizes.
+Such objects are flagged in the catalogue
+using the \emph{a10} column.
 \item \emph{Saturation.}
 The photometry and astrometry of objects
 brighter than the saturation limit of the instrument
-is subject to systematic errors
-(typically at $r<13$, $i<12$, $\ha<12.5$).
+is subject to systematic errors.
 Such objects can be removed by ensuring that the columns
-\emph{rSaturated}, \emph{iSaturated},
-or \emph{haSaturated} are set to ``False''.
+\emph{rSaturated}, \emph{iSaturated}, \emph{haSaturated}
+or \emph{saturated} are set to ``False''.
 \end{itemize}
 We note that it is not possible, at this stage,
 to include an exhaustive list of all the caveats,
 because we cannot anticipate all forms of use of the data.
 For this reason, we recommend users to read
-the caveats section on the webpage (www.iphas.org/dr2),
+the FAQ section on our website,
 which will be updated as user experience accumulates.
 
 
@@ -1844,37 +1824,36 @@ which will be updated as user experience accumulates.
 \label{sec:qualitycriteria}
 
 Most applications will require
-a combination of the quality criteria outlined above
-to remove lower-quality objects.
-In what follows we recommend two sets of such criteria.
-The choice of quality criteria will always tension 
-completeness {\bf against reliability,
-i.e. the fraction of spurious sources}.
+a combination of quality criteria
+to be used
+to avoid the caveats outlined above.
+The choice of criteria will always tension 
+completeness against reliability,
+i.e. the fraction of spurious sources.
 To aid users we have listed two sets of
 recommended quality criteria 
 in Tables~\ref{tab:a10} and \ref{tab:a10point}.
 
-Table~\ref{tab:a10} specifies
+First, Table~\ref{tab:a10} specifies
 a set of minimum quality criteria
 which should benefit most applications
 which desire accurate colours
 as well as completeness {\bf down to $\sim$19th magnitude}.
 The listed criteria are designed to 
 (i) remove low-S/N sources, 
-(ii) remove saturated sources,
-and (iii) remove objects for which the 2\farcs 3-diameter
+(ii) remove saturated objects,
+and (iii) remove sources for which the 2\farcs 3-diameter
 aperture magnitude is inconsistent 
-with its alternative 1\farcs 2-diameter measurement
-within each filter.
-This last criterion is a proxy
+with its alternative 1\farcs 2-diameter measurement.
+This latter criterion is a proxy
 for identifying objects which are affected
 by poor background subtraction
-or failed source deblending.
+or failed deblending.
 A total of 86 million sources out of 219 million 
 (39 per cent) satisfy all the criteria listed in Table~\ref{tab:a10}
 and are hereafter referred to as `a10'.
 For convenience, the catalogue contains a boolean column
-named \emph{a10} that directly flags these objects.
+named \emph{a10} that flags these objects.
 
 \begin{table*}
 \vspace{2.5cm}
@@ -1973,7 +1952,7 @@ have been flagged using the column named \emph{a10point}.}
 
 For applications which require
 a higher standard of {\bf accuracy} at the expense of completeness,
-a further set of additional quality criteria
+a set of additional quality criteria
 are suggested in Table~\ref{tab:a10point}.
 These criteria are designed to ensure that
 (i) the object appeared as a perfect point source,
@@ -2003,12 +1982,12 @@ named \emph{a10point} which flags these objects.
 \end{figure}
 
 Fig.~\ref{fig:magdist} compares the $r$-band magnitude
-distributions for \emph{a10}, \emph{a10point}
-and unfiltered objects.
-We find that 81 per cent of the sources 
+distributions for objects tagged \emph{a10} and \emph{a10point}
+against the unfiltered catalogue.
+In the magnitude range $13 < r < 19$,
+we find that 81 per cent of the sources 
 are flagged \emph{a10}
-and 54 per cent are flagged \emph{a10point}
-in the magnitude range $13 < r < 19$.
+and 54 per cent are flagged \emph{a10point}.
 We will explain below that the
 \emph{a10point} category is least complete
 at low Galactic longitudes,
@@ -2037,26 +2016,18 @@ In this section we start by discussing
 the \emph{reliability} of the survey,
 which we define as the fraction of sources
 which are genuine astrophysical objects.
-To estimate the reliability, we cross-matched the IPHAS catalogue
-against SDSS DR7,
-which is a catalogue of similar resolution and depth.\footnote{DR7 was chosen for this comparison due to a change in 
-the catalogue generation for DR8, which resulted in fewer stars being 
-detected near bright ($r\,<\,10$) sources, which in turn gave an unduly 
-pessimistic values for the reliability of IPHAS sources.}
+To estimate the reliability, we cross-matched IPHAS
+against SDSS DR7\footnote{SDSS DR7 was chosen for this comparison
+due to an apparent change in 
+the catalogue generation for DR8 and DR9,
+which resulted in fewer genuine stars being
+detected near bright ($r\,<\,12$) sources,
+which in turn gave an unduly pessimistic view
+on our reliability.},
+which is a catalogue of similar resolution and depth.
 By computing the fraction of IPHAS sources which were
-independently detected by SDSS as well,
-we obtain a lower limit for the reliability.
-
-%Such contiguous areas were only found to exist
-%in the second and third Galactic quadrants.
-% as the SDSS strips passing through the early plane are 
-%incomplete. 
-
-%, which has a comparable depth.
-
-%observed; provided the comparison is made to an external source of 
-%comparable depth this will provide the ratio of genuine astronomical 
-%sources to sources in the catalogue.
+also independently detected by SDSS,
+we can obtain a good lower limit on the reliability.
 
 %In producing a point source catalogue, spurious detections 
 %will inevitably be made. A fraction of these will mimic stellar 
@@ -2081,21 +2052,21 @@ baseline reliability (90.8 per cent),
 which is improved markedly by the simple requirement
 that a source needs to be detected in all three bands
 (98.7 per cent). 
-Reliabilities $>99\%$ and $>99.5\%$ are achieved using the 
-\emph{a10} and \emph{a10point} quality flags.
+Reliabilities of 99.5 and 99.7 per cent are achieved
+using the \emph{a10} and \emph{a10point} quality flags.
 
-To understand the nature of the small fraction of objects
-which appear to be ``unreliable'' in this test,
-despite having been flagged as \emph{a10point},
+To understand the nature of the small fraction
+of \emph{a10point}-flagged sources
+which appear to be unreliable in this test,
 we investigated the data by eye.
-We found these ``unreliable'' sources to be located
+We found these `unreliable' objects to be located
 in the vicinity of moderately bright stars ($r\,\lesssim\,12$),
 tracing out an area which is affected by saturation spikes or
 scattered light in the SDSS images.
-In all cases these remaining objects appear as genuine
-stars in both the IPHAS and SDSS images,
-and hence we think it is likely that the reliability
-of the \emph{a10point} class of objects is close to 100 per cent.
+In all cases we found these remaining objects 
+to appear as genuine stars in both the IPHAS and SDSS images.
+It is hence likely that the reliability
+of the \emph{a10point} class is close to 100 per cent.
 
 \begin{table}
     \caption{Fractions of sources in our catalogue
@@ -2664,15 +2635,15 @@ data illustrates how IPHAS can complement infrared surveys.
 \subsection{IPHAS as a complement to infrared data}
 
 {\bf Towards Sh2-82,
-the IPHAS catalogue and the Spitzer/GLIMPSE archive
+the IPHAS and Spitzer/GLIMPSE catalogues
 have 4798 entries in common,
-out of a total of 10\,739 and 11\,321 entries, respectively.
+out of 10\,739 and 11\,321 entries in total, respectively.
 1356 objects of these objects were detected in all
 four GLIMPSE bands.
 Fig.~\ref{fig:spitzer-ccd} presents their colour-colour diagram,
 in which we have indicated the 845 objects (62 per cent)
 that have a counterpart in IPHAS (grey circles),
-as well as the 511 objects that don't (red crosses).
+and the 511 objects that do not (red crosses).
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/spitzer-ccd/spitzer-ccd.pdf} 
@@ -2692,13 +2663,13 @@ as well as the 511 objects that don't (red crosses).
     \label{fig:spitzer-ccd}
 \end{figure}
 
-We find that objects located in the upper half of the diagram,
-where highly-reddened objects are expected to sit,
-are less likely to appear in both surveys.
+We find that objects located in the upper half of the Spitzer diagram
+are less likely to have an an IPHAS counterpart,
+which is where highly-reddened objects are expected to sit.
 This is not surprising,
 because Sh2-82 is located 
 towards a high-extinction sightline 
-near the inner plane
+near the inner plane,
 where an optical survey will naturally be extinction-limited.
 Nevertheless, the extinction map due to \citet{Sale2014}
 has demonstrated that IPHAS can probe stars as far away 
@@ -2706,7 +2677,7 @@ as 4-5\,kpc towards this region.
 The situation will be even more favourable
 in the outer-plane, where dust optical depths are low.
 
-Finally, we note that Sh 2-82 is one of a large population 
+We note that Sh 2-82 is one of a large population 
 of poorly-studied star-forming regions
 located at low Galactic latitudes,
 which have only recently started to become revealed
@@ -2736,16 +2707,7 @@ and stellar contents of many of such unexplored regions.
 %which are in the Spitzer/GLIMPSE catalogue for this region,
 %2984 (44\%) have a counterpart in IPHAS.
 
-% are 6753 region considered in Fig.~\ref{fig:emitters}
-%contains 6753 objects in the
-%Spitzer GLIMPSE catalogue
-
-%371 objects (20\%) also have a counterpart in the 
-%Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
-%both within a matching radius of 2 arcsec.
-
 % reliable & r < 20 & (l > 53.55-10/60.) & (l < 53.55+10/60.)                  & (b > 0.01-7.5/60.) & (b < 0.01+7.5/60.)
-% Vizier II/293
 %TODO: This is an example of a high-extinction sightline where
 % optical observations will naturally be extinction-limited.
 % IPHAS will naturally count far fewer sources than (N)IR surveys.
@@ -2757,7 +2719,6 @@ and stellar contents of many of such unexplored regions.
 \subsection{$r - \ha$ excess as a quantitative measure of H$\alpha$ emission}
 
 { \bf
-
 As well as discover emission line stars, IPHAS data can provide a
 first estimate of the equivalent width of line emission.
 How this is done has been discussed in previous works 
@@ -2894,9 +2855,8 @@ are larger than the
 aperture diameters specified in this work.
 {\bf To enable the analysis of diffuse sources,
 our website provides access to the entire set
-of pipeline-processed imaging data,
-the associated metadata,
-and the documentation describing the FITS header keywords
+of pipeline-processed imaging data and
+associated meta data
 (see www.iphas.org/images)}.
 The image headers have been updated to include
 a new keyword, called {\sc photzp},
@@ -2935,7 +2895,8 @@ version of Vega's SED presented by \citet{Bohlin2014}.
 We warn that the image repository on our website
 includes data that did not pass quality control
 and has not been globally re-calibrated.
-Such data are flagged {\bf in the metadata table}
+Such data are flagged {\bf in the on line meta data table,
+which is available from our website,}
 and must be used with great caution.
 
 In the spirit of reproducibility,
@@ -2981,7 +2942,7 @@ the catalogue.  The closing demonstrations highlight the use of the
 survey's unique $(r-\ha,\ r-i)$ diagram for characterising stellar populations
 and selecting emission-line objects.  More comprehensive applications of IPHAS
 can be found in the works of \citet{Sale2014}, which applies DR2 to the problem
-of 3D extinction mapping, and of Sabin et al (submitted), where the results of a search
+of 3D extinction mapping, and of \citet{Sabin2014}, where the results of a search
 of the image database for new planetary nebulae is presented. 
 
 The current plan is to work toward
