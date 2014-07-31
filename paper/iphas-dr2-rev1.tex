@@ -257,29 +257,6 @@ our future ambitions.
 \section{Observations}
 \label{sec:observations}
 
-\begin{figure*}
-        \includegraphics[width=1\linewidth]{figures/footprint/footprint_small.png}
-        \caption{Survey area showing the footprints
-        of all the quality-approved IPHAS fields
-        which have been included in this data release.
-        The area covered by each field has been coloured black
-        with a semi-transparent opacity of 20 per cent,
-        such that regions where fields overlap are darker.
-        The IPHAS strategy is to observe each field twice
-        with a small offset,
-        and hence the vast majority of the area 
-        is covered twice (dominant grey colour).
-        There are small overlaps between all the neighbouring fields
-        which can be seen as a honeycomb pattern
-        of dark grey lines across the survey area.
-        Regions with incomplete data are apparent as white gaps (no data) 
-        or in light grey (indicating that one offset is missing).
-        The dark vertical strip near $\ell \simeq$125\degr\ 
-        is an arbitrary consequence of the tiling pattern,
-        which was populated starting from 0h in Right Ascension.}
-        \label{fig:footprint}
-\end{figure*}
-
 \begin{table}
     \caption{Key properties of IPHAS DR2.}
     \label{tbl:survey}
@@ -325,6 +302,22 @@ of roughly 180 by 10 degrees,
 covering Galactic latitudes $-5\degr < b < +5\degr$ 
 and longitudes $30\degr < \ell < 215\degr$.
 
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/fieldpair/fieldpair.pdf} 
+    \caption{
+    Example footprint of a pointing and its offset position.
+    Each field in the survey is accompanied by an offset field
+    at 5\arcmin\ West and South
+	to deal with gaps between the CCDs.
+	This unit of observation is called a \emph{field pair}.
+	The WFC is a mosaic of four CCDs,
+	and hence a field pair is composed of eight CCD frames.
+	In this example, each CCD is plotted in semi-transparent grey
+	to highlight the overlap regions.
+	}
+    \label{fig:fieldpair}
+\end{figure}
+
 The WFC is a mosaic of 4 CCDs 
 that captures a sky area of close to 0.29~deg$^2$ at a pixel scale of
 0.33 arcsec/pixel.
@@ -334,7 +327,9 @@ Each of these pointings is accompanied by an offset position
 displaced by $+$5 arcmin in Dec 
 and $+$5 arcmin in RA,
 to deal with inter-CCD gaps, detector imperfections,
-and to enable quality checks. 
+and to enable quality checks.
+An example of the footprint of a pointing
+with its offset position is shown in Fig.~\ref{fig:fieldpair}.
 Hence, the basic unit of observation
 amounts to $2 \times 3$ exposures, 
 in which each of the 3 survey filters is exposed at 2 offset sky positions 
@@ -365,6 +360,29 @@ As a result, 92 per cent of the survey footprint
 now benefits from quality-approved data.
 The most recent observations included in this release
 were obtained in November 2012.
+
+\begin{figure*}
+        \includegraphics[width=1\linewidth]{figures/footprint/footprint_small.png}
+        \caption{Survey area showing the footprints
+        of all the quality-approved IPHAS fields
+        which have been included in this data release.
+        The area covered by each field has been coloured black
+        with a semi-transparent opacity of 20 per cent,
+        such that regions where fields overlap are darker.
+        The IPHAS strategy is to observe each field twice
+        with a small offset,
+        and hence the vast majority of the area 
+        is covered twice (dominant grey colour).
+        There are small overlaps between all the neighbouring fields
+        which can be seen as a honeycomb pattern
+        of dark grey lines across the survey area.
+        Regions with incomplete data are apparent as white gaps (no data) 
+        or in light grey (indicating that one offset is missing).
+        The dark vertical strip near $\ell \simeq$125\degr\ 
+        is an arbitrary consequence of the tiling pattern,
+        which was populated starting from 0h in Right Ascension.}
+        \label{fig:footprint}
+\end{figure*}
 
 Fig.~\ref{fig:footprint} shows the footprint
 of the quality-approved observations included in this work. 
@@ -454,15 +472,7 @@ which is why they are flagged in the catalogue
 (to be explained in \S\ref{sec:catalogue}).
 \end{enumerate}
 
-%This approach works very well 
-%across the vast majority of the survey area.  Nevertheless,
-%the Galactic Plane contains crowded regions 
-%with large numbers of overlapping sources
-%or rapidly spatially-varying nebulosity,
-%where aperture photometry will be compromised by frequent blending
-%or poor background subtraction. 
-
-Having carried out object detection and characterisation,
+Having carried out object detection,
 the astrometric calibration is then determined.
 The solution starts with a rough 
 World Coordinate System (WCS)
@@ -471,8 +481,8 @@ which uses a Zenithal Polynomial projection
 \citep[ZPN;][]{Calabretta2002}
 to model the field distortion of the WFC.
 The parameters of this solution
-are then progressively refined using the
-Two-Micron All Sky Survey catalogue \citep[2MASS; ][]{Skrutskie2006}.
+are then progressively refined by fitting against the
+Two-Micron All Sky Survey \citep[2MASS; ][]{Skrutskie2006}.
 We did not include proper motion information during this step,
 because each CCD typically contains
 hundreds of 2MASS reference stars.
@@ -481,28 +491,36 @@ to deliver results which are internally consistent
 to better than 0\farcs 1 across the detector
 \citep{Gonzalez-Solares2008}.
 
-An external validation has been carried out
-by comparing our positions against the
+An external validation of the astrometry 
+has been carried out by comparing our positions against the
 United States Naval Observatory CCD Astrograph Catalog 
 \citep[UCAC4;][]{UCAC4}.
 Fig.~\ref{fig:astrometry} shows the distribution
-of the astrometric residuals
-between IPHAS and UCAC4
-for N million stars in the magnitude
-range $13 < r < 15$,
+of the position offsets against UCAC4
+computed for 1.3 million stars
+in the magnitude range $13 < r < 15$,
 which is the range where both surveys overlap
 and where the formal mean error of UCAC4
 is better than 50~mas \citep{UCAC3}.
-We find the mean residual to be $0\farcs 09\pm0\farcs 07$,
+We find the mean position offset to be $0\farcs 09\pm0\farcs 07$,
 which is satisfactory for our purposes.
+We note that both UCAC4 and 2MASS -- and hence also IPHAS --
+are calibrated in the International Celestial Reference System (ICRS).
+%(Figure: note that blended stars were excluded).
+%We note that the mean residual is  
+%is $-0.006 \pm 0.086$ in R.A.
+%and $0.012\pm0.073$ in Dec.
 
 \begin{figure}
-    \includegraphics[width=0.5\textwidth]{figures/astrometry/astrometry.pdf} 
-    \caption{Distribution of position residuals
-            between IPHAS DR2 and UCAC4.
-            The residuals were computed for stars
-            in the magnitude range $13 < r < 15$ which were
-            not blended and not saturated.}
+    \includegraphics[width=\linewidth]{figures/astrometry/astrometry.pdf} 
+    \caption{Distribution of the distance
+    		between the positions of stars
+    		which appear both in IPHAS DR2 and UCAC4
+    		within a cross-matching distance of 1\arcsec.
+            The residuals were computed for 
+            the 1.3 million stars in the IPHAS catalogue
+            which are not blended, not saturated,
+            and fall in the magnitude range $13 < r < 15$.}
     \label{fig:astrometry}
 \end{figure}
 
@@ -2640,8 +2658,55 @@ have not previously appeared in the literature,
 we note that all four are detected
 in the Spitzer 8.0~\micron\ image at S/N$>$5.
 They are likely to be YSOs exhibiting a mild infrared excess.
+The recovery of \ha-emitters in Spitzer
+data illustrates how IPHAS can complement infrared surveys.
 
-Sh 2-82 is one of a large population 
+\subsection{IPHAS as a complement to infrared data}
+
+{\bf Towards Sh2-82,
+the IPHAS catalogue and the Spitzer/GLIMPSE archive
+have 4798 entries in common,
+out of a total of 10\,739 and 11\,321 entries, respectively.
+1356 objects of these objects were detected in all
+four GLIMPSE bands.
+Fig.~\ref{fig:spitzer-ccd} presents their colour-colour diagram,
+in which we have indicated the 845 objects (62 per cent)
+that have a counterpart in IPHAS (grey circles),
+as well as the 511 objects that don't (red crosses).
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/spitzer-ccd/spitzer-ccd.pdf} 
+    \caption{Spitzer/GLIMPSE colour-colour diagram towards Sh~2-82,
+    showing the objects for which a counterpart exists in IPHAS
+    (845 objects, grey circles) 
+    and those for which no counterpart was identified 
+    (511 objects, red crosses).
+    A cross-matching radius of 1 arcsec
+    was used to identify counterparts.
+    The arrow illustrates the reddening vector corresponding
+    to $A_{Ks}=3$ following the reddening law due to \citet{Flaherty2007}.
+    It is apparent that the most heavily reddened objects
+    tend to have no counterpart.
+    Three heavily-reddened objects without counterpart
+    are located above the diagram but are not shown for clarity. }
+    \label{fig:spitzer-ccd}
+\end{figure}
+
+We find that objects located in the upper half of the diagram,
+where highly-reddened objects are expected to sit,
+are less likely to appear in both surveys.
+This is not surprising,
+because Sh2-82 is located 
+towards a high-extinction sightline 
+near the inner plane
+where an optical survey will naturally be extinction-limited.
+Nevertheless, the extinction map due to \citet{Sale2014}
+has demonstrated that IPHAS can probe stars as far away 
+as 4-5\,kpc towards this region.
+The situation will be even more favourable
+in the outer-plane, where dust optical depths are low.
+
+Finally, we note that Sh 2-82 is one of a large population 
 of poorly-studied star-forming regions
 located at low Galactic latitudes,
 which have only recently started to become revealed
@@ -2652,19 +2717,7 @@ in the near-infrared \cite[e.g.][]{Bica2003}.
 IPHAS data can offer a handle
 on the extinction, distance
 and stellar contents of many of such unexplored regions.
-{\bf For example,
-in the region studied above,
-the IPHAS catalogue and the Spitzer/GLIMPSE archive
-have 4798 sources in common
-within a cross-matching radius of 1 arcsec,
-(out of a total of 10\,739 and 11\,321 entries in the
-IPHAS and Spitzer catalogues, respectively).
-This is a favourable statistic,
-given that this is a high-extinction sightline towards the inner plane
-where an optical survey will naturally be extinction limited,
-and IPHAS can be shown not to reach beyond 4-5\,kpc \citep{Sale2014}.
-The situation will be even more favourable
-in the outer-plane, where dust optical depths are low.
+}
 
 %where IPHAS is not limited by extinction
 %This is an example of a high-extinction sightline where
@@ -2690,8 +2743,6 @@ in the outer-plane, where dust optical depths are low.
 %371 objects (20\%) also have a counterpart in the 
 %Wide-field Infrared Survey Explorer catalogue (WISE; Cutri et al. 2013),
 %both within a matching radius of 2 arcsec.
-
-}
 
 % reliable & r < 20 & (l > 53.55-10/60.) & (l < 53.55+10/60.)                  & (b > 0.01-7.5/60.) & (b < 0.01+7.5/60.)
 % Vizier II/293

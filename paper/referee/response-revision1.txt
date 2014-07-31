@@ -7,10 +7,11 @@ referee identified areas where additional information would (i) strengthen the
 role of the paper as a user's guide to the survey, and (ii) would lessen the 
 burden on the reader to track down information from previous works.  
 We appreciate the merits of the referee's suggestions in this respect, and have 
-acted upon them by adding a total of N new pages, 1 new table, and 1 new figure 
-to the manuscript (marked in bold).  We have also added N new sections of 
-auxillary material to our web site as a direct consequence of the referee's
-suggestions.
+acted upon them by adding a total of 4 new pages (3 new sections, 3 new figures,
+and 1 new table) to the manuscript.  Changes have been marked in bold.
+We have also ~doubled the auxillary documentation that is available on our web
+site a direct consequence of the referee's suggestions, and will continue to
+expand the on line documentation as user experience accumulates.
 
 In what follows we will start by explaining our response to each of the issues 
 which the referee identified as high-level remarks (9 items), followed by the
@@ -38,11 +39,12 @@ High-level items
 > information, users will be challenged to find what they need.
 
 [Authors' response]
-Whilst revising the manuscript in response to the items that follow below, we
-have kept the referee's recommendation to lessen the burden on the reader in 
-mind.
-We have also added an overview table of the survey parameters at the start of 
-Section 2, in which 15 key properties of the survey are summarised (Table 1).
+Whilst revising the manuscript in response to the items that follow below, we have 
+kept the referee's recommendation to lessen the burden on the reader in mind.
+As an immediate response to this specific item, we have extended Section 2 to 
+(i) include an overview table of the survey parameters, summarising 15 key properties 
+of the survey (Table 1), and (ii) included a plot reminding the reader of the footprint
+of a single IPHAS pointing and its offset position (Figure 1).
 
 
 [Referee]
@@ -78,7 +80,7 @@ the key differences between the past and the present release (last paragraph).
 [Authors' response]
 The referee requested a discussion on the sensitivity of the H-alpha 
 photometry to line emission to be included in this work.  In response, we have
-added one new section (7.3) and one new figure (Fig 19) to the paper.
+added one new section (7.4) and one new figure (Fig 21) to the paper.
 In this new section, which is titled "r-Halpha excess as a quantitative measure
 of Halpha emission", we compare the spectroscopic H-alpha EWs for a sample of
 classical Be stars from Raddi et al (2014) against the position of these
@@ -201,10 +203,11 @@ in each CCD to fit the parameters of the WCS solution.
 
 [Authors' response]
 In response to the referee's suggestion to include a cross-comparison between
-IPHAS and an infrared survey, we have added a brief discussion on the overlap
-between the GLIMPSE and IPHAS catalogues at the end of Section 7.2.  The 
-discussion warns the reader that an optical survey will naturally be 
-extinction-limited.
+IPHAS and an infrared survey, we have added a new Section 7.3 which provides
+a brief discussion on the overlap between the GLIMPSE and IPHAS catalogues.  
+The discussion reminds the user that an optical survey will naturally be 
+extinction-limited, by showing the sources which IPHAS and Spitzer do not have
+in common as a function of their position on the Spitzer colour-colour diagram. 
 
 
 Section-specific remarks
