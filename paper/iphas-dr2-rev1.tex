@@ -229,7 +229,7 @@ just over half of the survey footprint was covered
 and the data were insufficiently complete 
 to support a homogeneously calibrated source catalogue.
 The goal of this paper is to present the next release, 
- which supersedes the IDR by including a global re-calibration
+ which supercedes the IDR by including a global re-calibration
 and by taking the coverage up to 92 per cent of the survey area.}
 In this work we
 (i) explain the data reduction 
@@ -289,7 +289,8 @@ The detailed properties of the IPHAS observing programme
 have been presented before 
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008}. 
 To set the stage for this release,
-we recap some key points in this section {\bf (see Table~1 for a summary)}.
+we recap some key points in this section 
+{\bf (see Table~1 for a quick-reference overview)}.
 IPHAS is an imaging survey of the Galactic Plane north of the celestial equator, 
 from which photometry in Sloan $r$ and $i$ 
 is extracted along with narrowband \ha. 
@@ -591,7 +592,7 @@ across the data release:
 We discarded any exposures 
 for which the $5\sigma$ limiting magnitude\footnote{\bf
 We defined the $5\sigma$ limiting magnitude
-as the magnitude which an imaginary point source would have
+as the magnitude which a point source would have
 if its flux equalled five times the level of the noise in the sky background.
 The sky noise was estimated using a robust MAD estimator 
 for noise scaled to equivalent Gaussian standard deviation,
@@ -643,11 +644,10 @@ due to mechanical glitches in the telescope tracking system.
 { \bf As a result, 3 per cent of our images show an
 average ellipticity across the detectors which is worse
 than $e > 0.2$.
-The inspection of these examples revealed no evidence for
-degraded photometry up to ellipticities less than 0.3.
-In fact high ellipticities are naturally correlated with superior seeing.
-We did however exclude a small number of exposures
-which exceeded $e > 0.3$.}
+The inspection of these examples revealed no evidence
+for degraded photometry up to ellipticities of 0.3.
+We have excluded a small number of exposures
+which exceeded $e = 0.3$.}
 
 (3) \emph{Seeing.} 
 The original survey goal was to obtain data 
@@ -988,9 +988,9 @@ between two neighbouring field pairs.
 
 We have found the information contained
 in our narrow overlap regions to be insufficient
-to constrain the calibration parameters.
+to constrain the calibration parameters well enough.
 This is because photometry at the extreme edges of the WFC
--- where neighbouring fields overlap -- 
+-- where neighbouring field pairs overlap -- 
 is prone to systematics at the level of 1--2~per cent.
 The cause of these errors is thought to include 
 the use of twilight sky flats in the pipeline,
@@ -1673,8 +1673,8 @@ than 0.2 mag;
 cosmic ray or noise artefact, i.e. we require
 either \emph{pStar} or \emph{pGalaxy} to be
 greater than 20 per cent;
-\item the source must not have been detected in one of the strongly
-vignetted corners of the detector, 
+\item the source must not have been detected
+in one of the strongly vignetted corners of the instrument, 
 not have had any known bad pixels in the aperture,
 and not have been on the edge of one of the CCDs.
 \end{enumerate}
@@ -1731,7 +1731,7 @@ these entries may be spurious detections.
 Not all the single-band detections are spurious, however.
 We note that the confirmation rate for $i$-band detections
 is markedly better than for $r$ and \ha,
-which is likely explained by the fact that $i$ is least
+which is likely to be explained by the fact that $i$ is least
 affected by interstellar extinction, and so the survey can occasionally pick up
 highly-reddened objects in $i$ which are otherwise lost in $r$ and \ha.
 Moreover, objects which are intrinsically very red may also be picked
@@ -1759,14 +1759,14 @@ and (v) the source densities.
 \subsection{Known caveats}
 
 Like any other photometric survey
-which operates close
+in which a majority of detected objects are close
 to the detection and resolution limits,
 our catalogue inevitably contains sources
-with are spurious or have been parametrised inaccurately.
+that are spurious or have been parametrised inaccurately.
 In what follows, we highlight the most common
 caveats which users of the catalogue might face,
 followed by a discussion on how they can be avoided.
-Known caveats include:
+These caveats include:
 \begin{itemize}
 \item \emph{Spurious objects.}
 Nebulous sky backgrounds,
@@ -1802,8 +1802,8 @@ These objects can be removed by ensuring that an
 object is detected at $S/N>10$
 and has photometry which is consistent across
 the different aperture sizes.
-Such objects are flagged in the catalogue
-using the \emph{a10} column.
+Objects detected at $S/N>10$ in all bands
+are flagged in the catalogue using the \emph{a10} column.
 \item \emph{Saturation.}
 The photometry and astrometry of objects
 brighter than the saturation limit of the instrument
@@ -1823,10 +1823,10 @@ which will be updated as user experience accumulates.
 \subsection{Recommended quality criteria}
 \label{sec:qualitycriteria}
 
-Most applications will require
+Many applications will require
 a combination of quality criteria
 to be used
-to avoid the caveats outlined above.
+to avoid the issues identified above.
 The choice of criteria will always tension 
 completeness against reliability,
 i.e. the fraction of spurious sources.
@@ -1838,20 +1838,19 @@ First, Table~\ref{tab:a10} specifies
 a set of minimum quality criteria
 which should benefit most applications
 which desire accurate colours
-as well as completeness {\bf down to $\sim$19th magnitude}.
-The listed criteria are designed to 
-(i) remove low-S/N sources, 
-(ii) remove saturated objects,
-and (iii) remove sources for which the 2\farcs 3-diameter
-aperture magnitude is inconsistent 
-with its alternative 1\farcs 2-diameter measurement.
+as well as completeness down to $\sim$19th magnitude.
+The listed criteria are designed
+to ensure that each band offers photometry
+at a high S/N which is consistent
+across different aperture sizes.
 This latter criterion is a proxy
 for identifying objects which are affected
 by poor background subtraction
 or failed deblending.
 A total of 86 million sources out of 219 million 
 (39 per cent) satisfy all the criteria listed in Table~\ref{tab:a10}
-and are hereafter referred to as `a10'.
+and are hereafter referred to as `a10'
+(short for ``all-band $10\sigma$'').
 For convenience, the catalogue contains a boolean column
 named \emph{a10} that flags these objects.
 
@@ -1951,11 +1950,11 @@ have been flagged using the column named \emph{a10point}.}
 \end{table*}
 
 For applications which require
-a higher standard of {\bf accuracy} at the expense of completeness,
+a higher standard of accuracy at the expense of completeness,
 a set of additional quality criteria
 are suggested in Table~\ref{tab:a10point}.
 These criteria are designed to ensure that
-(i) the object appeared as a perfect point source,
+(i) the object appeared as a perfect point source in all bands,
 (ii) the object was not blended with a nearby neighbour,
 and (iii) the object was not located near a very bright star.
 59 million sources (27 per cent) satisfy
@@ -2638,11 +2637,11 @@ data illustrates how IPHAS can complement infrared surveys.
 the IPHAS and Spitzer/GLIMPSE catalogues
 have 4798 entries in common,
 out of 10\,739 and 11\,321 entries in total, respectively.
-1356 objects of these objects were detected in all
-four GLIMPSE bands.
-Fig.~\ref{fig:spitzer-ccd} presents their colour-colour diagram,
-in which we have indicated the 845 objects (62 per cent)
-that have a counterpart in IPHAS (grey circles),
+Fig.~\ref{fig:spitzer-ccd} presents the Spitzer colour-colour diagram
+of the region, containing the 1356 objects that were detected 
+in all four GLIMPSE bands.
+We have indicated the 845 objects (62 per cent)
+that have a counterpart in IPHAS (grey circles)
 and the 511 objects that do not (red crosses).
 
 \begin{figure}
@@ -2661,14 +2660,12 @@ and the 511 objects that do not (red crosses).
     tend to have no counterpart.
     In contrast, many of the objects on the right hand side of the diagram,
     where YSOs are expected to sit, do have counterparts.
-    %We note that three heavily-reddened objects without counterpart
-    %are located above the diagram but are not shown for clarity. 
     }
     \label{fig:spitzer-ccd}
 \end{figure}
 
 We find that objects located in the upper half of the Spitzer diagram
-are less likely to have an an IPHAS counterpart,
+are less likely to have an IPHAS counterpart,
 which is where highly-reddened objects are expected to sit.
 This is not surprising,
 because Sh2-82 is located 
@@ -2789,7 +2786,7 @@ in the $(r - \ha, r - i)$ plane
 are compared with the positions of a sample
 of over 200 classical Be stars in Perseus (from Raddi et al, 2014).
 Stars of this type come with the advantage that secular variation,
-whilst itcertainly occurs,
+whilst it certainly occurs,
 is not as common as in T Tau stars.
 The objects plotted are a bright selection ($r \lesssim 16.5$)
 for which there are spectroscopic determinations

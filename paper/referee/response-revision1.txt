@@ -9,9 +9,9 @@ burden on the reader to track down information from previous works.
 We appreciate the merits of the referee's suggestions in this respect, and have 
 acted upon them by adding a total of 4 new pages (3 new sections, 3 new figures,
 and 1 new table) to the manuscript.  Changes have been marked in bold.
-We have also ~doubled the auxillary documentation that is available on our web
-site as a direct consequence of the referee's suggestions, and will continue to
-expand the on line documentation as user experience accumulates.
+We have also ~doubled the auxiliary documentation that is available on our web
+site prompted by the referee's suggestions.  It is our intention to
+expand the on-line documentation as user experience accumulates.
 
 In what follows we will start by explaining our response to each of the issues 
 which the referee identified as high-level remarks (9 items), followed by the
@@ -40,11 +40,12 @@ High-level items
 
 [Authors' response]
 Whilst revising the manuscript in response to the items that will follow below,
-we have kept the referee's recommendation to lessen the burden on the reader in
-mind.  In immediate response to this comment, we have extended Section 2 to 
+we have kept in mind the referee's recommendation to lessen the burden on the
+reader.
+In immediate response to this comment, we have extended Section 2 to  
 (i) include an overview table of the survey parameters, which summarises 15 key 
 properties of the survey, and (ii) included an extra figure to remind the reader
-of the footprint of an IPHAS field.
+of the footprint of an IPHAS field pair.
 
 
 [Referee]
@@ -113,15 +114,16 @@ updated as user experience accumulates.
 > the Appendix.  They should also mention that tables containing the image metadata are available at IPHAS web site.
 
 [Authors' response]
-Although the paper does intend to focus on the catalogue product, we agree with the
-referee that it would be beneficial to give users additional guidance on the use 
-of the images.  For this reason, we have made significant improvements to our 
-web site by (i) providing a query tool to retrieve IPHAS images by coordinates, 
+Although the paper itself specifically targets the catalogue product, we
+agree with the referee that it would be beneficial to give users
+additional guidance on the use of the images.  For this reason, we
+have made significant improvements to our web site by (i) providing a
+query tool to retrieve IPHAS images by coordinates, 
 and (ii) provide more comprehensive documentation on the metadata, the header 
 keywords, the flux calibration, and the WCS astrometric solution (see www.iphas.org/images).
 Moreover, Section 6 of the paper has been edited to advertise these resources.
 We note that the next release, DR3, intends to focus more strongly on our image
-and image mosaic products, as the survey is approaching ~100% coverage.
+and image mosaic products, when the survey approaches ~100% coverage.
 
 
 [Referee]
@@ -140,8 +142,8 @@ and image mosaic products, as the survey is approaching ~100% coverage.
 [Authors' response]
 The referee questioned the nature of the objects which are marked as "reliable"
 in the catalogue, and in particular questioned the nature of the large number of 
-sources not flagged as "reliable".  Having considered this comment, we have come 
-to conclude that we made a poor choice of terminology by adopting the labels 
+sources not flagged as "reliable".  Having considered this comment, we
+have concluded that we made a poor choice of terminology by adopting the labels 
 "reliable" and "veryReliable" as quality qualifiers.
 These classes, which are based on stringent quality criteria set out in 
 Tables 6 and 7, aim to help users identify high-quality objects, e.g. by 
@@ -152,18 +154,18 @@ however confer the incorrect impression that such sources are "unreliable".
 As a result, we have decided to change the terminology by renaming the class 
 previously known as "reliable" into "a10" (which is short for "all-band 10-sigma"), 
 and renaming "veryReliable" into "a10point" (short for "all-band 10-sigma and
-perfectly point-like").  We believe this change in terminology will better serve 
-as an operational description of the detection quality.
+perfectly point-like").  We believe this change in terminology works better in
+providing an operational description of the detection quality.
 
-In addition to this change in terminology, we have adopted the referee's suggestion
+In addition to this change, we have adopted the referee's suggestion
 to gauge the reliability of our objects against an external catalogue.  That is,
 we have introduced a new Section 6.2, titled "Source reliability", in which the 
 reliability of IPHAS sources as a function of the quality criteria is gauged 
 against SDSS.  Moreover, we note that a separate paper is in an advanced state 
-of preparation (Farnhill et al.), which will investigate the issues surrounding 
+of preparation (Farnhill et al.), that investigates the issues surrounding 
 the completeness and reliability of our catalogue, e.g. by injecting artificial 
-sources into the images and measuring their recovery rates, whilst also comparing 
-source counts between SDSS and IPHAS in more detail.
+sources into the images and measuring their recovery rates, whilst
+also comparing source counts between SDSS and IPHAS in more detail.
 
 
 [Referee]
@@ -187,10 +189,10 @@ source counts between SDSS and IPHAS in more detail.
 We have edited Section 3.1 to offer the reader more details on the astrometric 
 calibration.  We have also added the results of an external validation of our 
 astrometry against UCAC4, which shows a mean residual of 0.09 +/- 0.07 arcsec at
-the bright end of our catalogue.  Finally, we have also added a statement to specify
-that no proper motion information was used in arriving at our astrometry, because
-because hundreds of 2MASS positional reference stars were typically available in 
-each CCD to fit the parameters of the WCS solution.
+the brighter end of our catalogue.  Finally, we have also added a statement
+to specify that no proper motion information was used in arriving at our 
+astrometry, because hundreds of 2MASS positional reference stars were typically
+available in each CCD to fit the parameters of the WCS solution.
 
 
 [Referee]
@@ -207,7 +209,7 @@ In response to the referee's suggestion to include a cross-comparison between
 IPHAS and an infrared survey, we have added a new section (7.3) which provides
 a brief discussion on the overlap between the GLIMPSE and IPHAS catalogues.  
 The discussion reminds the user that an optical survey will naturally be 
-extinction-limited, by showing where sources which IPHAS and GLIMPE have in common
+extinction-limited, by showing where sources in common between IPHAS and GLIMPSE
 are positioned in a colour-colour diagram.
 
 
@@ -262,8 +264,7 @@ magnitude is defined and estimated in our work.
 We have edited the third paragraph in Section 3.2 to explain that the choice
 of our ellipticity limit is based on inspecting examples of high-ellipticity 
 exposures, which revealed no evidence for degraded photometry up to ellipticities 
-less than 0.3.  In fact we have found high ellipticities to be correlated with 
-superior seeing, and therefore somewhat deeper frames.
+of 0.3.
 
 
 [Referee]
@@ -417,9 +418,10 @@ the message which the Section attempts to convey.
 The main driver for imposing the top-level criteria is to avoid the catalogue
 from being dominated by the wealth of spurious detections which the pipeline
 naturally picks up at S/N < 5.  We have edited the first paragraph of Section 
-5.4 to clarify this point.  For DR3, we consider following the example set by 
-Spitzer/GLIMPSE to offer both a "highly reliable" as well as a  "more complete,
-less reliable" version of the catalogue to the public.
+5.4 to clarify this point.  For DR3, we are considering following the
+example set by Spitzer/GLIMPSE to offer both a "highly reliable" as
+well as a  "more complete, less reliable" version of the catalogue to
+the community.
 
 
 [Referee]
@@ -431,8 +433,8 @@ less reliable" version of the catalogue to the public.
 [Authors' response]
 As we acknowledged during our response to "point 6", we believe that our choice
 of the word "reliable" as the name of a class of high-quality objects was 
-misleading. We believe to have resolved this problem by renaming the "reliable"
-class into the "a10" class, which avoids conveying the incorrect impression that 
+misleading. We believe we have resolved this problem by renaming the "reliable"
+class as the "a10" class, which avoids conveying the incorrect impression that 
 objects not in this class are spurious by default.
 
 
@@ -441,8 +443,8 @@ objects not in this class are spurious by default.
 > Should the work "accuracy" be "reliability"?
 
 [Authors' response]
-Indeed, we have corrected this mistake. Again, this is a result of our previously
-incorrect usage of the term "reliable".
+Indeed, we have corrected this mistake. Again, this is a result of our 
+previously incorrect usage of the term "reliable".
 
 
 [Referee]
@@ -457,7 +459,7 @@ We have corrected this mistake.
 ---
 
 Again, we thank the referee for the insightful feedback, which has not only
-helped to benefit the DR2 paper, but will also be taken into account during the
+benefitted the DR2 paper, but will also be taken into account during the
 preparation of DR3.
 
 Kind regards,
