@@ -415,56 +415,56 @@ are available.
 
 \subsection{Initial pipeline processing}
 
-All raw IPHAS data were transferred
-to the Cambridge Astronomical Survey Unit (CASU) 
-for initial processing and archiving.
-The procedures used by CASU were originally devised
-for the INT Wide Field imaging Survey \citep[WFS;][]{McMahon2001,Irwin2005},
-which was a 200 deg$^2$ {\bf extragalactic} survey programme carried out 
-between 1998 and 2003.
-Because IPHAS uses the same telescope and camera combination,
-we have been able to benefit from the existing WFS pipeline.
-A description of the processing steps 
-is found in \citet{Irwin2001}.
-Its application to IPHAS has previously been described
+All raw IPHAS data were transferred to the Cambridge Astronomical Survey Unit 
+(CASU) for initial processing and archiving.  The procedures used by CASU 
+were originally devised for the INT Wide Field imaging Survey 
+\citep[WFS;][]{McMahon2001,Irwin2005}, which was a 200 deg$^2$ 
+{\bf extragalactic} survey programme carried out between 1998 and 2003.
+Because IPHAS uses the same telescope and camera combination, we have been 
+able to benefit from the existing WFS pipeline. A description of the 
+processing steps can be found in \citet{Irwin2001}. Its application to IPHAS 
+has previously been described
 by \citet{Drew2005} and \citet{Gonzalez-Solares2008},
-and the source code is available
-on-line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}. 
-In brief, the pipeline takes care of bias subtraction,
-linearity correction, flat-fielding,
-gain correction and de-fringing.
+and some elements of the the source code are available 
+on line\footnote{http://casu.ast.cam.ac.uk/surveys-projects/software-release}. 
+In brief, the imaging processing part of the pipeline takes care of bias 
+subtraction, the linearity correction, flat-fielding with internal gain
+correction, and de-fringing for the i-band.
 
 { \bf
 Object detection and parametrisation is then carried out
-using the standard methods in use by CASU,
+using the standard methods developed by CASU,
 which can be summarised in four steps
 \citep[a discussion on each of these steps
 and related points can be found in][]{Irwin1985,Irwin1997}:
 \begin{enumerate}
-\item The local sky background is estimated
-by computing the sigma-clipped median intensity
-in a grid of 64$\times$64 pixel bins across the image,
-which is robust against contaminating sources.
-Bilinear interpolation is then used to obtain an estimate 
-of the background level at each pixel.
+\item The local sky background is estimated by first computing an iteratively
+sigma-clipped median intensity on a grid of 64$\times$64 pixel bins across 
+the image from each detector.  This is usually robust against contaminating 
+sources corrupting the background level. The resulting array of background
+values is then filtered to further reduce the effect of large objects on
+the local background level. Bilinear interpolation is then used to obtain an 
+estimate of the background level at the orginal image pixel scale.
+\item To improve faint object detection, each image is smoothed with a matched
+detection filter which is used in conjunction with the unsmoothed image
+for object detection and parameterisation.
 \item Objects, or blends of objects, are detected
-by identifying groups of 4 or more neighbouring pixels
-in which the intensity exceeds the background level by at least $1.25\sigma$.
-\item The object are parametrised:
-positions are obtained by computing 
-the intensity-weighted isophotal centre-of-gravity
-of each object,
-and photometry is obtained 
-by measuring the intensity
-in a series of soft-edged circular apertures of increasing diameter 
-(1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6 and 6\farcs 6).
-Objects are also classified morphologically
--- stellar, extended or noise --
-based on their intensity as a function of aperture size.
-\item The parametrisation of overlapping objects
-is refined by simultaneous fitting of
-soft-edged apertures to each blend,
-effectively carrying out profile fitting where it is necessary.
+by identifying groups of 4 or more neighbouring contiguous pixels
+in which the intensity exceeds the background level by at least $1.25\sigma$
+on the matched filtered image. Objects are deblended using a sequence of
+successively higher detection levels.
+\item The objects are parametrised using the unsmoothed image at these pixel 
+locations : positions are obtained based on an intensity-weighted isophotal 
+centre-of-gravity of each object; whilst photometry is derived by measuring 
+the intensity in a series of soft-edged circular apertures covering a range 
+of diameters (1\farcs 2, 2\farcs 3, 3\farcs 3, 4\farcs 6, 6\farcs 6 and 
+9\farcs 2).  Objects are also classified morphologically
+-- stellar, extended or noise -- based on their intensity as a function of 
+aperture size and on their intensity-weighted second moments, where the latter
+are used to derive an estimate of object ellipticity.
+\item The parametrisation of overlapping objects is refined by simultaneous 
+fitting of soft-edged apertures to each blend,
+effectively carrying out ``top hat'' profile fitting where it is necessary.
 We note that the parametrisation of these blended objects is naturally
 less reliable than that of single, unconfused sources,
 which is why they are flagged in the catalogue
@@ -478,7 +478,7 @@ World Coordinate System (WCS)
 based on the known telescope and camera geometry,
 using a Zenithal Polynomial projection
 \citep[ZPN;][]{Calabretta2002}
-to model the field distortion of the camera.
+to model the (fixed) field distortion of the camera.
 The parameters of this solution
 are then progressively refined by fitting against the
 Two-Micron All Sky Survey \citep[2MASS; ][]{Skrutskie2006}.
@@ -487,7 +487,7 @@ because each CCD typically contains
 hundreds of 2MASS reference stars.
 The resulting fit has previously been shown
 to deliver results which are internally consistent
-to better than 0\farcs 1 across the detector
+to better than 0\farcs 1 across the detector array
 \citep{Gonzalez-Solares2008}.
 
 An external validation of the astrometry 
@@ -503,8 +503,9 @@ and where the formal mean error of UCAC4
 is better than 50~mas \citep{UCAC3}.
 We find the mean position offset to be $0\farcs 09\pm0\farcs 07$,
 which is satisfactory for our purposes.
-We note that both UCAC4 and 2MASS -- and hence also IPHAS --
-are calibrated in the International Celestial Reference System (ICRS).
+%We note that both UCAC4 and 2MASS -- and hence also IPHAS --
+%not 100% true due to bulk pm of calibrators - Mike
+%are calibrated in the International Celestial Reference System (ICRS).
 %We note that the mean residual is  
 %is $-0.006 \pm 0.086$ in R.A.
 %and $0.012\pm0.073$ in Dec.
@@ -565,29 +566,6 @@ have been rejected using seven quality criteria,
 which ensure a good and homogeneous level of quality
 across the data release:
 
-\begin{figure}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_r.pdf} 
-    \end{minipage}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_i.pdf} 
-    \end{minipage}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_h.pdf} 
-    \end{minipage}
-    \caption{Distribution of the 5$\sigma$ limiting magnitude
-             across all quality-approved survey fields
-             for $r$ (top), $i$ (middle) and \ha\ (bottom).
-             Fields with a limiting magnitude brighter than
-             20th ($r$) or 19th (\ha, $i$) were rejected
-             from the data release.
-             The $r$-band depth is most sensitive 
-             to the presence of the moon above the horizon: 
-             this is the main reason for the wide, bi-modal character
-             of its distribution.}
-    \label{fig:depth}
-\end{figure}
-
 (1) \emph{Depth.} 
 We discarded any exposures 
 for which the $5\sigma$ limiting magnitude\footnote{\bf
@@ -630,9 +608,9 @@ with $b$ the semi-minor and $a$ the semi-major axis,
 is a morphological measure of the elongation
 of the Point Spread Function (PSF).
 It is expected to be zero (circular)
-in a perfect imaging system,
+in a perfect noise-free imaging system,
 but it is slightly non-zero in any real telescope data 
-due to optical distortions and tracking errors.
+due to optical distortions, tracking errors and photon plus readout noise.
 Indeed, it is worth noting
 that IPHAS data have been collected
 from unguided exposures that rely entirely
@@ -668,6 +646,29 @@ is normally derived from the field with the
 best-available seeing for a given object,
 and that the FWHM measurement
 is available as a column in the catalogue.
+
+\begin{figure}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_r.pdf} 
+    \end{minipage}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_i.pdf} 
+    \end{minipage}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_h.pdf} 
+    \end{minipage}
+    \caption{Distribution of the 5$\sigma$ limiting magnitude
+             across all quality-approved survey fields
+             for $r$ (top), $i$ (middle) and \ha\ (bottom).
+             Fields with a limiting magnitude brighter than
+             20th ($r$) or 19th (\ha, $i$) were rejected
+             from the data release.
+             The $r$-band depth is most sensitive 
+             to the presence of the moon above the horizon: 
+             this is the main reason for the wide, bi-modal character
+             of its distribution.}
+    \label{fig:depth}
+\end{figure}
 
 \begin{figure}
     \begin{minipage}[b]{\linewidth}
@@ -801,7 +802,7 @@ lost outside of the aperture used
 {\bf
 Finally, \textsc{percorr} is a term used to correct 
 for the small difference in internal gain
-computed using the twilight flats
+computed using the relatively blue twilight flats
 compared to the much redder typical astronomical objects. 
 It is estimated by making a robust average of the dark sky levels 
 measured on each detector during an observing run
