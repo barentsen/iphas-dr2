@@ -495,7 +495,7 @@ has been carried out by comparing our positions against the
 United States Naval Observatory CCD Astrograph Catalog 
 \citep[UCAC4;][]{UCAC4}.
 Fig.~\ref{fig:astrometry} shows the distribution
-of the position offsets against UCAC4
+of the offsets against UCAC4
 computed for 1.3 million stars
 in the magnitude range $13 < r < 15$,
 which is the range where both surveys overlap
@@ -538,7 +538,7 @@ how these have been removed or flagged in the final catalogue.
 The entire data set -- comprising 2.5~terabyte of FITS files --
 was then transferred to the University of Hertfordshire
 for the purpose of transforming the raw
-detection tables into a proper source catalogue which
+detection tables into a source catalogue which
 (i) is quality-controlled,
 (ii) is homogeneously calibrated, and 
 (iii) contains user-friendly columns and warning flags.
@@ -601,6 +601,29 @@ To a lesser extent, the wide spread in the $r$-band depth
 is also explained by the shorter exposure time
 that was used for this band during the first months of data-taking.
 
+\begin{figure}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_r.pdf} 
+    \end{minipage}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_i.pdf} 
+    \end{minipage}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=\textwidth]{figures/depth/depth_h.pdf} 
+    \end{minipage}
+    \caption{Distribution of the 5$\sigma$ limiting magnitude
+             across all quality-approved survey fields
+             for $r$ (top), $i$ (middle) and \ha\ (bottom).
+             Fields with a limiting magnitude brighter than
+             20th ($r$) or 19th (\ha, $i$) were rejected
+             from the data release.
+             The $r$-band depth is most sensitive 
+             to the presence of the moon above the horizon: 
+             this is the main reason for the wide, bi-modal character
+             of its distribution.}
+    \label{fig:depth}
+\end{figure}
+
 (2) \emph{Ellipticity.} 
 The ellipticity of a point source,
 defined as $e = 1 - b / a$ 
@@ -646,29 +669,6 @@ is normally derived from the field with the
 best-available seeing for a given object,
 and that the FWHM measurement
 is available as a column in the catalogue.
-
-\begin{figure}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_r.pdf} 
-    \end{minipage}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_i.pdf} 
-    \end{minipage}
-    \begin{minipage}[b]{\linewidth}
-        \includegraphics[width=\textwidth]{figures/depth/depth_h.pdf} 
-    \end{minipage}
-    \caption{Distribution of the 5$\sigma$ limiting magnitude
-             across all quality-approved survey fields
-             for $r$ (top), $i$ (middle) and \ha\ (bottom).
-             Fields with a limiting magnitude brighter than
-             20th ($r$) or 19th (\ha, $i$) were rejected
-             from the data release.
-             The $r$-band depth is most sensitive 
-             to the presence of the moon above the horizon: 
-             this is the main reason for the wide, bi-modal character
-             of its distribution.}
-    \label{fig:depth}
-\end{figure}
 
 \begin{figure}
     \begin{minipage}[b]{\linewidth}
@@ -1359,6 +1359,8 @@ perfection and will not be entirely free of anomalies.  Indeed as we worked,
 we noticed the occasional unsurprising examples of inconsistency between these 
 two surveys.
 
+%\newpage
+
 \section{Source catalogue generation}
 \label{sec:catalogue}
 
@@ -1680,6 +1682,27 @@ not have had any known bad pixels in the aperture,
 and not have been on the edge of one of the CCDs.
 \end{enumerate}
 
+A total of 219 million primary detections satisfied
+the above criteria and have been included in the catalogue.
+
+Table~\ref{tbl:detections} details the breakdown of these
+sources as a function of the bands in which they are captured.
+159 million sources are detected in all three filters (73 per cent),
+30 million are detected in two filters (14 per cent),
+and the remaining 30 million are single-band detections.
+{\bf
+Table~\ref{tbl:detections} also presents 
+the fraction of `confirmed' objects,
+which we define as those sources
+which have been detected more than once
+(recall that much of the survey area
+is observed twice due to the field pair strategy).
+We find that the single-band detections tend
+to show much lower confirmation rates (32 per cent on average)
+than double- and triple-band detections (89 per cent).
+This suggests that a significant fraction of
+these entries may be spurious detections.
+
 \begin{table}
     \caption{Breakdown of catalogue sources as a function of the band(s)
              in which the object was detected.
@@ -1708,27 +1731,6 @@ and not have been on the edge of one of the CCDs.
 	\end{center}
 \end{table}
 
-A total of 219 million primary detections satisfied
-the above criteria and have been included in the catalogue.
-
-Table~\ref{tbl:detections} details the breakdown of these
-sources as a function of the bands in which they are captured.
-159 million sources are detected in all three filters (73 per cent),
-30 million are detected in two filters (14 per cent),
-and the remaining 30 million are single-band detections.
-{\bf
-Table~\ref{tbl:detections} also presents 
-the fraction of `confirmed' objects,
-which we define as those sources
-which have been detected more than once
-(recall that much of the survey area
-is observed twice due to the field pair strategy).
-We find that the single-band detections tend
-to show much lower confirmation rates (32 per cent on average)
-than double- and triple-band detections (89 per cent).
-This suggests that a significant fraction of
-these entries may be spurious detections.
-
 Not all the single-band detections are spurious, however.
 We note that the confirmation rate for $i$-band detections
 is markedly better than for $r$ and \ha,
@@ -1743,6 +1745,8 @@ without inspecting the image data by eye,
 or verifying that the object
 was detected more than once (\emph{nObs}$>$1).
 }
+
+%\newpage
 
 \section{Discussion}
 \label{sec:discussion}
@@ -1907,7 +1911,6 @@ have been flagged in the catalogue using the column named \emph{a10}
   \hline
 \end{tabular}
 \label{tab:a10}
-
 \vspace{2.5cm}
 \caption{\bf Additional quality criteria which are recommended
 for applications which require objects to be
@@ -2029,11 +2032,6 @@ By computing the fraction of IPHAS sources which were
 also independently detected by SDSS,
 we can obtain a good lower limit on the reliability.
 
-%In producing a point source catalogue, spurious detections 
-%will inevitably be made. A fraction of these will mimic stellar 
-%sources closely enough that they cannot be excluded using the 
-%recorded parameters. 
-
 The comparison was carried out across three cone-shaped regions,
 each covering 1 deg$^2$,
 using a strict cross-matching distance of 0.5~arcsec.
@@ -2054,19 +2052,6 @@ that a source needs to be detected in all three bands
 (98.7 per cent). 
 Reliabilities of 99.5 and 99.7 per cent are achieved
 using the \emph{a10} and \emph{a10point} quality flags.
-
-To understand the nature of the small fraction
-of \emph{a10point}-flagged sources
-which appear to be unreliable in this test,
-we investigated the data by eye.
-We found these `unreliable' objects to be located
-in the vicinity of moderately bright stars ($r\,\lesssim\,12$),
-tracing out an area which is affected by saturation spikes or
-scattered light in the SDSS images.
-In all cases we found these remaining objects 
-to appear as genuine stars in both the IPHAS and SDSS images.
-It is hence likely that the reliability
-of the \emph{a10point} class is close to 100 per cent.
 
 \begin{table}
     \caption{Fractions of sources in our catalogue
@@ -2106,10 +2091,37 @@ of the \emph{a10point} class is close to 100 per cent.
     \end{center}
 \end{table}
 
+To understand the nature of the small fraction
+of \emph{a10point}-flagged sources
+which appear to be unreliable in this test,
+we investigated the data by eye.
+We found these `unreliable' objects to be located
+in the vicinity of moderately bright stars ($r\,\lesssim\,12$),
+tracing out an area which is affected by saturation spikes or
+scattered light in the SDSS images.
+In all cases we found these remaining objects 
+to appear as genuine stars in both the IPHAS and SDSS images.
+It is hence likely that the reliability
+of the \emph{a10point} class is close to 100 per cent.
+
 }
 
 \subsection{Random and systematic uncertainties}
 \label{sec:uncertainties}
+
+Fig.~\ref{fig:uncertainties} shows the mean photometric
+uncertainties (\emph{rErr}, \emph{iErr}, \emph{haErr})
+as a function of magnitude.
+We find the typical uncertainty to reach 0.1~mag near $r=$20.5 
+and $i$,\ha$=19.5$.
+We note that the fainter depth in $r$ is compensated
+by the fact that most stars have brighter magnitudes in $i$ and \ha;
+the average colours in the catalogue are
+$\overline{(r-i)}=1.06\pm0.12$ and $\overline{(r-\ha)}=0.44\pm0.03$.
+We warn that the statistics shown in Fig.~\ref{fig:uncertainties}
+are the random errors based on the expected Poissonian photon noise.
+Systematics, such as calibration and deblending errors,
+are not included.
 
 \begin{figure}
     \includegraphics[width=0.45\textwidth]{figures/uncertainties/uncertainties.pdf} 
@@ -2126,24 +2138,10 @@ of the \emph{a10point} class is close to 100 per cent.
     \label{fig:uncertainties}
 \end{figure}
 
-Fig.~\ref{fig:uncertainties} shows the mean photometric
-uncertainties (\emph{rErr}, \emph{iErr}, \emph{haErr})
-as a function of magnitude.
-We find the typical uncertainty to reach 0.1~mag near $r=$20.5 
-and $i$,\ha$=19.5$.
-We note that the fainter depth in $r$ is compensated
-by the fact that most stars have brighter magnitudes in $i$ and \ha;
-the average colours in the catalogue are
-$\overline{(r-i)}=1.06\pm0.12$ and $\overline{(r-\ha)}=0.44\pm0.03$.
-We warn that the statistics shown in Fig.~\ref{fig:uncertainties}
-are the random errors based on the expected Poissonian photon noise.
-Systematics, such as calibration and deblending errors,
-are not included.
-
 To appraise the level at which our photometry is affected by such systematics,
 we can exploit the secondary measurements which are present in the catalogue
 (i.e. \emph{r} vs \emph{r2}, \emph{i} vs \emph{i2}, \emph{ha} vs \emph{ha2}).
-In Fig.~\ref{fig:pairmag} we show the mean absolute residuals between
+In Fig.~\ref{fig:pairmag}a we show the mean absolute residuals between
 these primary and secondary magnitudes as a function of magnitude (black dots).
 We also plot the Poissonian uncertainties for comparison (solid red line).
 We find the mean residual and standard deviation to be $0.03\pm0.04$~mag
@@ -2154,33 +2152,13 @@ Stars fainter than this range appear to be dominated by photon noise (red line),
 while stars at the bright end appear to suffer from large systematic
 errors due to saturation effects.
 
-In Fig.~\ref{fig:pairmag_a10} we show 
-a similar comparison between the primary and secondary detections,
-but this time we have only included sources which are flagged
-as \emph{a10point} in the catalogue.
-We do not observe an improvement in the average residuals as a function of magnitude,
-but the number of outliers has decreased markedly
-(evidenced by the shorter error bars which denote the standard deviation of the absolute residuals).
-We conclude that the \emph{a10point} quality criteria are effective
-at reducing the level of the systematic errors,
-while also removing the inaccurate data at the bright and faint end.
-
-\begin{figure}
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{\linewidth}
-\centering
-\includegraphics[width=0.9\textwidth]{figures/repeatability/repeatability.pdf}
-\caption{}
-\label{fig:pairmag}
-\end{subfigure}
-\hspace{0.5cm}
-\begin{subfigure}[b]{\linewidth}
-\centering
-\includegraphics[width=0.9\textwidth]{figures/repeatability/repeatability-a10point.pdf}
-\caption{}
-\label{fig:pairmag_a10}
-\end{subfigure}
-\caption{Photometric repeatability as a function of magnitude
+\begin{figure*}
+	\vspace{1cm}
+    \begin{minipage}[b]{\linewidth}
+        \includegraphics[width=0.5\textwidth]{figures/repeatability/repeatability.pdf} 
+        \includegraphics[width=0.5\textwidth]{figures/repeatability/repeatability-a10point.pdf}
+    \end{minipage}
+    \caption{Photometric repeatability as a function of magnitude
          for all sources in the catalogue (panel a)
          and for the \emph{a10point} sources alone (panel b).
          Black dots show the mean absolute residuals
@@ -2189,11 +2167,10 @@ while also removing the inaccurate data at the bright and faint end.
          The red trend line shows the average Poissonian uncertainties
          we derived in Fig.~\ref{fig:uncertainties}.
          We find that the \emph{a10point} quality criteria are successful
-         at removing objects with large residuals.
-    }
-\end{figure}
-\begin{figure*}
-    \vspace{1cm}
+         at removing objects with large residuals.}
+    \label{fig:pairmag}
+
+    \vspace{2cm}
     \includegraphics[width=\textwidth]{figures/sourcecount/sourcecount.pdf} 
     \caption{Number of entries in the IPHAS DR2 source catalogue
     as a function of Galactic longitude.
@@ -2217,6 +2194,18 @@ while also removing the inaccurate data at the bright and faint end.
    }
     \label{fig:sourcecount}
 \end{figure*}
+
+In Fig.~\ref{fig:pairmag}b we show 
+a similar comparison between the primary and secondary detections,
+but this time we have only included sources which are flagged
+as \emph{a10point} in the catalogue.
+We do not observe an improvement in the average residuals as a function of magnitude,
+but the number of outliers has decreased markedly
+(evidenced by the shorter error bars which denote the standard deviation of the absolute residuals).
+We conclude that the \emph{a10point} quality criteria are effective
+at reducing the level of the systematic errors,
+while also removing the inaccurate data at the bright and faint end.
+
 
 \subsection{Source counts and blending}
 \label{sec:densities}
@@ -2268,6 +2257,8 @@ important to bear this in mind when appraising stars of seemingly
 unusual colours (such as candidate emission line stars) -- if 
 blending is flagged, the probability that the unusual colour is 
 spurious is greatly increased.
+
+%\newpage
 
 \section{Demonstration}
 \label{sec:demonstration}
@@ -2547,25 +2538,6 @@ in Fig.~\ref{fig:mosaic_spitzer},
 located predominantly in the top-left part
 of the bubble.
 
-\begin{figure}
-\begin{center}
-  \includegraphics[width=\linewidth]{figures/sh2-82/sh2-82-ccd.pdf}
-    \caption{$(r-\ha,\ r-i)$ diagram for the rectangular region of 
-    20-by-15 arcmin centred on the H{\sc ii} region Sh 2-82,
-    which is the area shown in Fig.~\ref{fig:mosaic_iphas}.    
-    The diagram shows all objects in the catalogue
-    which have been flagged as \emph{a10} and are brighter
-    than $r<20$ (grey circles).
-    The unreddened main sequence is indicated by a solid line,
-    while the main sequence for stars with an \ha\ emission line
-    strength of $-10~\rm{\AA}$~EW is indicated by a dashed line
-    \citep[both based on the colour simulations by][]{Barentsen2011a}.
-    Red triangles indicate objects which have been identified as
-    as likely \ha-emitters.}
-    \label{fig:emitters}
-\end{center}
-\end{figure}
-
 Fig.~\ref{fig:emitters} presents
 the IPHAS colour-colour diagram for 
 the 20-by-15 arcmin region shown in the mosaics.
@@ -2586,26 +2558,6 @@ These candidate \ha-emitters
 are marked by red triangles in the colour-colour diagram,
 and by yellow triangles in the image mosaic (Fig.~\ref{fig:mosaic_iphas}).
 Their details are listed in Table~\ref{tbl:emitters}.
-
-\begin{table}
-    \caption{Candidate \ha-emitters towards Sh 2-82.}
-    \label{tbl:emitters}
-    \footnotesize
-    \resizebox{0.47\textwidth}{!}{
-        \begin{tabular}{clccc}
-        \toprule
-        \# & Name [IPHAS2 ...] & $r$ & $i$ & \ha  \\
-        \midrule
-        1 & J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
-        2 & J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
-        3 & J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
-        4 & J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
-        5 & J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
-        6 & J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
-        \bottomrule
-        \end{tabular}
-    }
-\end{table}
 
 In previous work, we have shown that the majority of
 \ha-emitters seen by IPHAS towards an H{\sc ii} region
@@ -2631,6 +2583,45 @@ in the Spitzer 8.0~\micron\ image at S/N$>$5.
 They are likely to be YSOs exhibiting a mild infrared excess.
 The recovery of \ha-emitters in Spitzer
 data illustrates how IPHAS can complement infrared surveys.
+
+\begin{figure}
+\begin{center}
+  \includegraphics[width=\linewidth]{figures/sh2-82/sh2-82-ccd.pdf}
+    \caption{$(r-\ha,\ r-i)$ diagram for the rectangular region of 
+    20-by-15 arcmin centred on the H{\sc ii} region Sh 2-82,
+    which is the area shown in Fig.~\ref{fig:mosaic_iphas}.    
+    The diagram shows all objects in the catalogue
+    which have been flagged as \emph{a10} and are brighter
+    than $r<20$ (grey circles).
+    The unreddened main sequence is indicated by a solid line,
+    while the main sequence for stars with an \ha\ emission line
+    strength of $-10~\rm{\AA}$~EW is indicated by a dashed line
+    \citep[both based on the colour simulations by][]{Barentsen2011a}.
+    Red triangles indicate objects which have been identified as
+    as likely \ha-emitters.}
+    \label{fig:emitters}
+\end{center}
+\end{figure}
+
+\begin{table}
+    \caption{Candidate \ha-emitters towards Sh 2-82.}
+    \label{tbl:emitters}
+    \footnotesize
+    \resizebox{0.47\textwidth}{!}{
+        \begin{tabular}{clccc}
+        \toprule
+        \# & Name [IPHAS2 ...] & $r$ & $i$ & \ha  \\
+        \midrule
+        1 & J192954.40+181026.1& $17.69\pm0.01$ & $16.12\pm0.01$ & $16.19\pm0.01$ \\
+        2 & J193011.01+182051.2& $18.55\pm0.02$ & $16.95\pm0.02$ & $17.31\pm0.02$ \\
+        3 & J193021.52+181954.5& $19.72\pm0.05$ & $17.94\pm0.03$ & $18.47\pm0.04$ \\
+        4 & J193024.45+181938.3& $19.31\pm0.04$ & $17.55\pm0.02$ & $17.99\pm0.03$ \\
+        5 & J193033.00+181609.3& $18.25\pm0.01$ & $16.91\pm0.01$ & $16.92\pm0.01$ \\
+        6 & J193042.48+182317.4& $19.96\pm0.03$ & $18.11\pm0.03$ & $18.48\pm0.03$ \\
+        \bottomrule
+        \end{tabular}
+    }
+\end{table}
 
 \subsection{IPHAS as a complement to infrared data}
 
@@ -2906,7 +2897,7 @@ the source code that was used to generate
 the catalogue is made available at
 https://github.com/barentsen/iphas-dr2
 
-\vspace{0.5cm}
+%\vspace{0.5cm}
 
 \section{Concluding remarks and future work}
 \label{sec:conclusions}
