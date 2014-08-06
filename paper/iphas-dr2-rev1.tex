@@ -229,7 +229,7 @@ just over half of the survey footprint was covered
 and the data were insufficiently complete 
 to support a homogeneously calibrated source catalogue.
 The goal of this paper is to present the next release, 
- which supercedes the IDR by including a global re-calibration
+which supersedes the IDR by including a global re-calibration
 and by taking the coverage up to 92 per cent of the survey area.}
 In this work we
 (i) explain the data reduction 
@@ -503,17 +503,10 @@ and where the formal mean error of UCAC4
 is better than 50~mas \citep{UCAC3}.
 We find the mean position offset to be $0\farcs 09\pm0\farcs 07$,
 which is satisfactory for our purposes.
-%We note that both UCAC4 and 2MASS -- and hence also IPHAS --
-%not 100% true due to bulk pm of calibrators - Mike
-%are calibrated in the International Celestial Reference System (ICRS).
-%We note that the mean residual is  
-%is $-0.006 \pm 0.086$ in R.A.
-%and $0.012\pm0.073$ in Dec.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/astrometry/astrometry.pdf} 
-    \caption{Distribution of the position offsets
-    		of stars
+    \caption{Distribution of the astrometric residuals of stars
     		which appear both in IPHAS DR2 and UCAC4
     		within a cross-matching distance of 1\arcsec.
             The residuals were computed for 
@@ -901,7 +894,7 @@ to be explained below,
 has revealed that the error in our initial nightly calibration
 exceeded 0.1~mag in 12 per cent of the fields,
 and even exceeded 0.5~mag in 0.7 per cent.
-For comparison, Fig.~\ref{fig:ccd_after}
+Fig.~\ref{fig:ccd_after}
 demonstrates the improvement 
 in the colour-colour diagram
 after re-calibrating. }
@@ -1359,7 +1352,6 @@ perfection and will not be entirely free of anomalies.  Indeed as we worked,
 we noticed the occasional unsurprising examples of inconsistency between these 
 two surveys.
 
-%\newpage
 
 \section{Source catalogue generation}
 \label{sec:catalogue}
@@ -1746,7 +1738,6 @@ or verifying that the object
 was detected more than once (\emph{nObs}$>$1).
 }
 
-%\newpage
 
 \section{Discussion}
 \label{sec:discussion}
@@ -1846,12 +1837,12 @@ which desire accurate colours
 as well as completeness down to $\sim$19th magnitude.
 The listed criteria are designed
 to ensure that each band offers photometry
-at a high S/N which is consistent
+at S/N\ $>10$ that is self-consistent
 across different aperture sizes.
-This latter criterion is a proxy
-for identifying objects which are affected
-by poor background subtraction
-or failed deblending.
+%This latter criterion is a proxy
+%for identifying objects which are affected
+%by poor background subtraction
+%or failed deblending.
 A total of 86 million sources out of 219 million 
 (39 per cent) satisfy all the criteria listed in Table~\ref{tab:a10}
 and are hereafter referred to as `a10'
@@ -1987,11 +1978,11 @@ named \emph{a10point} which flags these objects.
 Fig.~\ref{fig:magdist} compares the $r$-band magnitude
 distributions for objects tagged \emph{a10} and \emph{a10point}
 against the unfiltered catalogue.
-In the magnitude range $13 < r < 19$,
-we find that 81 per cent of the sources 
-are flagged \emph{a10}
+we find that 81 per cent of sources 
+in the magnitude range $13 < r < 19$
+are flagged \emph{a10},
 and 54 per cent are flagged \emph{a10point}.
-We will explain below that the
+We will show below that the
 \emph{a10point} category is least complete
 at low Galactic longitudes,
 where source blending can affect
@@ -2020,9 +2011,9 @@ the \emph{reliability} of the survey,
 which we define as the fraction of sources
 which are genuine astrophysical objects.
 To estimate the reliability, we cross-matched IPHAS
-against SDSS DR7\footnote{SDSS DR7 was chosen for this comparison
+against SDSS DR7\footnote{SDSS DR7 was chosen
 due to an apparent change in 
-the catalogue generation for DR8 and DR9,
+the catalogue preparation for DR8 and DR9,
 which resulted in fewer genuine stars being
 detected near bright ($r\,<\,12$) sources,
 which in turn gave an unduly pessimistic view
@@ -2034,7 +2025,7 @@ we can obtain a good lower limit on the reliability.
 
 The comparison was carried out across three cone-shaped regions,
 each covering 1 deg$^2$,
-using a strict cross-matching distance of 0.5~arcsec.
+using a strict cross-matching distance of 0\farcs 5.
 We considered four subsets of the IPHAS catalogue:
 \begin{enumerate}
 \item the entire (unfiltered) catalogue;
@@ -2043,21 +2034,11 @@ We considered four subsets of the IPHAS catalogue:
 \item \emph{a10point} sources.
 \end{enumerate}
 
-The results for each of the regions and subsets
-are presented in Table~\ref{tbl:reliability}.
-We find that our catalogue shows a good
-baseline reliability (90.8 per cent),
-which is improved markedly by the simple requirement
-that a source needs to be detected in all three bands
-(98.7 per cent). 
-Reliabilities of 99.5 and 99.7 per cent are achieved
-using the \emph{a10} and \emph{a10point} quality flags.
-
 \begin{table}
     \caption{Fractions of sources in our catalogue
-             which are also found in the SDSS DR7 catalogue
-             within a cross-matching radius of 0.5~arcsec.
-             These statistics can be interpreted
+             which are also found in SDSS DR7
+             within a cross-matching radius of 0\farcs 5.
+             These percentages can be interpreted
              as lower limits
              for the reliability of our sources,
              i.e. the probability that an entry in our
@@ -2068,12 +2049,11 @@ using the \emph{a10} and \emph{a10point} quality flags.
              where both surveys
              show contiguous overlap.
              The reliability is shown
-             for IPHAS sources 
-             without selection criteria applied (``all''),
+             without quality criteria applied (``all''),
              using only objects detected in all three bands ($nBands=3$),
              using objects detected at 10$\sigma$
              in all three bands (\emph{a10}),
-             and finally using the detections
+             and finally using objects
              classified as reliable 10$\sigma$ point sources (\emph{a10point}).
              }
     \label{tbl:reliability}
@@ -2090,6 +2070,16 @@ using the \emph{a10} and \emph{a10point} quality flags.
         \end{tabular}
     \end{center}
 \end{table}
+
+The results for each of the regions and subsets
+are presented in Table~\ref{tbl:reliability}.
+We find that our catalogue shows a good
+baseline reliability (90.8 per cent),
+which is improved markedly by the simple requirement
+that a source needs to be detected in all three bands
+(98.7 per cent). 
+Reliabilities of 99.5 and 99.7 per cent are achieved
+using the \emph{a10} and \emph{a10point} quality flags.
 
 To understand the nature of the small fraction
 of \emph{a10point}-flagged sources
@@ -2258,7 +2248,6 @@ unusual colours (such as candidate emission line stars) -- if
 blending is flagged, the probability that the unusual colour is 
 spurious is greatly increased.
 
-%\newpage
 
 \section{Demonstration}
 \label{sec:demonstration}
@@ -2627,10 +2616,10 @@ data illustrates how IPHAS can complement infrared surveys.
 
 {\bf Towards Sh2-82,
 the IPHAS and Spitzer/GLIMPSE catalogues
-have 4798 entries in common,
-out of 10\,739 and 11\,321 entries in total, respectively.
+have 4,798 entries in common,
+out of 10,739 and 11,321 entries in total, respectively.
 Fig.~\ref{fig:spitzer-ccd} presents the Spitzer colour-colour diagram
-of the region, containing the 1356 objects that were detected 
+of the region, showing the 1,356 objects that were detected 
 in all four GLIMPSE bands.
 We have indicated the 845 objects (62 per cent)
 that have a counterpart in IPHAS (grey circles)
@@ -2659,6 +2648,9 @@ and the 511 objects that do not (red crosses).
 We find that objects located in the upper half of the Spitzer diagram
 are less likely to have an IPHAS counterpart,
 which is where highly-reddened objects are expected to sit.
+Moreover, amongst the objects with a counterpart,
+we note that more have been detected in $i$ (843 objects)
+than in $r$ (634) or \ha\ (600).
 This is not surprising,
 because Sh2-82 is located 
 towards a high-extinction sightline 
@@ -2682,31 +2674,6 @@ IPHAS data can offer a handle
 on the extinction, distance
 and stellar contents of many of such unexplored regions.
 }
-
-%where IPHAS is not limited by extinction
-%This is an example of a high-extinction sightline where
-%optical observations will naturally be extinction-limited.
-%IPHAS will naturally count far fewer sources than (N)IR surveys.
-%In the outer-plane the situation is, in fact, reversed,
-%except where there is UKIDSS GPS coverage (i.e. dec > 60).
-%For example, in the anti-centre region where the dust optical depths are low, IPHAS contains more...
-
-%Amongst the 1810 high-quality sources which we
-%plotted in Fig.~\ref{fig:emitters},
-%no less than 1561 objects (87\%) have a counterpart
-%in the Spitzer GLIMPSE archive
-%within a matching radius of 1 arcsec.
-%In the other direction, out of the 6753 objects
-%which are in the Spitzer/GLIMPSE catalogue for this region,
-%2984 (44\%) have a counterpart in IPHAS.
-
-% reliable & r < 20 & (l > 53.55-10/60.) & (l < 53.55+10/60.)                  & (b > 0.01-7.5/60.) & (b < 0.01+7.5/60.)
-%TODO: This is an example of a high-extinction sightline where
-% optical observations will naturally be extinction-limited.
-% IPHAS will naturally count far fewer sources than (N)IR surveys.
-% In the outer-plane the situation is, in fact, reversed,
-% except where there is UKIDSS GPS coverage (i.e. dec > 60).
-% For example, in the anti-centre region where the dust optical depths are low, IPHAS contains more...
 
 
 \subsection{$r - \ha$ excess as a quantitative measure of H$\alpha$ emission}
@@ -2897,7 +2864,6 @@ the source code that was used to generate
 the catalogue is made available at
 https://github.com/barentsen/iphas-dr2
 
-%\vspace{0.5cm}
 
 \section{Concluding remarks and future work}
 \label{sec:conclusions}
