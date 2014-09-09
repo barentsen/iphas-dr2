@@ -39,7 +39,7 @@
         "name": "l",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic longitude $\\ell$ converted from ra/dec (IAU 1958 system).",
+        "desc": "Galactic longitude (IAU 1958 system).",
         "form": ".5f",
         "suff": "°"
     },
@@ -47,7 +47,7 @@
         "name": "b",
         "type": "double",
         "unit": "degrees",
-        "desc": "Galactic latitude $b$ converted from ra/dec (IAU 1958 system).",
+        "desc": "Galactic latitude (IAU 1958 system).",
         "form": ".5f",
         "suff": "°"
     },
@@ -180,7 +180,7 @@
         "name": "rClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar."
     },
     {
         "name": "rClassStat",
@@ -315,7 +315,7 @@
         "name": "iClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar."
     },
     {
         "name": "iClassStat",
@@ -464,7 +464,7 @@
         "name": "haClass",
         "type": "short",
         "unit": "",
-        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar, -3=probableGalaxy, -9=saturated."
+        "desc": "Discrete image classification flag: 1=galaxy, 0=noise, -1=star, -2=probableStar."
     },
     {
         "name": "haClassStat",
